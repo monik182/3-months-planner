@@ -16,7 +16,7 @@ export default function Steps() {
   ];
 
   return (
-    <StepsRoot key="subtle" variant="subtle" count={steps.length} height="calc(80vh - 2rem)">
+    <StepsRoot key="subtle" variant="subtle" count={steps.length} height="calc(80vh - 2rem)" className="p-10">
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
         <GridItem>
           <StepsList>
@@ -28,7 +28,7 @@ export default function Steps() {
         <GridItem>
 
           {steps.map((step, index) => (
-            <StepsContent key={index} index={index}>
+            <StepsContent key={index} index={index} className="mt-10">
               {step.content}
             </StepsContent>
           ))}
