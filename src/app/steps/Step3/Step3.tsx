@@ -137,8 +137,8 @@ export function Step3() {
                   <Indicator
                     key={index}
                     indicator={indicator}
-                    removeMeasurement={() => removeMeasurement(item.id, index)}
-                    updateMeasurement={(indicator) => updateMeasurement(item.id, index, indicator)}
+                    onRemove={() => removeMeasurement(item.id, index)}
+                    onChange={(indicator) => updateMeasurement(item.id, index, indicator)}
                   />
                 ))}
                 <Button variant="outline" className="mt-5" onClick={() => addMeasurement(item.id)} disabled={disableMeasurement}>

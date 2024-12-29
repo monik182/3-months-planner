@@ -14,11 +14,11 @@ export interface IndicatorItem {
 
 interface IndicatorProps {
   indicator?: IndicatorItem
-  updateMeasurement: (indicator: IndicatorItem) => void
-  removeMeasurement: () => void
+  onChange: (indicator: IndicatorItem) => void
+  onRemove: () => void
 }
 export const DEFAULT_MEASUREMENT = { value: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false }
-export function Indicator({ indicator, updateMeasurement, removeMeasurement }: IndicatorProps) {
+export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
   const [value, setValue] = useState(indicator)
   const [error, setError] = useState('')
   const handleUpdate = () => {
@@ -30,14 +30,14 @@ export function Indicator({ indicator, updateMeasurement, removeMeasurement }: I
       setError('Please fill out all fields')
       return
     }
-    updateMeasurement({ ...value, isEditing: false })
+    onChange({ ...value, isEditing: false })
   }
 
   const handleEnableEditing = () => {
     if (!value) {
       return
     }
-    updateMeasurement({ ...value, isEditing: true })
+    onChange({ ...value, isEditing: true })
   }
 
   const handleEditValue = (e: React.ChangeEvent<HTMLInputElement>, prop: string) => {
@@ -98,7 +98,7 @@ export function Indicator({ indicator, updateMeasurement, removeMeasurement }: I
       </Field.Root>
       {error && <Alert status="error" title={error} />}
       <Flex justify="flex-end" gap="5px">
-        <Button size="xs" variant="outline" onClick={removeMeasurement}>
+        <Button size="xs" variant="outline" onClick={onRemove}>
           <CiTrash />
           Remove
         </Button>
