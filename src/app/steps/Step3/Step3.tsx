@@ -4,13 +4,12 @@ import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { DEFAULT_ITEM_WEEKS } from './WeeksSelector'
-import { DEFAULT_MEASUREMENT, Indicator, IndicatorItem } from './Indicator'
+import { DEFAULT_INDICATOR, Indicator, IndicatorItem } from './Indicator'
 
 interface Item {
   id: string
   value: string
   isEditingWeeks: boolean
-  // weeks: string[]
   dueDate?: string // TODO: this must be required
   indicators: IndicatorItem[]
 }
@@ -22,7 +21,7 @@ const _items = [
 ]
 export function Step3() {
   const [items, setItems] = useState<Item[]>([..._items])
-  const disableMeasurement = !!items.some((item) => item.indicators.some((indicator) => indicator.isEditing))
+  const disableIndicator = (item: Item) => !!item.indicators.some((indicator) => indicator.isEditing)
 
   const addItem = (pos?: number) => {
     const newId = (items.length + 1).toString()
@@ -73,24 +72,30 @@ export function Step3() {
   }
 
   const handleAddIndicator = (id: string) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, measurements: [...item.indicators, { ...DEFAULT_MEASUREMENT, isEditing: true }] } : item
-    )
-    setItems(updatedItems)
+    setItems(items => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, indicators: [...item.indicators, { ...DEFAULT_INDICATOR, isEditing: true }] } : item
+      )
+      return updatedItems
+    })
   }
 
   const handleIndicatorChange = (id: string, index: number, measurement: IndicatorItem) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, indicators: item.indicators.map((m, i) => (i === index ? measurement : m)) } : item
-    )
-    setItems(updatedItems)
+    setItems(items => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, indicators: item.indicators.map((m, i) => (i === index ? measurement : m)) } : item
+      )
+      return updatedItems
+    })
   }
 
   const handleRemoveIndicator = (id: string, index: number) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
-    )
-    setItems(updatedItems)
+    setItems(items => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
+      )
+      return updatedItems
+    })
   }
 
   return (
@@ -125,12 +130,6 @@ export function Step3() {
             </Card.Header>
             <Card.Body>
               HERE COME THE Strategies
-              {/* TODO: move this to the actions!!! */}
-              {/* {item.isEditingWeeks ? (
-                    <WeeksSelector weeks={item.weeks} setWeeks={(weeks) => updateItemWeeks(item.id, weeks)} onFocusOutside={() => toggleItemWeeks(item.id)} />
-                  ) : (
-                    <Text textStyle="sx" onClick={() => toggleItemWeeks(item.id)}>Due: {item.weeks.length === 12 ? 'Every week' : `Weeks ${item.weeks.join(', ')}`}</Text>
-                  )} */}
             </Card.Body>
             <Card.Footer>
               <Flex direction="column" gap="10px">
@@ -142,7 +141,7 @@ export function Step3() {
                     onChange={(indicator) => handleIndicatorChange(item.id, index, indicator)}
                   />
                 ))}
-                <Button variant="outline" className="mt-5" onClick={() => handleAddIndicator(item.id)} disabled={disableMeasurement}>
+                <Button variant="outline" className="mt-5" onClick={() => handleAddIndicator(item.id)} disabled={disableIndicator(item)}>
                   <SlPlus /> Add Indicator
                 </Button>
               </Flex>

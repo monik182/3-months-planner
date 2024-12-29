@@ -17,7 +17,9 @@ interface IndicatorProps {
   onChange: (indicator: IndicatorItem) => void
   onRemove: () => void
 }
-export const DEFAULT_MEASUREMENT = { value: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false }
+
+export const DEFAULT_INDICATOR = { value: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false }
+
 export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
   const [value, setValue] = useState(indicator)
   const [error, setError] = useState('')
