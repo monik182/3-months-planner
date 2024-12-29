@@ -1,4 +1,4 @@
-import { Heading, Text } from '@chakra-ui/react';
+import { Flex, Heading, Text } from '@chakra-ui/react';
 
 interface StepLayoutProps {
   title: string;
@@ -15,9 +15,9 @@ export function StepLayout({ title, description, children }: StepLayoutProps) {
           {description}
         </Text>
       )}
-      <div className="mt-5 overflow-y-auto h-full">
+      <Flex direction="column" height="100%" maxHeight="100%" overflow="hidden" paddingTop="1rem">
         {children}
-      </div>
+      </Flex>
     </div>
   )
 }
