@@ -1,6 +1,6 @@
 'use client'
 import { Box, Button, Editable, Em, Flex, IconButton, List, Separator, Text, createListCollection } from '@chakra-ui/react'
-import { StepLayout } from './step-layout'
+import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { SelectContent, SelectItem, SelectLabel, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select'
