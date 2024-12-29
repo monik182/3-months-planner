@@ -10,7 +10,6 @@ export function Step2() {
       <Textarea
         size="xl"
         variant="outline"
-        className="mt-5"
         placeholder="Where do you want to be in 3 years? What key achievements, progress, or changes will set the stage for your long-term vision? Think of this as the bridge between where you are now and where you're going."
       />
     </StepLayout>

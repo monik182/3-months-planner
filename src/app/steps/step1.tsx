@@ -10,7 +10,6 @@ export function Step1() {
       <Textarea
         size="xl"
         variant="outline"
-        className="mt-5"
         placeholder="Think big. What are the dreams you’ve always wanted to pursue? How would your life look if you reached your full potential? Be bold and dream unapologetically."
       />
     </StepLayout>

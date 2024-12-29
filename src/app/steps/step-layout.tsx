@@ -8,14 +8,16 @@ interface StepLayoutProps {
 
 export function StepLayout({ title, description, children }: StepLayoutProps) {
   return (
-    <div>
+    <div className="h-full overflow-hidden">
       <Heading size="xl" fontWeight="bold">{title}</Heading>
       {description && (
-        <Text textStyle="xs">
+        <Text textStyle="sm">
           {description}
         </Text>
       )}
-      {children}
+      <div className="mt-5 overflow-y-auto h-full">
+        {children}
+      </div>
     </div>
   )
 }
