@@ -3,21 +3,22 @@ import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { DEFAULT_ITEM_WEEKS } from './WeeksSelector'
 import { DEFAULT_INDICATOR, Indicator, IndicatorItem } from './Indicator'
+import { DEFAULT_STRATEGY, Strategy, StrategyItem } from './Strategy'
 
 interface Item {
   id: string
   value: string
   isEditingWeeks: boolean
+  strategies: StrategyItem[]
   dueDate?: string // TODO: this must be required
   indicators: IndicatorItem[]
 }
 
 const _items = [
-  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], indicators: [] },
-  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], indicators: [] },
-  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], indicators: [] },
+  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
+  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
+  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
 ]
 export function Step3() {
   const [items, setItems] = useState<Item[]>([..._items])
@@ -29,8 +30,8 @@ export function Step3() {
       id: newId,
       value: '',
       isEditingWeeks: false,
-      weeks: [...DEFAULT_ITEM_WEEKS],
       indicators: [],
+      strategies: [{ ...DEFAULT_STRATEGY }],
     };
     const updatedItems =
       pos !== undefined
@@ -50,25 +51,6 @@ export function Step3() {
   const removeItem = (id: string) => {
     let updatedItems = items.filter((checkbox) => checkbox.id !== id)
     setItems(updatedItems)
-  }
-
-  const updateItemWeeks = (id: string, weeks: string[]) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, weeks: [...weeks].sort((a, b) => parseInt(a) - parseInt(b)) } : item
-    )
-    setItems(updatedItems)
-  }
-
-  const toggleItemWeeks = (id: string) => {
-    setItems((items) => {
-      const updatedItems = items.map((item) => {
-        if (item.id === id) {
-        }
-        return item.id === id ? { ...item, isEditingWeeks: !item.isEditingWeeks } : item
-
-      })
-      return updatedItems
-    })
   }
 
   const handleAddIndicator = (id: string) => {
@@ -93,6 +75,39 @@ export function Step3() {
     setItems(items => {
       const updatedItems = items.map((item) =>
         item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
+      )
+      return updatedItems
+    })
+  }
+
+  const handleAddStrategy = (id: string) => {
+    setItems(items => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, strategies: [...item.strategies, { ...DEFAULT_STRATEGY, id: item.strategies.length.toString() }] } : item
+      )
+      return updatedItems
+    })
+  }
+
+  const handleUpdateStrategy = (id: string, strategy: StrategyItem) => {
+    setItems(items => {
+      const updatedItems = items.map((item) => {
+        if (item.id === id) {
+          if (!strategy.id) {
+            strategy.id = item.strategies.length.toString()
+          }
+          return { ...item, strategies: item.strategies.map((s) => (s.id === strategy.id ? strategy : s)) }
+        }
+        return item
+      })
+      return updatedItems
+    })
+  }
+
+  const handleRemoveStrategy = (id: string, strategyId: string) => {
+    setItems(items => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, strategies: item.strategies.filter((s) => s.id !== strategyId) } : item
       )
       return updatedItems
     })
@@ -129,7 +144,17 @@ export function Step3() {
               </Flex>
             </Card.Header>
             <Card.Body>
-              HERE COME THE Strategies
+              <Flex direction="column" gap="10px">
+                {item.strategies.map((strategy, index) => (
+                  <Strategy
+                    key={index}
+                    strategy={strategy}
+                    onAdd={() => handleAddStrategy(item.id)}
+                    onChange={(strategy) => handleUpdateStrategy(item.id, strategy)}
+                    onRemove={() => item.strategies.length > 1 ? handleRemoveStrategy(item.id, strategy.id) : undefined}
+                  />
+                ))}
+              </Flex>
             </Card.Body>
             <Card.Footer>
               <Flex direction="column" gap="10px">
@@ -141,7 +166,7 @@ export function Step3() {
                     onChange={(indicator) => handleIndicatorChange(item.id, index, indicator)}
                   />
                 ))}
-                <Button variant="outline" className="mt-5" onClick={() => handleAddIndicator(item.id)} disabled={disableIndicator(item)}>
+                <Button size="xs" variant="outline" className="mt-5" onClick={() => handleAddIndicator(item.id)} disabled={disableIndicator(item)}>
                   <SlPlus /> Add Indicator
                 </Button>
               </Flex>

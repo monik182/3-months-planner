@@ -7,21 +7,19 @@ interface WeeksSelectorProps {
   onFocusOutside: () => void
 }
 
-const _weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-
-const DEFAULT_WEEKS = _weeks.map((id) => ({ id: id.toString(), label: `Week ${id}`, value: id.toString() }))
-const __weeks = createListCollection({
-  items: [...DEFAULT_WEEKS],
+const WEEKS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+const DEFAULT_WEEKS_LIST = WEEKS.map((id) => ({ id: id.toString(), label: `Week ${id}`, value: id.toString() }))
+const WEEKS_COLLECTION = createListCollection({
+  items: [...DEFAULT_WEEKS_LIST],
 })
-
-export const DEFAULT_ITEM_WEEKS = _weeks.map((id) => id.toString())
+export const DEFAULT_WEEKS = WEEKS.map((id) => id.toString())
 
 export const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelectorProps) => {
   return (
     <SelectRoot
       open
       multiple
-      collection={__weeks}
+      collection={WEEKS_COLLECTION}
       size="sm"
       width="320px"
       value={weeks}
@@ -32,7 +30,7 @@ export const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelector
         <SelectValueText placeholder="Weeks" />
       </SelectTrigger>
       <SelectContent>
-        {__weeks.items.map((week) => (
+        {WEEKS_COLLECTION.items.map((week) => (
           <SelectItem item={week} key={week.value}>
             {week.label}
           </SelectItem>
