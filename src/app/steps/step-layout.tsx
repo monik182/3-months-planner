@@ -7,17 +7,17 @@ interface StepLayoutProps {
 }
 
 export function StepLayout({ title, description, children }: StepLayoutProps) {
+  const _description = typeof description === 'string' ? <Text textStyle="sm">{description}</Text> : description
+
   return (
-    <div className="h-full overflow-hidden">
+    <Flex overflow="hidden" height="100%" direction="column">
       <Heading size="xl" fontWeight="bold">{title}</Heading>
       {description && (
-        <Text textStyle="sm">
-          {description}
-        </Text>
+        _description
       )}
       <Flex direction="column" height="100%" maxHeight="100%" overflow="hidden" paddingTop="1rem">
         {children}
       </Flex>
-    </div>
+    </Flex>
   )
 }

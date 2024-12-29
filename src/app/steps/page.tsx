@@ -10,8 +10,6 @@ export default function Steps() {
     { title: 'Define Vision', content: <Step1 /> },
     { title: '3-Year Milestone', content: <Step2 /> },
     { title: 'Set Goals', content: <Step3 /> },
-    { title: 'Prioritize', content: 'Step 4' },
-    { title: 'Focus on One', content: 'Step 5' },
     { title: 'Plan Actions & Metrics', content: 'Step 6' },
     { title: 'Pick a Start Date', content: 'Step 7' },
   ]
