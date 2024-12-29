@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Provider } from '../components/ui/provider';
+import { Grid, GridItem } from '@chakra-ui/react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,12 +25,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>{children}</Provider>
+        <Provider>
+          <Grid templateRows="1fr auto" height="100vh">
+            <GridItem>HEADER</GridItem>
+            <GridItem height="90vh">{children}</GridItem>
+          </Grid>
+        </Provider>
       </body>
     </html>
   );
 }
+
