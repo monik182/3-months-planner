@@ -1,17 +1,17 @@
 import { Button, Grid, GridItem, Group } from '@chakra-ui/react';
 import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTrigger, StepsPrevTrigger, StepsRoot } from '../../components/ui/steps';
 import { Step1 } from './step1';
+import { Step2 } from './step2';
 
 export default function Steps() {
 
   const steps = [
     { title: 'Define Vision', content: <Step1 /> },
-    { title: '3-Year Milestone', content: 'Step 2' },
+    { title: '3-Year Milestone', content: <Step2 /> },
     { title: 'Set Goals', content: 'Step 3' },
     { title: 'Prioritize', content: 'Step 4' },
     { title: 'Focus on One', content: 'Step 5' },
     { title: 'Plan Actions & Metrics', content: 'Step 6' },
-    // { title: 'Set Indicators', content: 'Step 7' },
     { title: 'Pick a Start Date', content: 'Step 7' },
   ];
 
