@@ -3,7 +3,7 @@ import { Box, Button, Editable, Em, Flex, IconButton, List, Separator, Text, cre
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { SelectContent, SelectItem, SelectLabel, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select'
+import { DEFAULT_ITEM_WEEKS, WeeksSelector } from './WeeksSelector'
 
 interface Item {
   id: string
@@ -12,17 +12,10 @@ interface Item {
   weeks: string[]
 }
 
-const _weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-const DEFAULT_WEEKS = _weeks.map((id) => ({ id: id.toString(), label: `Week ${id}`, value: id.toString() }))
-const __weeks = createListCollection({
-  items: [...DEFAULT_WEEKS],
-})
-const DEFAULT__ITEM_WEEKS = _weeks.map((id) => id.toString())
-
 const _items = [
-  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT__ITEM_WEEKS] },
-  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT__ITEM_WEEKS] },
-  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT__ITEM_WEEKS] },
+  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS] },
+  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS] },
+  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS] },
 ]
 export function Step3() {
   const [items, setItems] = useState<Item[]>([..._items])
@@ -33,7 +26,7 @@ export function Step3() {
       id: newId,
       value: '',
       isEditingWeeks: false,
-      weeks: [...DEFAULT__ITEM_WEEKS],
+      weeks: [...DEFAULT_ITEM_WEEKS],
     };
     const updatedItems =
       pos !== undefined
@@ -118,38 +111,6 @@ export function Step3() {
         <SlPlus /> New Goal
       </Button>
     </StepLayout>
-  )
-}
-
-interface WeeksSelectorProps {
-  weeks: string[]
-  setWeeks: (weeks: string[]) => void
-  onFocusOutside: () => void
-}
-
-const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelectorProps) => {
-  return (
-    <SelectRoot
-      open
-      multiple
-      collection={__weeks}
-      size="sm"
-      width="320px"
-      value={weeks}
-      onValueChange={(e) => setWeeks(e.value)}
-      onFocusOutside={onFocusOutside}
-    >
-      <SelectTrigger>
-        <SelectValueText placeholder="Weeks" />
-      </SelectTrigger>
-      <SelectContent>
-        {__weeks.items.map((week) => (
-          <SelectItem item={week} key={week.value}>
-            {week.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </SelectRoot>
   )
 }
 
