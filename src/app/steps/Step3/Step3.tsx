@@ -4,24 +4,24 @@ import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { DEFAULT_ITEM_WEEKS, WeeksSelector } from './WeeksSelector'
-import { DEFAULT_MEASUREMENT, Measurement, MeasurementItem } from './Measurement'
+import { DEFAULT_MEASUREMENT, Indicator, IndicatorItem } from './Indicator'
 
 interface Item {
   id: string
   value: string
   isEditingWeeks: boolean
   weeks: string[]
-  measurements: MeasurementItem[]
+  indicators: IndicatorItem[]
 }
 
 const _items = [
-  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], measurements: [] },
-  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], measurements: [] },
-  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], measurements: [] },
+  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], indicators: [] },
+  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], indicators: [] },
+  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], indicators: [] },
 ]
 export function Step3() {
   const [items, setItems] = useState<Item[]>([..._items])
-  const disableMeasurement = !!items.some((item) => item.measurements.some((measurement) => measurement.isEditing))
+  const disableMeasurement = !!items.some((item) => item.indicators.some((indicator) => indicator.isEditing))
 
   const addItem = (pos?: number) => {
     const newId = (items.length + 1).toString()
@@ -30,7 +30,7 @@ export function Step3() {
       value: '',
       isEditingWeeks: false,
       weeks: [...DEFAULT_ITEM_WEEKS],
-      measurements: [],
+      indicators: [],
     };
     const updatedItems =
       pos !== undefined
@@ -73,21 +73,21 @@ export function Step3() {
 
   const addMeasurement = (id: string) => {
     const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, measurements: [...item.measurements, { ...DEFAULT_MEASUREMENT, isEditing: true }] } : item
+      item.id === id ? { ...item, measurements: [...item.indicators, { ...DEFAULT_MEASUREMENT, isEditing: true }] } : item
     )
     setItems(updatedItems)
   }
 
-  const updateMeasurement = (id: string, index: number, measurement: MeasurementItem) => {
+  const updateMeasurement = (id: string, index: number, measurement: IndicatorItem) => {
     const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, measurements: item.measurements.map((m, i) => (i === index ? measurement : m)) } : item
+      item.id === id ? { ...item, indicators: item.indicators.map((m, i) => (i === index ? measurement : m)) } : item
     )
     setItems(updatedItems)
   }
 
   const removeMeasurement = (id: string, index: number) => {
     const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, measurements: item.measurements.filter((_, i) => i !== index) } : item
+      item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
     )
     setItems(updatedItems)
   }
@@ -133,12 +133,12 @@ export function Step3() {
             </Card.Body>
             <Card.Footer>
               <Flex direction="column" gap="10px">
-                {item.measurements.map((measurement, index) => (
-                  <Measurement
+                {item.indicators.map((indicator, index) => (
+                  <Indicator
                     key={index}
-                    measurement={measurement}
+                    indicator={indicator}
                     removeMeasurement={() => removeMeasurement(item.id, index)}
-                    updateMeasurement={(measurement) => updateMeasurement(item.id, index, measurement)}
+                    updateMeasurement={(indicator) => updateMeasurement(item.id, index, indicator)}
                   />
                 ))}
                 <Button variant="outline" className="mt-5" onClick={() => addMeasurement(item.id)} disabled={disableMeasurement}>

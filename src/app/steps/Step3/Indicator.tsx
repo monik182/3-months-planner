@@ -4,7 +4,7 @@ import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { SlStar } from 'react-icons/sl'
 import { Alert } from '@/components/ui/alert'
 
-export interface MeasurementItem {
+export interface IndicatorItem {
   value: string
   startingNumber: number | null
   goalNumber: number | null
@@ -12,14 +12,14 @@ export interface MeasurementItem {
   isEditing: boolean
 }
 
-interface MeasurementProps {
-  measurement?: MeasurementItem
-  updateMeasurement: (measurement: MeasurementItem) => void
+interface IndicatorProps {
+  indicator?: IndicatorItem
+  updateMeasurement: (indicator: IndicatorItem) => void
   removeMeasurement: () => void
 }
 export const DEFAULT_MEASUREMENT = { value: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false }
-export function Measurement({ measurement, updateMeasurement, removeMeasurement }: MeasurementProps) {
-  const [value, setValue] = useState(measurement)
+export function Indicator({ indicator, updateMeasurement, removeMeasurement }: IndicatorProps) {
+  const [value, setValue] = useState(indicator)
   const [error, setError] = useState('')
   const handleUpdate = () => {
     setError('')
@@ -51,10 +51,10 @@ export function Measurement({ measurement, updateMeasurement, removeMeasurement 
   }
 
   useEffect(() => {
-    if (measurement) {
-      setValue(measurement)
+    if (indicator) {
+      setValue(indicator)
     }
-  }, [measurement])
+  }, [indicator])
 
   if (!value) {
     return null
@@ -74,7 +74,7 @@ export function Measurement({ measurement, updateMeasurement, removeMeasurement 
     <Flex direction="column" w="full" width="500px" gap="1rem" flex="1">
       <Field.Root>
         <Box pos="relative" w="full">
-          <Field.Label>What are you measuring?</Field.Label>
+          <Field.Label>What indicator are you tracking?</Field.Label>
           <Input className="peer" placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.value} onChange={(e) => handleEditValue(e, 'value')} />
         </Box>
       </Field.Root>
@@ -92,8 +92,8 @@ export function Measurement({ measurement, updateMeasurement, removeMeasurement 
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
-          <Field.Label>Metric or unit of measure</Field.Label>
-          <Input className="peer" placeholder="Indicate the unit, such as kilograms, euros, calls, or transactions." value={value.metric} onChange={(e) => handleEditValue(e, 'metric')} />
+          <Field.Label>What is the unit of measurement?</Field.Label>
+          <Input className="peer" placeholder="Indicate the unit, such as kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEditValue(e, 'metric')} />
         </Box>
       </Field.Root>
       {error && <Alert status="error" title={error} />}
