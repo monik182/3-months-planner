@@ -9,8 +9,7 @@ export default function Steps() {
   const steps = [
     { title: 'Define Vision', content: <Step1 /> },
     { title: '3-Year Milestone', content: <Step2 /> },
-    { title: 'Set Goals', content: <Step3 /> },
-    { title: 'Plan Actions & Metrics', content: 'Step 6' },
+    { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
     { title: 'Pick a Start Date', content: 'Step 7' },
   ]
 

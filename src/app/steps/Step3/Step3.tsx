@@ -1,24 +1,27 @@
 'use client'
-import { Box, Button, Editable, Em, Flex, IconButton, List, Separator, Text, createListCollection } from '@chakra-ui/react'
+import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { DEFAULT_ITEM_WEEKS, WeeksSelector } from './WeeksSelector'
+import { DEFAULT_MEASUREMENT, Measurement, MeasurementItem } from './Measurement'
 
 interface Item {
   id: string
   value: string
   isEditingWeeks: boolean
   weeks: string[]
+  measurements: MeasurementItem[]
 }
 
 const _items = [
-  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS] },
-  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS] },
-  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS] },
+  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], measurements: [] },
+  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], measurements: [] },
+  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT_ITEM_WEEKS], measurements: [] },
 ]
 export function Step3() {
   const [items, setItems] = useState<Item[]>([..._items])
+  const disableMeasurement = !!items.some((item) => item.measurements.some((measurement) => measurement.isEditing))
 
   const addItem = (pos?: number) => {
     const newId = (items.length + 1).toString()
@@ -27,6 +30,7 @@ export function Step3() {
       value: '',
       isEditingWeeks: false,
       weeks: [...DEFAULT_ITEM_WEEKS],
+      measurements: [],
     };
     const updatedItems =
       pos !== undefined
@@ -40,6 +44,11 @@ export function Step3() {
     const updatedItems = items.map((item) =>
       item.id === id ? { ...item, value } : item
     )
+    setItems(updatedItems)
+  }
+
+  const removeItem = (id: string) => {
+    let updatedItems = items.filter((checkbox) => checkbox.id !== id)
     setItems(updatedItems)
   }
 
@@ -62,8 +71,24 @@ export function Step3() {
     })
   }
 
-  const removeItem = (id: string) => {
-    let updatedItems = items.filter((checkbox) => checkbox.id !== id)
+  const addMeasurement = (id: string) => {
+    const updatedItems = items.map((item) =>
+      item.id === id ? { ...item, measurements: [...item.measurements, { ...DEFAULT_MEASUREMENT, isEditing: true }] } : item
+    )
+    setItems(updatedItems)
+  }
+
+  const updateMeasurement = (id: string, index: number, measurement: MeasurementItem) => {
+    const updatedItems = items.map((item) =>
+      item.id === id ? { ...item, measurements: item.measurements.map((m, i) => (i === index ? measurement : m)) } : item
+    )
+    setItems(updatedItems)
+  }
+
+  const removeMeasurement = (id: string, index: number) => {
+    const updatedItems = items.map((item) =>
+      item.id === id ? { ...item, measurements: item.measurements.filter((_, i) => i !== index) } : item
+    )
     setItems(updatedItems)
   }
 
@@ -74,37 +99,54 @@ export function Step3() {
     >
       <Box flex="1" overflowY="auto" px={2} minHeight="0">
         {items.map((item) => (
-          <div key={item.id}>
-            <Flex key={item.id} justify="space-between">
-              <Flex gap="5px" direction="column">
+          <Card.Root key={item.id} marginBottom="1rem">
+            <Card.Header>
+              <Flex key={item.id} justify="space-between">
                 <Editable.Root
                   value={item.value}
                   onValueChange={(e) => updateItemValue(item.id, e.value)}
                   placeholder="Click to edit"
                   defaultEdit
+                  width="100%"
                 >
                   <Editable.Preview />
                   <Editable.Input />
                 </Editable.Root>
-                {/* TODO: move this to the actions!!! */}
-                {/* {item.isEditingWeeks ? (
-                  <WeeksSelector weeks={item.weeks} setWeeks={(weeks) => updateItemWeeks(item.id, weeks)} onFocusOutside={() => toggleItemWeeks(item.id)} />
-                ) : (
-                  <Text textStyle="sx" onClick={() => toggleItemWeeks(item.id)}>Due: {item.weeks.length === 12 ? 'Every week' : `Weeks ${item.weeks.join(', ')}`}</Text>
-                )} */}
+                <IconButton
+                  aria-label="Remove list item"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => removeItem(item.id)}
+                >
+                  <SlClose />
+                </IconButton>
               </Flex>
-              <IconButton
-                aria-label="Remove list item"
-                variant="ghost"
-                size="sm"
-                onClick={() => removeItem(item.id)}
-              >
-                <SlClose />
-              </IconButton>
-            </Flex>
-            <Separator />
-
-          </div>
+            </Card.Header>
+            <Card.Body>
+              HERE COME THE ACTIONS
+              {/* TODO: move this to the actions!!! */}
+              {/* {item.isEditingWeeks ? (
+                    <WeeksSelector weeks={item.weeks} setWeeks={(weeks) => updateItemWeeks(item.id, weeks)} onFocusOutside={() => toggleItemWeeks(item.id)} />
+                  ) : (
+                    <Text textStyle="sx" onClick={() => toggleItemWeeks(item.id)}>Due: {item.weeks.length === 12 ? 'Every week' : `Weeks ${item.weeks.join(', ')}`}</Text>
+                  )} */}
+            </Card.Body>
+            <Card.Footer>
+              <Flex direction="column" gap="10px">
+                {item.measurements.map((measurement, index) => (
+                  <Measurement
+                    key={index}
+                    measurement={measurement}
+                    removeMeasurement={() => removeMeasurement(item.id, index)}
+                    updateMeasurement={(measurement) => updateMeasurement(item.id, index, measurement)}
+                  />
+                ))}
+                <Button variant="outline" className="mt-5" onClick={() => addMeasurement(item.id)} disabled={disableMeasurement}>
+                  <SlPlus /> Add Measurement
+                </Button>
+              </Flex>
+            </Card.Footer>
+          </Card.Root>
         ))}
       </Box>
 
