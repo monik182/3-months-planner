@@ -86,11 +86,12 @@ export function Step3() {
                   <Editable.Preview />
                   <Editable.Input />
                 </Editable.Root>
-                {item.isEditingWeeks ? (
+                {/* TODO: move this to the actions!!! */}
+                {/* {item.isEditingWeeks ? (
                   <WeeksSelector weeks={item.weeks} setWeeks={(weeks) => updateItemWeeks(item.id, weeks)} onFocusOutside={() => toggleItemWeeks(item.id)} />
                 ) : (
                   <Text textStyle="sx" onClick={() => toggleItemWeeks(item.id)}>Due: {item.weeks.length === 12 ? 'Every week' : `Weeks ${item.weeks.join(', ')}`}</Text>
-                )}
+                )} */}
               </Flex>
               <IconButton
                 aria-label="Remove list item"
