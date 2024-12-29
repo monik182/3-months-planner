@@ -3,14 +3,15 @@ import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { DEFAULT_ITEM_WEEKS, WeeksSelector } from './WeeksSelector'
+import { DEFAULT_ITEM_WEEKS } from './WeeksSelector'
 import { DEFAULT_MEASUREMENT, Indicator, IndicatorItem } from './Indicator'
 
 interface Item {
   id: string
   value: string
   isEditingWeeks: boolean
-  weeks: string[]
+  // weeks: string[]
+  dueDate?: string // TODO: this must be required
   indicators: IndicatorItem[]
 }
 
@@ -71,21 +72,21 @@ export function Step3() {
     })
   }
 
-  const addMeasurement = (id: string) => {
+  const handleAddIndicator = (id: string) => {
     const updatedItems = items.map((item) =>
       item.id === id ? { ...item, measurements: [...item.indicators, { ...DEFAULT_MEASUREMENT, isEditing: true }] } : item
     )
     setItems(updatedItems)
   }
 
-  const updateMeasurement = (id: string, index: number, measurement: IndicatorItem) => {
+  const handleIndicatorChange = (id: string, index: number, measurement: IndicatorItem) => {
     const updatedItems = items.map((item) =>
       item.id === id ? { ...item, indicators: item.indicators.map((m, i) => (i === index ? measurement : m)) } : item
     )
     setItems(updatedItems)
   }
 
-  const removeMeasurement = (id: string, index: number) => {
+  const handleRemoveIndicator = (id: string, index: number) => {
     const updatedItems = items.map((item) =>
       item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
     )
@@ -123,7 +124,7 @@ export function Step3() {
               </Flex>
             </Card.Header>
             <Card.Body>
-              HERE COME THE ACTIONS
+              HERE COME THE Strategies
               {/* TODO: move this to the actions!!! */}
               {/* {item.isEditingWeeks ? (
                     <WeeksSelector weeks={item.weeks} setWeeks={(weeks) => updateItemWeeks(item.id, weeks)} onFocusOutside={() => toggleItemWeeks(item.id)} />
@@ -137,12 +138,12 @@ export function Step3() {
                   <Indicator
                     key={index}
                     indicator={indicator}
-                    onRemove={() => removeMeasurement(item.id, index)}
-                    onChange={(indicator) => updateMeasurement(item.id, index, indicator)}
+                    onRemove={() => handleRemoveIndicator(item.id, index)}
+                    onChange={(indicator) => handleIndicatorChange(item.id, index, indicator)}
                   />
                 ))}
-                <Button variant="outline" className="mt-5" onClick={() => addMeasurement(item.id)} disabled={disableMeasurement}>
-                  <SlPlus /> Add Measurement
+                <Button variant="outline" className="mt-5" onClick={() => handleAddIndicator(item.id)} disabled={disableMeasurement}>
+                  <SlPlus /> Add Indicator
                 </Button>
               </Flex>
             </Card.Footer>
