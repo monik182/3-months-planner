@@ -1,5 +1,5 @@
 import { Button, Grid, GridItem, Group } from '@chakra-ui/react';
-import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTrigger, StepsPrevTrigger, StepsRoot } from '../../components/ui/steps';
+import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTrigger, StepsPrevTrigger, StepsRoot } from '@/components/ui/steps';
 import { Step1 } from './step1';
 import { Step2 } from './step2';
 import { Step3 } from './step3';

@@ -1,40 +1,46 @@
 'use client'
-import { Box, Button, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react';
-import { StepLayout } from './step-layout';
-import { useState } from 'react';
-import { SlClose, SlPlus } from 'react-icons/sl';
+import { Box, Button, Editable, Em, Flex, IconButton, List, Separator, Text, createListCollection } from '@chakra-ui/react'
+import { StepLayout } from './step-layout'
+import { useState } from 'react'
+import { SlClose, SlPlus } from 'react-icons/sl'
+import { SelectContent, SelectItem, SelectLabel, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select'
 
 interface Item {
   id: string
   value: string
+  isEditingWeeks: boolean
+  weeks: string[]
 }
 
+const _weeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+const DEFAULT_WEEKS = _weeks.map((id) => ({ id: id.toString(), label: `Week ${id}`, value: id.toString() }))
+const __weeks = createListCollection({
+  items: [...DEFAULT_WEEKS],
+})
+const DEFAULT__ITEM_WEEKS = _weeks.map((id) => id.toString())
+
 const _items = [
-  { id: '1', value: 'Complete my weekly project tasks by Friday' },
-  { id: '2', value: 'Attend a networking event every month' },
-  { id: '3', value: 'Read one book on leadership every quarter' },
+  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, weeks: [...DEFAULT__ITEM_WEEKS] },
+  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, weeks: [...DEFAULT__ITEM_WEEKS] },
+  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, weeks: [...DEFAULT__ITEM_WEEKS] },
 ]
 export function Step3() {
-  const [items, setItems] = useState<Item[]>(_items)
+  const [items, setItems] = useState<Item[]>([..._items])
 
   const addItem = (pos?: number) => {
-    let updatedItems
     const newId = (items.length + 1).toString()
+    const newItem = {
+      id: newId,
+      value: '',
+      isEditingWeeks: false,
+      weeks: [...DEFAULT__ITEM_WEEKS],
+    };
+    const updatedItems =
+      pos !== undefined
+        ? [...items.slice(0, pos + 1), newItem, ...items.slice(pos + 1)]
+        : [...items, newItem];
 
-    if (pos !== undefined) {
-      updatedItems = [
-        ...items.slice(0, pos + 1),
-        { id: newId, value: '' },
-        ...items.slice(pos + 1),
-      ]
-    } else {
-      updatedItems = [
-        ...items,
-        { id: newId, value: '' },
-      ]
-    }
-
-    setItems(updatedItems)
+    setItems(updatedItems);
   }
 
   const updateItemValue = (id: string, value: string) => {
@@ -42,6 +48,25 @@ export function Step3() {
       item.id === id ? { ...item, value } : item
     )
     setItems(updatedItems)
+  }
+
+  const updateItemWeeks = (id: string, weeks: string[]) => {
+    const updatedItems = items.map((item) =>
+      item.id === id ? { ...item, weeks: [...weeks].sort((a, b) => parseInt(a) - parseInt(b)) } : item
+    )
+    setItems(updatedItems)
+  }
+
+  const toggleItemWeeks = (id: string) => {
+    setItems((items) => {
+      const updatedItems = items.map((item) => {
+        if (item.id === id) {
+        }
+        return item.id === id ? { ...item, isEditingWeeks: !item.isEditingWeeks } : item
+
+      })
+      return updatedItems
+    })
   }
 
   const removeItem = (id: string) => {
@@ -56,33 +81,75 @@ export function Step3() {
     >
       <Box flex="1" overflowY="auto" px={2} minHeight="0">
         {items.map((item) => (
-          <Flex key={item.id} justify="space-between">
-            <Flex gap="5px">
-              <Editable.Root
-                value={item.value}
-                onValueChange={(e) => updateItemValue(item.id, e.value)}
-                placeholder="Click to edit"
-                defaultEdit
+          <div key={item.id}>
+            <Flex key={item.id} justify="space-between">
+              <Flex gap="5px" direction="column">
+                <Editable.Root
+                  value={item.value}
+                  onValueChange={(e) => updateItemValue(item.id, e.value)}
+                  placeholder="Click to edit"
+                  defaultEdit
+                >
+                  <Editable.Preview />
+                  <Editable.Input />
+                </Editable.Root>
+                {item.isEditingWeeks ? (
+                  <WeeksSelector weeks={item.weeks} setWeeks={(weeks) => updateItemWeeks(item.id, weeks)} onFocusOutside={() => toggleItemWeeks(item.id)} />
+                ) : (
+                  <Text textStyle="sx" onClick={() => toggleItemWeeks(item.id)}>Due: {item.weeks.length === 12 ? 'Every week' : `Weeks ${item.weeks.join(', ')}`}</Text>
+                )}
+              </Flex>
+              <IconButton
+                aria-label="Remove list item"
+                variant="ghost"
+                size="sm"
+                onClick={() => removeItem(item.id)}
               >
-                <Editable.Preview />
-                <Editable.Input />
-              </Editable.Root>
+                <SlClose />
+              </IconButton>
             </Flex>
-            <IconButton
-              aria-label="Remove list item"
-              variant="ghost"
-              size="sm"
-              onClick={() => removeItem(item.id)}
-            >
-              <SlClose />
-            </IconButton>
-          </Flex>
+            <Separator />
+
+          </div>
         ))}
       </Box>
+
       <Button variant="outline" className="mt-5" onClick={() => addItem()}>
         <SlPlus /> New Goal
       </Button>
     </StepLayout>
+  )
+}
+
+interface WeeksSelectorProps {
+  weeks: string[]
+  setWeeks: (weeks: string[]) => void
+  onFocusOutside: () => void
+}
+
+const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelectorProps) => {
+  return (
+    <SelectRoot
+      open
+      multiple
+      collection={__weeks}
+      size="sm"
+      width="320px"
+      value={weeks}
+      onValueChange={(e) => setWeeks(e.value)}
+      onFocusOutside={onFocusOutside}
+    >
+      <SelectTrigger>
+        <SelectValueText placeholder="Weeks" />
+      </SelectTrigger>
+      <SelectContent>
+        {__weeks.items.map((week) => (
+          <SelectItem item={week} key={week.value}>
+            {week.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </SelectRoot>
   )
 }
 
