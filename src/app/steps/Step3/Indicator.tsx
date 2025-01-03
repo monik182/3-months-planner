@@ -20,9 +20,10 @@ interface IndicatorProps {
 
 export const DEFAULT_INDICATOR = { value: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false }
 
-export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
+export function Indicator({ indicator = DEFAULT_INDICATOR, onChange, onRemove }: IndicatorProps) {
   const [value, setValue] = useState(indicator)
   const [error, setError] = useState('')
+
   const handleUpdate = () => {
     setError('')
     if (!value) {
@@ -47,8 +48,14 @@ export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
     if (!value) {
       return
     }
+
+    if (isNaN(parseInt(e.target.value))) {
+      setValue({ ...value, [prop]: null })
+      return
+    }
     const isNumber = prop === 'startingNumber' || prop === 'goalNumber'
     const parsedValue = isNumber ? parseInt(e.target.value || '0') : e.target.value
+
     setValue({ ...value, [prop]: parsedValue })
   }
 
@@ -83,13 +90,13 @@ export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your starting number?</Field.Label>
-          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingNumber?.toString()} onChange={(e) => handleEditValue(e, 'startingNumber')} />
+          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingNumber?.toString() || ''} onChange={(e) => handleEditValue(e, 'startingNumber')} />
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your goal number?</Field.Label>
-          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalNumber?.toString()} onChange={(e) => handleEditValue(e, 'goalNumber')} />
+          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalNumber?.toString() || ''} onChange={(e) => handleEditValue(e, 'goalNumber')} />
         </Box>
       </Field.Root>
       <Field.Root>
