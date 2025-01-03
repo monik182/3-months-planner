@@ -48,14 +48,14 @@ export function Indicator({ indicator = DEFAULT_INDICATOR, onChange, onRemove }:
     if (!value) {
       return
     }
+    const isNumber = prop === 'startingNumber' || prop === 'goalNumber'
 
-    if (isNaN(parseInt(e.target.value))) {
+    if (isNumber && isNaN(parseInt(e.target.value))) {
       setValue({ ...value, [prop]: null })
       return
     }
-    const isNumber = prop === 'startingNumber' || prop === 'goalNumber'
-    const parsedValue = isNumber ? parseInt(e.target.value || '0') : e.target.value
 
+    const parsedValue = isNumber ? parseInt(e.target.value || '0') : e.target.value
     setValue({ ...value, [prop]: parsedValue })
   }
 
