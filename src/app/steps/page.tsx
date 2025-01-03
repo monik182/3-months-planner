@@ -1,10 +1,21 @@
+'use client'
 import { Button, Grid, GridItem, Group } from '@chakra-ui/react';
 import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTrigger, StepsPrevTrigger, StepsRoot } from '@/components/ui/steps';
 import { Step1 } from './Step1';
 import { Step2 } from './Step2';
 import { Step3 } from './Step3/Step3';
+import { useEffect, useState } from 'react';
 
 export default function Steps() {
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return null
+  }
 
   const steps = [
     { title: 'Define Vision', content: <Step1 /> },
