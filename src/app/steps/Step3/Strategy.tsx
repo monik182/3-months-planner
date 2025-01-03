@@ -20,29 +20,31 @@ interface StrategyProps {
 
 export const DEFAULT_STRATEGY = { id: '', value: '', weeks: [...DEFAULT_WEEKS], isEditing: false }
 
-//FIXME: The first strategy is not editable, also the weeks are not edited properly
-
 export function Strategy({ strategy = DEFAULT_STRATEGY, onAdd, onChange, onRemove }: StrategyProps) {
   const [value, setValue] = useState(strategy)
-  console.log('value>>>>', value)
+
   const handleWeekUpdate = (weeks: string[]) => {
-    if (value) {
-      onChange({ ...value, weeks: [...weeks].sort((a, b) => parseInt(a) - parseInt(b)) })
-    }
+    setValue(value => {
+      const updatedValue = { ...value, weeks: weeks.sort((a, b) => parseInt(a) - parseInt(b)) }
+      onChange(updatedValue)
+      return updatedValue
+    })
   }
 
-  const handleValueUpdate = (val: string) => {
-    console.log('e.target.value>>>>', val)
-    if (!value) {
-      return
-    }
-    onChange({ ...value, value: val })
+  const handleValueUpdate = (newValue: string) => {
+    setValue(value => {
+      const updatedValue = { ...value, value: newValue }
+      onChange(updatedValue)
+      return updatedValue
+    })
   }
 
   const toggleWeeksSelector = () => {
-    if (value) {
-      onChange({ ...value, isEditing: !value.isEditing })
-    }
+    setValue(value => {
+      const updatedValue = { ...value, isEditing: !value.isEditing }
+      onChange(updatedValue)
+      return updatedValue
+    })
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -52,10 +54,7 @@ export function Strategy({ strategy = DEFAULT_STRATEGY, onAdd, onChange, onRemov
   }
 
   useEffect(() => {
-    if (strategy) {
-      console.log('this is a new strategy')
-      setValue(strategy)
-    }
+    setValue(strategy)
   }, [strategy])
 
   if (!value) {
@@ -86,7 +85,7 @@ export function Strategy({ strategy = DEFAULT_STRATEGY, onAdd, onChange, onRemov
         </IconButton>
       </Flex>
       {value.isEditing ? (
-        <WeeksSelector weeks={value.weeks} setWeeks={handleWeekUpdate} onFocusOutside={toggleWeeksSelector} />
+        <WeeksSelector weeks={value.weeks} setWeeks={handleWeekUpdate} onFocusOutside={() => toggleWeeksSelector()} />
       ) : (
         <Text textStyle="sx" onClick={toggleWeeksSelector}>Due: {value.weeks.length === 12 ? 'Every week' : `Weeks ${value.weeks.join(', ')}`}</Text>
       )}

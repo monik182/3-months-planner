@@ -1,4 +1,5 @@
 'use client'
+import { v4 as uuidv4 } from 'uuid'
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
@@ -16,22 +17,22 @@ interface Item {
 }
 
 const _items = [
-  { id: '1', value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
-  { id: '2', value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
-  { id: '3', value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
+  { id: uuidv4(), value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
+  { id: uuidv4(), value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
+  { id: uuidv4(), value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
 ]
 export function Step3() {
   const [items, setItems] = useState<Item[]>([..._items])
   const disableIndicator = (item: Item) => !!item.indicators.some((indicator) => indicator.isEditing)
 
   const addItem = (pos?: number) => {
-    const newId = (items.length + 1).toString()
+    const newId = uuidv4()
     const newItem = {
       id: newId,
       value: '',
       isEditingWeeks: false,
       indicators: [],
-      strategies: [{ ...DEFAULT_STRATEGY }],
+      strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }],
     };
     const updatedItems =
       pos !== undefined
@@ -49,7 +50,7 @@ export function Step3() {
   }
 
   const removeItem = (id: string) => {
-    let updatedItems = items.filter((checkbox) => checkbox.id !== id)
+    let updatedItems = items.filter((item) => item.id !== id)
     setItems(updatedItems)
   }
 
@@ -83,18 +84,19 @@ export function Step3() {
   const handleAddStrategy = (id: string) => {
     setItems(items => {
       const updatedItems = items.map((item) =>
-        item.id === id ? { ...item, strategies: [...item.strategies, { ...DEFAULT_STRATEGY, id: item.strategies.length.toString() }] } : item
+        item.id === id ? { ...item, strategies: [...item.strategies, { ...DEFAULT_STRATEGY, id: uuidv4() }] } : item
       )
       return updatedItems
     })
   }
 
   const handleUpdateStrategy = (id: string, strategy: StrategyItem) => {
+    console.log(id, 'new strategy', strategy.weeks)
     setItems(items => {
       const updatedItems = items.map((item) => {
         if (item.id === id) {
           if (!strategy.id) {
-            strategy.id = item.strategies.length.toString()
+            strategy.id = uuidv4()
           }
           return { ...item, strategies: item.strategies.map((s) => (s.id === strategy.id ? strategy : s)) }
         }
@@ -151,7 +153,7 @@ export function Step3() {
                     strategy={strategy}
                     onAdd={() => handleAddStrategy(item.id)}
                     onChange={(strategy) => handleUpdateStrategy(item.id, strategy)}
-                    onRemove={() => item.strategies.length > 1 ? handleRemoveStrategy(item.id, strategy.id) : undefined}
+                    onRemove={() => index < item.strategies.length - 1 ? handleRemoveStrategy(item.id, strategy.id) : undefined}
                   />
                 ))}
               </Flex>
