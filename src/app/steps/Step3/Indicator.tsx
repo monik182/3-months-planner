@@ -3,14 +3,7 @@ import { useEffect, useState } from 'react'
 import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { SlStar } from 'react-icons/sl'
 import { Alert } from '@/components/ui/alert'
-
-export interface IndicatorItem {
-  value: string
-  startingNumber: number | null
-  goalNumber: number | null
-  metric: string
-  isEditing: boolean
-}
+import { Indicator as IndicatorItem } from '@/types'
 
 interface IndicatorProps {
   indicator?: IndicatorItem

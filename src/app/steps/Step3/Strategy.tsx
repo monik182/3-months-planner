@@ -3,14 +3,7 @@ import { WeeksSelector } from './WeeksSelector'
 import { useEffect, useState } from 'react'
 import { SlClose } from 'react-icons/sl'
 import { DEFAULT_STRATEGY } from '@/constants'
-
-
-export interface StrategyItem {
-  id: string
-  value: string
-  weeks: string[]
-  isEditing: boolean
-}
+import { Strategy as StrategyItem } from '@/types'
 
 interface StrategyProps {
   strategy?: StrategyItem
@@ -18,7 +11,6 @@ interface StrategyProps {
   onAdd: () => void
   onRemove?: () => void
 }
-
 
 export function Strategy({ strategy = DEFAULT_STRATEGY, onAdd, onChange, onRemove }: StrategyProps) {
   const [value, setValue] = useState(strategy)

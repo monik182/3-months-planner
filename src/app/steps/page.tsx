@@ -5,9 +5,29 @@ import { Step1 } from './Step1';
 import { Step2 } from './Step2';
 import { Step3 } from './Step3/Step3';
 import { useEffect, useState } from 'react';
+import { Step4 } from './Step4/page';
+import { Goal, Plan, Vision } from '@/types';
+import { INITIAL_PLAN } from '@/constants';
 
 export default function Steps() {
   const [isClient, setIsClient] = useState(false)
+  const [plan, setPlan] = useState<Plan>(INITIAL_PLAN)
+
+  const handleStep1Change = (value: Vision) => {
+    setPlan(plan => ({ ...plan, vision: value.content }))
+  }
+
+  const handleStep2Change = (value: Vision) => {
+    setPlan(plan => ({ ...plan, threeYearMilestone: value.content }))
+  }
+
+  const handleStep3Change = (value: Goal[]) => {
+    setPlan(plan => ({ ...plan, goals: value }))
+  }
+
+  const handleStep4Change = (value: Plan) => {
+    setPlan(plan => ({ ...plan, ...value }))
+  }
 
   useEffect(() => {
     setIsClient(true)
@@ -18,14 +38,14 @@ export default function Steps() {
   }
 
   const steps = [
-    { title: 'Define Vision', content: <Step1 /> },
-    { title: '3-Year Milestone', content: <Step2 /> },
-    { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
-    { title: 'Pick a Start Date', content: 'Step 7' },
+    { title: 'Define Vision', content: <Step1 goNext={() => console} onChange={handleStep1Change} /> },
+    { title: '3-Year Milestone', content: <Step2 onChange={handleStep2Change} /> },
+    { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={handleStep3Change} /> },
+    { title: 'Start Date & Review', content: <Step4 plan={plan} onChange={handleStep4Change} /> },
   ]
 
   return (
-    <StepsRoot key="subtle" variant="subtle" count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem">
+    <StepsRoot linear variant="subtle" count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={(details) => console.log('chaging step tp', details)} onStepComplete={() => console.log('complrted step tp',)}>
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
         <GridItem>
           <StepsList>

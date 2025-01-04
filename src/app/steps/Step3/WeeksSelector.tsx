@@ -1,6 +1,6 @@
 import { createListCollection } from '@chakra-ui/react'
 import { SelectContent, SelectItem, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select'
-import { WEEKS } from '@/constants'
+import { DEFAULT_WEEKS_LIST } from '@/constants'
 
 interface WeeksSelectorProps {
   weeks: string[]
@@ -8,7 +8,6 @@ interface WeeksSelectorProps {
   onFocusOutside: () => void
 }
 
-const DEFAULT_WEEKS_LIST = WEEKS.map((id) => ({ id: id.toString(), label: `Week ${id}`, value: id.toString() }))
 const WEEKS_COLLECTION = createListCollection({
   items: [...DEFAULT_WEEKS_LIST],
 })
