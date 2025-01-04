@@ -1,12 +1,12 @@
 # Wizard
-1. Long term vision
-2. 3-year vision
-3. Create measurable goals
-4. Prioritize goals
-5. Select up to 3 goals
-6. Create tactics for each goal with their due date
-7. Set lead and lag indicators
-8. Select start date
+1. Long term vision ✅
+2. 3-year vision ✅
+3. Create measurable goals ✅
+4. Prioritize goals ✅
+5. Select up to 3 goals ✅
+6. Create tactics for each goal with their due date ✅
+7. Set lead and lag indicators ✅
+8. Select start date ✅
 
 
 # Planning
