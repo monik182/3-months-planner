@@ -22,7 +22,7 @@ export function Indicator({ indicator = DEFAULT_INDICATOR, onChange, onRemove }:
     if (!value) {
       return
     }
-    if (!value.value || !value.startingNumber || !value.goalNumber || !value.metric) {
+    if (!value.value || value.startingNumber == null || value.goalNumber == null || !value.metric) {
       setError('Please fill out all fields')
       return
     }

@@ -10,9 +10,9 @@ import { Indicator as IndicatorItem, Goal, Strategy as StrategyItem, Step } from
 import { DEFAULT_STRATEGY } from '@/constants'
 
 const _items = [
-  { id: uuidv4(), value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
-  { id: uuidv4(), value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
-  { id: uuidv4(), value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
+  { id: uuidv4(), value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
+  { id: uuidv4(), value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
+  { id: uuidv4(), value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
 ]
 export function Step3({ goNext, onChange }: Step<Goal[]>) {
   const [items, setItems] = useState<Goal[]>([..._items])
@@ -27,21 +27,25 @@ export function Step3({ goNext, onChange }: Step<Goal[]>) {
       indicators: [],
       strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }],
     }
-    const updatedItems =
-      pos !== undefined
-        ? [...items.slice(0, pos + 1), newItem, ...items.slice(pos + 1)]
-        : [...items, newItem]
-
-    setItems(updatedItems)
-    onChange(updatedItems)
+    
+    setItems(items => {
+      const updatedItems =
+        pos !== undefined
+          ? [...items.slice(0, pos + 1), newItem, ...items.slice(pos + 1)]
+          : [...items, newItem]
+      onChange(updatedItems)
+      return updatedItems
+    })
   }
 
   const updateItemValue = (id: string, value: string) => {
-    const updatedItems = items.map((item) =>
-      item.id === id ? { ...item, value } : item
-    )
-    setItems(updatedItems)
-    onChange(updatedItems)
+    setItems(items => {
+      const updatedItems = items.map((item) =>
+        item.id === id ? { ...item, value } : item
+      )
+      onChange(updatedItems)
+      return updatedItems
+    })
   }
 
   const removeItem = (id: string) => {
@@ -94,13 +98,11 @@ export function Step3({ goNext, onChange }: Step<Goal[]>) {
     setItems(items => {
       const updatedItems = items.map((item) => {
         if (item.id === id) {
-          if (!strategy.id) {
-            strategy.id = uuidv4()
-          }
           return { ...item, strategies: item.strategies.map((s) => (s.id === strategy.id ? strategy : s)) }
         }
         return item
       })
+
       onChange(updatedItems)
       return updatedItems
     })
