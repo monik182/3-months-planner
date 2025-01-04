@@ -11,6 +11,21 @@
 
 # Planning
 - Weekly scoring
+  - Show current week number
+  - Show week slider (research creative way to show a cool "End of Year")
+  - Show week start and end
+  - Show week completion rate
+  - Show graph to compare weeks historic value
+  - Show goal card 
+    - Header: 
+      - Goal
+      - Show completion % by goal
+    - Body: 
+      - Strategies list (check list) with its due date
+      - Mark overdue goals
+      - Indicators components list
+        - Show input to track current indicator value
+        - Show graph to compare indicator historic value
 
 
 # Auth & Persistency
@@ -43,4 +58,7 @@ Time blocking:
 - Buffer blocks: 1 or 2 daily, 30 min - 1 hour -> low level activities
 - Breakout blocks: once a month, 3 hours
 - Week 13: Celebrate last year achievements/last opportunity to close last year's goals/**Plan next year**
+
+Print:
+- Create printable templates for the weekly score tracking
 
