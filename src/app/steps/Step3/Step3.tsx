@@ -4,26 +4,19 @@ import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { DEFAULT_INDICATOR, Indicator, IndicatorItem } from './Indicator'
-import { DEFAULT_STRATEGY, Strategy, StrategyItem } from './Strategy'
-
-interface Item {
-  id: string
-  value: string
-  isEditingWeeks: boolean
-  strategies: StrategyItem[]
-  dueDate?: string // TODO: this must be required
-  indicators: IndicatorItem[]
-}
+import { DEFAULT_INDICATOR, Indicator } from './Indicator'
+import { Strategy } from './Strategy'
+import { Indicator as IndicatorItem, Goal, Strategy as StrategyItem, Step } from '@/types'
+import { DEFAULT_STRATEGY } from '@/constants'
 
 const _items = [
   { id: uuidv4(), value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
   { id: uuidv4(), value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
   { id: uuidv4(), value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY }] },
 ]
-export function Step3() {
-  const [items, setItems] = useState<Item[]>([..._items])
-  const disableIndicator = (item: Item) => !!item.indicators.some((indicator) => indicator.isEditing)
+export function Step3({ goNext, onChange }: Step<Goal[]>) {
+  const [items, setItems] = useState<Goal[]>([..._items])
+  const disableIndicator = (item: Goal) => !!item.indicators.some((indicator) => indicator.isEditing)
 
   const addItem = (pos?: number) => {
     const newId = uuidv4()
@@ -33,13 +26,14 @@ export function Step3() {
       isEditingWeeks: false,
       indicators: [],
       strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }],
-    };
+    }
     const updatedItems =
       pos !== undefined
         ? [...items.slice(0, pos + 1), newItem, ...items.slice(pos + 1)]
-        : [...items, newItem];
+        : [...items, newItem]
 
-    setItems(updatedItems);
+    setItems(updatedItems)
+    onChange(updatedItems)
   }
 
   const updateItemValue = (id: string, value: string) => {
@@ -47,11 +41,13 @@ export function Step3() {
       item.id === id ? { ...item, value } : item
     )
     setItems(updatedItems)
+    onChange(updatedItems)
   }
 
   const removeItem = (id: string) => {
     let updatedItems = items.filter((item) => item.id !== id)
     setItems(updatedItems)
+    onChange(updatedItems)
   }
 
   const handleAddIndicator = (id: string) => {
@@ -59,6 +55,7 @@ export function Step3() {
       const updatedItems = items.map((item) =>
         item.id === id ? { ...item, indicators: [...item.indicators, { ...DEFAULT_INDICATOR, isEditing: true }] } : item
       )
+      onChange(updatedItems)
       return updatedItems
     })
   }
@@ -68,6 +65,7 @@ export function Step3() {
       const updatedItems = items.map((item) =>
         item.id === id ? { ...item, indicators: item.indicators.map((m, i) => (i === index ? measurement : m)) } : item
       )
+      onChange(updatedItems)
       return updatedItems
     })
   }
@@ -77,6 +75,7 @@ export function Step3() {
       const updatedItems = items.map((item) =>
         item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
       )
+      onChange(updatedItems)
       return updatedItems
     })
   }
@@ -86,12 +85,12 @@ export function Step3() {
       const updatedItems = items.map((item) =>
         item.id === id ? { ...item, strategies: [...item.strategies, { ...DEFAULT_STRATEGY, id: uuidv4() }] } : item
       )
+      onChange(updatedItems)
       return updatedItems
     })
   }
 
   const handleUpdateStrategy = (id: string, strategy: StrategyItem) => {
-    console.log(id, 'new strategy', strategy.weeks)
     setItems(items => {
       const updatedItems = items.map((item) => {
         if (item.id === id) {
@@ -102,6 +101,7 @@ export function Step3() {
         }
         return item
       })
+      onChange(updatedItems)
       return updatedItems
     })
   }
@@ -111,6 +111,7 @@ export function Step3() {
       const updatedItems = items.map((item) =>
         item.id === id ? { ...item, strategies: item.strategies.filter((s) => s.id !== strategyId) } : item
       )
+      onChange(updatedItems)
       return updatedItems
     })
   }

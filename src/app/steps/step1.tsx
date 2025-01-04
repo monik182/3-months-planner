@@ -1,7 +1,24 @@
-import { Textarea } from '@chakra-ui/react';
-import { StepLayout } from './step-layout';
+import { Textarea } from '@chakra-ui/react'
+import { StepLayout } from './step-layout'
+import { Step, Vision } from '@/types'
+import { useState } from 'react'
 
-export function Step1() {
+export function Step1({ goNext, onChange }: Step<Vision>) {
+  const [value, setValue] = useState('')
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setValue(e.target.value)
+    onChange({ content: e.target.value })
+  }
+
+  const handleCanChangePage = () => {
+    if (value.trim().length > 0) {
+      goNext?.()
+    } else {
+      
+    }
+  }
+
   return (
     <StepLayout
       title="Define your long term vision"
@@ -11,6 +28,8 @@ export function Step1() {
         autoresize
         size="xl"
         variant="outline"
+        value={value}
+        onChange={handleChange}
         placeholder="Think big. What are the dreams you’ve always wanted to pursue? How would your life look if you reached your full potential? Be bold and dream unapologetically."
       />
     </StepLayout>
