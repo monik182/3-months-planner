@@ -21,6 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "@/constants*": ["./src/app/constants"],
+      "@/types*": ["./src/app/types"],
+      "@/util*": ["./src/app/util"],
       "@/components/ui/*": ["./src/components/ui/*"]
     }
   },
