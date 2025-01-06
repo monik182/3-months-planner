@@ -10,6 +10,7 @@ export const DEFAULT_STRATEGY = { id: '', content: '', weeks: [...DEFAULT_WEEKS]
 export const DEFAULT_WEEKS_LIST = WEEKS.map((id) => ({ id: id.toString(), label: `Week ${id}`, value: id.toString() }))
 
 export const INITIAL_PLAN: Plan = {
+  id: '',
   vision: '',
   threeYearMilestone: '',
   goals: [],

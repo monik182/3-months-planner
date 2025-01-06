@@ -8,10 +8,11 @@ import { useEffect, useState } from 'react'
 import { Step4 } from './Step4/page'
 import { Goal, Plan, Vision } from '@/types'
 import { INITIAL_PLAN } from '@/constants'
+import { v4 as uuidv4 } from 'uuid'
 
 export default function Steps() {
   const [isClient, setIsClient] = useState(false)
-  const [plan, setPlan] = useState<Plan>(INITIAL_PLAN)
+  const [plan, setPlan] = useState<Plan>({ ...INITIAL_PLAN, id: uuidv4() })
 
   const handleStep1Change = (value: Vision) => {
     setPlan(plan => ({ ...plan, vision: value.content }))
