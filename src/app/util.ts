@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { GoalTracking } from './types'
 
 export function calculatePlanEndDate(startDate: string): string {
   return dayjs(startDate).add(12 * 7, 'day').format('YYYY-MM-DD')
@@ -46,4 +47,32 @@ export function calculateWeekEndDate(startDate: string) {
 export function calculateWeekStartDate(startDate: string, weekNumber: number) {
   const start = dayjs(startDate).add((weekNumber - 1) * 7, 'day')
   return start.format('YYYY-MM-DD')
+}
+
+export const calculateGoalScore = (goal: GoalTracking): number => {
+  const strategyScore =
+    goal.strategies.length > 0
+      ? (goal.strategies.filter((str) => str.checked).length /
+        goal.strategies.length) *
+      100
+      : 0
+
+  return Math.round(strategyScore)
+}
+
+export const calculateWeekScore = (goals: GoalTracking[]): number => {
+  const totalStrategies = goals.reduce(
+    (acc, goal) => acc + goal.strategies.length,
+    0
+  )
+
+  const totalCheckedStrategies = goals.reduce(
+    (acc, goal) =>
+      acc + goal.strategies.filter((strategy) => strategy.checked).length,
+    0
+  )
+
+  return totalStrategies > 0
+    ? Math.round((totalCheckedStrategies / totalStrategies) * 100)
+    : 0
 }

@@ -1,6 +1,7 @@
 'use client'
 import React, { createContext, useContext, useState, useCallback } from "react"
 import { PlanTracking } from '@/types'
+import { calculateGoalScore, calculateWeekScore } from '../util'
 
 interface PlanTrackingContextType {
   planTracking: PlanTracking
@@ -65,14 +66,28 @@ export const PlanTrackingProvider = ({
           const updatedGoals = week.goals.map((goal) => {
             const updatedStrategies = goal.strategies.map((strategy) => {
               if (strategy.id === strategyId) {
-                return { ...strategy, checked, lastUpdated: new Date().toISOString() }
+                return {
+                  ...strategy,
+                  checked,
+                  lastUpdated: new Date().toISOString(),
+                }
               }
               return strategy
             })
-            return { ...goal, strategies: updatedStrategies }
+
+            const updatedGoal = {
+              ...goal,
+              strategies: updatedStrategies,
+            }
+            updatedGoal.score = calculateGoalScore(updatedGoal)
+            return updatedGoal
           })
 
-          return { ...week, goals: updatedGoals }
+          return {
+            ...week,
+            goals: updatedGoals,
+            score: calculateWeekScore(updatedGoals),
+          }
         })
 
         return { ...prevPlan, weeks: updatedWeeks }
