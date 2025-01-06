@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { GoalTracking } from './types'
+import { GoalTracking, WeekTracking } from './types'
 
 export function calculatePlanEndDate(startDate: string): string {
   return dayjs(startDate).add(12 * 7, 'day').format('YYYY-MM-DD')
@@ -75,4 +75,38 @@ export const calculateWeekScore = (goals: GoalTracking[]): number => {
   return totalStrategies > 0
     ? Math.round((totalCheckedStrategies / totalStrategies) * 100)
     : 0
+}
+
+export const calculateIndicatorTrend = (
+  indicatorId: string,
+  currentWeek: WeekTracking,
+  previousWeek?: WeekTracking,
+): number => {
+  if (!previousWeek) {
+    return 0
+  }
+
+  const currentIndicator = currentWeek.goals
+    .flatMap((goal) => goal.indicators)
+    .find((indicator) => indicator.id === indicatorId)
+
+  const previousIndicator = previousWeek.goals
+    .flatMap((goal) => goal.indicators)
+    .find((indicator) => indicator.id === indicatorId)
+
+
+  if (!currentIndicator || !previousIndicator || currentIndicator.goalNumber == null) {
+    return 0
+  }
+
+  const goalRange = currentIndicator.goalNumber - (currentIndicator.startingNumber || 0)
+
+  if (goalRange === 0) {
+    return 0
+  }
+
+  const currentProgress = currentIndicator.value - (currentIndicator.startingNumber || 0)
+  const previousProgress = previousIndicator.value - (previousIndicator.startingNumber || 0)
+
+  return Math.round(((currentProgress - previousProgress) / goalRange) * 100)
 }

@@ -1,39 +1,49 @@
-import { Box } from '@chakra-ui/react'
+import { Box, HStack } from '@chakra-ui/react'
 import { IndicatorTracking } from '@/types'
-import { StatDownTrend, StatLabel, StatRoot, StatValueText } from '@/components/ui/stat'
+import { StatDownTrend, StatLabel, StatRoot, StatUpTrend, StatValueText } from '@/components/ui/stat'
 import { useState } from 'react'
 import { usePlanTracking } from '../../providers/usePlanTracking'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
+import { calculateIndicatorTrend } from '../../util'
 
 interface IndicatorProps {
   indicator: IndicatorTracking
 }
 export function Indicator({ indicator }: IndicatorProps) {
-  const { updateIndicatorValue } = usePlanTracking()
+  const { updateIndicatorValue, planTracking } = usePlanTracking()
+  const currentWeek = planTracking.weeks.find((week) => week.id === indicator.weekId)
+  const weekIndex = planTracking.weeks.findIndex((week) => week.id === indicator.weekId)
+  const previousWeek = weekIndex > 0 ? planTracking.weeks[weekIndex - 1] : undefined
+  const trend = calculateIndicatorTrend(indicator.id, currentWeek!, previousWeek)
 
   const [showInput, setShowInput] = useState(false)
   const toggleShowInput = () => {
     setShowInput(prev => !prev)
   }
-  const shouldGoUp = (indicator.startingNumber || 0) < (indicator.goalNumber || 0)
-  const isUpTrend = indicator.value > (indicator.goalNumber || 0)
+  const isUpTrend = trend >= 0
 
   return (
     <Box>
       <StatRoot>
         <StatLabel info={`Target: ${indicator.goalNumber}`}>{indicator.content}</StatLabel>
+        <HStack>
         {!showInput ? (
-          <StatValueText cursor="pointer" onClick={toggleShowInput}>{indicator.value.toString()}</StatValueText>
+            <StatValueText cursor="pointer" onClick={toggleShowInput}>{indicator.value.toString()}</StatValueText>
         ) : (
           <StatValueText>
-              <NumberInputRoot size="xs" value={indicator.value.toString()} step={1} onValueChange={(e) => updateIndicatorValue(indicator.weekId, indicator.id, parseInt(e.value))}>
+              <NumberInputRoot size="xs" value={indicator.value.toString()} step={1} onValueChange={(e) => updateIndicatorValue(indicator.weekId, indicator.id, parseInt(e.value))} min={0}>
                 <NumberInputField placeholder={`Enter ${indicator.content}`} onMouseOut={toggleShowInput} />
               </NumberInputRoot>
           </StatValueText>
         )}
-        <StatDownTrend variant="plain" px="0">
-          1.9%
-        </StatDownTrend>
+          <div>
+            {isUpTrend ? (
+              <StatUpTrend>{trend}%</StatUpTrend>
+            ) : (
+              <StatDownTrend>{trend}%</StatDownTrend>
+            )}
+          </div>
+        </HStack>
       </StatRoot>
     </Box>
   )

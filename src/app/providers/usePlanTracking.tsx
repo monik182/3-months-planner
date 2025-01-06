@@ -35,13 +35,14 @@ export const PlanTrackingProvider = ({
   const updateIndicatorValue = useCallback(
     (weekId: string, indicatorId: string, newValue: number) => {
       setPlanTracking((prevPlan) => {
-        const updatedWeeks = prevPlan.weeks.map((week) => {
+        const updatedWeeks = prevPlan.weeks.map((week, index) => {
           if (week.id !== weekId) return week
 
           const updatedGoals = week.goals.map((goal) => {
             const updatedIndicators = goal.indicators.map((indicator) => {
               if (indicator.id === indicatorId) {
-                return { ...indicator, value: newValue }
+                const updatedIndicator = { ...indicator, value: newValue }
+                return updatedIndicator
               }
               return indicator
             })
