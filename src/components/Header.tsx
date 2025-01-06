@@ -1,20 +1,57 @@
-import { Flex, Heading, Link, Separator } from '@chakra-ui/react';
-import { ColorModeButton } from './ui/color-mode';
+'use client'
+import { Flex, HStack, Heading, Separator } from '@chakra-ui/react'
+import { ColorModeButton } from './ui/color-mode'
+import { SegmentedControl } from './ui/segmented-control'
+import { SlHome, SlNotebook } from 'react-icons/sl'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+
+
+const pageMap: Record<string, string> = {
+  home: '/dashboard',
+  planner: '/steps',
+}
 
 export function Header() {
+  const [value, setValue] = useState('home')
+  const router = useRouter()
+  const handleOnChange = (value: string) => {
+    setValue(value)
+    router.push(pageMap[value])
+  }
+
+  const items = [
+    {
+      value: "home",
+      label: (
+        <HStack>
+            <SlHome />
+            Home
+        </HStack>
+      ),
+    },
+    {
+      value: "planner",
+      label: (
+        <HStack>
+            <SlNotebook />
+            Planner
+        </HStack>
+      ),
+    },
+  ]
 
   return (
     <header>
-      <Flex justify="space-between" align="center">
+      <Flex justify="space-between" align="center" marginTop="1rem">
         <Flex gap="1rem" align="center">
           <Heading size="2xl">3-Months Planner</Heading>
-          <nav>
-            <ul>
-              <li>
-                <Link href="/">Home</Link>
-              </li>
-            </ul>
-          </nav>
+          <SegmentedControl
+            size="lg"
+            value={value}
+            onValueChange={(e) => handleOnChange(e.value)}
+            items={items}
+          />
         </Flex>
         <Flex gap="5px" align="center">
           <ColorModeButton />
