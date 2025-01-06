@@ -13,9 +13,10 @@ export default function Dashboard() {
 
   return (
     <Grid>
-      <Flex>
+      <Flex gap=" 1rem">
         <Box>
           <h1>Week {currentWeek} </h1>
+          <p>here should be a slider?</p>
         </Box>
         <Box>
           Current chart progress of the plan

@@ -37,6 +37,7 @@ export interface Plan {
 
 export interface IndicatorTracking extends Indicator {
   weekId: string
+  trend: number
   value: number
 }
 
@@ -50,6 +51,7 @@ export interface StrategyTracking extends Strategy {
 
 export interface GoalTracking extends Goal {
   weekId: string
+  score: number
   strategies: StrategyTracking[]
   indicators: IndicatorTracking[]
 }
@@ -59,6 +61,7 @@ export interface WeekTracking {
   startDate: string
   endDate: string
   weekNumber: number
+  score: number
   goals: GoalTracking[]
 }
 

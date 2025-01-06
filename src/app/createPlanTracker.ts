@@ -11,12 +11,14 @@ export function createPlanTracker(plan: Plan): PlanTracking {
 
     return {
       id: weekId,
+      score: 0,
       weekNumber: week,
       startDate: weekStartDate,
       endDate: calculateWeekEndDate(weekStartDate),
       goals: plan.goals.map((goal) => {
         return {
           ...goal,
+          score: 0,
           weekId,
           strategies: goal.strategies.filter((strategy) => strategy.weeks.includes(week.toString())).map((strategy) => {
             return {
@@ -32,6 +34,7 @@ export function createPlanTracker(plan: Plan): PlanTracking {
             return {
               ...indicator,
               weekId,
+              trend: 0,
               value: indicator.startingNumber || 0
             }
           })
