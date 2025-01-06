@@ -12,7 +12,7 @@ interface IndicatorProps {
   onRemove: () => void
 }
 
-export const DEFAULT_INDICATOR = { value: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false, id: '' }
+export const DEFAULT_INDICATOR = { content: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false, id: '' }
 
 export function Indicator({ indicator = {...DEFAULT_INDICATOR, id: uuidv4() }, onChange, onRemove }: IndicatorProps) {
   const [value, setValue] = useState(indicator)
@@ -23,7 +23,7 @@ export function Indicator({ indicator = {...DEFAULT_INDICATOR, id: uuidv4() }, o
     if (!value) {
       return
     }
-    if (!value.value || value.startingNumber == null || value.goalNumber == null || !value.metric) {
+    if (!value.content || value.startingNumber == null || value.goalNumber == null || !value.metric) {
       setError('Please fill out all fields')
       return
     }
@@ -67,7 +67,7 @@ export function Indicator({ indicator = {...DEFAULT_INDICATOR, id: uuidv4() }, o
     return (
       <div>
         <Button variant="outline" colorPalette="yellow" className="mt-5" onClick={handleEnableEditing}>
-          <SlStar /> {value.value}
+          <SlStar /> {value.content}
         </Button>
       </div>
     )
@@ -78,7 +78,7 @@ export function Indicator({ indicator = {...DEFAULT_INDICATOR, id: uuidv4() }, o
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What indicator are you tracking?</Field.Label>
-          <Input className="peer" placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.value} onChange={(e) => handleEditValue(e, 'value')} />
+          <Input className="peer" placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.content} onChange={(e) => handleEditValue(e, 'content')} />
         </Box>
       </Field.Root>
       <Field.Root>

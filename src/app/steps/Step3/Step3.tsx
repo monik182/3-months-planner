@@ -10,9 +10,9 @@ import { Indicator as IndicatorItem, Goal, Strategy as StrategyItem, Step } from
 import { DEFAULT_STRATEGY } from '@/constants'
 
 const _items = [
-  { id: uuidv4(), value: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
-  { id: uuidv4(), value: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
-  { id: uuidv4(), value: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
+  { id: uuidv4(), content: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
+  { id: uuidv4(), content: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
+  { id: uuidv4(), content: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
 ]
 export function Step3({ goNext, onChange }: Step<Goal[]>) {
   const [items, setItems] = useState<Goal[]>([..._items])
@@ -22,7 +22,7 @@ export function Step3({ goNext, onChange }: Step<Goal[]>) {
     const newId = uuidv4()
     const newItem = {
       id: newId,
-      value: '',
+      content: '',
       isEditingWeeks: false,
       indicators: [],
       strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }],
@@ -129,7 +129,7 @@ export function Step3({ goNext, onChange }: Step<Goal[]>) {
             <Card.Header>
               <Flex key={item.id} justify="space-between">
                 <Editable.Root
-                  value={item.value}
+                  value={item.content}
                   onValueChange={(e) => updateItemValue(item.id, e.value)}
                   placeholder="Click to edit"
                   defaultEdit
