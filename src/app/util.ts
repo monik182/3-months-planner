@@ -15,12 +15,30 @@ export function getNextStartDate(startMonday = false): string {
 }
 
 export function getNextStartDates(startMonday = false, n = 30): string[] {
-  const dates = [];
-  const firstDate = dayjs(getNextStartDate(startMonday));
+  const dates = []
+  const firstDate = dayjs(getNextStartDate(startMonday))
 
   for (let i = 0; i < n; i++) {
-    dates.push(firstDate.add(i * 7, 'day').format('YYYY-MM-DD'));
+    dates.push(firstDate.add(i * 7, 'day').format('YYYY-MM-DD'))
   }
 
-  return dates;
+  return dates
+}
+
+export function getCurrentWeekFromStartDate(startDate: string) {
+  const start = dayjs(startDate)
+  const today = dayjs()
+
+  const daysDifference = today.diff(start, 'day')
+
+  return Math.ceil((daysDifference + 1) / 7)
+}
+
+export function calculateWeekEndDate(startDate: string) {
+  const start = dayjs(startDate)
+  const isSunday = start.day() === 0
+  if (isSunday) {
+    return start.add(6, 'day').format('YYYY-MM-DD')
+  }
+  return start.add(6, 'day').format('YYYY-MM-DD')
 }

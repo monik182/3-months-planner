@@ -13,7 +13,7 @@
 - Weekly scoring
   - Show current week number
   - Show week slider (research creative way to show a cool "End of Year")
-  - Show week start and end
+  - Show week start and end dates
   - Show week completion rate
   - Show graph to compare weeks historic value
   - Show goal card 
