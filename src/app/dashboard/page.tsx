@@ -2,15 +2,14 @@
 import { Box, Grid, HStack, Heading, Tabs } from '@chakra-ui/react'
 import { Week } from './Week/Week'
 import { getCurrentWeekFromStartDate } from '@/util'
-import { mockedPlan } from './mockedData'
-import { createPlanTracker } from '../createPlanTracker'
 import { WEEKS } from '../constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
+import { usePlanTracking } from '../providers/usePlanTracking'
 
 
 export default function Dashboard() {
-  const planTracker = createPlanTracker(mockedPlan)
+  const { planTracking: planTracker } = usePlanTracking()
   const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
 
   return (

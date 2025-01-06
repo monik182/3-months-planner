@@ -5,6 +5,9 @@ import { Provider } from '@/components/ui/provider';
 import { Box, Grid, GridItem } from '@chakra-ui/react';
 import { Toaster } from "@/components/ui/toaster"
 import { Header } from '@/components/Header';
+import { PlanTrackingProvider } from './providers/usePlanTracking';
+import { mockedPlan } from './dashboard/mockedData';
+import { createPlanTracker } from './createPlanTracker';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,19 +29,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const planTracker = createPlanTracker(mockedPlan)
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
-          <Box margin="0 2rem">
-            <Grid templateRows="1fr auto" height="100vh">
-              <GridItem><Header /></GridItem>
-              <GridItem height="90vh">{children}</GridItem>
-            </Grid>
-            <Toaster />
-          </Box>
+          <PlanTrackingProvider initialPlan={planTracker}>
+            <Box margin="0 2rem">
+              <Grid templateRows="1fr auto" height="100vh">
+                <GridItem><Header /></GridItem>
+                <GridItem height="90vh">{children}</GridItem>
+              </Grid>
+              <Toaster />
+            </Box>
+          </PlanTrackingProvider>
         </Provider>
       </body>
     </html>
