@@ -9,13 +9,16 @@ interface GoalProps {
 
 export function Goal({ goal }: GoalProps) {
   const goalProgress = 100
+
   return (
     <Box>
       <Card.Root>
         <Card.Body gap="2">
           <Card.Header>
-            <Card.Title mt="2">{goal.content}</Card.Title>
-            <p>Current progress: {goalProgress}%</p>
+            <Flex alignItems="center" justifyContent="space-between">
+              <Card.Title mt="2">{goal.content}</Card.Title>
+              <p>Score: {goalProgress}%</p>
+            </Flex>
           </Card.Header>
           <Card.Description>
             <Flex gap="3" direction="column">
