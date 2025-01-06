@@ -2,24 +2,22 @@ import { Box, Card, Input } from '@chakra-ui/react'
 import { Checkbox } from '../../../components/ui/checkbox'
 import { useState } from 'react'
 import { StatDownTrend, StatLabel, StatRoot, StatValueText } from '../../../components/ui/stat'
-import { calculateWeekEndDate, getCurrentWeekFromStartDate } from '../../util'
 import dayjs from 'dayjs'
+import { WeekTracking } from '../../types'
 
 interface WeekProps {
-  startDate: string
+  week: WeekTracking
 }
 
-export function Week({ startDate }: WeekProps) {
-  const currentWeek = getCurrentWeekFromStartDate(startDate)
+export function Week({ week }: WeekProps) {
   const [checked, setChecked] = useState(true)
-  const endWeekDate = calculateWeekEndDate(startDate)
-  const formattedStartDate = dayjs(startDate).format('DD MMM')
-  const formattedEndDate = dayjs(endWeekDate).format('DD MMM')
-  console.log(endWeekDate)
+  const formattedStartDate = dayjs(week.startDate).format('DD MMM')
+  const formattedEndDate = dayjs(week.endDate).format('DD MMM')
+
   return (
     <Box>
       <Box>
-        <p>Week {currentWeek}: {formattedStartDate} - {formattedEndDate}</p>
+        <p>Week {week.weekNumber}: {formattedStartDate} - {formattedEndDate}</p>
       </Box>
       <Card.Root width="320px">
         <Card.Body gap="2">
