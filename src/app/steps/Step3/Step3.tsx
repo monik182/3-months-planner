@@ -57,7 +57,7 @@ export function Step3({ goNext, onChange }: Step<Goal[]>) {
   const handleAddIndicator = (id: string) => {
     setItems(items => {
       const updatedItems = items.map((item) =>
-        item.id === id ? { ...item, indicators: [...item.indicators, { ...DEFAULT_INDICATOR, isEditing: true }] } : item
+        item.id === id ? { ...item, indicators: [...item.indicators, { ...DEFAULT_INDICATOR, isEditing: true, id: uuidv4() }] } : item
       )
       onChange(updatedItems)
       return updatedItems
