@@ -1,10 +1,12 @@
 'use client'
-import { Box, Flex, Grid, Tabs } from '@chakra-ui/react'
+import { Box, Grid, HStack, Heading, Tabs } from '@chakra-ui/react'
 import { Week } from './Week/Week'
 import { getCurrentWeekFromStartDate } from '@/util'
 import { mockedPlan } from './mockedData'
 import { createPlanTracker } from '../createPlanTracker'
 import { WEEKS } from '../constants'
+import { MdCelebration } from 'react-icons/md'
+import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
 
 
 export default function Dashboard() {
@@ -13,18 +15,28 @@ export default function Dashboard() {
 
   return (
     <Grid>
-      <Flex gap=" 1rem">
+      <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0">
         <Box>
-          <h1>Week {currentWeek} </h1>
-          <p>here should be a slider?</p>
+          <Heading size="4xl">Week {currentWeek}</Heading>
+          <Box>
+            <Grid gridTemplateColumns="80% 20%" gap="1rem" alignItems="center">
+              <ProgressRoot striped animated colorPalette="cyan">
+                <HStack gap="5">
+                  <ProgressBar flex="1" />
+                  <ProgressValueText>{currentWeek}/12</ProgressValueText>
+                </HStack>
+              </ProgressRoot>
+              <MdCelebration />
+            </Grid>
+          </Box>
         </Box>
         <Box>
-          Current chart progress of the plan
+          Current chart progress of the plan - with week scores
         </Box>
-      </Flex>
+      </Grid>
 
-      <Box>
-        <Tabs.Root lazyMount unmountOnExit defaultValue="week-1" fitted variant="subtle">
+      <Box marginTop="2rem">
+        <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle">
           <Tabs.List>
             {WEEKS.map((week) => (
               <Tabs.Trigger key={`week-${week}`} value={`tab-${week}`}>W-{week}</Tabs.Trigger>
