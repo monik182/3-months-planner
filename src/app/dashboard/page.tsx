@@ -1,11 +1,14 @@
 'use client'
-import { Box, Flex, Grid } from '@chakra-ui/react';
-import { Week } from './Week/Week';
-import { getCurrentWeekFromStartDate } from '../util';
+import { Box, Flex, Grid } from '@chakra-ui/react'
+import { Week } from './Week/Week'
+import { getCurrentWeekFromStartDate } from '@/util'
+import { mockedPlan } from './mockedData'
+import { createPlanTracker } from '../createPlanTracker'
+
 
 export default function Dashboard() {
-  const startDate = '2024-11-04'
-  const currentWeek = getCurrentWeekFromStartDate(startDate)
+  const planTracker = createPlanTracker(mockedPlan)
+  const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
 
   return (
     <Grid>
@@ -19,7 +22,7 @@ export default function Dashboard() {
       </Flex>
       
       <Box>
-        <Week startDate={startDate} />
+        <Week startDate={planTracker.startDate} />
       </Box>
     </Grid>
   )

@@ -3,14 +3,14 @@ import { StepLayout } from '../step-layout'
 import { Plan, Step } from '@/types'
 import dayjs from 'dayjs'
 import { DateSelector } from './DateSelector'
-import { calculateEndDate } from '@/util'
+import { calculatePlanEndDate } from '@/util'
 import { Box, Fieldset, Grid, Input, Stack, VStack, Text, Heading, Flex, Badge } from '@chakra-ui/react'
 import { Field } from '../../../components/ui/field'
 
 export function Step4({ plan, goNext, onChange }: Step<Plan> & { plan: Plan }) {
   const [value, setValue] = useState<Plan>(plan)
   const handleDateChange = (value: string) => {
-    const endDate = calculateEndDate(value)
+    const endDate = calculatePlanEndDate(value)
     setValue((prev) => {
       const updatedPlan = { ...prev, startDate: value, endDate }
       onChange(updatedPlan)
