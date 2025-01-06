@@ -108,6 +108,30 @@ export const mockedPlan: Plan = {
           goalNumber: 3,
           metric: 'courses',
           isEditing: false
+        },
+        {
+          id: 'i4',
+          content: 'Projects created',
+          startingNumber: 0,
+          goalNumber: 1,
+          metric: 'projects',
+          isEditing: false
+        },
+        {
+          id: 'i5',
+          content: 'Hours spent on AI courses',
+          startingNumber: 0,
+          goalNumber: 60,
+          metric: 'hours',
+          isEditing: false,
+        },
+        {
+          id: 'i6',
+          content: 'AI skills proficiency',
+          startingNumber: 0,
+          goalNumber: 100,
+          metric: '%',
+          isEditing: false
         }
       ]
     }

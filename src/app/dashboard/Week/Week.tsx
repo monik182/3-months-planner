@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Grid, SimpleGrid } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { WeekTracking } from '@/types'
 import { Goal } from './Goal'
@@ -16,7 +16,9 @@ export function Week({ week }: WeekProps) {
       <Box>
         <p>Week {week.weekNumber}: {formattedStartDate} - {formattedEndDate}</p>
       </Box>
-      {week.goals.map((goal) => (<Goal key={goal.id} goal={goal} />))}
+      <SimpleGrid minChildWidth="sm" gap="40px">
+        {week.goals.map((goal) => (<Goal key={goal.id} goal={goal} />))}
+      </SimpleGrid>
     </Box>
   )
 }

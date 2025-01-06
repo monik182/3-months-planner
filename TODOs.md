@@ -25,7 +25,7 @@
       - Mark overdue goals
       - Indicators components list
         - Show input to track current indicator value
-        - Show graph to compare indicator historic value
+        - Show graph to compare indicator historic value?
 
 
 # Auth & Persistency
