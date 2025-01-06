@@ -1,20 +1,24 @@
 'use client'
-import { Box, Grid, HStack, Heading, Tabs } from '@chakra-ui/react'
+import { Box, Grid, HStack, Heading, Tabs, Text } from '@chakra-ui/react'
 import { Week } from './Week/Week'
-import { getCurrentWeekFromStartDate } from '@/util'
+import { getChartData, getCurrentWeekFromStartDate } from '@/util'
 import { WEEKS } from '../constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
 import { usePlanTracking } from '../providers/usePlanTracking'
-
+import dayjs from 'dayjs'
+import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 
 export default function Dashboard() {
+  const today = dayjs().format('DD MMMM YYYY')
   const { planTracking: planTracker } = usePlanTracking()
+  const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
+  const data = getChartData(planTracker)
 
   return (
     <Grid>
-      <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0">
+      <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0" alignItems="center">
         <Box>
           <Heading size="4xl">Week {currentWeek}</Heading>
           <Box>
@@ -28,10 +32,18 @@ export default function Dashboard() {
               <MdCelebration />
             </Grid>
           </Box>
+          <Text><b>End of year:</b> {endOfYPlan}</Text>
+          <Text><b>Today:</b> {today}</Text>
         </Box>
-        <Box>
-          Current chart progress of the plan - with week scores
-        </Box>
+        <LineChart width={1000} height={300} data={data}
+          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="label" interval={0} />
+          <YAxis domain={[0, 100]} ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]} />
+          <Tooltip />
+          <Legend formatter={(value) => value.toUpperCase()} />
+          <Line type="monotone" dataKey="score" stroke="#8884d8" />
+        </LineChart>
       </Grid>
 
       <Box marginTop="2rem">

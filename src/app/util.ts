@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { GoalTracking, WeekTracking } from './types'
+import { GoalTracking, PlanTracking, StrategyTracking, WeekTracking } from './types'
 
 export function calculatePlanEndDate(startDate: string): string {
   return dayjs(startDate).add(12 * 7, 'day').format('YYYY-MM-DD')
@@ -109,4 +109,25 @@ export const calculateIndicatorTrend = (
   const previousProgress = previousIndicator.value - (previousIndicator.startingNumber || 0)
 
   return Math.round(((currentProgress - previousProgress) / goalRange) * 100)
+}
+
+export function getChartData(plan: PlanTracking) {
+  return plan.weeks.map((week) => {
+    return {
+      label: `Week ${week.weekNumber}`,
+      score: week.score,
+    }
+  })
+}
+
+export function isStrategyOverdue(strategy: StrategyTracking, weekEndDate: string): boolean {
+  const end = dayjs(weekEndDate)
+  const today = dayjs()
+  const overdue = today.isAfter(end, 'day')
+
+  if (overdue && !strategy.firstUpdated && !strategy.checked) {
+    return true
+  }
+
+  return false
 }

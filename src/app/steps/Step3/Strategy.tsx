@@ -57,7 +57,7 @@ export function Strategy({ strategy = DEFAULT_STRATEGY, onAdd, onChange, onRemov
     <Flex direction="column">
       <Flex justify="space-between" align="center" gap="1rem">
         <Editable.Root
-          value={value.value}
+          value={value.content}
           onValueChange={(e) => handleValueUpdate(e.value)}
           placeholder="What is your next strategy?"
           onKeyDown={(e) => handleKeyDown(e)}

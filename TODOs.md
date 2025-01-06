@@ -11,21 +11,21 @@
 
 # Planning
 - Weekly scoring
-  - Show current week number
-  - Show week slider (research creative way to show a cool "End of Year")
-  - Show week start and end dates
-  - Show week completion rate
-  - Show graph to compare weeks historic value
-  - Show goal card 
-    - Header: 
-      - Goal
-      - Show completion % by goal
+  - Show current week number ✅
+  - Show week slider (research creative way to show a cool "End of Year") ✅
+  - Show week start and end dates ✅
+  - Show week completion rate ✅
+  - Show graph to compare weeks historic value ❌
+  - Show goal card  ✅
+    - Header:  ✅
+      - Goal ✅
+      - Show completion % by goal ✅
     - Body: 
-      - Strategies list (check list) with its due date
-      - Mark overdue goals
-      - Indicators components list
-        - Show input to track current indicator value
-        - Show graph to compare indicator historic value?
+      - Strategies list (check list) with its due date ✅
+      - Mark overdue goals ✅
+      - Indicators components list ✅
+        - Show input to track current indicator value ✅
+        - Show graph to compare indicator historic value? ✅
 
 
 # Auth & Persistency

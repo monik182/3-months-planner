@@ -1,35 +1,40 @@
 import { WEEKS } from './constants'
 import { Plan, PlanTracking } from './types'
 import { v4 as uuidv4 } from 'uuid'
-import { calculateWeekEndDate, calculateWeekStartDate } from './util'
+import { calculateWeekEndDate, calculateWeekStartDate, isStrategyOverdue } from './util'
 
 export function createPlanTracker(plan: Plan): PlanTracking {
 
   const weeks = WEEKS.map((week) => {
     const weekId = uuidv4()
     const weekStartDate = calculateWeekStartDate(plan.startDate, week)
+    const weekEndDate = calculateWeekEndDate(weekStartDate)
 
     return {
       id: weekId,
       score: 0,
       weekNumber: week,
       startDate: weekStartDate,
-      endDate: calculateWeekEndDate(weekStartDate),
+      endDate: weekEndDate,
       goals: plan.goals.map((goal) => {
         return {
           ...goal,
           score: 0,
           weekId,
-          strategies: goal.strategies.filter((strategy) => strategy.weeks.includes(week.toString())).map((strategy) => {
-            return {
-              ...strategy,
-              weekId,
-              checked: false,
-              firstUpdated: '',
-              lastUpdated: '',
-              overdue: false
-            }
-          }),
+          strategies: goal.strategies
+            .filter((strategy) => strategy.weeks.includes(week.toString()))
+            .map((strategy) => {
+              const formattedStrategy = {
+                ...strategy,
+                weekId,
+                checked: false,
+                firstUpdated: '',
+                lastUpdated: '',
+                overdue: false,
+              }
+              formattedStrategy.overdue = isStrategyOverdue(formattedStrategy, weekEndDate)
+              return formattedStrategy
+            }),
           indicators: goal.indicators.map((indicator) => {
             return {
               ...indicator,
