@@ -20,9 +20,10 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
-      "@/constants*": ["./src/app/constants"],
-      "@/types*": ["./src/app/types"],
-      "@/util*": ["./src/app/util"],
+      "@/constants": ["./src/app/constants"],
+      "@/types": ["./src/app/types"],
+      "@/util": ["./src/app/util"],
+      "@/lib/*": ["./src/lib/*"],
       "@/components/ui/*": ["./src/components/ui/*"]
     }
   },
