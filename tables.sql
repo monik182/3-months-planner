@@ -4,7 +4,8 @@ CREATE TABLE plans (
   vision TEXT NULL,
   three_year_milestone TEXT NULL,
   plan_start_date DATE NULL,
-  plan_end_date DATE NULL
+  plan_end_date DATE NULL,
+  completed BOOLEAN DEFAULT false NOT NULL
 );
 
 -- Weeks Table

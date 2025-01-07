@@ -16,4 +16,12 @@ export const INITIAL_PLAN: Plan = {
   goals: [],
   startDate: getPlanStartDate(),
   endDate: calculatePlanEndDate(getPlanStartDate()),
-} 
+}
+
+export const TABLES = {
+  PLANS: 'plans',
+  GOALS: 'goals',
+  STRATEGIES: 'strategies',
+  WEEKS: 'weeks',
+  INDICATORS: 'indicators',
+}

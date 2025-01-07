@@ -2,7 +2,7 @@ export interface Strategy {
   id: string
   content: string
   weeks: string[]
-  isEditing: boolean
+  isEditing?: boolean
 }
 
 export interface Indicator {
@@ -17,7 +17,7 @@ export interface Indicator {
 export interface Goal {
   id: string
   content: string
-  isEditingWeeks: boolean
+  isEditingWeeks?: boolean
   strategies: Strategy[]
   indicators: Indicator[]
 }
@@ -33,6 +33,9 @@ export interface Plan {
   goals: Goal[]
   startDate: string
   endDate: string
+  completed: boolean
+  created: string
+  lastUpdated: string
 }
 
 export interface IndicatorTracking extends Indicator {
