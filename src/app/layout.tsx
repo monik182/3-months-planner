@@ -8,6 +8,7 @@ import { Header } from '@/components/Header';
 import { PlanTrackingProvider } from './providers/usePlanTracking';
 import { mockedPlan } from './dashboard/mockedData';
 import { createPlanTracker } from './createPlanTracker';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,17 +37,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>
-          <PlanTrackingProvider initialPlan={planTracker}>
-            <Box margin="0 2rem">
-              <Grid templateRows="1fr auto" height="100vh">
-                <GridItem><Header /></GridItem>
-                <GridItem height="90vh">{children}</GridItem>
-              </Grid>
-              <Toaster />
-            </Box>
-          </PlanTrackingProvider>
-        </Provider>
+        <UserProvider>
+          <Provider>
+            <PlanTrackingProvider initialPlan={planTracker}>
+              <Box margin="0 2rem">
+                <Grid templateRows="1fr auto" height="100vh">
+                  <GridItem><Header /></GridItem>
+                  <GridItem height="90vh">{children}</GridItem>
+                </Grid>
+                <Toaster />
+              </Box>
+            </PlanTrackingProvider>
+          </Provider>
+        </UserProvider>
       </body>
     </html>
   );
