@@ -4,14 +4,15 @@ import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTri
 import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Step4 } from './Step4/page'
 import { Goal, Plan, Vision } from '@/types'
 import { INITIAL_PLAN } from '@/constants'
 import { v4 as uuidv4 } from 'uuid'
+import { useProtectedPage } from '../hooks/useProtectedPage'
 
 export default function Steps() {
-  const [isClient, setIsClient] = useState(false)
+  const { user } = useProtectedPage()
   const [plan, setPlan] = useState<Plan>({ ...INITIAL_PLAN, id: uuidv4() })
 
   const handleStep1Change = (value: Vision) => {
@@ -30,11 +31,7 @@ export default function Steps() {
     setPlan(plan => ({ ...plan, ...value }))
   }
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  if (!isClient) {
+  if (!user) {
     return null
   }
 

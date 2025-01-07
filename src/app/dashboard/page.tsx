@@ -8,13 +8,17 @@ import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/pr
 import { usePlanTracking } from '../providers/usePlanTracking'
 import dayjs from 'dayjs'
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+import { useProtectedPage } from '../hooks/useProtectedPage'
 
 export default function Dashboard() {
+  const { user } = useProtectedPage()
   const today = dayjs().format('DD MMMM YYYY')
   const { planTracking: planTracker } = usePlanTracking()
   const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
   const data = getChartData(planTracker)
+
+  if (!user) return null
 
   return (
     <Grid>
