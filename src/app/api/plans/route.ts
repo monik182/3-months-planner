@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const plan = await prismaHandler(() => planManager.getCurrentPlan(userId))
+    const plan = await prismaHandler(() => planManager.getAllPlans(userId))
     return new Response(JSON.stringify(plan), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })

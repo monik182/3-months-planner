@@ -10,9 +10,10 @@ import { Goal, Plan, Vision } from '@/types'
 import { useProtectedPage } from '../hooks/useProtectedPage'
 import { useDebouncedCallback } from 'use-debounce'
 import { PlanService } from '../../services/plan'
+import { createPlan } from '../factories'
 
 async function fetchPlan(userId: string) {
-  const plan = await PlanService.getPlanByUserId(userId)
+  const plan = await PlanService.getByUserId(userId)
   console.log('FRESHLY FETCHED PLAN FROM REMOTE<<<>>>>', plan)
   return plan
 }
@@ -20,6 +21,13 @@ async function fetchPlan(userId: string) {
 export default function Steps() {
   const { user } = useProtectedPage()
   const [plan, setPlan] = useState<Plan>()
+
+  const handleCreatePlan = async () => {
+    if (!user?.sub) return
+    const newPLan = createPlan(user?.sub)
+    const createdPlan = await PlanService.create(newPLan)
+    console.log('Created pkan>>>>', createdPlan)
+  }
 
   const debouncedHandleStep1Change = useDebouncedCallback(
     (value: Vision) => {
@@ -69,7 +77,7 @@ export default function Steps() {
     { title: 'Define Vision', content: <Step1 goNext={() => console} onChange={debouncedHandleStep1Change} /> },
     { title: '3-Year Milestone', content: <Step2 onChange={debouncedHandleStep2Change} /> },
     { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={debouncedHandleStep3Change} /> },
-    { title: 'Start Date & Review', content: <Step4 plan={plan} onChange={debouncedHandleStep4Change} /> },
+    { title: 'Start Date & Review', content: <Step4 plan={plan!} onChange={debouncedHandleStep4Change} /> },
   ]
 
   return (
@@ -86,6 +94,7 @@ export default function Steps() {
 
           {steps.map((step, index) => (
             <StepsContent key={index} index={index} className="h-full">
+              <Button onClick={handleCreatePlan}>CREATE PLAN</Button>
               {step.content}
             </StepsContent>
           ))}

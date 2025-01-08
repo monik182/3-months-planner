@@ -1,4 +1,6 @@
-const getPlanByUserId = async (userId: string) => {
+import { Plan } from '../app/types'
+
+const getByUserId = async (userId: string) => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
     method: 'GET',
   })
@@ -6,6 +8,16 @@ const getPlanByUserId = async (userId: string) => {
   return plan
 }
 
+const create = async (data: Plan) => {
+  const response = await fetch(`/api/plan`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+  const plan = await response.json()
+  return plan
+}
+
 export const PlanService = {
-  getPlanByUserId,
+  getByUserId,
+  create,
 }
