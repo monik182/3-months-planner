@@ -5,7 +5,7 @@ import { getChartData, getCurrentWeekFromStartDate } from '@/util'
 import { DEFAULT_WEEKS } from '../constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { usePlanTracking } from '../providers/usePlanTracking'
+import { usePlan } from '../providers/usePlan'
 import dayjs from 'dayjs'
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { useProtectedPage } from '../hooks/useProtectedPage'
@@ -13,7 +13,7 @@ import { useProtectedPage } from '../hooks/useProtectedPage'
 export default function Dashboard() {
   const { user } = useProtectedPage()
   const today = dayjs().format('DD MMMM YYYY')
-  const { plan: planTracker } = usePlanTracking()
+  const { plan: planTracker } = usePlan()
   const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
   const data = getChartData(planTracker)

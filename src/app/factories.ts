@@ -1,20 +1,32 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Goal, Indicator, Plan, Strategy, Week } from '@/types'
 import { DEFAULT_WEEKS } from '@/constants'
-import { getDate, getPlanStartDate } from '@/util'
+import { calculateWeekEndDate, calculateWeekStartDate, getDate, getPlanStartDate } from '@/util'
 
 export function createPlan(): Plan {
+  const startDate = getPlanStartDate()
   return {
     id: uuidv4(),
     vision: '',
     threeYearMilestone: '',
     goals: [],
-    startDate: getPlanStartDate(),
+    startDate,
     endDate: null,
     completed: false,
     created: getDate(),
     lastUpdated: getDate(),
-    weeks: [],
+    weeks: createWeeks(startDate),
+  }
+}
+
+export function createWeek(): Week {
+  return {
+    id: uuidv4(),
+    startDate: null,
+    endDate: null,
+    weekNumber: 0,
+    score: 0,
+    goals: [],
   }
 }
 
@@ -24,7 +36,7 @@ export function createGoal(): Goal {
     weekId: '',
     score: 0,
     content: '',
-    strategies: [createStrategy()],
+    strategies: [],
     indicators: [],
   }
 }
@@ -55,13 +67,10 @@ export function createIndicator(): Indicator {
   }
 }
 
-export function createWeek(): Week {
-  return {
-    id: uuidv4(),
-    startDate: null,
-    endDate: null,
-    weekNumber: 0,
-    score: 0,
-    goals: [],
-  }
+export function createWeeks(planStartDate: string): Week[] {
+  return DEFAULT_WEEKS.map((week) => {
+    const weekStartDate = calculateWeekStartDate(planStartDate, parseInt(week))
+    const weekEndDate = calculateWeekEndDate(weekStartDate)
+    return { ...createWeek(), weekStartDate, weekEndDate }
+  })
 }

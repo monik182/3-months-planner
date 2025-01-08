@@ -2,8 +2,9 @@
 import React, { createContext, useContext, useState, useCallback } from "react"
 import { Plan } from '@/types'
 import { calculateGoalScore, calculateWeekScore, isStrategyOverdue } from '../util'
+import { createPlan } from '../factories'
 
-interface PlanTrackingContextType {
+interface PlanContextType {
   plan: Plan
   updateIndicatorValue: (
     weekId: string,
@@ -17,20 +18,17 @@ interface PlanTrackingContextType {
   ) => void
 }
 
-const PlanTrackingContext = createContext<PlanTrackingContextType | undefined>(
+const PlanContext = createContext<PlanContextType | undefined>(
   undefined
 )
 
 interface PlanTrackingProviderProps {
-  initialPlan: Plan
   children: React.ReactNode
 }
 
-export const PlanTrackingProvider = ({
-  children,
-  initialPlan,
-}: PlanTrackingProviderProps) => {
-  const [plan, setPlan] = useState<Plan>(initialPlan)
+export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
+
+  const [plan, setPlan] = useState<Plan>(createPlan())
 
   const updateIndicatorValue = useCallback(
     (weekId: string, indicatorId: string, newValue: number) => {
@@ -73,7 +71,7 @@ export const PlanTrackingProvider = ({
                   firstUpdated: !strategy.firstUpdated ? new Date().toISOString() : strategy.firstUpdated,
                   lastUpdated: new Date().toISOString(),
                 }
-                updatedStrategy.overdue = updatedStrategy.overdue ? updatedStrategy.overdue : isStrategyOverdue(updatedStrategy, week.endDate)
+                updatedStrategy.overdue = updatedStrategy.overdue ? updatedStrategy.overdue : isStrategyOverdue(updatedStrategy, week.endDate!)
                 return updatedStrategy
               }
               return strategy
@@ -101,7 +99,7 @@ export const PlanTrackingProvider = ({
   )
 
   return (
-    <PlanTrackingContext.Provider
+    <PlanContext.Provider
       value={{
         plan,
         updateIndicatorValue,
@@ -109,15 +107,15 @@ export const PlanTrackingProvider = ({
       }}
     >
       {children}
-    </PlanTrackingContext.Provider>
+    </PlanContext.Provider>
   )
 }
 
-export const usePlanTracking = (): PlanTrackingContextType => {
-  const context = useContext(PlanTrackingContext)
+export const usePlan = (): PlanContextType => {
+  const context = useContext(PlanContext)
   if (!context) {
     throw new Error(
-      "usePlanTracking must be used within a PlanTrackingProvider"
+      "usePlan must be used within a PlanProvider"
     )
   }
   return context

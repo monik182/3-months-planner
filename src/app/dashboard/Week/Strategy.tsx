@@ -1,7 +1,7 @@
 import { Flex, Text } from '@chakra-ui/react'
 import { Strategy as IStrategy } from '@/types'
 import { Checkbox } from '@/components/ui/checkbox'
-import { usePlanTracking } from '../../providers/usePlanTracking'
+import { usePlan } from '../../providers/usePlan'
 import { PiTimerThin } from 'react-icons/pi'
 
 interface StrategyProps {
@@ -9,7 +9,7 @@ interface StrategyProps {
 }
 
 export function Strategy({ strategy }: StrategyProps) {
-  const { updateStrategyChecked } = usePlanTracking()
+  const { updateStrategyChecked } = usePlan()
   const showOverdue = strategy.overdue && !strategy.checked
 
   return (
