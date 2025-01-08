@@ -1,10 +1,10 @@
 'use client'
 import React, { createContext, useContext, useState, useCallback } from "react"
-import { PlanTracking } from '@/types'
+import { Plan } from '@/types'
 import { calculateGoalScore, calculateWeekScore, isStrategyOverdue } from '../util'
 
 interface PlanTrackingContextType {
-  planTracking: PlanTracking
+  plan: Plan
   updateIndicatorValue: (
     weekId: string,
     indicatorId: string,
@@ -22,7 +22,7 @@ const PlanTrackingContext = createContext<PlanTrackingContextType | undefined>(
 )
 
 interface PlanTrackingProviderProps {
-  initialPlan: PlanTracking
+  initialPlan: Plan
   children: React.ReactNode
 }
 
@@ -30,11 +30,11 @@ export const PlanTrackingProvider = ({
   children,
   initialPlan,
 }: PlanTrackingProviderProps) => {
-  const [planTracking, setPlanTracking] = useState<PlanTracking>(initialPlan)
+  const [plan, setPlan] = useState<Plan>(initialPlan)
 
   const updateIndicatorValue = useCallback(
     (weekId: string, indicatorId: string, newValue: number) => {
-      setPlanTracking((prevPlan) => {
+      setPlan((prevPlan) => {
         const updatedWeeks = prevPlan.weeks.map((week, index) => {
           if (week.id !== weekId) return week
 
@@ -60,7 +60,7 @@ export const PlanTrackingProvider = ({
 
   const updateStrategyChecked = useCallback(
     (weekId: string, strategyId: string, checked: boolean) => {
-      setPlanTracking((prevPlan) => {
+      setPlan((prevPlan) => {
         const updatedWeeks = prevPlan.weeks.map((week) => {
           if (week.id !== weekId) return week
 
@@ -103,7 +103,7 @@ export const PlanTrackingProvider = ({
   return (
     <PlanTrackingContext.Provider
       value={{
-        planTracking,
+        plan,
         updateIndicatorValue,
         updateStrategyChecked,
       }}

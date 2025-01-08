@@ -1,8 +1,45 @@
+export interface Plan {
+  id: string
+  vision: string
+  threeYearMilestone: string
+  startDate: string
+  endDate: string
+  completed: boolean
+  created: string
+  lastUpdated: string
+  goals: Goal[]
+  weeks: Week[]
+}
+
+export interface Week {
+  id: string
+  startDate: string
+  endDate: string
+  weekNumber: number
+  score: number
+  goals: Goal[]
+}
+
+export interface Goal {
+  id: string
+  weekId: string
+  score: number
+  content: string
+  isEditingWeeks?: boolean
+  strategies: Strategy[]
+  indicators: Indicator[]
+}
+
 export interface Strategy {
   id: string
   content: string
   weeks: string[]
-  isEditing?: boolean
+  isEditing?: boolean // TODO: Remove this
+  weekId: string
+  checked: boolean
+  firstUpdated: string
+  lastUpdated: string
+  overdue: boolean
 }
 
 export interface Indicator {
@@ -11,69 +48,17 @@ export interface Indicator {
   startingNumber: number | null
   goalNumber: number | null
   metric: string
-  isEditing: boolean
-}
-
-export interface Goal {
-  id: string
-  content: string
-  isEditingWeeks?: boolean
-  strategies: Strategy[]
-  indicators: Indicator[]
-}
-
-export interface Vision {
-  content: string
-}
-
-export interface Plan {
-  id: string
-  vision: string
-  threeYearMilestone: string
-  goals: Goal[]
-  startDate: string
-  endDate: string
-  completed: boolean
-  created: string
-  lastUpdated: string
-}
-
-export interface IndicatorTracking extends Indicator {
+  isEditing?: boolean // TODO: Remove this
   weekId: string
   trend: number
   value: number
 }
 
-export interface StrategyTracking extends Strategy {
-  weekId: string
-  checked: boolean
-  firstUpdated: string
-  lastUpdated: string
-  overdue: boolean
-}
-
-export interface GoalTracking extends Goal {
-  weekId: string
-  score: number
-  strategies: StrategyTracking[]
-  indicators: IndicatorTracking[]
-}
-
-export interface WeekTracking {
-  id: string
-  startDate: string
-  endDate: string
-  weekNumber: number
-  score: number
-  goals: GoalTracking[]
-}
-
-export interface PlanTracking extends Plan {
-  id: string
-  weeks: WeekTracking[]
-}
-
 export interface Step<T> {
   goNext?: () => void
   onChange: (value: T) => void
+}
+
+export interface Vision {
+  content: string
 }

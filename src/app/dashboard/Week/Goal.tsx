@@ -1,10 +1,10 @@
 import { Box, Card, Flex, SimpleGrid } from '@chakra-ui/react'
-import { GoalTracking } from '@/types'
+import { Goal } from '@/types'
 import { Strategy } from './Strategy'
 import { Indicator } from './Indicator'
 
 interface GoalProps {
-  goal: GoalTracking
+  goal: Goal
 }
 
 export function Goal({ goal }: GoalProps) {

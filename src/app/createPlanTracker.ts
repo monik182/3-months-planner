@@ -1,9 +1,9 @@
 import { WEEKS } from './constants'
-import { Plan, PlanTracking } from './types'
+import { Plan } from './types'
 import { v4 as uuidv4 } from 'uuid'
 import { calculateWeekEndDate, calculateWeekStartDate, isStrategyOverdue } from './util'
 
-export function createPlanTracker(plan: Plan): PlanTracking {
+export function createPlanTracker(plan: Plan): Plan {
 
   const weeks = WEEKS.map((week) => {
     const weekId = uuidv4()

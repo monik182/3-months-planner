@@ -13,7 +13,7 @@ import { useProtectedPage } from '../hooks/useProtectedPage'
 export default function Dashboard() {
   const { user } = useProtectedPage()
   const today = dayjs().format('DD MMMM YYYY')
-  const { planTracking: planTracker } = usePlanTracking()
+  const { plan: planTracker } = usePlanTracking()
   const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
   const data = getChartData(planTracker)

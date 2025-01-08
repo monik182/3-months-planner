@@ -1,11 +1,11 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { StrategyTracking } from '@/types'
+import { Strategy as IStrategy } from '@/types'
 import { Checkbox } from '@/components/ui/checkbox'
 import { usePlanTracking } from '../../providers/usePlanTracking'
 import { PiTimerThin } from 'react-icons/pi'
 
 interface StrategyProps {
-  strategy: StrategyTracking
+  strategy: IStrategy
 }
 
 export function Strategy({ strategy }: StrategyProps) {

@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { GoalTracking, PlanTracking, StrategyTracking, WeekTracking } from './types'
+import { Goal, Plan, Strategy, Week } from './types'
 
 export function calculatePlanEndDate(startDate: string): string {
   return dayjs(startDate).add(12 * 7, 'day').format('YYYY-MM-DD')
@@ -49,7 +49,7 @@ export function calculateWeekStartDate(startDate: string, weekNumber: number) {
   return start.format('YYYY-MM-DD')
 }
 
-export const calculateGoalScore = (goal: GoalTracking): number => {
+export const calculateGoalScore = (goal: Goal): number => {
   const strategyScore =
     goal.strategies.length > 0
       ? (goal.strategies.filter((str) => str.checked).length /
@@ -60,7 +60,7 @@ export const calculateGoalScore = (goal: GoalTracking): number => {
   return Math.round(strategyScore)
 }
 
-export const calculateWeekScore = (goals: GoalTracking[]): number => {
+export const calculateWeekScore = (goals: Goal[]): number => {
   const totalStrategies = goals.reduce(
     (acc, goal) => acc + goal.strategies.length,
     0
@@ -79,8 +79,8 @@ export const calculateWeekScore = (goals: GoalTracking[]): number => {
 
 export const calculateIndicatorTrend = (
   indicatorId: string,
-  currentWeek: WeekTracking,
-  previousWeek?: WeekTracking,
+  currentWeek: Week,
+  previousWeek?: Week,
 ): number => {
   if (!previousWeek) {
     return 0
@@ -111,7 +111,7 @@ export const calculateIndicatorTrend = (
   return Math.round(((currentProgress - previousProgress) / goalRange) * 100)
 }
 
-export function getChartData(plan: PlanTracking) {
+export function getChartData(plan: Plan) {
   return plan.weeks.map((week) => {
     return {
       label: `Week ${week.weekNumber}`,
@@ -120,7 +120,7 @@ export function getChartData(plan: PlanTracking) {
   })
 }
 
-export function isStrategyOverdue(strategy: StrategyTracking, weekEndDate: string): boolean {
+export function isStrategyOverdue(strategy: Strategy, weekEndDate: string): boolean {
   const end = dayjs(weekEndDate)
   const today = dayjs()
   const overdue = today.isAfter(end, 'day')
