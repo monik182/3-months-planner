@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { Header } from '@/components/Header'
 import { PlanProvider } from './providers/usePlan'
 import { UserProvider } from '@auth0/nextjs-auth0/client'
+import { ReactQueryProvider } from './providers/ReactQueryProvider'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,17 +36,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <UserProvider>
-          <Provider>
-            <PlanProvider>
-              <Box margin="0 2rem">
-                <Grid templateRows="1fr auto" height="100vh">
-                  <GridItem><Header /></GridItem>
-                  <GridItem height="90vh">{children}</GridItem>
-                </Grid>
-                <Toaster />
-              </Box>
-            </PlanProvider>
-          </Provider>
+          <ReactQueryProvider>
+            <Provider>
+              <PlanProvider>
+                <Box margin="0 2rem">
+                  <Grid templateRows="1fr auto" height="100vh">
+                    <GridItem><Header /></GridItem>
+                    <GridItem height="90vh">{children}</GridItem>
+                  </Grid>
+                  <Toaster />
+                </Box>
+              </PlanProvider>
+            </Provider>
+          </ReactQueryProvider>
         </UserProvider>
       </body>
     </html>

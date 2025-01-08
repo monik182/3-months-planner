@@ -9,46 +9,56 @@ import { Step4 } from './Step4/Step4'
 import { Goal, Plan, Vision } from '@/types'
 import { useProtectedPage } from '../hooks/useProtectedPage'
 import { usePlan } from '../providers/usePlan'
+import { useDebouncedCallback } from 'use-debounce'
 
 export default function Steps() {
   const { user } = useProtectedPage()
   const { plan } = usePlan()
   const [, setPlan] = useState<Plan>()
 
-  const handleStep1Change = (value: Vision) => {
-    setPlan(plan => {
-      if (!plan) return plan
-      return { ...plan, vision: value.content }
-    })
-  }
+  const debouncedHandleStep1Change = useDebouncedCallback(
+    (value: Vision) => {
+      setPlan(plan => {
+        if (!plan) return plan
+        return { ...plan, vision: value.content }
+      })
+      console.log('debounced', value)
+    }, 1000)
+    
 
-  const handleStep2Change = (value: Vision) => {
-    setPlan(plan => {
-      if (!plan) return plan
-      return { ...plan, threeYearMilestone: value.content }
-    })
-  }
+  const debouncedHandleStep2Change = useDebouncedCallback(
+    (value: Vision) => {
+      setPlan(plan => {
+        if (!plan) return plan
+        return { ...plan, threeYearMilestone: value.content }
+      })
+    }, 1000)
 
-  const handleStep3Change = (value: Goal[]) => {
-    setPlan(plan => {
-      if (!plan) return plan
-      return { ...plan, goals: value }
-    })
-  }
+    const debouncedHandleStep3Change = useDebouncedCallback(
+      (value: Goal[]) => {
+        setPlan(plan => {
+          if (!plan) return plan
+          return { ...plan, goals: value }
+        })
+      }, 1000)
 
-  const handleStep4Change = (value: Plan) => {
-    setPlan(plan => ({ ...plan, ...value }))
-  }
+  const debouncedHandleStep4Change = useDebouncedCallback(
+    (value: Plan) => {
+      setPlan(plan => {
+        if (!plan) return plan
+        return { ...plan, ...value }
+      })
+    }, 1000)
 
   if (!user) {
     return null
   }
 
   const steps = [
-    { title: 'Define Vision', content: <Step1 goNext={() => console} onChange={handleStep1Change} /> },
-    { title: '3-Year Milestone', content: <Step2 onChange={handleStep2Change} /> },
-    { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={handleStep3Change} /> },
-    { title: 'Start Date & Review', content: <Step4 plan={plan} onChange={handleStep4Change} /> },
+    { title: 'Define Vision', content: <Step1 goNext={() => console} onChange={debouncedHandleStep1Change} /> },
+    { title: '3-Year Milestone', content: <Step2 onChange={debouncedHandleStep2Change} /> },
+    { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={debouncedHandleStep3Change} /> },
+    { title: 'Start Date & Review', content: <Step4 plan={plan} onChange={debouncedHandleStep4Change} /> },
   ]
 
   return (
