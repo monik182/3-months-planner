@@ -2,7 +2,7 @@
 import { Box, Grid, HStack, Heading, Tabs, Text } from '@chakra-ui/react'
 import { Week } from './Week/Week'
 import { getChartData, getCurrentWeekFromStartDate } from '@/util'
-import { WEEKS } from '../constants'
+import { DEFAULT_WEEKS } from '../constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
 import { usePlanTracking } from '../providers/usePlanTracking'
@@ -53,7 +53,7 @@ export default function Dashboard() {
       <Box marginTop="2rem">
         <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle">
           <Tabs.List>
-            {WEEKS.map((week) => (
+            {DEFAULT_WEEKS.map((week) => (
               <Tabs.Trigger key={`week-${week}`} value={`tab-${week}`}>W-{week}</Tabs.Trigger>
             ))}
             <Tabs.Indicator rounded="l2" />

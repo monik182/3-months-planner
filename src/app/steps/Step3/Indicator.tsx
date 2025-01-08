@@ -1,10 +1,10 @@
-import { v4 as uuidv4 } from 'uuid'
 import { Box, Button, Field, Flex, Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { SlStar } from 'react-icons/sl'
 import { Alert } from '@/components/ui/alert'
 import { Indicator as IndicatorItem } from '@/types'
+import { createIndicator } from '../../factories'
 
 interface IndicatorProps {
   indicator?: IndicatorItem
@@ -12,9 +12,7 @@ interface IndicatorProps {
   onRemove: () => void
 }
 
-export const DEFAULT_INDICATOR = { content: '', startingNumber: null, goalNumber: null, metric: '', isEditing: false, id: '' }
-
-export function Indicator({ indicator = {...DEFAULT_INDICATOR, id: uuidv4() }, onChange, onRemove }: IndicatorProps) {
+export function Indicator({ indicator = createIndicator(), onChange, onRemove }: IndicatorProps) {
   const [value, setValue] = useState(indicator)
   const [error, setError] = useState('')
 

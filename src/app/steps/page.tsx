@@ -7,13 +7,12 @@ import { Step3 } from './Step3/Step3'
 import { useState } from 'react'
 import { Step4 } from './Step4/Step4'
 import { Goal, Plan, Vision } from '@/types'
-import { INITIAL_PLAN } from '@/constants'
-import { v4 as uuidv4 } from 'uuid'
 import { useProtectedPage } from '../hooks/useProtectedPage'
+import { createPlan } from '../factories'
 
 export default function Steps() {
   const { user } = useProtectedPage()
-  const [plan, setPlan] = useState<Plan>({ ...INITIAL_PLAN, id: uuidv4() })
+  const [plan, setPlan] = useState<Plan>(createPlan())
 
   const handleStep1Change = (value: Vision) => {
     setPlan(plan => ({ ...plan, vision: value.content }))

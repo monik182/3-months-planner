@@ -2,9 +2,9 @@ export interface Plan {
   id: string
   vision: string
   threeYearMilestone: string
-  startDate: string
-  endDate: string
   completed: boolean
+  startDate: string
+  endDate: string | null
   created: string
   lastUpdated: string
   goals: Goal[]
@@ -13,8 +13,8 @@ export interface Plan {
 
 export interface Week {
   id: string
-  startDate: string
-  endDate: string
+  startDate: string | null
+  endDate: string | null
   weekNumber: number
   score: number
   goals: Goal[]
@@ -32,14 +32,14 @@ export interface Goal {
 
 export interface Strategy {
   id: string
+  weekId: string
   content: string
   weeks: string[]
   isEditing?: boolean // TODO: Remove this
-  weekId: string
-  checked: boolean
-  firstUpdated: string
-  lastUpdated: string
   overdue: boolean
+  checked: boolean
+  firstUpdated: string | null
+  lastUpdated: string | null
 }
 
 export interface Indicator {

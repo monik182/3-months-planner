@@ -1,120 +1,112 @@
 'use client'
-import { v4 as uuidv4 } from 'uuid'
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '../step-layout'
 import { useState } from 'react'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { DEFAULT_INDICATOR, Indicator } from './Indicator'
+import { Indicator } from './Indicator'
 import { Strategy } from './Strategy'
 import { Indicator as IndicatorItem, Goal, Strategy as StrategyItem, Step } from '@/types'
-import { DEFAULT_STRATEGY } from '@/constants'
+import { createGoal, createIndicator, createStrategy } from '../../factories'
 
 const _items = [
-  { id: uuidv4(), content: 'Complete my weekly project tasks by Friday', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
-  { id: uuidv4(), content: 'Attend a networking event every month', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
-  { id: uuidv4(), content: 'Read one book on leadership every quarter', isEditingWeeks: false, indicators: [], strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }] },
+  { ...createGoal(), content: 'Complete my weekly project tasks by Friday' },
+  { ...createGoal(), content: 'Attend a networking event every month' },
+  { ...createGoal(), content: 'Read one book on leadership every quarter' },
 ]
 export function Step3({ goNext, onChange }: Step<Goal[]>) {
-  const [items, setItems] = useState<Goal[]>([..._items])
+  const [goals, setGoals] = useState<Goal[]>([..._items])
   const disableIndicator = (item: Goal) => !!item.indicators.some((indicator) => indicator.isEditing)
 
   const addItem = (pos?: number) => {
-    const newId = uuidv4()
-    const newItem = {
-      id: newId,
-      content: '',
-      isEditingWeeks: false,
-      indicators: [],
-      strategies: [{ ...DEFAULT_STRATEGY, id: uuidv4() }],
-    }
+    const newGoal = createGoal()
     
-    setItems(items => {
-      const updatedItems =
+    setGoals(goals => {
+      const updatedGoals =
         pos !== undefined
-          ? [...items.slice(0, pos + 1), newItem, ...items.slice(pos + 1)]
-          : [...items, newItem]
-      onChange(updatedItems)
-      return updatedItems
+          ? [...goals.slice(0, pos + 1), newGoal, ...goals.slice(pos + 1)]
+          : [...goals, newGoal]
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const updateItemValue = (id: string, value: string) => {
-    setItems(items => {
-      const updatedItems = items.map((item) =>
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) =>
         item.id === id ? { ...item, value } : item
       )
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const removeItem = (id: string) => {
-    let updatedItems = items.filter((item) => item.id !== id)
-    setItems(updatedItems)
-    onChange(updatedItems)
+    let updatedGoals = goals.filter((item) => item.id !== id)
+    setGoals(updatedGoals)
+    onChange(updatedGoals)
   }
 
   const handleAddIndicator = (id: string) => {
-    setItems(items => {
-      const updatedItems = items.map((item) =>
-        item.id === id ? { ...item, indicators: [...item.indicators, { ...DEFAULT_INDICATOR, isEditing: true, id: uuidv4() }] } : item
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) =>
+        item.id === id ? { ...item, indicators: [...item.indicators, { ...createIndicator(), isEditing: true }] } : item
       )
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const handleIndicatorChange = (id: string, index: number, measurement: IndicatorItem) => {
-    setItems(items => {
-      const updatedItems = items.map((item) =>
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) =>
         item.id === id ? { ...item, indicators: item.indicators.map((m, i) => (i === index ? measurement : m)) } : item
       )
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const handleRemoveIndicator = (id: string, index: number) => {
-    setItems(items => {
-      const updatedItems = items.map((item) =>
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) =>
         item.id === id ? { ...item, indicators: item.indicators.filter((_, i) => i !== index) } : item
       )
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const handleAddStrategy = (id: string) => {
-    setItems(items => {
-      const updatedItems = items.map((item) =>
-        item.id === id ? { ...item, strategies: [...item.strategies, { ...DEFAULT_STRATEGY, id: uuidv4() }] } : item
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) =>
+        item.id === id ? { ...item, strategies: [...item.strategies, createStrategy()] } : item
       )
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const handleUpdateStrategy = (id: string, strategy: StrategyItem) => {
-    setItems(items => {
-      const updatedItems = items.map((item) => {
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) => {
         if (item.id === id) {
           return { ...item, strategies: item.strategies.map((s) => (s.id === strategy.id ? strategy : s)) }
         }
         return item
       })
 
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
   const handleRemoveStrategy = (id: string, strategyId: string) => {
-    setItems(items => {
-      const updatedItems = items.map((item) =>
+    setGoals(goals => {
+      const updatedGoals = goals.map((item) =>
         item.id === id ? { ...item, strategies: item.strategies.filter((s) => s.id !== strategyId) } : item
       )
-      onChange(updatedItems)
-      return updatedItems
+      onChange(updatedGoals)
+      return updatedGoals
     })
   }
 
@@ -124,7 +116,7 @@ export function Step3({ goNext, onChange }: Step<Goal[]>) {
       description={description}
     >
       <Box flex="1" overflowY="auto" px={2} minHeight="0">
-        {items.map((item) => (
+        {goals.map((item) => (
           <Card.Root key={item.id} marginBottom="1rem">
             <Card.Header>
               <Flex key={item.id} justify="space-between">
