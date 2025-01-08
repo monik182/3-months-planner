@@ -5,7 +5,6 @@ import { Provider } from '@/components/ui/provider'
 import { Box, Grid, GridItem } from '@chakra-ui/react'
 import { Toaster } from "@/components/ui/toaster"
 import { Header } from '@/components/Header'
-import { PlanProvider } from './providers/usePlan'
 import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { ReactQueryProvider } from './providers/ReactQueryProvider'
 
@@ -38,15 +37,13 @@ export default function RootLayout({
         <UserProvider>
           <ReactQueryProvider>
             <Provider>
-              <PlanProvider>
-                <Box margin="0 2rem">
-                  <Grid templateRows="1fr auto" height="100vh">
-                    <GridItem><Header /></GridItem>
-                    <GridItem height="90vh">{children}</GridItem>
-                  </Grid>
-                  <Toaster />
-                </Box>
-              </PlanProvider>
+              <Box margin="0 2rem">
+                <Grid templateRows="1fr auto" height="100vh">
+                  <GridItem><Header /></GridItem>
+                  <GridItem height="90vh">{children}</GridItem>
+                </Grid>
+                <Toaster />
+              </Box>
             </Provider>
           </ReactQueryProvider>
         </UserProvider>
