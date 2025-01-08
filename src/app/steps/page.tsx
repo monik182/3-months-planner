@@ -4,17 +4,22 @@ import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTri
 import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Step4 } from './Step4/Step4'
 import { Goal, Plan, Vision } from '@/types'
 import { useProtectedPage } from '../hooks/useProtectedPage'
-import { usePlan } from '../providers/usePlan'
 import { useDebouncedCallback } from 'use-debounce'
+import { PlanService } from '../../services/plan'
+
+async function fetchPlan(userId: string) {
+  const plan = await PlanService.getPlanByUserId(userId)
+  console.log('FRESHLY FETCHED PLAN FROM REMOTE<<<>>>>', plan)
+  return plan
+}
 
 export default function Steps() {
   const { user } = useProtectedPage()
-  const { plan } = usePlan()
-  const [, setPlan] = useState<Plan>()
+  const [plan, setPlan] = useState<Plan>()
 
   const debouncedHandleStep1Change = useDebouncedCallback(
     (value: Vision) => {
@@ -49,6 +54,12 @@ export default function Steps() {
         return { ...plan, ...value }
       })
     }, 1000)
+
+    useEffect(() => {
+      if (user?.sub) {
+        fetchPlan(user.sub)
+      }
+    }, [user?.sub])
 
   if (!user) {
     return null

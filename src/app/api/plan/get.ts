@@ -1,6 +1,6 @@
 import { formatError, prismaHandler } from '@/lib/prismaHandler'
-import { prisma } from '@/lib/prisma'
 import { NextRequest } from 'next/server'
+import { planManager } from '../../../db/planManager'
 
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get('userId')
@@ -10,23 +10,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const plan = await prismaHandler(() =>
-      prisma.plan.findFirst({
-        where: { userId: userId as string, completed: false },
-        include: {
-          weeks: {
-            include: {
-              goals: {
-                include: {
-                  strategies: true,
-                  indicators: true,
-                },
-              },
-            },
-          },
-        },
-      })
-    )
+    const plan = await prismaHandler(() => planManager.getCurrentPlan(userId))
     return new Response(JSON.stringify(plan), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
