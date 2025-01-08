@@ -1,8 +1,9 @@
 'use client'
-import React, { createContext, useContext, useState, useCallback } from "react"
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react"
 import { Plan } from '@/types'
 import { calculateGoalScore, calculateWeekScore, isStrategyOverdue } from '../util'
 import { createPlan } from '../factories'
+import { useUser } from '@auth0/nextjs-auth0/client'
 
 interface PlanContextType {
   plan: Plan
@@ -27,12 +28,24 @@ interface PlanTrackingProviderProps {
 }
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
+  const { user, isLoading } = useUser()
+  // TODO: get user plan from API, if there are no plans, create a new one
+  const [plan, setPlan] = useState<Plan>()
 
-  const [plan, setPlan] = useState<Plan>(createPlan())
+  useEffect(() => {
+    if (user) {
+      setPlan(createPlan(user.id as string))
+    }
+  }, [user])
+
+  if (!plan) {
+    return null
+  }
 
   const updateIndicatorValue = useCallback(
-    (weekId: string, indicatorId: string, newValue: number) => {
+    (weekId: string, indicatorId: string, newValue: number) => {      
       setPlan((prevPlan) => {
+        if (!prevPlan) return prevPlan
         const updatedWeeks = prevPlan.weeks.map((week, index) => {
           if (week.id !== weekId) return week
 
@@ -59,6 +72,8 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const updateStrategyChecked = useCallback(
     (weekId: string, strategyId: string, checked: boolean) => {
       setPlan((prevPlan) => {
+        if (!prevPlan) return prevPlan
+
         const updatedWeeks = prevPlan.weeks.map((week) => {
           if (week.id !== weekId) return week
 

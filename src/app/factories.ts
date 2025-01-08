@@ -3,10 +3,11 @@ import { Goal, Indicator, Plan, Strategy, Week } from '@/types'
 import { DEFAULT_WEEKS } from '@/constants'
 import { calculateWeekEndDate, calculateWeekStartDate, getDate, getPlanStartDate } from '@/util'
 
-export function createPlan(): Plan {
+export function createPlan(userId: string): Plan {
   const startDate = getPlanStartDate()
   return {
     id: uuidv4(),
+    userId,
     vision: '',
     threeYearMilestone: '',
     goals: [],

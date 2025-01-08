@@ -1,5 +1,6 @@
 export interface Plan {
   id: string
+  userId: string
   vision: string
   threeYearMilestone: string
   completed: boolean

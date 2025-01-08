@@ -8,22 +8,32 @@ import { useState } from 'react'
 import { Step4 } from './Step4/Step4'
 import { Goal, Plan, Vision } from '@/types'
 import { useProtectedPage } from '../hooks/useProtectedPage'
-import { createPlan } from '../factories'
+import { usePlan } from '../providers/usePlan'
 
 export default function Steps() {
   const { user } = useProtectedPage()
-  const [plan, setPlan] = useState<Plan>(createPlan())
+  const { plan } = usePlan()
+  const [, setPlan] = useState<Plan>()
 
   const handleStep1Change = (value: Vision) => {
-    setPlan(plan => ({ ...plan, vision: value.content }))
+    setPlan(plan => {
+      if (!plan) return plan
+      return { ...plan, vision: value.content }
+    })
   }
 
   const handleStep2Change = (value: Vision) => {
-    setPlan(plan => ({ ...plan, threeYearMilestone: value.content }))
+    setPlan(plan => {
+      if (!plan) return plan
+      return { ...plan, threeYearMilestone: value.content }
+    })
   }
 
   const handleStep3Change = (value: Goal[]) => {
-    setPlan(plan => ({ ...plan, goals: value }))
+    setPlan(plan => {
+      if (!plan) return plan
+      return { ...plan, goals: value }
+    })
   }
 
   const handleStep4Change = (value: Plan) => {

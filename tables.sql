@@ -1,6 +1,7 @@
 -- Plans Table
 CREATE TABLE plans (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID KEY DEFAULT gen_random_uuid(),
   vision TEXT NULL,
   three_year_milestone TEXT NULL,
   plan_start_date DATE NULL,
