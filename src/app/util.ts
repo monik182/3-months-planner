@@ -1,18 +1,22 @@
 import dayjs from 'dayjs'
 import { Goal, Plan, Strategy, Week } from './types'
 
+export function getDate() {
+  return dayjs().format('YYYY-MM-DD')
+}
+
 export function calculatePlanEndDate(startDate: string): string {
   return dayjs(startDate).add(12 * 7, 'day').format('YYYY-MM-DD')
 }
 
 export function getPlanStartDate(startMonday = false): string {
-  const date = new Date()
-  const day = date.getDay()
+  const date = dayjs()
+  const day = date.day()
   const diff = startMonday ? 1 : 7
-  const nextDate = date.getDate() + (diff - day)
-  date.setDate(nextDate)
+  const nextDate = date.date() + (diff - day)
+  date.date(nextDate)
 
-  return dayjs(date).format('YYYY-MM-DD')
+  return date.format('YYYY-MM-DD')
 }
 
 export function getNextStartDates(startMonday = false, n = 30): string[] {
