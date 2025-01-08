@@ -9,7 +9,75 @@ generator client {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  directUrl         = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Strategy {
+  id           String    @id @default(cuid())
+  weekId       String
+  content      String
+  weeks        String[]
+  overdue      Boolean
+  checked      Boolean
+  firstUpdated DateTime?
+  lastUpdated  DateTime?
+  week         Week      @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  Goal         Goal?     @relation(fields: [goalId], references: [id])
+  goalId       String?
+}
+
+model Indicator {
+  id             String  @id @default(cuid())
+  content        String
+  startingNumber Float?
+  goalNumber     Float?
+  metric         String
+  weekId         String
+  trend          Float
+  value          Float
+  week           Week    @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  Goal           Goal?   @relation(fields: [goalId], references: [id])
+  goalId         String?
+}
+
+model Goal {
+  id             String      @id @default(cuid())
+  weekId         String
+  score          Int
+  content        String
+  isEditingWeeks Boolean?
+  week           Week        @relation(fields: [weekId], references: [id], onDelete: Cascade)
+  strategies     Strategy[]
+  indicators     Indicator[]
+  Plan           Plan?       @relation(fields: [planId], references: [id])
+  planId         String?
+}
+
+model Week {
+  id         String      @id @default(cuid())
+  startDate  DateTime?
+  endDate    DateTime?
+  weekNumber Int
+  score      Int
+  goals      Goal[]
+  planId     String
+  plan       Plan        @relation(fields: [planId], references: [id], onDelete: Cascade)
+  Strategy   Strategy[]
+  Indicator  Indicator[]
+}
+
+model Plan {
+  id                 String    @id @default(cuid())
+  userId             String
+  vision             String
+  threeYearMilestone String
+  completed          Boolean
+  startDate          DateTime
+  endDate            DateTime?
+  created            DateTime  @default(now())
+  lastUpdated        DateTime  @updatedAt
+  goals              Goal[]
+  weeks              Week[]
 }

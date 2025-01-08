@@ -1,11 +1,11 @@
 # Auth & Persistency
 - Create auth provider ✅
 - Save data to DB
-  - clean up interfaces
-  - create db manager?
-  - include user id to the models
-  - create a model folder?
+  - clean up interfaces ✅
+  - include user id to the models ✅
   - create prisma schema
+  - create db manager?
+  - create a model folder?
   - add cache
 
 # Release
