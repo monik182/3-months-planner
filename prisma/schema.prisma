@@ -14,70 +14,119 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model Strategy {
-  id           String    @id @default(cuid())
-  weekId       String
-  content      String
-  weeks        String[]
-  overdue      Boolean
-  checked      Boolean
-  firstUpdated DateTime?
-  lastUpdated  DateTime?
-  week         Week      @relation(fields: [weekId], references: [id], onDelete: Cascade)
-  Goal         Goal?     @relation(fields: [goalId], references: [id])
-  goalId       String?
+model plans {
+  id          String   @id @default(cuid())
+  user_id     String
+  vision      String
+  milestone   String
+  completed   Boolean  @default(false)
+  start_date  DateTime
+  end_date    DateTime?
+  created     DateTime @default(now())
+  last_update DateTime @updatedAt
+
+  user        users     @relation(fields: [user_id], references: [id])
+  goals       goals[]
+
+  @@index([user_id])
 }
 
-model Indicator {
-  id             String  @id @default(cuid())
-  content        String
-  startingNumber Float?
-  goalNumber     Float?
-  metric         String
-  weekId         String
-  trend          Float
-  value          Float
-  week           Week    @relation(fields: [weekId], references: [id], onDelete: Cascade)
-  Goal           Goal?   @relation(fields: [goalId], references: [id])
-  goalId         String?
+model goals {
+  id          String      @id @default(cuid())
+  plan_id     String
+  content     String
+  status      String
+
+  plan        plans        @relation(fields: [plan_id], references: [id])
+  goalHistory goal_history[]
+  strategies  strategies[]
+  indicators  indicators[]
+
+  @@index([plan_id])
 }
 
-model Goal {
-  id             String      @id @default(cuid())
-  weekId         String
-  score          Int
-  content        String
-  isEditingWeeks Boolean?
-  week           Week        @relation(fields: [weekId], references: [id], onDelete: Cascade)
-  strategies     Strategy[]
-  indicators     Indicator[]
-  Plan           Plan?       @relation(fields: [planId], references: [id])
-  planId         String?
+model goal_history {
+  id         String   @id @default(cuid())
+  goal_id    String
+  start_date DateTime
+  end_date   DateTime
+
+  goal       goals    @relation(fields: [goal_id], references: [id])
+
+  @@index([goal_id])
 }
 
-model Week {
-  id         String      @id @default(cuid())
-  startDate  DateTime?
-  endDate    DateTime?
-  weekNumber Int
-  score      Int
-  goals      Goal[]
-  planId     String
-  plan       Plan        @relation(fields: [planId], references: [id], onDelete: Cascade)
-  Strategy   Strategy[]
-  Indicator  Indicator[]
+model strategies {
+  id         String        @id @default(cuid())
+  goal_id    String
+  content    String
+  weeks      String
+  status     String
+
+  goal       goals         @relation(fields: [goal_id], references: [id])
+  strategyHistory strategy_history[]
+
+  @@index([goal_id])
 }
 
-model Plan {
-  id                 String    @id @default(cuid())
-  userId             String
-  vision             String
-  threeYearMilestone String
-  completed          Boolean
-  startDate          DateTime
-  endDate            DateTime?
-  created            DateTime  @default(now())
-  lastUpdated        DateTime  @updatedAt
-  goals              Goal[]
-  weeks              Week[]
+model strategy_history {
+  id            String   @id @default(cuid())
+  strategy_id   String
+  overdue       Boolean  @default(false)
+  completed     Boolean  @default(false)
+  first_update  DateTime?
+  last_update   DateTime?
+
+  strategy      strategies @relation(fields: [strategy_id], references: [id])
+
+  @@index([strategy_id])
+}
+
+model indicators {
+  id              String             @id @default(cuid())
+  goal_id         String
+  content         String
+  metric          String
+  starting_value  Float
+  goal_value      Float
+  status          String
+
+  goal            goals              @relation(fields: [goal_id], references: [id])
+  indicatorHistory indicator_history[]
+
+  @@index([goal_id])
+}
+
+model indicator_history {
+  id            String     @id @default(cuid())
+  indicator_id  String
+  value         Float
+
+  indicator     indicators @relation(fields: [indicator_id], references: [id])
+
+  @@index([indicator_id])
+}
+
+model notifications {
+  id          String   @id @default(cuid())
+  user_id     String
+  entity_type String
+  entity_id   String
+  type        String
+  message     String
+  status      String
+  send_date   DateTime
+  created     DateTime @default(now())
+  last_update DateTime @updatedAt
+
+  user        users    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([entity_type, entity_id])
+}
+
+model users {
+  id           String          @id @default(cuid())
+  plans        plans[]
+  notifications notifications[]
 }
