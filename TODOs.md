@@ -3,10 +3,10 @@
 - Save data to DB
   - clean up interfaces ✅
   - include user id to the models ✅
-  - create prisma schema
-  - create db manager?
+  - create prisma schema ✅
+  - create db manager 
   - create a model folder?
-  - add cache
+  - add cache?
 
 # Release
 - Deploy

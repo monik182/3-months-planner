@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import { Goal, Indicator, Plan, Strategy, Week } from '@/types'
 import { DEFAULT_WEEKS } from '@/constants'
-import { calculateWeekEndDate, calculateWeekStartDate, getDate, getPlanStartDate } from '@/util'
+import { calculatePlanEndDate, calculateWeekEndDate, calculateWeekStartDate, getDate, getPlanStartDate } from '@/util'
 
 export function createPlan(userId: string): Plan {
   const startDate = getPlanStartDate()
@@ -75,3 +75,42 @@ export function createWeeks(planStartDate: string): Week[] {
     return { ...createWeek(), weekStartDate, weekEndDate }
   })
 }
+
+export function structurePlan(plan: Plan): Plan {
+  const weeks = DEFAULT_WEEKS.map((week, index) => {
+    const _week = plan.weeks[index]
+    _week.startDate = calculateWeekStartDate(plan.startDate, parseInt(week))
+    _week.endDate = calculateWeekEndDate(_week.startDate)
+    // const weekGoals = plan.goals.filter((goal) => goal.strategies.)
+    _week.goals = plan.goals.map((goal) => {
+      return {
+        ...goal,
+        weekId: _week.id,
+      }
+    })
+    _week.goals.forEach((goal) => {
+      goal.strategies = goal.strategies
+        .filter((strategy) => strategy.weeks.includes(week))
+        .map((strategy) => {
+          return {
+            ...strategy,
+            weekId: _week.id,
+            firstUpdated: getDate(),
+            lastUpdated: getDate(),
+          }
+        })
+
+      goal.indicators.forEach((indicator) => {
+        indicator.weekId = _week.id
+      })
+    })
+    return _week
+  })
+  plan.weeks = weeks
+  plan.endDate = calculatePlanEndDate(plan.startDate)
+  plan.created = getDate()
+  plan.lastUpdated = getDate()
+  return plan
+}
+
+// TODO: create class??
