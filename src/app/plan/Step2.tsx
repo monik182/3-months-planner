@@ -1,11 +1,11 @@
 import { Textarea } from '@chakra-ui/react'
-import { StepLayout } from './step-layout'
+import { StepLayout } from './stepLayout'
 import { Step, Vision } from '@/app/types'
 import { useState } from 'react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useDebouncedCallback } from 'use-debounce'
 
-export function Step2({ goNext }: Step<Vision>) {
+export function Step2({ }: Step<Vision>) {
   const { plan, updatePlan } = usePlanContext()
   const [value, setValue] = useState(plan.milestone)
 

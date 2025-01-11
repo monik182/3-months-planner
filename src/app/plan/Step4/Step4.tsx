@@ -1,4 +1,4 @@
-import { StepLayout } from '../step-layout'
+import { StepLayout } from '../stepLayout'
 import { Plan, Step } from '@/app/types'
 import dayjs from 'dayjs'
 import { DateSelector } from './DateSelector'

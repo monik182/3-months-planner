@@ -1,6 +1,6 @@
 'use client'
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
-import { StepLayout } from '@/app/plan/step-layout'
+import { StepLayout } from '@/app/plan/stepLayout'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { Goal, Step } from '@/app/types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
