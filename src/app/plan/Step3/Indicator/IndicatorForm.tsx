@@ -24,10 +24,9 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
       return
     }
     onChange(value)
-    // toggleEdit()
   }
 
-  const handleEditValue = (e: React.ChangeEvent<HTMLInputElement>, prop: string) => {
+  const handleEdit = (e: React.ChangeEvent<HTMLInputElement>, prop: string) => {
     setError('')
     if (!value) {
       return
@@ -49,34 +48,30 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
     }
   }, [indicator])
 
-  if (!value) {
-    return null
-  }
-
   return (
     <Flex direction="column" w="full" width="500px" gap="1rem" flex="1">
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What indicator are you tracking?</Field.Label>
-          <Input className="peer" placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.content} onChange={(e) => handleEditValue(e, 'content')} />
+          <Input className="peer" placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.content} onChange={(e) => handleEdit(e, 'content')} />
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your starting number?</Field.Label>
-          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingValue?.toString() || ''} onChange={(e) => handleEditValue(e, 'startingValue')} />
+          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingValue?.toString() || ''} onChange={(e) => handleEdit(e, 'startingValue')} />
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your goal number?</Field.Label>
-          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalValue?.toString() || ''} onChange={(e) => handleEditValue(e, 'goalValue')} />
+          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalValue?.toString() || ''} onChange={(e) => handleEdit(e, 'goalValue')} />
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is the unit of measurement?</Field.Label>
-          <Input className="peer" placeholder="Indicate the unit, such as kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEditValue(e, 'metric')} />
+          <Input className="peer" placeholder="Indicate the unit, such as kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} />
         </Box>
       </Field.Root>
       {error && <Alert status="error" title={error} />}

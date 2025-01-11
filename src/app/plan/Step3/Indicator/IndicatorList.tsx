@@ -17,14 +17,14 @@ export function IndicatorList({ goalId }: IndicatorListProps) {
   const disableIndicator = !!filteredIndicators.some((indicator) => indicator.startingValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
 
-  const handleCreateIndicator = () => {
+  const handleCreate = () => {
     const newIndicator = createIndicator(goalId)
     if (newIndicator?.id) {
       setIndicatorToUpdate(newIndicator)
     }
   }
 
-  const handleIndicatorChange = (id: string, indicator: Partial<Indicator>) => {
+  const handleChange = (id: string, indicator: Partial<Indicator>) => {
     updateIndicator(id, indicator)
     setIndicatorToUpdate(null)
   }
@@ -39,7 +39,7 @@ export function IndicatorList({ goalId }: IndicatorListProps) {
       {!!indicatorToUpdate && (
         <IndicatorForm
           indicator={indicatorToUpdate}
-          onChange={(indicator) => handleIndicatorChange(indicatorToUpdate.id, indicator)}
+          onChange={(indicator) => handleChange(indicatorToUpdate.id, indicator)}
           onRemove={() => handleRemove(indicatorToUpdate.id)}
         />
       )}
@@ -50,7 +50,7 @@ export function IndicatorList({ goalId }: IndicatorListProps) {
           </Button>
         ))}
       </Flex>
-      <Button size="xs" variant="outline" className="mt-5" onClick={handleCreateIndicator} disabled={disableIndicator}>
+      <Button size="xs" variant="outline" className="mt-5" onClick={handleCreate} disabled={disableIndicator}>
         <SlPlus /> Add Indicator
       </Button>
     </Flex>
