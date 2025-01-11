@@ -21,7 +21,7 @@ model plans {
   milestone   String
   completed   Boolean  @default(false)
   start_date  DateTime
-  end_date    DateTime?
+  end_date    DateTime
   created     DateTime @default(now())
   last_update DateTime @updatedAt
 
