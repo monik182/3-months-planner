@@ -2,56 +2,58 @@ export interface Plan {
   id: string
   userId: string
   vision: string
-  threeYearMilestone: string
+  milestone: string
   completed: boolean
   startDate: string
-  endDate: string | null
+  endDate: string
   created: string
   lastUpdated: string
-  goals: Goal[]
-  weeks: Week[]
-}
-
-export interface Week {
-  id: string
-  startDate: string | null
-  endDate: string | null
-  weekNumber: number
-  score: number
-  goals: Goal[]
 }
 
 export interface Goal {
   id: string
-  weekId: string
-  score: number
+  planId: string
   content: string
-  isEditingWeeks?: boolean
-  strategies: Strategy[]
-  indicators: Indicator[]
+  status: string
+}
+
+export interface GoalHistory {
+  id: string
+  goalId: string
+  startDate: string
+  endDate: string
 }
 
 export interface Strategy {
   id: string
-  weekId: string
+  goalId: string
   content: string
   weeks: string[]
-  isEditing?: boolean // TODO: Remove this
+  status: string
+}
+
+export interface StrategyHistory {
+  id: string
+  strategyId: string
   overdue: boolean
-  checked: boolean
-  firstUpdated: string | null
-  lastUpdated: string | null
+  completed: boolean
+  firstUpdate: string | null
+  lastUpdate: string | null
 }
 
 export interface Indicator {
   id: string
+  goalId: string
   content: string
-  startingNumber: number | null
-  goalNumber: number | null
   metric: string
-  isEditing?: boolean // TODO: Remove this
-  weekId: string
-  trend: number
+  startingValue: number
+  goalNumber: number
+  status: string
+}
+
+export interface IndicatorHistory {
+  id: string
+  indicatorId: string
   value: number
 }
 
