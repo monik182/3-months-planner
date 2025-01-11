@@ -144,36 +144,6 @@ export function usePlan(userId?: string): UsePlan {
     [planInstance, refreshState]
   )
 
-  // const saveGoal = useCallback(
-  //   (goal: Goal) => {
-  //     if (!planInstance) return
-
-  //     planInstance.saveGoal(goal)
-  //     refreshState()
-  //   },
-  //   [planInstance, refreshState]
-  // )
-
-  // const saveStrategy = useCallback(
-  //   (strategy: Strategy) => {
-  //     if (!planInstance) return
-
-  //     planInstance.saveStrategy(strategy)
-  //     refreshState()
-  //   },
-  //   [planInstance, refreshState]
-  // )
-
-  // const saveIndicator = useCallback(
-  //   (indicator: Indicator) => {
-  //     if (!planInstance) return
-
-  //     planInstance.saveIndicator(indicator)
-  //     refreshState()
-  //   },
-  //   [planInstance, refreshState]
-  // )
-
   useEffect(() => {
     if (userId) {
       const planInstance = new PlanClass(userId)
@@ -206,10 +176,6 @@ export function usePlan(userId?: string): UsePlan {
     removeGoal,
     removeStrategy,
     removeIndicator,
-    // saveGoal,
-    // saveStrategy,
-    // saveIndicator,
-
   }
 }
 
@@ -237,9 +203,6 @@ export interface UsePlan {
   updateGoal: (id: string, updates: Partial<Goal>) => void
   updateStrategy: (id: string, updates: Partial<Strategy>) => void
   updateIndicator: (id: string, updates: Partial<Indicator>) => void
-  // saveGoal: (goal: Goal) => void
-  // saveStrategy: (strategy: Strategy) => void
-  // saveIndicator: (indicator: Indicator) => void
   removeGoal: (id: string) => void
   removeStrategy: (id: string) => void
   removeIndicator: (id: string) => void

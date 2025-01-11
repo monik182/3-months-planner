@@ -31,9 +31,6 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     removeGoal,
     removeStrategy,
     removeIndicator,
-    // saveGoal,
-    // saveStrategy,
-    // saveIndicator,
   } = usePlan(user?.sub as string)
 
   if (isLoading) {
@@ -61,9 +58,6 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         removeGoal,
         removeStrategy,
         removeIndicator,
-        // saveGoal,
-        // saveStrategy,
-        // saveIndicator,
       }}
     >
       {children}

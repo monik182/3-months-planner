@@ -101,18 +101,6 @@ export class PlanClass {
     return indicator
   }
 
-  // public saveGoal(goal: Goal): void {
-  //   this.goals = this.addItem(this.goals, goal)
-  // }
-
-  // public saveIndicator(indicator: Indicator): void {
-  //   this.indicators = this.addItem(this.indicators, indicator)
-  // }
-
-  // public saveStrategy(strategy: Strategy): void {
-  //   this.strategies = this.addItem(this.strategies, strategy)
-  // }
-
   public updatePlan(updates: Partial<Omit<Plan, 'id' | 'userId' | 'created'>>): void {
     this.plan = {
       ...this.plan,
