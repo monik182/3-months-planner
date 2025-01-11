@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
-import { Goal, Indicator, Plan, Status, Strategy } from '@/types'
+import { Goal, Indicator, Plan, Status, Strategy } from '@/app/types'
 import { calculatePlanEndDate, getDate, getPlanStartDate } from '../util'
 import { DEFAULT_WEEKS } from '../constants'
 

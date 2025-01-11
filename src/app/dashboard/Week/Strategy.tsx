@@ -1,5 +1,5 @@
 import { Flex, Text } from '@chakra-ui/react'
-import { Strategy as IStrategy } from '@/types'
+import { Strategy as IStrategy } from '@/app/types'
 import { Checkbox } from '@/components/ui/checkbox'
 import { usePlanContext } from '../../providers/usePlanContext'
 import { PiTimerThin } from 'react-icons/pi'

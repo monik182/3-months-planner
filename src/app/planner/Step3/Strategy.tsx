@@ -2,7 +2,7 @@ import { Editable, Flex, IconButton, Text } from '@chakra-ui/react'
 import { WeeksSelector } from './WeeksSelector'
 import { useEffect, useState } from 'react'
 import { SlClose } from 'react-icons/sl'
-import { Strategy as StrategyItem } from '@/types'
+import { Strategy as StrategyItem } from '@/app/types'
 
 interface StrategyProps {
   strategy: StrategyItem

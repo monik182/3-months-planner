@@ -1,4 +1,4 @@
-import { getNextStartDates } from '@/util';
+import { getNextStartDates } from '@/app/util';
 import { Flex, createListCollection, Text } from '@chakra-ui/react';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';

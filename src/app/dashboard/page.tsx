@@ -1,7 +1,7 @@
 'use client'
 import { Box, Grid, HStack, Heading, Tabs, Text } from '@chakra-ui/react'
 import { Week } from './Week/Week'
-import { getChartData, getCurrentWeekFromStartDate } from '@/util'
+import { getChartData, getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '../constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'

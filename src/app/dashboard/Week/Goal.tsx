@@ -1,5 +1,5 @@
 import { Box, Card, Flex, SimpleGrid } from '@chakra-ui/react'
-import { Goal } from '@/types'
+import { Goal } from '@/app/types'
 import { Strategy } from './Strategy'
 import { Indicator } from './Indicator'
 

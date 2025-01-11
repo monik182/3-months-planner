@@ -1,6 +1,6 @@
 import { Textarea } from '@chakra-ui/react';
 import { StepLayout } from './step-layout';
-import { Step, Vision } from '@/types';
+import { Step, Vision } from '@/app/types';
 import { useState } from 'react';
 import { usePlanContext } from '../providers/usePlanContext';
 import { useDebouncedCallback } from 'use-debounce';
