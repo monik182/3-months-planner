@@ -8,6 +8,7 @@ const getByUserId = async (userId: string) => {
   return plan
 }
 
+// TODO: Refactor this to create plan and goals in seq
 const create = async (data: Plan) => {
   const response = await fetch(`/api/plan`, {
     method: 'POST',

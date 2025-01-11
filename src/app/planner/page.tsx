@@ -18,7 +18,7 @@ async function fetchPlan(userId: string) {
   return plan
 }
 
-export default function Steps() {
+export default function Planner() {
   const { user } = useProtectedPage()
   const [plan, setPlan] = useState<Plan>()
 

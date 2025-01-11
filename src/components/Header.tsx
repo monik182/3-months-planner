@@ -59,7 +59,7 @@ export function Header() {
 const pageMap: Record<string, string> = {
   home: '/',
   dashboard: '/dashboard',
-  planner: '/steps',
+  planner: '/planner',
 }
 
 const items = [
