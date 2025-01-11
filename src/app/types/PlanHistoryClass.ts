@@ -3,7 +3,7 @@ import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Status, Strategy,
 import { calculatePlanEndDate, getDate, getPlanStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 
-export class PlanClass {
+export class PlanHistoryClass {
   private userId: string
   private plan: Plan
   private goals: Goal[] = []
