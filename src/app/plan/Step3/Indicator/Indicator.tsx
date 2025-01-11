@@ -1,25 +1,18 @@
 import { Box, Button, Field, Flex, Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
-import { SlStar } from 'react-icons/sl'
 import { Alert } from '@/components/ui/alert'
 import { Indicator as IndicatorItem } from '@/app/types'
 
-interface IndicatorProps {
+interface IndicatorFormProps {
   indicator: IndicatorItem
   onChange: (indicator: IndicatorItem) => void
   onRemove: () => void
 }
 
-export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
+export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormProps) {
   const [value, setValue] = useState(indicator)
-  const isNew = indicator.startingValue == null || indicator.goalValue == null || !indicator.content || !indicator.metric
   const [error, setError] = useState('')
-  const [isEditing, setIsEditing] = useState(isNew)
-
-  const toggleEdit = () => {
-    setIsEditing(prev => !prev)
-  }
 
   const handleUpdate = () => {
     setError('')
@@ -31,7 +24,7 @@ export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
       return
     }
     onChange(value)
-    toggleEdit()
+    // toggleEdit()
   }
 
   const handleEditValue = (e: React.ChangeEvent<HTMLInputElement>, prop: string) => {
@@ -58,16 +51,6 @@ export function Indicator({ indicator, onChange, onRemove }: IndicatorProps) {
 
   if (!value) {
     return null
-  }
-
-  if (!isEditing) {
-    return (
-      <div>
-        <Button variant="outline" colorPalette="yellow" className="mt-5" onClick={toggleEdit}>
-          <SlStar /> {value.content}
-        </Button>
-      </div>
-    )
   }
 
   return (
