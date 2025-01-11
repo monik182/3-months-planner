@@ -2,19 +2,16 @@
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/step-layout'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { Indicator } from './Indicator/Indicator'
 import { Strategy } from './Strategy'
-import { Indicator as IndicatorItem, Goal, Strategy as StrategyItem, Step } from '@/app/types'
+import { Goal, Strategy as StrategyItem, Step } from '@/app/types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
+import { IndicatorList } from '@/app/plan/Step3/Indicator/IndicatorList'
 
 export function Step3({ goNext }: Step<Goal[]>) {
   const { 
-    // plan,
     goals, createGoal, updateGoal, removeGoal,
     strategies, createStrategy, updateStrategy, removeStrategy,
-    indicators, createIndicator, updateIndicator, removeIndicator,
   } = usePlanContext()
-  const disableIndicator = (goalId: string) => !!indicators.filter(i => i.goalId === goalId).some((indicator) => indicator.startingValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
 
   const updateGoalContent = (id: string, content: string) => {
     updateGoal(id, { content })
@@ -22,10 +19,6 @@ export function Step3({ goNext }: Step<Goal[]>) {
 
   const handleUpdateStrategy = (id: string, strategy: Partial<StrategyItem>) => {
     updateStrategy(id, strategy)
-  }
-
-  const handleIndicatorChange = (id: string, indicator: Partial<IndicatorItem>) => {
-    updateIndicator(id, indicator)
   }
 
   return (
@@ -75,19 +68,7 @@ export function Step3({ goNext }: Step<Goal[]>) {
               </Flex>
             </Card.Body>
             <Card.Footer>
-              <Flex direction="column" gap="10px">
-                {indicators.filter(indicator => indicator.goalId === goal.id).map((indicator, index) => (
-                  <Indicator
-                    key={index}
-                    indicator={indicator}
-                    onChange={(indicator) => handleIndicatorChange(indicator.id, indicator)}
-                    onRemove={() => removeIndicator(indicator.id)}
-                  />
-                ))}
-                <Button size="xs" variant="outline" className="mt-5" onClick={() => createIndicator(goal.id)} disabled={disableIndicator(goal.id)}>
-                  <SlPlus /> Add Indicator
-                </Button>
-              </Flex>
+                <IndicatorList goalId={goal.id} />
             </Card.Footer>
           </Card.Root>
         ))}
