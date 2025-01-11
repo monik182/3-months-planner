@@ -69,7 +69,7 @@ export enum Status {
 
 export interface Step<T> {
   goNext?: () => void
-  onChange: (value: T) => void
+  onChange?: (value: T) => void
 }
 
 export interface Vision {

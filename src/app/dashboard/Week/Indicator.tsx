@@ -2,7 +2,7 @@ import { Box, HStack } from '@chakra-ui/react'
 import { Indicator as IIndicator } from '@/types'
 import { StatDownTrend, StatLabel, StatRoot, StatUpTrend, StatValueText } from '@/components/ui/stat'
 import { useState } from 'react'
-import { usePlan } from '../../providers/usePlan'
+import { usePlanContext } from '../../providers/usePlanContext'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { calculateIndicatorTrend } from '../../util'
 
@@ -10,7 +10,7 @@ interface IndicatorProps {
   indicator: IIndicator
 }
 export function Indicator({ indicator }: IndicatorProps) {
-  const { updateIndicatorValue, plan } = usePlan()
+  const { updateIndicatorValue, plan } = usePlanContext()
   const currentWeek = plan.weeks.find((week) => week.id === indicator.weekId)
   const weekIndex = plan.weeks.findIndex((week) => week.id === indicator.weekId)
   const previousWeek = weekIndex > 0 ? plan.weeks[weekIndex - 1] : undefined

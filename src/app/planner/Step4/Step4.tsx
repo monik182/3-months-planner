@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { StepLayout } from '../step-layout'
 import { Plan, Step } from '@/types'
 import dayjs from 'dayjs'
@@ -6,25 +5,13 @@ import { DateSelector } from './DateSelector'
 import { calculatePlanEndDate } from '@/util'
 import { Box, Fieldset, Grid, Input, Stack, VStack, Text, Heading, Flex, Badge } from '@chakra-ui/react'
 import { Field } from '../../../components/ui/field'
+import { usePlanContext } from '../../providers/usePlanContext'
 
-export function Step4({ plan, goNext, onChange }: Step<Plan> & { plan: Plan }) {
-  // FIXME: fetch pran from provider
-  const [value, setValue] = useState<Plan>(plan)
-  const handleDateChange = (value: string) => {
-    const endDate = calculatePlanEndDate(value)
-    setValue((prev) => {
-      const updatedPlan = { ...prev, startDate: value, endDate }
-      onChange(updatedPlan)
-      return updatedPlan
-    })
-  }
-
-  useEffect(() => {
-    setValue(plan)
-  }, [plan])
-
-  if (!plan) {
-    return null
+export function Step4(props: Step<Plan>) {
+  const { plan, goals, updatePlan } = usePlanContext()
+  const handleDateChange = (startDate: string) => {
+    const endDate = calculatePlanEndDate(startDate)
+    updatePlan({ startDate, endDate })
   }
 
   return (
@@ -33,10 +20,10 @@ export function Step4({ plan, goNext, onChange }: Step<Plan> & { plan: Plan }) {
       description="Choose the start date for your plan, marking the beginning of your journey toward achieving your goals. This is also a chance to review everything you’ve outlined so far—your vision, goals, and strategies—and ensure they align with your priorities and timeline. Take a moment to reflect and adjust if needed before you commit to taking the first step."
     >
       <Grid gap="1rem" templateColumns="1fr 1fr">
-        <DateSelector onChange={handleDateChange} date={value?.startDate} />
+        <DateSelector onChange={handleDateChange} date={plan?.startDate} />
         <Fieldset.Root size="lg" disabled>
           <Field label="End Date">
-            <Input disabled value={dayjs(value?.endDate).format('MMMM DD, YYYY')} />
+            <Input disabled value={dayjs(plan?.endDate).format('MMMM DD, YYYY')} />
           </Field>
         </Fieldset.Root>
       </Grid>
@@ -52,7 +39,7 @@ export function Step4({ plan, goNext, onChange }: Step<Plan> & { plan: Plan }) {
           <Heading size="lg" mb={4}>
             Three-Year Milestone
           </Heading>
-          <Text fontSize="md">{plan.threeYearMilestone}</Text>
+          <Text fontSize="md">{plan.milestone}</Text>
         </Box>
 
         <Flex justify="space-between" bg="gray.50" p={4} borderRadius="md" mb={6}>
@@ -70,7 +57,7 @@ export function Step4({ plan, goNext, onChange }: Step<Plan> & { plan: Plan }) {
             Goals
           </Heading>
           <Stack>
-            {plan.goals.map((goal) => (
+            {goals.map((goal) => (
               <Box
                 key={goal.id}
                 borderWidth="1px"

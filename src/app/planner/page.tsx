@@ -10,74 +10,21 @@ import { Goal, Plan, Vision } from '@/types'
 import { useProtectedPage } from '../hooks/useProtectedPage'
 import { useDebouncedCallback } from 'use-debounce'
 import { PlanService } from '../../services/plan'
-import { createPlan } from '../factories'
+import { PlanProvider, usePlanContext } from '../providers/usePlanContext'
 
-async function fetchPlan(userId: string) {
-  const plan = await PlanService.getByUserId(userId)
-  console.log('FRESHLY FETCHED PLAN FROM REMOTE<<<>>>>', plan)
-  return plan
-}
-
-export default function Planner() {
+function PlanPage() {
   const { user } = useProtectedPage()
-  const [plan, setPlan] = useState<Plan>()
-
-  const handleCreatePlan = async () => {
-    if (!user?.sub) return
-    const newPLan = createPlan(user?.sub)
-    const createdPlan = await PlanService.create(newPLan)
-    console.log('Created pkan>>>>', createdPlan)
-  }
-
-  const debouncedHandleStep1Change = useDebouncedCallback(
-    (value: Vision) => {
-      setPlan(plan => {
-        if (!plan) return plan
-        return { ...plan, vision: value.content }
-      })
-      console.log('debounced', value)
-    }, 1000)
-    
-
-  const debouncedHandleStep2Change = useDebouncedCallback(
-    (value: Vision) => {
-      setPlan(plan => {
-        if (!plan) return plan
-        return { ...plan, threeYearMilestone: value.content }
-      })
-    }, 1000)
-
-    const debouncedHandleStep3Change = useDebouncedCallback(
-      (value: Goal[]) => {
-        setPlan(plan => {
-          if (!plan) return plan
-          return { ...plan, goals: value }
-        })
-      }, 1000)
-
-  const debouncedHandleStep4Change = useDebouncedCallback(
-    (value: Plan) => {
-      setPlan(plan => {
-        if (!plan) return plan
-        return { ...plan, ...value }
-      })
-    }, 1000)
-
-    useEffect(() => {
-      if (user?.sub) {
-        fetchPlan(user.sub)
-      }
-    }, [user?.sub])
+  const { plan } = usePlanContext()
 
   if (!user) {
     return null
   }
 
   const steps = [
-    { title: 'Define Vision', content: <Step1 goNext={() => console} onChange={debouncedHandleStep1Change} /> },
-    { title: '3-Year Milestone', content: <Step2 onChange={debouncedHandleStep2Change} /> },
-    { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={debouncedHandleStep3Change} /> },
-    { title: 'Start Date & Review', content: <Step4 plan={plan!} onChange={debouncedHandleStep4Change} /> },
+    { title: 'Define Vision', content: <Step1 goNext={() => console} /> },
+    { title: '3-Year Milestone', content: <Step2 /> },
+    // { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={debouncedHandleStep3Change} /> },
+    // { title: 'Start Date & Review', content: <Step4 /> },
   ]
 
   return (
@@ -94,12 +41,11 @@ export default function Planner() {
 
           {steps.map((step, index) => (
             <StepsContent key={index} index={index} className="h-full">
-              <Button onClick={handleCreatePlan}>CREATE PLAN</Button>
               {step.content}
             </StepsContent>
           ))}
           <StepsCompletedContent>
-            Congrats, you have created your 3-months plan!
+            Congrats, you have created your 3-month plan!
           </StepsCompletedContent>
         </GridItem>
         <GridItem>
@@ -118,5 +64,13 @@ export default function Planner() {
         </GridItem>
       </Grid>
     </StepsRoot>
+  )
+}
+
+export default function PlanWithProvider() {
+  return (
+    <PlanProvider>
+      <PlanPage />
+    </PlanProvider>
   )
 }

@@ -2,21 +2,22 @@ import { Textarea } from '@chakra-ui/react'
 import { StepLayout } from './step-layout'
 import { Step, Vision } from '@/types'
 import { useState } from 'react'
+import { usePlanContext } from '../providers/usePlanContext'
+import { useDebouncedCallback } from 'use-debounce'
 
-export function Step1({ goNext, onChange }: Step<Vision>) {
-  const [value, setValue] = useState('')
+export function Step1({ goNext }: Step<Vision>) {
+  const { plan, updatePlan } = usePlanContext()
+  const [value, setValue] = useState(plan.vision)
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setValue(e.target.value)
-    onChange({ content: e.target.value })
-  }
+  const debounced = useDebouncedCallback(
+    (vision: string) => {
+      updatePlan({ vision })
+    }, 1000)
 
-  const handleCanChangePage = () => {
-    if (value.trim().length > 0) {
-      goNext?.()
-    } else {
-      
-    }
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const vision = e.target.value
+    setValue(vision)
+    debounced(vision)
   }
 
   return (
@@ -29,7 +30,7 @@ export function Step1({ goNext, onChange }: Step<Vision>) {
         size="xl"
         variant="outline"
         value={value}
-        onChange={handleChange}
+        onChange={handleOnChange}
         placeholder="Think big. What are the dreams you’ve always wanted to pursue? How would your life look if you reached your full potential? Be bold and dream unapologetically."
       />
     </StepLayout>
