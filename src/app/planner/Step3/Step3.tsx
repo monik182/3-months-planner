@@ -1,11 +1,11 @@
 'use client'
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
-import { StepLayout } from '../step-layout'
+import { StepLayout } from '@/app/planner/step-layout'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { Indicator } from './Indicator/Indicator'
 import { Strategy } from './Strategy'
 import { Indicator as IndicatorItem, Goal, Strategy as StrategyItem, Step } from '@/app/types'
-import { usePlanContext } from '../../providers/usePlanContext'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 
 export function Step3({ goNext }: Step<Goal[]>) {
   const { 

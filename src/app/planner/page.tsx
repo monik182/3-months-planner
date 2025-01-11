@@ -5,8 +5,8 @@ import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
-import { useProtectedPage } from '../hooks/useProtectedPage'
-import { PlanProvider, usePlanContext } from '../providers/usePlanContext'
+import { useProtectedPage } from '@/app/hooks/useProtectedPage'
+import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
 
 function PlanPage() {
   const { user } = useProtectedPage()

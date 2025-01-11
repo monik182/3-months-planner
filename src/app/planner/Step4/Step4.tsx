@@ -4,8 +4,8 @@ import dayjs from 'dayjs'
 import { DateSelector } from './DateSelector'
 import { calculatePlanEndDate } from '@/app/util'
 import { Box, Fieldset, Grid, Input, Stack, VStack, Text, Heading, Flex, Badge } from '@chakra-ui/react'
-import { Field } from '../../../components/ui/field'
-import { usePlanContext } from '../../providers/usePlanContext'
+import { Field } from '@/components/ui/field'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 
 export function Step4(props: Step<Plan>) {
   const { plan, goals, updatePlan } = usePlanContext()

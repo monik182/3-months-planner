@@ -1,7 +1,7 @@
 'use client'
-import React, { createContext, useContext, useEffect } from "react"
+import React, { createContext, useContext } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
-import { UsePlan, usePlan } from '../hooks/usePlan'
+import { UsePlan, usePlan } from '@/app/hooks/usePlan'
 
 type PlanContextType = {} & UsePlan
 

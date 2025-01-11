@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { PlanClass } from '../types/PlannerClass'
+import { PlanClass } from '@/app/types/PlannerClass'
 import { Goal, Indicator, Plan, Status, Strategy } from '@/app/types'
 
 export function usePlan(userId?: string): UsePlan {

@@ -2,13 +2,13 @@
 import { Box, Grid, HStack, Heading, Tabs, Text } from '@chakra-ui/react'
 import { Week } from './Week/Week'
 import { getChartData, getCurrentWeekFromStartDate } from '@/app/util'
-import { DEFAULT_WEEKS } from '../constants'
+import { DEFAULT_WEEKS } from '@/app/constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { usePlanContext } from '../providers/usePlanContext'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
-import { useProtectedPage } from '../hooks/useProtectedPage'
+import { useProtectedPage } from '@/app/hooks/useProtectedPage'
 
 export default function Dashboard() {
   const { user } = useProtectedPage()

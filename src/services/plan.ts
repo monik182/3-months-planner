@@ -1,4 +1,4 @@
-import { Plan } from '../app/types'
+import { Plan } from '@/app/types'
 
 const getByUserId = async (userId: string) => {
   const response = await fetch(`/api/plan?userId=${userId}`, {

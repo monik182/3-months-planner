@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { prismaHandler } from '../lib/prismaHandler'
+import { prismaHandler } from '@/lib/prismaHandler'
 import { Plan } from '@prisma/client'
 
 export const planManager = {

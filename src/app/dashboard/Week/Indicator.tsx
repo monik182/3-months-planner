@@ -2,9 +2,9 @@ import { Box, HStack } from '@chakra-ui/react'
 import { Indicator as IIndicator } from '@/app/types'
 import { StatDownTrend, StatLabel, StatRoot, StatUpTrend, StatValueText } from '@/components/ui/stat'
 import { useState } from 'react'
-import { usePlanContext } from '../../providers/usePlanContext'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
-import { calculateIndicatorTrend } from '../../util'
+import { calculateIndicatorTrend } from '@/app/util'
 
 interface IndicatorProps {
   indicator: IIndicator
