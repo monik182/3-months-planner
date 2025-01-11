@@ -1,5 +1,5 @@
 import { Editable, Flex, IconButton, Text } from '@chakra-ui/react'
-import { WeeksSelector } from './WeeksSelector'
+import { WeeksSelector } from '../WeeksSelector'
 import { useEffect, useState } from 'react'
 import { SlClose } from 'react-icons/sl'
 import { Strategy as StrategyItem } from '@/app/types'
@@ -11,7 +11,7 @@ interface StrategyProps {
   onRemove: () => void
 }
 
-export function Strategy({ strategy, onAdd, onChange, onRemove }: StrategyProps) {
+export function StrategyForm({ strategy, onAdd, onChange, onRemove }: StrategyProps) {
   const [value, setValue] = useState(strategy)
   const [isEditing, setIsEditing] = useState(false)
 
