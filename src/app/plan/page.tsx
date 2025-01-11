@@ -5,26 +5,37 @@ import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
-import { useProtectedPage } from '@/app/hooks/useProtectedPage'
-import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
+import { PlanProvider } from '@/app/providers/usePlanContext'
+import { useState } from 'react'
 
 function PlanPage() {
-  const { user } = useProtectedPage()
-  const { plan } = usePlanContext()
+  const [nextText, setNextText] = useState('Next')
+  const [step, setStep] = useState(0)
 
-  if (!user) {
-    return null
-  }
+  const handleSavePlan = () => {}
 
   const steps = [
     { title: 'Define Vision', content: <Step1 goNext={() => console} /> },
     { title: '3-Year Milestone', content: <Step2 /> },
     { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
-    // { title: 'Start Date & Review', content: <Step4 /> },
+    { title: 'Start Date & Review', content: <Step4 /> },
   ]
 
+  const handleStepChange = ({ step }: { step: number }) => {
+    console.log('NEXT STEP>>>>', step)
+    if (step === 3) {
+      setNextText('Save')
+    } else if (step > 3) {
+      setNextText('Saved')
+      console.log('show saved message and redirect to dashboard!!!')
+    } else {
+      setNextText('Next')
+    }
+    setStep(step)
+  }
+
   return (
-    <StepsRoot linear step={2} variant="subtle" count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={(details) => console.log('chaging step tp', details)} onStepComplete={() => console.log('complrted step tp',)}>
+    <StepsRoot linear variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={handleStepChange} onStepComplete={() => console.log('complrted step tp',)}>
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
         <GridItem>
           <StepsList>
@@ -53,7 +64,7 @@ function PlanPage() {
             </StepsPrevTrigger>
             <StepsNextTrigger asChild>
               <Button variant="outline" size="sm">
-                Next
+                {nextText}
               </Button>
             </StepsNextTrigger>
           </Group>
