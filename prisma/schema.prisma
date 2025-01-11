@@ -91,8 +91,8 @@ model indicators {
   goal_id         String
   content         String
   metric          String
-  starting_value  Float
-  goal_value      Float
+  starting_value  Int
+  goal_value      Int
   status          String
 
   goal            goals              @relation(fields: [goal_id], references: [id])
@@ -104,7 +104,7 @@ model indicators {
 model indicator_history {
   id            String     @id @default(cuid())
   indicator_id  String
-  value         Float
+  value         Int
 
   indicator     indicators @relation(fields: [indicator_id], references: [id])
 
