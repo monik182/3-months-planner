@@ -1,9 +1,9 @@
-import { Textarea } from '@chakra-ui/react';
-import { StepLayout } from './step-layout';
-import { Step, Vision } from '@/app/types';
-import { useState } from 'react';
-import { usePlanContext } from '@/app/providers/usePlanContext';
-import { useDebouncedCallback } from 'use-debounce';
+import { Textarea } from '@chakra-ui/react'
+import { StepLayout } from './step-layout'
+import { Step, Vision } from '@/app/types'
+import { useState } from 'react'
+import { usePlanContext } from '@/app/providers/usePlanContext'
+import { useDebouncedCallback } from 'use-debounce'
 
 export function Step2({ goNext }: Step<Vision>) {
   const { plan, updatePlan } = usePlanContext()
