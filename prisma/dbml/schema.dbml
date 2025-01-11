@@ -60,8 +60,8 @@ Table indicators {
   goal_id String [not null]
   content String [not null]
   metric String [not null]
-  starting_value Float [not null]
-  goal_value Float [not null]
+  starting_value Int [not null]
+  goal_value Int [not null]
   status String [not null]
   goal goals [not null]
   indicatorHistory indicator_history [not null]
@@ -70,7 +70,7 @@ Table indicators {
 Table indicator_history {
   id String [pk]
   indicator_id String [not null]
-  value Float [not null]
+  value Int [not null]
   indicator indicators [not null]
 }
 
