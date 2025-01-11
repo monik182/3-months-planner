@@ -6,15 +6,19 @@ import { usePlanContext } from '@/app/providers/usePlanContext';
 import { useDebouncedCallback } from 'use-debounce';
 
 export function Step2({ goNext }: Step<Vision>) {
-  const { updatePlan } = usePlanContext()
-  const [value, setValue] = useState('')
+  const { plan, updatePlan } = usePlanContext()
+  const [value, setValue] = useState(plan.milestone)
 
-  const debouncedHandleChange = useDebouncedCallback(
-    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const milestone = e.target.value
+  const debounced = useDebouncedCallback(
+    (milestone: string) => {
       updatePlan({ milestone })
-      setValue(milestone)
     }, 1000)
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const milestone = e.target.value
+    setValue(milestone)
+    debounced(milestone)
+  }
 
   return (
     <StepLayout
@@ -26,7 +30,7 @@ export function Step2({ goNext }: Step<Vision>) {
         size="xl"
         variant="outline"
         value={value}
-        onChange={debouncedHandleChange}
+        onChange={handleOnChange}
         placeholder="Where do you want to be in 3 years? What key achievements, progress, or changes will set the stage for your long-term vision? Think of this as the bridge between where you are now and where you're going."
       />
     </StepLayout>

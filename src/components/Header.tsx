@@ -26,7 +26,7 @@ export function Header() {
       <Flex justify="space-between" align="center" marginTop="1rem">
         <Flex gap="1rem" align="center">
           <Heading size="2xl" onClick={() => handleOnChange('home')}>
-            3-Month Planner
+            3-Month Plan
           </Heading>
           <SegmentedControl
             size="lg"
@@ -60,7 +60,7 @@ export function Header() {
 const pageMap: Record<string, string> = {
   home: '/',
   dashboard: '/dashboard',
-  planner: '/planner',
+  plan: '/plan',
 }
 
 const items = [
@@ -85,11 +85,11 @@ const items = [
     hide: true,
   },
   {
-    value: "planner",
+    value: "plan",
     label: (
       <HStack>
         <SlNotebook />
-        Planner
+        Plan
       </HStack>
     ),
     hide: true,
