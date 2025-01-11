@@ -3,17 +3,17 @@ import { WeeksSelector } from './WeeksSelector'
 import { useEffect, useState } from 'react'
 import { SlClose } from 'react-icons/sl'
 import { Strategy as StrategyItem } from '@/types'
-import { createStrategy } from '../../factories'
 
 interface StrategyProps {
-  strategy?: StrategyItem
+  strategy: StrategyItem
   onChange: (strategy: StrategyItem) => void
   onAdd: () => void
-  onRemove?: () => void
+  onRemove: () => void
 }
 
-export function Strategy({ strategy = createStrategy(), onAdd, onChange, onRemove }: StrategyProps) {
+export function Strategy({ strategy, onAdd, onChange, onRemove }: StrategyProps) {
   const [value, setValue] = useState(strategy)
+  const [isEditing, setIsEditing] = useState(false)
 
   const handleWeekUpdate = (weeks: string[]) => {
     setValue(value => {
@@ -32,11 +32,7 @@ export function Strategy({ strategy = createStrategy(), onAdd, onChange, onRemov
   }
 
   const toggleWeeksSelector = () => {
-    setValue(value => {
-      const updatedValue = { ...value, isEditing: !value.isEditing }
-      onChange(updatedValue)
-      return updatedValue
-    })
+    setIsEditing(prev => !prev)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -71,12 +67,11 @@ export function Strategy({ strategy = createStrategy(), onAdd, onChange, onRemov
           variant="ghost"
           aria-label="Remove list item"
           onClick={onRemove}
-          disabled={!onRemove}
         >
           <SlClose size="xs" />
         </IconButton>
       </Flex>
-      {value.isEditing ? (
+      {isEditing ? (
         <WeeksSelector weeks={value.weeks} setWeeks={handleWeekUpdate} onFocusOutside={() => toggleWeeksSelector()} />
       ) : (
         <Text textStyle="sx" onClick={toggleWeeksSelector}>Due: {value.weeks.length === 12 ? 'Every week' : `Weeks ${value.weeks.join(', ')}`}</Text>

@@ -4,12 +4,8 @@ import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTri
 import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
-import { useEffect, useState } from 'react'
 import { Step4 } from './Step4/Step4'
-import { Goal, Plan, Vision } from '@/types'
 import { useProtectedPage } from '../hooks/useProtectedPage'
-import { useDebouncedCallback } from 'use-debounce'
-import { PlanService } from '../../services/plan'
 import { PlanProvider, usePlanContext } from '../providers/usePlanContext'
 
 function PlanPage() {
@@ -23,12 +19,12 @@ function PlanPage() {
   const steps = [
     { title: 'Define Vision', content: <Step1 goNext={() => console} /> },
     { title: '3-Year Milestone', content: <Step2 /> },
-    // { title: 'Set Goals, Actions & Metrics', content: <Step3 onChange={debouncedHandleStep3Change} /> },
+    { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
     // { title: 'Start Date & Review', content: <Step4 /> },
   ]
 
   return (
-    <StepsRoot linear variant="subtle" count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={(details) => console.log('chaging step tp', details)} onStepComplete={() => console.log('complrted step tp',)}>
+    <StepsRoot linear step={2} variant="subtle" count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={(details) => console.log('chaging step tp', details)} onStepComplete={() => console.log('complrted step tp',)}>
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
         <GridItem>
           <StepsList>

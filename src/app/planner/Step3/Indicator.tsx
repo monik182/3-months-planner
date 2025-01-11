@@ -14,25 +14,25 @@ interface IndicatorProps {
 
 export function Indicator({ indicator = createIndicator(), onChange, onRemove }: IndicatorProps) {
   const [value, setValue] = useState(indicator)
+  const isNew = indicator.startingValue == null || indicator.goalValue == null || !indicator.content || !indicator.metric
   const [error, setError] = useState('')
+  const [isEditing, setIsEditing] = useState(isNew)
+
+  const toggleEdit = () => {
+    setIsEditing(prev => !prev)
+  }
 
   const handleUpdate = () => {
     setError('')
     if (!value) {
       return
     }
-    if (!value.content || value.startingNumber == null || value.goalNumber == null || !value.metric) {
+    if (!value.content || value.startingValue == null || value.goalValue == null || !value.metric) {
       setError('Please fill out all fields')
       return
     }
-    onChange({ ...value, isEditing: false })
-  }
-
-  const handleEnableEditing = () => {
-    if (!value) {
-      return
-    }
-    onChange({ ...value, isEditing: true })
+    onChange(value)
+    toggleEdit()
   }
 
   const handleEditValue = (e: React.ChangeEvent<HTMLInputElement>, prop: string) => {
@@ -61,10 +61,10 @@ export function Indicator({ indicator = createIndicator(), onChange, onRemove }:
     return null
   }
 
-  if (!value.isEditing) {
+  if (!isEditing) {
     return (
       <div>
-        <Button variant="outline" colorPalette="yellow" className="mt-5" onClick={handleEnableEditing}>
+        <Button variant="outline" colorPalette="yellow" className="mt-5" onClick={toggleEdit}>
           <SlStar /> {value.content}
         </Button>
       </div>
@@ -82,13 +82,13 @@ export function Indicator({ indicator = createIndicator(), onChange, onRemove }:
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your starting number?</Field.Label>
-          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingNumber?.toString() || ''} onChange={(e) => handleEditValue(e, 'startingNumber')} />
+          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingValue?.toString() || ''} onChange={(e) => handleEditValue(e, 'startingValue')} />
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your goal number?</Field.Label>
-          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalNumber?.toString() || ''} onChange={(e) => handleEditValue(e, 'goalNumber')} />
+          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalValue?.toString() || ''} onChange={(e) => handleEditValue(e, 'goalValue')} />
         </Box>
       </Field.Root>
       <Field.Root>

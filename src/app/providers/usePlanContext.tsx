@@ -28,16 +28,13 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     updateGoal,
     updateStrategy,
     updateIndicator,
-    saveGoal,
-    saveStrategy,
-    saveIndicator,
+    removeGoal,
+    removeStrategy,
+    removeIndicator,
+    // saveGoal,
+    // saveStrategy,
+    // saveIndicator,
   } = usePlan(user?.sub as string)
-
-  useEffect(() => {
-    if (user) {
-    }
-  }, [user])
-
 
   if (isLoading) {
     return <div>Loading....</div>
@@ -61,9 +58,12 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         updateGoal,
         updateStrategy,
         updateIndicator,
-        saveGoal,
-        saveStrategy,
-        saveIndicator,
+        removeGoal,
+        removeStrategy,
+        removeIndicator,
+        // saveGoal,
+        // saveStrategy,
+        // saveIndicator,
       }}
     >
       {children}

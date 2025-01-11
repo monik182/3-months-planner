@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PlanClass } from '../types/PlannerClass'
 import { Goal, Indicator, Plan, Status, Strategy } from '@/types'
-import { DEFAULT_WEEKS } from '../constants'
 
 export function usePlan(userId?: string): UsePlan {
   const [planInstance, setPlanInstance] = useState<PlanClass>()
@@ -21,24 +20,32 @@ export function usePlan(userId?: string): UsePlan {
 
   const createGoal = useCallback(
     (content = '', status = Status.ACTIVE) => {
-      if (!planInstance) return
+      if (!planInstance) return null
 
-      planInstance.createGoal(content, status)
-      refreshState()
+      try {
+        const goal = planInstance.createGoal(content, status)
+        refreshState()
+        return goal
+      } catch (error: unknown) {
+        console.error((error as Error).message)
+      }
+      return null
     },
     [planInstance, refreshState]
   )
 
   const createStrategy = useCallback(
-    (goalId: string, content = '', weeks = [...DEFAULT_WEEKS], status = Status.ACTIVE) => {
-      if (!planInstance) return
+    (goalId: string, content = '', weeks?: string[], status = Status.ACTIVE) => {
+      if (!planInstance) return null
 
       try {
-        planInstance.createStrategy(goalId, content, weeks, status)
+        const strategy = planInstance.createStrategy(goalId, content, weeks, status)
         refreshState()
+        return strategy
       } catch (error: unknown) {
         console.error((error as Error).message)
       }
+      return null
     },
     [planInstance, refreshState]
   )
@@ -53,14 +60,16 @@ export function usePlan(userId?: string): UsePlan {
       goalValue = 0,
       status = Status.ACTIVE
     ) => {
-      if (!planInstance) return
+      if (!planInstance) return null
 
       try {
-        planInstance.createIndicator(goalId, content, metric, startingValue, goalValue, status)
+        const indicator = planInstance.createIndicator(goalId, content, metric, startingValue, goalValue, status)
         refreshState()
+        return indicator
       } catch (error: unknown) {
         console.error((error as Error).message)
       }
+      return null
     },
     [planInstance, refreshState]
   )
@@ -105,35 +114,65 @@ export function usePlan(userId?: string): UsePlan {
     [planInstance, refreshState]
   )
 
-  const saveGoal = useCallback(
-    (goal: Goal) => {
+  const removeGoal = useCallback(
+    (id: string) => {
       if (!planInstance) return
 
-      planInstance.saveGoal(goal)
+      planInstance.removeGoal(id)
       refreshState()
     },
     [planInstance, refreshState]
   )
 
-  const saveStrategy = useCallback(
-    (strategy: Strategy) => {
+  const removeStrategy = useCallback(
+    (id: string) => {
       if (!planInstance) return
 
-      planInstance.saveStrategy(strategy)
+      planInstance.removeStrategy(id)
       refreshState()
     },
     [planInstance, refreshState]
   )
 
-  const saveIndicator = useCallback(
-    (indicator: Indicator) => {
+  const removeIndicator = useCallback(
+    (id: string) => {
       if (!planInstance) return
 
-      planInstance.saveIndicator(indicator)
+      planInstance.removeIndicator(id)
       refreshState()
     },
     [planInstance, refreshState]
   )
+
+  // const saveGoal = useCallback(
+  //   (goal: Goal) => {
+  //     if (!planInstance) return
+
+  //     planInstance.saveGoal(goal)
+  //     refreshState()
+  //   },
+  //   [planInstance, refreshState]
+  // )
+
+  // const saveStrategy = useCallback(
+  //   (strategy: Strategy) => {
+  //     if (!planInstance) return
+
+  //     planInstance.saveStrategy(strategy)
+  //     refreshState()
+  //   },
+  //   [planInstance, refreshState]
+  // )
+
+  // const saveIndicator = useCallback(
+  //   (indicator: Indicator) => {
+  //     if (!planInstance) return
+
+  //     planInstance.saveIndicator(indicator)
+  //     refreshState()
+  //   },
+  //   [planInstance, refreshState]
+  // )
 
   useEffect(() => {
     if (userId) {
@@ -143,6 +182,14 @@ export function usePlan(userId?: string): UsePlan {
       refreshState()
     }
   }, [userId])
+
+  useEffect(() => {
+    if (plan?.id && !goals.length) {
+      INITIAL_GOALS.forEach((goal) => {
+        createGoal(goal)
+      })
+    }
+  }, [plan?.id])
 
   return {
     plan: plan!,
@@ -156,9 +203,13 @@ export function usePlan(userId?: string): UsePlan {
     updateGoal,
     updateStrategy,
     updateIndicator,
-    saveGoal,
-    saveStrategy,
-    saveIndicator,
+    removeGoal,
+    removeStrategy,
+    removeIndicator,
+    // saveGoal,
+    // saveStrategy,
+    // saveIndicator,
+
   }
 }
 
@@ -167,13 +218,13 @@ export interface UsePlan {
   goals: Goal[]
   strategies: Strategy[]
   indicators: Indicator[]
-  createGoal: (content?: string, status?: Status) => void
+  createGoal: (content?: string, status?: Status) => Goal | null
   createStrategy: (
     goalId: string,
     content?: string,
     weeks?: string[],
     status?: Status
-  ) => void
+  ) => Strategy | null
   createIndicator: (
     goalId: string,
     content?: string,
@@ -181,12 +232,21 @@ export interface UsePlan {
     startingValue?: number,
     goalValue?: number,
     status?: Status
-  ) => void
+  ) => Indicator | null
   updatePlan: (updates: Partial<Omit<Plan, 'id' | 'userId' | 'created'>>) => void
   updateGoal: (id: string, updates: Partial<Goal>) => void
   updateStrategy: (id: string, updates: Partial<Strategy>) => void
   updateIndicator: (id: string, updates: Partial<Indicator>) => void
-  saveGoal: (goal: Goal) => void
-  saveStrategy: (strategy: Strategy) => void
-  saveIndicator: (indicator: Indicator) => void
+  // saveGoal: (goal: Goal) => void
+  // saveStrategy: (strategy: Strategy) => void
+  // saveIndicator: (indicator: Indicator) => void
+  removeGoal: (id: string) => void
+  removeStrategy: (id: string) => void
+  removeIndicator: (id: string) => void
 }
+
+const INITIAL_GOALS = [
+  'Complete my weekly project tasks by Friday',
+  'Attend a networking event every month',
+  'Read one book on leadership every quarter',
+]

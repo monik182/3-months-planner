@@ -32,12 +32,19 @@ export class PlanClass {
     }
   }
 
-  private addItem<T>(list: T[], item: T): T[] {
+  private addItem<T extends { id: string }>(list: T[], item: T): T[] {
+    if (list.find(i => i.id === item.id)) {
+      return list
+    }
     return [...list, item]
   }
 
   private updateItem<T extends { id: string }>(list: T[], id: string, updates: Partial<T>): T[] {
     return list.map(item => (item.id === id ? { ...item, ...updates } : item))
+  }
+
+  private removeItem<T extends { id: string }>(list: T[], id: string): T[] {
+    return list.filter(item => item.id !== id)
   }
 
   public createGoal(content = '', status = Status.ACTIVE): Goal {
@@ -94,17 +101,17 @@ export class PlanClass {
     return indicator
   }
 
-  public saveGoal(goal: Goal): void {
-    this.goals = this.addItem(this.goals, goal)
-  }
+  // public saveGoal(goal: Goal): void {
+  //   this.goals = this.addItem(this.goals, goal)
+  // }
 
-  public saveIndicator(indicator: Indicator): void {
-    this.indicators = this.addItem(this.indicators, indicator)
-  }
+  // public saveIndicator(indicator: Indicator): void {
+  //   this.indicators = this.addItem(this.indicators, indicator)
+  // }
 
-  public saveStrategy(strategy: Strategy): void {
-    this.strategies = this.addItem(this.strategies, strategy)
-  }
+  // public saveStrategy(strategy: Strategy): void {
+  //   this.strategies = this.addItem(this.strategies, strategy)
+  // }
 
   public updatePlan(updates: Partial<Omit<Plan, 'id' | 'userId' | 'created'>>): void {
     this.plan = {
@@ -124,6 +131,20 @@ export class PlanClass {
 
   public updateIndicator(id: string, updates: Partial<Indicator>): void {
     this.indicators = this.updateItem(this.indicators, id, updates)
+  }
+
+  public removeGoal(id: string): void {
+    this.goals = this.removeItem(this.goals, id)
+    this.strategies = this.strategies.filter(strategy => strategy.goalId !== id)
+    this.indicators = this.indicators.filter(indicator => indicator.goalId !== id)
+  }
+
+  public removeStrategy(id: string): void {
+    this.strategies = this.removeItem(this.strategies, id)
+  }
+
+  public removeIndicator(id: string): void {
+    this.indicators = this.removeItem(this.indicators, id)
   }
 
   public getPlan(): Plan {
