@@ -7,7 +7,7 @@ export interface Plan {
   startDate: string
   endDate: string
   created: string
-  lastUpdated: string
+  lastUpdate: string
 }
 
 export interface Goal {
@@ -22,6 +22,7 @@ export interface GoalHistory {
   goalId: string
   startDate: string
   endDate: string
+  sequence: number
 }
 
 export interface Strategy {
@@ -39,6 +40,7 @@ export interface StrategyHistory {
   completed: boolean
   firstUpdate: string | null
   lastUpdate: string | null
+  sequence: number
 }
 
 export interface Indicator {
@@ -47,7 +49,7 @@ export interface Indicator {
   content: string
   metric: string
   startingValue: number
-  goalNumber: number
+  goalValue: number
   status: string
 }
 
@@ -55,6 +57,14 @@ export interface IndicatorHistory {
   id: string
   indicatorId: string
   value: number
+  sequence: number
+}
+
+// FIXME: will this be the final enums?
+export enum Status {
+  INACTIVE = '0',
+  ACTIVE = '1',
+  DELETED = '2',
 }
 
 export interface Step<T> {
