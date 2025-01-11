@@ -4,7 +4,7 @@ import { calculatePlanEndDate, getDate, getPlanStartDate } from '../util'
 import { DEFAULT_WEEKS } from '../constants'
 
 export class PlanClass {
-  private userId: string
+  private readonly userId: string
   private plan: Plan
   private goals: Goal[] = []
   private strategies: Strategy[] = []
@@ -17,6 +17,8 @@ export class PlanClass {
 
   private createPlan(): Plan {
     const startDate = getPlanStartDate()
+    const now = getDate()
+
     return {
       id: uuidv4(),
       userId: this.userId,
@@ -25,52 +27,118 @@ export class PlanClass {
       completed: false,
       startDate,
       endDate: calculatePlanEndDate(startDate),
-      created: getDate(),
+      created: now,
+      lastUpdate: now,
+    }
+  }
+
+  private addItem<T>(list: T[], item: T): T[] {
+    return [...list, item]
+  }
+
+  private updateItem<T extends { id: string }>(list: T[], id: string, updates: Partial<T>): T[] {
+    return list.map(item => (item.id === id ? { ...item, ...updates } : item))
+  }
+
+  public createGoal(content = '', status = Status.ACTIVE): Goal {
+    const goal = {
+      id: uuidv4(),
+      planId: this.plan.id,
+      content,
+      status,
+    }
+
+    this.goals = this.addItem(this.goals, goal)
+    return goal
+  }
+
+  public createStrategy(goalId: string, content = '', weeks = [...DEFAULT_WEEKS], status = Status.ACTIVE): Strategy {
+    if (!this.goals.some(goal => goal.id === goalId)) {
+      throw new Error(`Goal with id ${goalId} does not exist`)
+    }
+    const strategy = {
+      id: uuidv4(),
+      goalId,
+      content,
+      weeks,
+      status,
+    }
+
+    this.strategies = this.addItem(this.strategies, strategy)
+    return strategy
+  }
+
+  public createIndicator(
+    goalId: string,
+    content = '',
+    metric = '',
+    startingValue = 0,
+    goalValue = 0,
+    status = Status.ACTIVE
+  ): Indicator {
+    if (!this.goals.some(goal => goal.id === goalId)) {
+      throw new Error(`Goal with id ${goalId} does not exist`)
+    }
+
+    const indicator = {
+      id: uuidv4(),
+      goalId,
+      content,
+      metric,
+      startingValue,
+      goalValue,
+      status,
+    }
+
+    this.indicators = this.addItem(this.indicators, indicator)
+    return indicator
+  }
+
+  public saveGoal(goal: Goal): void {
+    this.goals = this.addItem(this.goals, goal)
+  }
+
+  public saveIndicator(indicator: Indicator): void {
+    this.indicators = this.addItem(this.indicators, indicator)
+  }
+
+  public saveStrategy(strategy: Strategy): void {
+    this.strategies = this.addItem(this.strategies, strategy)
+  }
+
+  public updatePlan(updates: Partial<Omit<Plan, 'id' | 'userId' | 'created'>>): void {
+    this.plan = {
+      ...this.plan,
+      ...updates,
       lastUpdate: getDate(),
     }
   }
 
-  createGoal(): Goal {
-    return {
-      id: uuidv4(),
-      planId: this.plan.id,
-      content: '',
-      status: Status.ACTIVE,
-    }
+  public updateGoal(id: string, updates: Partial<Goal>): void {
+    this.goals = this.updateItem(this.goals, id, updates)
   }
 
-  createStrategy(goalId: string): Strategy {
-    return {
-      id: uuidv4(),
-      goalId,
-      content: '',
-      weeks: [...DEFAULT_WEEKS],
-      status: Status.ACTIVE,
-    }
+  public updateStrategy(id: string, updates: Partial<Strategy>): void {
+    this.strategies = this.updateItem(this.strategies, id, updates)
   }
 
-  createIndicator(goalId: string): Indicator {
-    return {
-      id: uuidv4(),
-      goalId,
-      content: '',
-      metric: '',
-      startingValue: 0,
-      goalValue: 0,
-      status: Status.ACTIVE,
-    }
+  public updateIndicator(id: string, updates: Partial<Indicator>): void {
+    this.indicators = this.updateItem(this.indicators, id, updates)
   }
 
-  saveGoal(goal: Goal) {
-    this.goals = [...this.goals, goal]
+  public getPlan(): Plan {
+    return { ...this.plan }
   }
 
-  saveIndicator(indicator: Indicator) {
-    this.indicators = [...this.indicators, indicator]
+  public getGoals(): Goal[] {
+    return [...this.goals]
   }
 
-  saveStrategies(strategy: Strategy) {
-    this.strategies = [...this.strategies, strategy]
+  public getStrategies(): Strategy[] {
+    return [...this.strategies]
   }
 
+  public getIndicators(): Indicator[] {
+    return [...this.indicators]
+  }
 }
