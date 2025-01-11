@@ -3,12 +3,12 @@ import { Plan, Step } from '@/app/types'
 import dayjs from 'dayjs'
 import { DateSelector } from './DateSelector'
 import { calculatePlanEndDate } from '@/app/util'
-import { Box, Fieldset, Grid, Input, Stack, VStack, Text, Heading, Flex, Badge } from '@chakra-ui/react'
+import { Box, Fieldset, Grid, Input, Stack, VStack, Text, Heading, Flex, Badge, Separator, HStack } from '@chakra-ui/react'
 import { Field } from '@/components/ui/field'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 
-export function Step4(props: Step<Plan>) {
-  const { plan, goals, updatePlan } = usePlanContext()
+export function Step4({ }: Step<Plan>) {
+  const { plan, goals, strategies, indicators, updatePlan } = usePlanContext()
   const handleDateChange = (startDate: string) => {
     const endDate = calculatePlanEndDate(startDate)
     updatePlan({ startDate, endDate })
@@ -20,10 +20,10 @@ export function Step4(props: Step<Plan>) {
       description="Choose the start date for your plan, marking the beginning of your journey toward achieving your goals. This is also a chance to review everything you’ve outlined so far—your vision, goals, and strategies—and ensure they align with your priorities and timeline. Take a moment to reflect and adjust if needed before you commit to taking the first step."
     >
       <Grid gap="1rem" templateColumns="1fr 1fr">
-        <DateSelector onChange={handleDateChange} date={plan?.startDate} />
+        <DateSelector onChange={handleDateChange} date={plan.startDate} />
         <Fieldset.Root size="lg" disabled>
           <Field label="End Date">
-            <Input disabled value={dayjs(plan?.endDate).format('MMMM DD, YYYY')} />
+            <Input disabled value={dayjs(plan.endDate).format('MMMM DD, YYYY')} />
           </Field>
         </Fieldset.Root>
       </Grid>
@@ -70,50 +70,54 @@ export function Step4(props: Step<Plan>) {
                   {goal.content}
                 </Heading>
               
-                {goal.strategies.filter(strategy => !!strategy.content).length && (
+                {!!strategies.filter(strategy => strategy.goalId === goal.id).length && (
                   <Box mb={4}>
                     <Heading size="sm" mb={2}>
                       Strategies
                     </Heading>
-                    {goal.strategies.filter(strategy => !!strategy.content).map((strategy) => (
+                    {strategies.filter(strategy => strategy.goalId === goal.id).map((strategy) => (
                       <Box key={strategy.id} mb={2}>
-                        <Badge colorScheme="teal" mr={2}>
+                        <Badge colorPalette="teal" mr={2}>
                           Strategy
                         </Badge>
                         {strategy.content}
                         <Text fontSize="sm" color="gray.600">
-                          Weeks: {strategy.weeks.join(', ')}
+                          <strong>Weeks:</strong> {strategy.weeks.length === 12 ? 'Every week' : strategy.weeks.join(', ')}
                         </Text>
                       </Box>
                     ))}
                   </Box>
                 )}
 
-                {goal.indicators.length && (
+                {!!indicators.filter(indicator => indicator.goalId === goal.id).length && (
                   <Box>
                     <Heading size="sm" mb={2}>
                       Indicators
                     </Heading>
-                    {goal.indicators.map((indicator, index) => (
+                    {indicators.filter(indicator => indicator.goalId === goal.id).map((indicator, index) => (
                       <VStack key={index} align="start" mb={2}>
-                        <Text>
-                          <strong>Value:</strong> {indicator.value}
-                        </Text>
-                        <Text>
-                          <strong>Starting Number:</strong>{' '}
-                          {indicator.startingNumber !== null
-                            ? indicator.startingNumber
+                        <HStack>
+                          <Badge colorPalette="orange" mr={2}>
+                            Indicator
+                          </Badge>
+                          {indicator.content}
+                        </HStack>
+                        <Text fontSize="sm" color="gray.600">
+                          <strong>Starting Value:</strong>{' '}
+                          {indicator.startingValue !== null
+                            ? indicator.startingValue
                             : 'N/A'}
                         </Text>
-                        <Text>
-                          <strong>Goal Number:</strong>{' '}
-                          {indicator.goalNumber !== null
-                            ? indicator.goalNumber
+                        <Text fontSize="sm" color="gray.600">
+                          <strong>Goal Value:</strong>{' '}
+                          {indicator.goalValue !== null
+                            ? indicator.goalValue
                             : 'N/A'}
                         </Text>
-                        <Text>
+                        <Text fontSize="sm" color="gray.600">
                           <strong>Metric:</strong> {indicator.metric}
                         </Text>
+                        <Separator />
                       </VStack>
                     ))}
                   </Box>
