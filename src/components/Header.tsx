@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { Avatar } from './ui/avatar'
 import { RxDashboard } from 'react-icons/rx'
+import Link from 'next/link'
 
 export function Header() {
   const { user } = useUser()
@@ -43,10 +44,10 @@ export function Header() {
                 shape="full"
                 size="lg"
               />
-              <a href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></a>
+              <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
             </Flex>
           ) : (
-              <a href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></a>
+              <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
           )}
           <ColorModeButton />
         </Flex>
