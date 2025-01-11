@@ -3,32 +3,33 @@ import { WeeksSelector } from '../WeeksSelector'
 import { useEffect, useState } from 'react'
 import { SlClose } from 'react-icons/sl'
 import { Strategy as StrategyItem } from '@/app/types'
+import React from 'react'
 
 interface StrategyProps {
   strategy: StrategyItem
   onChange: (strategy: StrategyItem) => void
   onAdd: () => void
   onRemove: () => void
+  onClick?: () => void
+  disabled?: boolean
 }
 
-export function StrategyForm({ strategy, onAdd, onChange, onRemove }: StrategyProps) {
+export const StrategyForm = React.memo(function StrategyForm({ strategy, disabled = false, onAdd, onChange, onRemove, onClick }: StrategyProps) {
+  // console.log('straterg>>', strategy)
   const [value, setValue] = useState(strategy)
   const [isEditing, setIsEditing] = useState(false)
 
   const handleWeekUpdate = (weeks: string[]) => {
-    setValue(value => {
-      const updatedValue = { ...value, weeks: weeks.sort((a, b) => parseInt(a) - parseInt(b)) }
-      onChange(updatedValue)
-      return updatedValue
-    })
+    const updatedValue = { ...value, weeks: weeks.sort((a, b) => parseInt(a) - parseInt(b)) }
+    setValue(updatedValue)
+    onChange(updatedValue)
   }
 
-  const handleValueUpdate = (newValue: string) => {
-    setValue(value => {
-      const updatedValue = { ...value, value: newValue }
-      onChange(updatedValue)
-      return updatedValue
-    })
+  const handleValueUpdate = (content: string) => {
+    const updatedValue = { ...value, content }
+    // console.log('new content>>>>', content)
+    setValue(updatedValue)
+    onChange(updatedValue)
   }
 
   const toggleWeeksSelector = () => {
@@ -45,12 +46,8 @@ export function StrategyForm({ strategy, onAdd, onChange, onRemove }: StrategyPr
     setValue(strategy)
   }, [strategy])
 
-  if (!value) {
-    return null
-  }
-
   return (
-    <Flex direction="column">
+    <Flex direction="column" onClick={onClick}>
       <Flex justify="space-between" align="center" gap="1rem">
         <Editable.Root
           value={value.content}
@@ -58,6 +55,7 @@ export function StrategyForm({ strategy, onAdd, onChange, onRemove }: StrategyPr
           placeholder="What is your next strategy?"
           onKeyDown={(e) => handleKeyDown(e)}
           defaultEdit
+          disabled={disabled}
         >
           <Editable.Preview />
           <Editable.Input />
@@ -78,4 +76,4 @@ export function StrategyForm({ strategy, onAdd, onChange, onRemove }: StrategyPr
       )}
     </Flex>
   )
-}
+})

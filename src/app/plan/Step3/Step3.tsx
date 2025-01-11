@@ -2,23 +2,18 @@
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/step-layout'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { Strategy } from './Strategy'
-import { Goal, Strategy as StrategyItem, Step } from '@/app/types'
+import { Goal, Step } from '@/app/types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorList } from '@/app/plan/Step3/Indicator/IndicatorList'
+import { StrategyList } from '@/app/plan/Step3/Strategy/StrategyList'
 
-export function Step3({ goNext }: Step<Goal[]>) {
+export function Step3({ }: Step<Goal[]>) {
   const { 
     goals, createGoal, updateGoal, removeGoal,
-    strategies, createStrategy, updateStrategy, removeStrategy,
   } = usePlanContext()
 
   const updateGoalContent = (id: string, content: string) => {
     updateGoal(id, { content })
-  }
-
-  const handleUpdateStrategy = (id: string, strategy: Partial<StrategyItem>) => {
-    updateStrategy(id, strategy)
   }
 
   return (
@@ -52,20 +47,7 @@ export function Step3({ goNext }: Step<Goal[]>) {
               </Flex>
             </Card.Header>
             <Card.Body>
-              <Flex direction="column" gap="10px">
-                {strategies.filter(strategy => strategy.goalId === goal.id).map((strategy, index) => (
-                  <Strategy
-                    key={index}
-                    strategy={strategy}
-                    onAdd={() => createStrategy(goal.id)}
-                    onChange={(strategy) => handleUpdateStrategy(strategy.id, strategy)}
-                    onRemove={() => removeStrategy(strategy.id)}
-                  />
-                ))}
-                <Button size="sm" variant="outline" className="mt-5" onClick={() => createStrategy(goal.id)}>
-                  <SlPlus /> Add Strategy
-                </Button>
-              </Flex>
+              <StrategyList goalId={goal.id} />
             </Card.Body>
             <Card.Footer>
                 <IndicatorList goalId={goal.id} />
