@@ -5,6 +5,7 @@ export const GoalHistorySchema = z.object({
   goal_id: z.string().cuid(),
   start_date: z.string().transform((val) => new Date(val)),
   end_date: z.string().transform((val) => new Date(val)),
+  sequence: z.number().int(),
 })
 
 export const PartialGoalHistorySchema = GoalHistorySchema.partial()

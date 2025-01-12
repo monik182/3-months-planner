@@ -7,6 +7,7 @@ export const StrategyHistorySchema = z.object({
   completed: z.boolean(),
   first_update: z.string().transform((val) => new Date(val)).nullable(),
   last_update: z.string().transform((val) => new Date(val)).nullable(),
+  sequence: z.number().int(),
 })
 
 export const PartialStrategyHistorySchema = StrategyHistorySchema.partial()

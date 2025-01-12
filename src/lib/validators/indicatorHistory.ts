@@ -4,6 +4,7 @@ export const IndicatorHistorySchema = z.object({
   id: z.string().cuid(),
   indicator_id: z.string().cuid(),
   value: z.number().int(),
+  sequence: z.number().int(),
 })
 
 export const PartialIndicatorHistorySchema = IndicatorHistorySchema.partial()
