@@ -1,0 +1,662 @@
+_type: export
+__export_format: 4
+__export_date: 2025-01-12T15:37:23.710Z
+__export_source: insomnia.desktop.app:v10.3.0
+resources:
+  - _id: req_a6df828c9b4e44d38cad58822aa430fd
+    parentId: fld_5cfd743a07d24adab02f6941a63cacb1
+    modified: 1672531200000
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/indicator/1"
+    name: Delete Indicator
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073500
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_5cfd743a07d24adab02f6941a63cacb1
+    parentId: wrk_d9178bc7602144fbb9d20b666d4a7035
+    modified: 1672531200000
+    created: 1672531200000
+    name: Indicator
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1736692073499
+    _type: request_group
+  - _id: wrk_d9178bc7602144fbb9d20b666d4a7035
+    parentId: null
+    modified: 1736692111182
+    created: 1736690149494
+    name: 3 Month Plan Collection
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_4a123aac467043cb9b086d6d27424deb
+    parentId: fld_5cfd743a07d24adab02f6941a63cacb1
+    modified: 1672531200000
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/indicator/1"
+    name: Update Indicator
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: '{ "name": "Updated Indicator", "description": "Updated description" }'
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736692073500
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_2704bbc1983c46a395eed03fde4b1341
+    parentId: fld_5cfd743a07d24adab02f6941a63cacb1
+    modified: 1736694215409
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/indicator"
+    name: Create Indicator
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "status": "1",
+            "id": "cm5tqpca40008h8xk753ufxyr",
+            "goal_id": "{{goalId}}",
+            "content": "savings",
+            "metric": "euros",
+            "starting_value": 0,
+            "goal_value": 150000000
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736692073500
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_1c9751091c8747c1b94caca9dc346d27
+    parentId: fld_5cfd743a07d24adab02f6941a63cacb1
+    modified: 1736692534932
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/indicator/1"
+    name: Get Indicators By Id
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073500
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_4e60684257344cb99954743b9f9457d7
+    parentId: fld_5cfd743a07d24adab02f6941a63cacb1
+    modified: 1736694247251
+    created: 1736692515214
+    url: "{{ baseUrl }}/api/indicator"
+    name: Get All Indicators By Goal ID
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_d2dbb5df760a44d0852ad770e2d52133
+        name: goalId
+        value: "4.2"
+        description: ""
+        disabled: true
+      - id: pair_0f1485d5acac466f8f08342955cb8a88
+        name: goalId
+        value: "{{goalId}}"
+        description: ""
+        disabled: true
+      - id: pair_0aa523d6520a481b8736aa6c7e5ae58d
+        name: goalId
+        value: "{{goalId2}}"
+        description: ""
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073499
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d875bc99bc334ee2b01a059f4c18033c
+    parentId: fld_157736b002a74b2d868781ff14d6e1e3
+    modified: 1736692500152
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/strategy"
+    name: Get All Strategies By Goal Id
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_77660f2b1cc6414588422aafc3b15d1c
+        name: goalId
+        value: "4.2"
+        description: ""
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073498
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_157736b002a74b2d868781ff14d6e1e3
+    parentId: wrk_d9178bc7602144fbb9d20b666d4a7035
+    modified: 1672531200000
+    created: 1672531200000
+    name: Strategy
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1736692073498
+    _type: request_group
+  - _id: req_a1c9f18998d140e4ae9cc2b4e0149c00
+    parentId: fld_157736b002a74b2d868781ff14d6e1e3
+    modified: 1672531200000
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/strategy/1"
+    name: Delete Strategy
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073498
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_92eea615004a4c4fa1ba4a8814c285bb
+    parentId: fld_157736b002a74b2d868781ff14d6e1e3
+    modified: 1736694053367
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/strategy"
+    name: Create Strategy
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "status": "1",
+            "id": "cm5tqpca30005h8xkfu06gmvn",
+            "content": "strategy #3 for goal numero 2",
+            "weeks": "1,2,3,4,5,6",
+            "goal_id": "{{goalId}}"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736692073498
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_7241002184c9466a9ac1ec850848c139
+    parentId: fld_157736b002a74b2d868781ff14d6e1e3
+    modified: 1672531200000
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/strategy/1"
+    name: Update Strategy
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: '{ "name": "Updated Strategy", "description": "Updated description" }'
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736692073498
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_298c5e16e8b748e3847ea6f75f448b4c
+    parentId: fld_157736b002a74b2d868781ff14d6e1e3
+    modified: 1736692917035
+    created: 1736692473839
+    url: "{{ baseUrl }}/api/strategy/4.2.1"
+    name: Get Strategies By ID
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073497.5
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_c344259605894187b31aefa06338bcc1
+    parentId: fld_6659824b2815415d8adc65b7c7f267ec
+    modified: 1672531200000
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/goal/1"
+    name: Delete Goal
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073498
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_6659824b2815415d8adc65b7c7f267ec
+    parentId: wrk_d9178bc7602144fbb9d20b666d4a7035
+    modified: 1672531200000
+    created: 1672531200000
+    name: Goal
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1736692073496
+    _type: request_group
+  - _id: req_d5779f5433ec4f3e9201b179942743cd
+    parentId: fld_6659824b2815415d8adc65b7c7f267ec
+    modified: 1736695838810
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/goal"
+    name: Create Goal
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+            "status": "1",
+            "id": "ckl3x6lwb0001glnxr2fy9bvi",
+            "content": "my first goal for my plan # 4",
+            "plan_id": "{{planId}}"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736692073497
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5637368c9be5464f8912983788eafd0b
+    parentId: fld_6659824b2815415d8adc65b7c7f267ec
+    modified: 1736695864227
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/goal/{{goalId}}"
+    name: Update Goal
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        { 
+            "status": "3"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736692073497
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_421cc4c1fb4f47ea8d2f11bd77f3fc2b
+    parentId: fld_6659824b2815415d8adc65b7c7f267ec
+    modified: 1736692295128
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/goal"
+    name: Get All Goals By Plan Id
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_3ca795f5335f4323ad1e5944f07e1513
+        name: planId
+        value: "4"
+        description: ""
+        disabled: false
+      - id: pair_5baa7cded33245a4b8c91d3772fde556
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1736692073497
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_22652be4de754d269222541cde52c9d9
+    parentId: fld_6659824b2815415d8adc65b7c7f267ec
+    modified: 1736692335820
+    created: 1736692321185
+    url: "{{ baseUrl }}/api/goal/4.3"
+    name: Get All Goals By Id
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_d833b48d49214ab7811139a374a97031
+        name: ""
+        value: ""
+        description: ""
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1736691127731
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_d5a6bf0f20304f2f869a87c31ad48d3e
+    parentId: fld_603aa794b68e4008bf50090dfeed3c1c
+    modified: 1672531200000
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/plan/1"
+    name: Delete Plan
+    description: ""
+    method: DELETE
+    body: {}
+    parameters: []
+    headers: []
+    authentication: {}
+    metaSortKey: -1736690181965
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: fld_603aa794b68e4008bf50090dfeed3c1c
+    parentId: wrk_d9178bc7602144fbb9d20b666d4a7035
+    modified: 1736692096023
+    created: 1672531200000
+    name: Plan
+    description: ""
+    environment: {}
+    environmentPropertyOrder: null
+    metaSortKey: -1736690181961
+    _type: request_group
+  - _id: req_e0a27d73153c4e2caa9c31899f852ba6
+    parentId: fld_603aa794b68e4008bf50090dfeed3c1c
+    modified: 1736695615924
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/plan/{{planId}}"
+    name: Update Plan
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"completed": true
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736690181964
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_806f36f749db40799de14942c6ed08c8
+    parentId: fld_603aa794b68e4008bf50090dfeed3c1c
+    modified: 1736694727132
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/plan"
+    name: Create Plan
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"id": "{{goalId}}",
+            "user_id": "ckl3x6lwb0001glnxr2fy9bvi",
+            "vision": "this is my complte and full visision for all my life",
+            "milestone": "THIS IS MY 3 YEAR MILESTONE TEXT",
+            "completed": false,
+            "start_date": "2025-01-13T12:00:00.789Z",
+            "end_date": "2025-03-23T12:00:00.789Z",
+            "created": "2025-01-12T12:34:56.789Z",
+            "last_update": "2025-01-12T12:34:56.789Z"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+    authentication: {}
+    metaSortKey: -1736690181963
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_ae528f8e58e140f287de210f4bc7b24a
+    parentId: fld_603aa794b68e4008bf50090dfeed3c1c
+    modified: 1736693726593
+    created: 1672531200000
+    url: "{{ baseUrl }}/api/plan/all"
+    name: Get All Plans
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_a99bc2a1e4594cc0bb0743c1fbedaffa
+        name: userId
+        value: monica
+        description: ""
+        disabled: true
+      - id: pair_9304c2b6726b475c80f8d2ac07065e7f
+        name: userId
+        value: "{{userId}}"
+        description: ""
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1736690181962
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_78ac2174803c465fb8121776ec51ebea
+    parentId: fld_603aa794b68e4008bf50090dfeed3c1c
+    modified: 1736693741739
+    created: 1736691533568
+    url: "{{ baseUrl }}/api/plan"
+    name: Get Current Open Plan
+    description: ""
+    method: GET
+    body: {}
+    parameters:
+      - id: pair_a99bc2a1e4594cc0bb0743c1fbedaffa
+        name: userId
+        value: monica
+        description: ""
+        disabled: true
+      - id: pair_9304c2b6726b475c80f8d2ac07065e7f
+        name: userId
+        value: "{{userId}}"
+        description: ""
+        disabled: false
+    headers: []
+    authentication: {}
+    metaSortKey: -1728908571337.625
+    isPrivate: false
+    pathParameters: []
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_cbd01377369708fd469ab0cd387ae97fe76485e0
+    parentId: wrk_d9178bc7602144fbb9d20b666d4a7035
+    modified: 1736695437573
+    created: 1736690149495
+    name: Base Environment
+    data:
+      baseUrl: http://localhost:3000
+      userId: ckl3x6lwb0001glnxr2fy9bvi
+      planId: ckl3x6lwb0001glnxr2fy9bvi
+      goalId: cm5tqpca30002h8xkcw8rganh
+      goalId2: cm5tqpca30001h8xkhkw86y9u
+      planIdCurrent: cm5tqpca30002h8xkcw8rganh
+    dataPropertyOrder: null
+    color: null
+    isPrivate: false
+    metaSortKey: 1736690149495
+    environmentType: kv
+    kvPairData:
+      - id: envPair_a3744b54eb0948c3a723915d147c812c
+        name: baseUrl
+        value: http://localhost:3000
+        type: str
+        enabled: true
+      - id: envPair_aebf555673c04e8286b7c1dadc25c1ef
+        name: userId
+        value: ckl3x6lwb0001glnxr2fy9bvi
+        type: str
+        enabled: true
+      - id: envPair_0697fb436bcb43c59306f424d1ca5338
+        name: planId
+        value: ckl3x6lwb0001glnxr2fy9bvi
+        type: str
+        enabled: true
+      - id: envPair_60583aa138064f6c86693320b2b0dc79
+        name: goalId
+        value: cm5tqpca30002h8xkcw8rganh
+        type: str
+        enabled: true
+      - id: envPair_d1b94d22cbe14861ae22c8af31736827
+        name: goalId2
+        value: cm5tqpca30001h8xkhkw86y9u
+        type: str
+        enabled: true
+      - id: envPair_fb44741336fc43c1978b304b1ac080c9
+        name: planIdCurrent
+        value: cm5tqpca30002h8xkcw8rganh
+        type: str
+        enabled: true
+    _type: environment
+  - _id: jar_cbd01377369708fd469ab0cd387ae97fe76485e0
+    parentId: wrk_d9178bc7602144fbb9d20b666d4a7035
+    modified: 1736690149496
+    created: 1736690149496
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
