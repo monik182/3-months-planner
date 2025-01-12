@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import cuid from 'cuid'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@/app/types'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { calculateWeekEndDate, calculateWeekStartDate } from '@/app/util'
@@ -33,7 +33,7 @@ export class PlanHistoryClass {
 
   private createGoalHistory(goalId: string, startDate: string, endDate: string, sequence: number): GoalHistory {
     return {
-      id: uuidv4(),
+      id: cuid(),
       goalId,
       startDate,
       endDate,
@@ -52,7 +52,7 @@ export class PlanHistoryClass {
 
   private createStrategyHistory(strategyId: string, sequence: number): StrategyHistory {
     return {
-      id: uuidv4(),
+      id: cuid(),
       strategyId,
       overdue: false,
       completed: false,
@@ -73,7 +73,7 @@ export class PlanHistoryClass {
 
   private createIndicatorHistory(indicatorId: string, sequence: number): IndicatorHistory {
     return {
-      id: uuidv4(),
+      id: cuid(),
       indicatorId,
       value: 0,
       sequence,

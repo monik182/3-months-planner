@@ -1,7 +1,8 @@
-import { v4 as uuidv4 } from 'uuid'
+import cuid from 'cuid'
 import { Goal, Indicator, Plan, Status, Strategy } from '@/app/types'
 import { calculatePlanEndDate, getDate, getPlanStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
+import { goals, indicators, plans, strategies } from '@prisma/client'
 
 export class PlanClass {
   private readonly userId: string
@@ -20,7 +21,7 @@ export class PlanClass {
     const now = getDate()
 
     return {
-      id: uuidv4(),
+      id: cuid(),
       userId: this.userId,
       vision: '',
       milestone: '',
@@ -49,7 +50,7 @@ export class PlanClass {
 
   public createGoal(content = '', status = Status.ACTIVE): Goal {
     const goal = {
-      id: uuidv4(),
+      id: cuid(),
       planId: this.plan.id,
       content,
       status,
@@ -64,7 +65,7 @@ export class PlanClass {
       throw new Error(`Goal with id ${goalId} does not exist`)
     }
     const strategy = {
-      id: uuidv4(),
+      id: cuid(),
       goalId,
       content,
       weeks,
@@ -88,7 +89,7 @@ export class PlanClass {
     }
 
     const indicator = {
-      id: uuidv4(),
+      id: cuid(),
       goalId,
       content,
       metric,
@@ -150,4 +151,50 @@ export class PlanClass {
   public getIndicators(): Indicator[] {
     return [...this.indicators]
   }
+
+  public planToPrismaType(): plans {
+    return {
+      id: this.plan.id,
+      user_id: this.userId,
+      vision: this.plan.vision,
+      milestone: this.plan.milestone,
+      completed: this.plan.completed,
+      start_date: new Date(this.plan.startDate),
+      end_date: new Date(this.plan.endDate),
+      created: new Date(this.plan.created),
+      last_update: new Date(this.plan.lastUpdate),
+    }
+  }
+
+  public goalsToPrismaType(): goals[] {
+    return this.goals.map((goal) => ({
+      id: goal.id,
+      plan_id: goal.planId,
+      content: goal.content,
+      status: goal.status,
+    }))
+  }
+
+  public strategiesToPrismaType(): strategies[] {
+    return this.strategies.map((strategy) => ({
+      id: strategy.id,
+      goal_id: strategy.goalId,
+      content: strategy.content,
+      status: strategy.status,
+      weeks: strategy.weeks.join(','),
+    }))
+  }
+
+  public indicatorsToPrismaType(): indicators[] {
+    return this.indicators.map((indicators) => ({
+      id: indicators.id,
+      goal_id: indicators.goalId,
+      content: indicators.content,
+      status: indicators.status,
+      metric: indicators.metric,
+      starting_value: indicators.startingValue,
+      goal_value: indicators.goalValue,
+    }))
+  }
+
 }
