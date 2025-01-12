@@ -36,31 +36,6 @@ const update = async (id: string, plan: Partial<plans>) => {
   }).then(response => response.json())
 }
 
-// const delete = async (id: string) => {
-//   return fetch(`/api/plan/${id}`, {
-//     method: 'DELETE',
-//   }).then(response => response.json())
-// }
-
-// const createPlan = async (data: PlanData) => {
-//   try {
-//     const plan = await create(data.plan)
-//     const goals = await Promise.allSettled(data.goals.map(GoalService.create))
-//     const strategies = await Promise.allSettled(data.strategies.map(StrategyService.create))
-//     const indicators = await Promise.allSettled(data.indicators.map(IndicatorService.create))
-
-//     return {
-//       plan,
-//       goals,
-//       strategies,
-//       indicators,
-//     }
-//   } catch (error: unknown) {
-//     console.error('Error at create plan: ', error)
-//     throw new Error(error?.message)
-//   }
-// }
-
 // TODO:
 // Add data validation
 // Add data transforms
