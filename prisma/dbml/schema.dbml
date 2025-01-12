@@ -12,7 +12,6 @@ Table plans {
   end_date DateTime [not null]
   created DateTime [default: `now()`, not null]
   last_update DateTime [not null]
-  user users [not null]
   goals goals [not null]
 }
 
@@ -85,16 +84,7 @@ Table notifications {
   send_date DateTime [not null]
   created DateTime [default: `now()`, not null]
   last_update DateTime [not null]
-  user users [not null]
 }
-
-Table users {
-  id String [pk]
-  plans plans [not null]
-  notifications notifications [not null]
-}
-
-Ref: plans.user_id > users.id
 
 Ref: goals.plan_id > plans.id
 
@@ -107,5 +97,3 @@ Ref: strategy_history.strategy_id > strategies.id
 Ref: indicators.goal_id > goals.id
 
 Ref: indicator_history.indicator_id > indicators.id
-
-Ref: notifications.user_id > users.id

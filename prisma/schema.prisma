@@ -29,10 +29,7 @@ model plans {
   created     DateTime @default(now())
   last_update DateTime @updatedAt
 
-  user        users     @relation(fields: [user_id], references: [id])
   goals       goals[]
-
-  @@index([user_id])
 }
 
 model goals {
@@ -123,14 +120,6 @@ model notifications {
   created     DateTime @default(now())
   last_update DateTime @updatedAt
 
-  user        users    @relation(fields: [user_id], references: [id])
 
-  @@index([user_id])
   @@index([entity_type, entity_id])
-}
-
-model users {
-  id           String          @id @default(cuid())
-  plans        plans[]
-  notifications notifications[]
 }
