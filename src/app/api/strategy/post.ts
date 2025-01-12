@@ -1,5 +1,6 @@
 import { strategiesHandler } from '@/db/prismaHandler'
 import { formatError } from '@/lib/prismaHandler'
+import { StrategySchema } from '@/lib/validators/strategy'
 import { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -10,8 +11,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const strategy = await strategiesHandler.create(data)
-    return new Response(JSON.stringify(strategy), { status: 200 })
+    const parsedData = StrategySchema.parse(data)
+    const response = await strategiesHandler.create(parsedData)
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }

@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const strategy = await strategiesHandler.findMany({ goal_id: goalId })
-    return new Response(JSON.stringify(strategy), { status: 200 })
+    const response = await strategiesHandler.findMany({ goal_id: goalId })
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }
