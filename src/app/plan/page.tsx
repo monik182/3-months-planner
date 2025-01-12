@@ -7,12 +7,12 @@ import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
 import { PlanProvider } from '@/app/providers/usePlanContext'
 import { useState } from 'react'
+import { useSave } from '@/app/plan/useSave'
 
 function PlanPage() {
   const [nextText, setNextText] = useState('Next')
   const [step, setStep] = useState(0)
-
-  const handleSavePlan = () => {}
+  const { handleSavePlan } = useSave()
 
   const steps = [
     { title: 'Define Vision', content: <Step1 goNext={() => console} /> },
@@ -27,7 +27,9 @@ function PlanPage() {
       setNextText('Save')
     } else if (step > 3) {
       setNextText('Saved')
+      handleSavePlan()
       console.log('show saved message and redirect to dashboard!!!')
+
     } else {
       setNextText('Next')
     }
