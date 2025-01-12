@@ -31,6 +31,7 @@ Table goal_history {
   goal_id String [not null]
   start_date DateTime [not null]
   end_date DateTime [not null]
+  sequence Int [not null]
   goal goals [not null]
 }
 
@@ -51,6 +52,7 @@ Table strategy_history {
   completed Boolean [not null, default: false]
   first_update DateTime
   last_update DateTime
+  sequence Int [not null]
   strategy strategies [not null]
 }
 
@@ -70,6 +72,7 @@ Table indicator_history {
   id String [pk]
   indicator_id String [not null]
   value Int [not null]
+  sequence Int [not null]
   indicator indicators [not null]
 }
 

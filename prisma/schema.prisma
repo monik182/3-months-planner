@@ -51,6 +51,7 @@ model goal_history {
   goal_id    String
   start_date DateTime
   end_date   DateTime
+  sequence   Int
 
   goal       goals    @relation(fields: [goal_id], references: [id], onDelete: Cascade)
 
@@ -77,6 +78,7 @@ model strategy_history {
   completed     Boolean  @default(false)
   first_update  DateTime?
   last_update   DateTime?
+  sequence      Int
 
   strategy      strategies @relation(fields: [strategy_id], references: [id], onDelete: Cascade)
 
@@ -102,6 +104,7 @@ model indicator_history {
   id            String     @id @default(cuid())
   indicator_id  String
   value         Int
+  sequence      Int
 
   indicator     indicators @relation(fields: [indicator_id], references: [id], onDelete: Cascade)
 
