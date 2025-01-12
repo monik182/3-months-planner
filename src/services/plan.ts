@@ -36,11 +36,6 @@ const update = async (id: string, plan: Partial<plans>) => {
   }).then(response => response.json())
 }
 
-// TODO:
-// Add data validation
-// Add data transforms
-// Validate where to create the history items
-
 export const PlanService = {
   create,
   get,
