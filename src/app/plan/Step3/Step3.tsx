@@ -8,9 +8,8 @@ import { IndicatorList } from '@/app/plan/Step3/Indicator/IndicatorList'
 import { StrategyList } from '@/app/plan/Step3/Strategy/StrategyList'
 
 export function Step3({ }: Step<Goal[]>) {
-  const { 
-    goals, createGoal, updateGoal, removeGoal,
-  } = usePlanContext()
+  const { plan } = usePlanContext()
+  const { goals, createGoal, updateGoal, removeGoal } = plan
 
   const updateGoalContent = (id: string, content: string) => {
     updateGoal(id, { content })

@@ -11,9 +11,8 @@ interface StrategyListProps {
 }
 export function StrategyList({ goalId }: StrategyListProps) {
 
-  const {
-    strategies, createStrategy, updateStrategy, removeStrategy,
-  } = usePlanContext()
+  const { plan } = usePlanContext()
+  const { strategies, createStrategy, updateStrategy, removeStrategy } = plan
   const filteredStrategies = useMemo(
     () => strategies.filter((strategy) => strategy.goalId === goalId),
     [strategies, goalId]

@@ -6,12 +6,12 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useDebouncedCallback } from 'use-debounce'
 
 export function Step1({ }: Step<Vision>) {
-  const { plan, updatePlan } = usePlanContext()
-  const [value, setValue] = useState(plan.vision)
+  const { plan } = usePlanContext()
+  const [value, setValue] = useState(plan.plan.vision)
 
   const debounced = useDebouncedCallback(
     (vision: string) => {
-      updatePlan({ vision })
+      plan.updatePlan({ vision })
     }, 1000)
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {

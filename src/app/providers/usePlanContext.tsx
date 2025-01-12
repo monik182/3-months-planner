@@ -5,8 +5,9 @@ import { UsePlan, usePlan } from '@/app/hooks/usePlan'
 import { UsePlanHistory, usePlanHistory } from '@/app/hooks/usePlanHistory'
 
 type PlanContextType = {
-  planHistory: UsePlanHistory
-} & UsePlan
+  plan: UsePlan,
+  planHistory: UsePlanHistory,
+}
 
 const PlanContext = createContext<PlanContextType | undefined>(
   undefined
@@ -18,31 +19,14 @@ interface PlanTrackingProviderProps {
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const { user, isLoading } = useUser()
-
-  const {
-    plan,
-    goals,
-    strategies,
-    indicators,
-    createGoal,
-    createStrategy,
-    createIndicator,
-    updatePlan,
-    updateGoal,
-    updateStrategy,
-    updateIndicator,
-    removeGoal,
-    removeStrategy,
-    removeIndicator,
-  } = usePlan(user?.sub as string)
-
-  const planHistory = usePlanHistory(plan, goals, strategies, indicators)
+  const plan = usePlan(user?.sub as string)
+  const planHistory = usePlanHistory(plan?.plan, plan?.goals, plan?.strategies, plan?.indicators)
 
   if (isLoading) {
     return <div>Loading....</div>
   }
 
-  if (!plan) {
+  if (!plan && !planHistory) {
     return null
   }
 
@@ -50,19 +34,6 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     <PlanContext.Provider
       value={{
         plan,
-        goals,
-        strategies,
-        indicators,
-        createGoal,
-        createStrategy,
-        createIndicator,
-        updatePlan,
-        updateGoal,
-        updateStrategy,
-        updateIndicator,
-        removeGoal,
-        removeStrategy,
-        removeIndicator,
         planHistory,
       }}
     >

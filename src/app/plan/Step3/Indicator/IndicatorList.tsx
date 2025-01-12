@@ -10,9 +10,8 @@ interface IndicatorListProps {
 }
 
 export function IndicatorList({ goalId }: IndicatorListProps) {
-  const {
-    indicators, createIndicator, updateIndicator, removeIndicator,
-  } = usePlanContext()
+  const { plan } = usePlanContext()
+  const { indicators, createIndicator, updateIndicator, removeIndicator } = plan
   const filteredIndicators = indicators.filter(i => i.goalId === goalId)
   const disableIndicator = !!filteredIndicators.some((indicator) => indicator.startingValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()

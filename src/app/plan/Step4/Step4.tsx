@@ -8,7 +8,8 @@ import { Field } from '@/components/ui/field'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 
 export function Step4({ }: Step<Plan>) {
-  const { plan, goals, strategies, indicators, updatePlan } = usePlanContext()
+  const { plan } = usePlanContext()
+  const { goals, strategies, indicators, updatePlan } = plan
   const handleDateChange = (startDate: string) => {
     const endDate = calculatePlanEndDate(startDate)
     updatePlan({ startDate, endDate })
