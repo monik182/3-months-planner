@@ -57,7 +57,7 @@ export function Step4({ }: Step<Plan>) {
             Goals
           </Heading>
           <Stack>
-            {goals.map((goal) => (
+            {goals.map((goal, index) => (
               <Box
                 key={goal.id}
                 borderWidth="1px"
@@ -67,7 +67,7 @@ export function Step4({ }: Step<Plan>) {
                 boxShadow="sm"
               >
                 <Heading size="md" mb={4}>
-                  {goal.content}
+                  Goal # {index + 1} {goal.content}
                 </Heading>
               
                 {!!strategies.filter(strategy => strategy.goalId === goal.id).length && (
@@ -75,10 +75,10 @@ export function Step4({ }: Step<Plan>) {
                     <Heading size="sm" mb={2}>
                       Strategies
                     </Heading>
-                    {strategies.filter(strategy => strategy.goalId === goal.id).map((strategy) => (
+                    {strategies.filter(strategy => strategy.goalId === goal.id).map((strategy, index) => (
                       <Box key={strategy.id} mb={2}>
                         <Badge colorPalette="teal" mr={2}>
-                          Strategy
+                          Strategy {index + 1}
                         </Badge>
                         {strategy.content}
                         <Text fontSize="sm" color="gray.600">
