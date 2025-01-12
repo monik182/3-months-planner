@@ -1,17 +1,16 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
 import { indicatorHistoryHandler } from '@/db/prismaHandler'
-import { SegmentData } from '@/app/types'
 
-export async function GET(_: NextRequest, segmentData: SegmentData) {
-  const params = await segmentData.params
+export async function GET(request: NextRequest) {
+  const indicatorId = request.nextUrl.searchParams.get('indicatorId')
 
-  if (!params.id) {
-    return new Response('Invalid indicator id', { status: 400 })
+  if (!indicatorId) {
+    return new Response('Invalid goal id', { status: 400 })
   }
 
   try {
-    const response = await indicatorHistoryHandler.findOne(params.id)
+    const response = await indicatorHistoryHandler.findMany({ indicator_id: indicatorId })
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
