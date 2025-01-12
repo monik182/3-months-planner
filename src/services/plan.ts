@@ -1,4 +1,4 @@
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@/app/types'
+import { plans } from '@prisma/client'
 
 const getByUserId = async (userId: string) => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
@@ -8,50 +8,58 @@ const getByUserId = async (userId: string) => {
   return plan
 }
 
-interface PlanData {
-  plan: Plan
-  goals: Goal[]
-  strategies: Strategy[]
-  indicators: Indicator[]
-  goalHistory: GoalHistory[]
-  strategyHistory: StrategyHistory[]
-  indicatorHistory: IndicatorHistory[]
-}
-
-const createPlan = async (plan: Plan) => {
+const create = async (plan: plans) => {
   return fetch(`/api/plan`, {
     method: 'POST',
-    body: JSON.stringify(plan)
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(plan),
   }).then(response => response.json())
 }
 
-const createGoal = (goal: Goal) => {
-  return fetch(`/api/goal`, {
-    method: 'POST',
-    body: JSON.stringify(goal)
+const get = async (id: string) => {
+  return fetch(`/api/plan/${id}`).then(response => response.json())
+}
+
+const getAll = async (userId: string) => {
+  const response = await fetch(`/api/plan/all?userId=${userId}`, {
+    method: 'GET',
+  })
+  const plans = await response.json()
+  return plans
+}
+
+const update = async (id: string, plan: Partial<plans>) => {
+  return fetch(`/api/plan/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(plan),
   }).then(response => response.json())
 }
 
-const createStrategy = (strategy: Strategy) => {
-  return fetch(`/api/strategy`, {
-    method: 'POST',
-    body: JSON.stringify(strategy)
-  }).then(response => response.json())
-}
+// const delete = async (id: string) => {
+//   return fetch(`/api/plan/${id}`, {
+//     method: 'DELETE',
+//   }).then(response => response.json())
+// }
 
-const createIndicator = (indicator: Indicator) => {
-  return fetch(`/api/indicator`, {
-    method: 'POST',
-    body: JSON.stringify(indicator)
-  }).then(response => response.json())
-}
+// const createPlan = async (data: PlanData) => {
+//   try {
+//     const plan = await create(data.plan)
+//     const goals = await Promise.allSettled(data.goals.map(GoalService.create))
+//     const strategies = await Promise.allSettled(data.strategies.map(StrategyService.create))
+//     const indicators = await Promise.allSettled(data.indicators.map(IndicatorService.create))
 
-const create = async (data: PlanData) => {
-  const plan = await createPlan(data.plan)
-  const goals = await Promise.allSettled(data.goals.map(createGoal))
-  const strategies = await Promise.allSettled(data.strategies.map(createStrategy))
-  const indicators = await Promise.allSettled(data.indicators.map(createIndicator))
-}
+//     return {
+//       plan,
+//       goals,
+//       strategies,
+//       indicators,
+//     }
+//   } catch (error: unknown) {
+//     console.error('Error at create plan: ', error)
+//     throw new Error(error?.message)
+//   }
+// }
 
 // TODO:
 // Add data validation
@@ -59,6 +67,9 @@ const create = async (data: PlanData) => {
 // Validate where to create the history items
 
 export const PlanService = {
-  getByUserId,
   create,
+  get,
+  getByUserId,
+  getAll,
+  update,
 }
