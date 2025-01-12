@@ -86,14 +86,14 @@ Table notifications {
   last_update DateTime [not null]
 }
 
-Ref: goals.plan_id > plans.id
+Ref: goals.plan_id > plans.id [delete: Cascade]
 
-Ref: goal_history.goal_id > goals.id
+Ref: goal_history.goal_id > goals.id [delete: Cascade]
 
-Ref: strategies.goal_id > goals.id
+Ref: strategies.goal_id > goals.id [delete: Cascade]
 
-Ref: strategy_history.strategy_id > strategies.id
+Ref: strategy_history.strategy_id > strategies.id [delete: Cascade]
 
-Ref: indicators.goal_id > goals.id
+Ref: indicators.goal_id > goals.id [delete: Cascade]
 
-Ref: indicator_history.indicator_id > indicators.id
+Ref: indicator_history.indicator_id > indicators.id [delete: Cascade]

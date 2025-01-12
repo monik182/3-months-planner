@@ -38,7 +38,7 @@ model goals {
   content     String
   status      String
 
-  plan        plans        @relation(fields: [plan_id], references: [id])
+  plan        plans        @relation(fields: [plan_id], references: [id], onDelete: Cascade)
   goalHistory goal_history[]
   strategies  strategies[]
   indicators  indicators[]
@@ -52,7 +52,7 @@ model goal_history {
   start_date DateTime
   end_date   DateTime
 
-  goal       goals    @relation(fields: [goal_id], references: [id])
+  goal       goals    @relation(fields: [goal_id], references: [id], onDelete: Cascade)
 
   @@index([goal_id])
 }
@@ -64,7 +64,7 @@ model strategies {
   weeks      String
   status     String
 
-  goal       goals         @relation(fields: [goal_id], references: [id])
+  goal       goals         @relation(fields: [goal_id], references: [id], onDelete: Cascade)
   strategyHistory strategy_history[]
 
   @@index([goal_id])
@@ -78,7 +78,7 @@ model strategy_history {
   first_update  DateTime?
   last_update   DateTime?
 
-  strategy      strategies @relation(fields: [strategy_id], references: [id])
+  strategy      strategies @relation(fields: [strategy_id], references: [id], onDelete: Cascade)
 
   @@index([strategy_id])
 }
@@ -92,7 +92,7 @@ model indicators {
   goal_value      Int
   status          String
 
-  goal            goals              @relation(fields: [goal_id], references: [id])
+  goal            goals              @relation(fields: [goal_id], references: [id], onDelete: Cascade)
   indicatorHistory indicator_history[]
 
   @@index([goal_id])
@@ -103,7 +103,7 @@ model indicator_history {
   indicator_id  String
   value         Int
 
-  indicator     indicators @relation(fields: [indicator_id], references: [id])
+  indicator     indicators @relation(fields: [indicator_id], references: [id], onDelete: Cascade)
 
   @@index([indicator_id])
 }
