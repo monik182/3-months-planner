@@ -2,6 +2,7 @@ import cuid from 'cuid'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@/app/types'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { calculateWeekEndDate, calculateWeekStartDate } from '@/app/util'
+import { goal_history, indicator_history, strategy_history } from '@prisma/client'
 
 export class PlanHistoryClass {
   private plan: Plan
@@ -99,4 +100,36 @@ export class PlanHistoryClass {
   public getIndicators(): IndicatorHistory[] {
     return [...this.indicators]
   }
+
+  public goalsToPrismaType(): goal_history[] {
+    return this.goals.map((goal) => ({
+      id: goal.id,
+      goal_id: goal.goalId,
+      start_date: new Date(goal.startDate),
+      end_date: new Date(goal.endDate),
+      sequence: goal.sequence,
+    }))
+  }
+
+  public strategiesToPrismaType(): strategy_history[] {
+    return this.strategies.map((strategy) => ({
+      id: strategy.id,
+      strategy_id: strategy.strategyId,
+      overdue: strategy.overdue,
+      completed: strategy.completed,
+      first_update: strategy.firstUpdate ? new Date(strategy.firstUpdate) : null,
+      last_update: strategy.lastUpdate ? new Date(strategy.lastUpdate) : null,
+      sequence: strategy.sequence,
+    }))
+  }
+
+  public indicatorsToPrismaType(): indicator_history[] {
+    return this.indicators.map((indicators) => ({
+      id: indicators.id,
+      indicator_id: indicators.indicatorId,
+      value: indicators.value,
+      sequence: indicators.sequence,
+    }))
+  }
+
 }
