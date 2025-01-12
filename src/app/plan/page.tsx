@@ -6,8 +6,14 @@ import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
 import { PlanProvider } from '@/app/providers/usePlanContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSave } from '@/app/plan/useSave'
+import { PlanService } from '@/services/plan'
+
+async function getPlan() {
+  const plan = await PlanService.getByUserId('111')
+  console.log(plan)
+}
 
 function PlanPage() {
   const [nextText, setNextText] = useState('Next')
@@ -35,6 +41,10 @@ function PlanPage() {
     }
     setStep(step)
   }
+
+  useEffect(() => {
+    getPlan()
+  }, [])
 
   return (
     <StepsRoot linear variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={handleStepChange} onStepComplete={() => console.log('complrted step tp',)}>
