@@ -12,8 +12,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const parsedData = PlanSchema.parse(data)
-    const plan = await plansHandler.create(parsedData)
-    return new Response(JSON.stringify(plan), { status: 200 })
+    const response = await plansHandler.create(parsedData)
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }

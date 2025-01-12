@@ -10,8 +10,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const plan = await plansHandler.findCurrent(userId)
-    return new Response(JSON.stringify(plan), { status: 200 })
+    const response = await plansHandler.findCurrent(userId)
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }

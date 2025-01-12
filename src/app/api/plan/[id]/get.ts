@@ -12,8 +12,8 @@ export async function GET(_: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const plan = await plansHandler.findOne(params.id)
-    return new Response(JSON.stringify(plan), { status: 200 })
+    const response = await plansHandler.findOne(params.id)
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }

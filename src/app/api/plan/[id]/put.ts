@@ -14,8 +14,8 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
 
   try {
     const parsedData = PartialPlanSchema.parse(data)
-    const plan = await plansHandler.update(params.id, parsedData)
-    return new Response(JSON.stringify(plan), { status: 200 })
+    const response = await plansHandler.update(params.id, parsedData)
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }
