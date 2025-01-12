@@ -25,38 +25,16 @@ export async function POST(request: NextRequest) {
 
   try {
 
-    const planResponse = await makeRequest<plans, plans>(
-      `${BASE_URL}/api/plan`,
-      plan
-    )
+    const planResponse = await makeRequest<plans, plans>('plan', plan)
 
-    const goalsResponse = await Promise.all(
-      goals.map((goal: goals) => makeRequest<goals, goals[]>(`${BASE_URL}/api/goal`, goal))
-    )
+    const goalsResponse = await processArray<goals, goals>('goal', goals)
+    const goalsHistoryResponse = await processArray<goal_history, goal_history>('goal/history', goalHistoryList)
 
-    const goalsHistoryResponse = await Promise.all(
-      goalHistoryList.map((goal: goal_history) => makeRequest<goal_history, goal_history[]>(`${BASE_URL}/api/goal/history`, goal))
-    )
+    const strategiesResponse = await processArray<strategies, strategies>('strategy', strategies)
+    const strategiesHistoryResponse = await processArray<strategy_history, strategy_history>('strategy/history', strategyHistoryList)
 
-    const strategiesResponse = await processArrayWithSettled<strategies, strategies[]>(
-      strategies,
-      `${BASE_URL}/api/strategy`
-    )
-
-    const strategiesHistoryResponse = await processArrayWithSettled<strategy_history, strategy_history[]>(
-      strategyHistoryList,
-      `${BASE_URL}/api/strategy/history`
-    )
-
-    const indicatorsResponse = await processArrayWithSettled<indicators, indicators[]>(
-      indicators,
-      `${BASE_URL}/api/indicator`
-    )
-
-    const indicatorsHistoryResponse = await processArrayWithSettled<indicator_history, indicator_history[]>(
-      indicatorHistoryList,
-      `${BASE_URL}/api/indicator/history`
-    )
+    const indicatorsResponse = await processArray<indicators, indicators>('indicator', indicators)
+    const indicatorsHistoryResponse = await processArray<indicator_history, indicator_history>('indicator/history', indicatorHistoryList)
 
     const response = {
       plan: planResponse,
@@ -75,7 +53,7 @@ export async function POST(request: NextRequest) {
 }
 
 async function makeRequest<T, R>(url: string, data: T): Promise<R> {
-  const response = await fetch(url, {
+  const response = await fetch(`${BASE_URL}/api/${url}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -88,21 +66,8 @@ async function makeRequest<T, R>(url: string, data: T): Promise<R> {
   return await response.json()
 }
 
-async function processArrayWithSettled<T, R>(
-  array: T[],
-  endpoint: string
-): Promise<{ success: R[]; failed: string[] }> {
-  const results = await Promise.allSettled(
-    array.map((item) => makeRequest<T, R>(endpoint, item))
+async function processArray<T, R>(url: string, array: T[]): Promise<R[]> {
+  return Promise.all(
+    array.map((item: T) => makeRequest<T, R>(url, item))
   )
-
-  const success = results
-    .filter((result): result is PromiseFulfilledResult<Awaited<R>> => result.status === 'fulfilled')
-    .map((result) => result.value)
-
-  const failed = results
-    .filter((result): result is PromiseRejectedResult => result.status === 'rejected')
-    .map((result) => result.reason?.message || 'Unknown error')
-
-  return { success, failed }
 }
