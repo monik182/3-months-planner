@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const status = request.nextUrl.searchParams.get('status') ?? undefined
 
   if (!goalId) {
-    return new Response('Invalid user id', { status: 400 })
+    return new Response('Invalid goal id', { status: 400 })
   }
 
   try {
