@@ -4,7 +4,8 @@
   - clean up interfaces ✅
   - include user id to the models ✅
   - create prisma schema ✅
-  - create db manager 
+  - create db manager ✅
+  - integrate db + backend + frontend
   - create a model folder?
   - add cache?
 
