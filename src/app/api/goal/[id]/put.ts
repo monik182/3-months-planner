@@ -2,6 +2,7 @@ import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
 import { goalsHandler } from '@/db/prismaHandler'
 import { SegmentData } from '@/app/types'
+import { PartialGoalSchema } from '@/lib/validators/goal'
 
 export async function PUT(request: NextRequest, segmentData: SegmentData) {
   const params = await segmentData.params
@@ -12,8 +13,9 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const plan = await goalsHandler.update(params.id, data)
-    return new Response(JSON.stringify(plan), { status: 200 })
+    const parsedData = PartialGoalSchema.parse(data)
+    const response = await goalsHandler.update(params.id, parsedData)
+    return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }
