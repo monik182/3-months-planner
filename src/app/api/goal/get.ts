@@ -16,3 +16,5 @@ export async function GET(request: NextRequest) {
     return new Response(formatError(error), { status: 500 })
   }
 }
+
+// TODO: create get by status

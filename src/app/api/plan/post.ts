@@ -1,5 +1,6 @@
 import { plansHandler } from '@/db/prismaHandler'
 import { formatError } from '@/lib/prismaHandler'
+import { PlanSchema } from '@/lib/validators/plan'
 import { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -10,7 +11,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const plan = await plansHandler.create(data)
+    const parsedData = PlanSchema.parse(data)
+    const plan = await plansHandler.create(parsedData)
     return new Response(JSON.stringify(plan), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
