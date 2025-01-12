@@ -48,15 +48,17 @@ export async function POST(request: NextRequest) {
 
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
+    console.log('Deleting plan and relations...')
+    await makeRequest<plans, plans>(`plan/${plan.id}`, undefined, 'DELETE')
     return new Response(formatError(error), { status: 500 })
   }
 }
 
-async function makeRequest<T, R>(url: string, data: T): Promise<R> {
+async function makeRequest<T, R>(url: string, data: T | undefined, method = 'POST'): Promise<R> {
   const response = await fetch(`${BASE_URL}/api/${url}`, {
-    method: 'POST',
+    method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    body: data ? JSON.stringify(data) : undefined,
   })
 
   if (!response.ok) {

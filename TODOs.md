@@ -6,7 +6,8 @@
   - create prisma schema ✅
   - create db manager ✅
   - integrate db + backend + frontend
-  - parallel requests with prisma?
+  - improve api/plan/create performance
+  - improve BE error responses
   - create a model folder?
   - add cache?
 

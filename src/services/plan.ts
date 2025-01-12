@@ -1,10 +1,10 @@
 import { goals, indicators, plans, strategies } from '@prisma/client'
 
 interface PlanData {
-  plan: plans,
-  goals: goals
-  strategies: strategies
-  indicators: indicators
+  plan: plans
+  goals: goals[]
+  strategies: strategies[]
+  indicators: indicators[]
 }
 
 const getByUserId = async (userId: string) => {
@@ -16,11 +16,13 @@ const getByUserId = async (userId: string) => {
 }
 
 const create = async (data: PlanData) => {
+  const body = JSON.stringify(data)
   return fetch(`/api/plan/create`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  }).then(response => response.json())
+    body,
+  })
+    .then(response => response.json())
 }
 
 const get = async (id: string) => {

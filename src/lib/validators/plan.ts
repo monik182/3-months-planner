@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const PlanSchema = z.object({
   id: z.string().cuid(),
-  user_id: z.string().cuid(),
+  user_id: z.string(),
   vision: z.string().min(1, 'Vision is required'),
   milestone: z.string().min(1, 'Milestone is required'),
   completed: z.boolean(),

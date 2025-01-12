@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PlanClass } from '@/app/types/PlanClass'
 import { Goal, Indicator, Plan, Status, Strategy } from '@/app/types'
+import { goals, indicators, plans, strategies } from '@prisma/client'
 
 export function usePlan(userId?: string): UsePlan {
   const [planInstance, setPlanInstance] = useState<PlanClass>()
@@ -144,6 +145,69 @@ export function usePlan(userId?: string): UsePlan {
     [planInstance, refreshState]
   )
 
+  const getPrismaPlan = useCallback(
+    () => {
+      console.log('getting instance prisma plan')
+      if (!planInstance) return {} as plans
+
+      try {
+        console.log('SUCCESS instance prisma plan')
+        refreshState()
+        return planInstance.planToPrismaType()
+      } catch (error: unknown) {
+        console.log('ERROR instance prisma plan')
+        console.error((error as Error).message)
+      }
+      return {} as plans
+    },
+    [planInstance, refreshState]
+  )
+
+  const getPrismaGoals = useCallback(
+    () => {
+      if (!planInstance) return [] as goals[]
+
+      try {
+        refreshState()
+        return planInstance.goalsToPrismaType()
+      } catch (error: unknown) {
+        console.error((error as Error).message)
+      }
+      return [] as goals[]
+    },
+    [planInstance, refreshState]
+  )
+
+  const getPrismaStrategies = useCallback(
+    () => {
+      if (!planInstance) return [] as strategies[]
+
+      try {
+        refreshState()
+        return planInstance.strategiesToPrismaType()
+      } catch (error: unknown) {
+        console.error((error as Error).message)
+      }
+      return [] as strategies[]
+    },
+    [planInstance, refreshState]
+  )
+
+  const getPrismaIndicators = useCallback(
+    () => {
+      if (!planInstance) return [] as indicators[]
+
+      try {
+        refreshState()
+        return planInstance.indicatorsToPrismaType()
+      } catch (error: unknown) {
+        console.error((error as Error).message)
+      }
+      return [] as indicators[]
+    },
+    [planInstance, refreshState]
+  )
+
   useEffect(() => {
     if (userId) {
       const planInstance = new PlanClass(userId)
@@ -176,6 +240,10 @@ export function usePlan(userId?: string): UsePlan {
     removeGoal,
     removeStrategy,
     removeIndicator,
+    getPrismaPlan,
+    getPrismaGoals,
+    getPrismaStrategies,
+    getPrismaIndicators,
   }
 }
 
@@ -206,6 +274,10 @@ export interface UsePlan {
   removeGoal: (id: string) => void
   removeStrategy: (id: string) => void
   removeIndicator: (id: string) => void
+  getPrismaPlan: () => plans
+  getPrismaGoals: () => goals[]
+  getPrismaStrategies: () => strategies[]
+  getPrismaIndicators: () => indicators[]
 }
 
 const INITIAL_GOALS = [

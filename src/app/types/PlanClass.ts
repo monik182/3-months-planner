@@ -167,7 +167,7 @@ export class PlanClass {
   }
 
   public goalsToPrismaType(): goals[] {
-    return this.goals.map((goal) => ({
+    return this.goals.filter(g => g.content.length > 0).map((goal) => ({
       id: goal.id,
       plan_id: goal.planId,
       content: goal.content,
@@ -176,7 +176,7 @@ export class PlanClass {
   }
 
   public strategiesToPrismaType(): strategies[] {
-    return this.strategies.map((strategy) => ({
+    return this.strategies.filter(s => s.content.length > 0).map((strategy) => ({
       id: strategy.id,
       goal_id: strategy.goalId,
       content: strategy.content,
@@ -186,14 +186,14 @@ export class PlanClass {
   }
 
   public indicatorsToPrismaType(): indicators[] {
-    return this.indicators.map((indicators) => ({
+    return this.indicators.filter(i => i.content.length > 0).map((indicators) => ({
       id: indicators.id,
       goal_id: indicators.goalId,
       content: indicators.content,
       status: indicators.status,
       metric: indicators.metric,
-      starting_value: indicators.startingValue,
-      goal_value: indicators.goalValue,
+      starting_value: parseInt(indicators.startingValue + ''),
+      goal_value: parseInt(indicators.goalValue + ''),
     }))
   }
 

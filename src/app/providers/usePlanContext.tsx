@@ -26,7 +26,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     return <div>Loading....</div>
   }
 
-  if (!plan && !planHistory) {
+  if (!plan?.plan || !planHistory) {
     return null
   }
 
