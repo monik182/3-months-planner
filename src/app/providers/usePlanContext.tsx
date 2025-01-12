@@ -2,8 +2,11 @@
 import React, { createContext, useContext } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { UsePlan, usePlan } from '@/app/hooks/usePlan'
+import { UsePlanHistory, usePlanHistory } from '@/app/hooks/usePlanHistory'
 
-type PlanContextType = {} & UsePlan
+type PlanContextType = {
+  planHistory: UsePlanHistory
+} & UsePlan
 
 const PlanContext = createContext<PlanContextType | undefined>(
   undefined
@@ -33,6 +36,8 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     removeIndicator,
   } = usePlan(user?.sub as string)
 
+  const planHistory = usePlanHistory(plan, goals, strategies, indicators)
+
   if (isLoading) {
     return <div>Loading....</div>
   }
@@ -58,6 +63,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         removeGoal,
         removeStrategy,
         removeIndicator,
+        planHistory,
       }}
     >
       {children}
