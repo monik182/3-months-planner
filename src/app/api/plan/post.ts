@@ -1,4 +1,4 @@
-import { plansHandler } from '@/db/planManager'
+import { plansHandler } from '@/db/prismaHandler'
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
 

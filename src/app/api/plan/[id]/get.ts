@@ -1,6 +1,6 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
-import { plansHandler } from '@/db/planManager'
+import { plansHandler } from '@/db/prismaHandler'
 
 interface SegmentData {
   params: Promise<{
