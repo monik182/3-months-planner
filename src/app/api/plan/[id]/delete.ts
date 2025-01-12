@@ -7,8 +7,9 @@ export async function DELETE(request: NextRequest, segmentData: SegmentData) {
   const params = await segmentData.params
 
   try {
-    const response = await plansHandler.delete(params.id)
-    return new Response(JSON.stringify(response), { status: 200 })
+    // TODO: remove this and do a put to update status
+    await plansHandler.delete(params.id)
+    return new Response(JSON.stringify({ deleted: true }), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
   }
