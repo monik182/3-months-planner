@@ -1,12 +1,8 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
 import { plansHandler } from '@/db/prismaHandler'
+import { SegmentData } from '@/app/types'
 
-interface SegmentData {
-  params: Promise<{
-    id: string
-  }>
-}
 
 export async function GET(_: NextRequest, segmentData: SegmentData) {
   const params = await segmentData.params

@@ -75,3 +75,9 @@ export interface Step<T> {
 export interface Vision {
   content: string
 }
+
+export interface SegmentData {
+  params: Promise<{
+    id: string
+  }>
+}
