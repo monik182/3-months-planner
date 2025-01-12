@@ -26,21 +26,21 @@ const createPlan = async (plan: Plan) => {
 }
 
 const createGoal = (goal: Goal) => {
-  return fetch(`/api/goal`, { // TODO: create this!!!!
+  return fetch(`/api/goal`, {
     method: 'POST',
     body: JSON.stringify(goal)
   }).then(response => response.json())
 }
 
 const createStrategy = (strategy: Strategy) => {
-  return fetch(`/api/strategy`, { // TODO: create this!!!!
+  return fetch(`/api/strategy`, {
     method: 'POST',
     body: JSON.stringify(strategy)
   }).then(response => response.json())
 }
 
 const createIndicator = (indicator: Indicator) => {
-  return fetch(`/api/indicator`, { // TODO: create this!!!!
+  return fetch(`/api/indicator`, {
     method: 'POST',
     body: JSON.stringify(indicator)
   }).then(response => response.json())
@@ -52,6 +52,11 @@ const create = async (data: PlanData) => {
   const strategies = await Promise.allSettled(data.strategies.map(createStrategy))
   const indicators = await Promise.allSettled(data.indicators.map(createIndicator))
 }
+
+// TODO:
+// Add data validation
+// Add data transforms
+// Validate where to create the history items
 
 export const PlanService = {
   getByUserId,
