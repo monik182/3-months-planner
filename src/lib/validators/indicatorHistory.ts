@@ -1,9 +1,9 @@
 import { z } from 'zod'
 
 export const IndicatorHistorySchema = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().cuid(),
   indicator_id: z.string().cuid(),
-  value: z.number(),
+  value: z.number().int(),
 })
 
 export const PartialIndicatorHistorySchema = IndicatorHistorySchema.partial()

@@ -1,10 +1,10 @@
 import { z } from 'zod'
 
 export const GoalHistorySchema = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().cuid(),
   goal_id: z.string().cuid(),
-  start_date: z.date(),
-  end_date: z.date(),
+  start_date: z.string().transform((val) => new Date(val)),
+  end_date: z.string().transform((val) => new Date(val)),
 })
 
 export const PartialGoalHistorySchema = GoalHistorySchema.partial()

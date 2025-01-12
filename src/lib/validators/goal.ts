@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const GoalSchema = z.object({
-  id: z.string().cuid().optional(),
+  id: z.string().cuid(),
   plan_id: z.string().cuid(),
   content: z.string().min(1, 'Content is required'),
   status: z.string().min(1, 'Status is required'),
