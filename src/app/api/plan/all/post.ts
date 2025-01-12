@@ -1,5 +1,6 @@
+import { PlanHistoryClass } from '@/app/types/PlanHistoryClass'
 import { formatError } from '@/lib/prismaHandler'
-import { goals, indicators, plans, strategies } from '@prisma/client'
+import { goal_history, goals, indicator_history, indicators, plans, strategies, strategy_history } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
@@ -17,6 +18,11 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Plan is required', { status: 400 })
   }
 
+  const planHistoryInstance = new PlanHistoryClass(plan, goals, strategies, indicators)
+  const goalHistoryList = planHistoryInstance.goalsToPrismaType()
+  const strategyHistoryList = planHistoryInstance.strategiesToPrismaType()
+  const indicatorHistoryList = planHistoryInstance.indicatorsToPrismaType()
+
   try {
 
     const planResponse = await makeRequest<plans, plans>(
@@ -28,9 +34,18 @@ export async function POST(request: NextRequest) {
       goals.map((goal: goals) => makeRequest<goals, goals[]>(`${BASE_URL}/api/goal`, goal))
     )
 
+    const goalsHistoryResponse = await Promise.all(
+      goalHistoryList.map((goal: goal_history) => makeRequest<goal_history, goal_history[]>(`${BASE_URL}/api/goal/history`, goal))
+    )
+
     const strategiesResponse = await processArrayWithSettled<strategies, strategies[]>(
       strategies,
       `${BASE_URL}/api/strategy`
+    )
+
+    const strategiesHistoryResponse = await processArrayWithSettled<strategy_history, strategy_history[]>(
+      strategyHistoryList,
+      `${BASE_URL}/api/strategy/history`
     )
 
     const indicatorsResponse = await processArrayWithSettled<indicators, indicators[]>(
@@ -38,11 +53,19 @@ export async function POST(request: NextRequest) {
       `${BASE_URL}/api/indicator`
     )
 
+    const indicatorsHistoryResponse = await processArrayWithSettled<indicator_history, indicator_history[]>(
+      indicatorHistoryList,
+      `${BASE_URL}/api/indicator/history`
+    )
+
     const response = {
       plan: planResponse,
       goals: goalsResponse,
+      goalsHistory: goalsHistoryResponse,
       strategies: strategiesResponse,
+      strategiesHistory: strategiesHistoryResponse,
       indicators: indicatorsResponse,
+      indicatorsHistory: indicatorsHistoryResponse,
     }
 
     return new Response(JSON.stringify(response), { status: 200 })
