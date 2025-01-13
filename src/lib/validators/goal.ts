@@ -8,9 +8,9 @@ export const GoalSchema = z.object({
 })
 
 export const PartialGoalSchema = GoalSchema.partial()
-export const GoalSchemaSchema = z.array(GoalSchema)
-export const PartialGoalSchemaSchema = z.array(PartialGoalSchema)
+export const GoalArraySchema = z.array(GoalSchema)
+export const PartialGoalArraySchema = z.array(PartialGoalSchema)
 export type GoalSchemaType = z.infer<typeof GoalSchema>
 export type PartialGoalSchemaType = z.infer<typeof PartialGoalSchema>
-export type GoalSchemaSchemaType = z.infer<typeof GoalSchemaSchema>
-export type PartialGoalSchemaSchemaType = z.infer<typeof PartialGoalSchemaSchema>
+export type GoalArraySchemaType = z.infer<typeof GoalArraySchema>
+export type PartialGoalArraySchemaType = z.infer<typeof PartialGoalArraySchema>

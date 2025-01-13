@@ -11,9 +11,9 @@ export const StrategyHistorySchema = z.object({
 })
 
 export const PartialStrategyHistorySchema = StrategyHistorySchema.partial()
-export const StrategyHistorySchemaSchema = z.array(StrategyHistorySchema)
-export const PartialStrategyHistorySchemaSchema = z.array(PartialStrategyHistorySchema)
+export const StrategyHistoryArraySchema = z.array(StrategyHistorySchema)
+export const PartialStrategyHistoryArraySchema = z.array(PartialStrategyHistorySchema)
 export type StrategyHistorySchemaType = z.infer<typeof StrategyHistorySchema>
 export type PartialStrategyHistorySchemaType = z.infer<typeof PartialStrategyHistorySchema>
-export type StrategyHistorySchemaSchemaType = z.infer<typeof StrategyHistorySchemaSchema>
-export type PartialStrategyHistorySchemaSchemaType = z.infer<typeof PartialStrategyHistorySchemaSchema>
+export type StrategyHistoryArraySchemaType = z.infer<typeof StrategyHistoryArraySchema>
+export type PartialStrategyHistoryArraySchemaType = z.infer<typeof PartialStrategyHistoryArraySchema>

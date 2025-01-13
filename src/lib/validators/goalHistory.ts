@@ -9,9 +9,9 @@ export const GoalHistorySchema = z.object({
 })
 
 export const PartialGoalHistorySchema = GoalHistorySchema.partial()
-export const GoalHistorySchemaSchema = z.array(GoalHistorySchema)
-export const PartialGoalHistorySchemaSchema = z.array(PartialGoalHistorySchema)
+export const GoalHistoryArraySchema = z.array(GoalHistorySchema)
+export const PartialGoalHistoryArraySchema = z.array(PartialGoalHistorySchema)
 export type GoalHistorySchemaType = z.infer<typeof GoalHistorySchema>
 export type PartialGoalHistorySchemaType = z.infer<typeof PartialGoalHistorySchema>
-export type GoalHistorySchemaSchemaType = z.infer<typeof GoalHistorySchemaSchema>
-export type PartialGoalHistorySchemaSchemaType = z.infer<typeof PartialGoalHistorySchemaSchema>
+export type GoalHistoryArraySchemaType = z.infer<typeof GoalHistoryArraySchema>
+export type PartialGoalHistoryArraySchemaType = z.infer<typeof PartialGoalHistoryArraySchema>

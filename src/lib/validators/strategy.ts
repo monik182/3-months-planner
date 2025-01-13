@@ -9,9 +9,9 @@ export const StrategySchema = z.object({
 })
 
 export const PartialStrategySchema = StrategySchema.partial()
-export const StrategySchemaSchema = z.array(StrategySchema)
-export const PartialStrategySchemaSchema = z.array(PartialStrategySchema)
+export const StrategyArraySchema = z.array(StrategySchema)
+export const PartialStrategyArraySchema = z.array(PartialStrategySchema)
 export type StrategySchemaType = z.infer<typeof StrategySchema>
 export type PartialStrategySchemaType = z.infer<typeof PartialStrategySchema>
-export type StrategySchemaSchemaType = z.infer<typeof StrategySchemaSchema>
-export type PartialStrategySchemaSchemaType = z.infer<typeof PartialStrategySchemaSchema>
+export type StrategyArraySchemaType = z.infer<typeof StrategyArraySchema>
+export type PartialStrategyArraySchemaType = z.infer<typeof PartialStrategyArraySchema>
