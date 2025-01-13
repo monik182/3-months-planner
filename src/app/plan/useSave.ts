@@ -1,15 +1,42 @@
 import { usePlanContext } from '@/app/providers/usePlanContext'
+import { toaster } from '@/components/ui/toaster'
+import { PlanService } from '@/services/plan'
+import { useState } from 'react'
 
 export function useSave() {
-  const { planHistory } = usePlanContext()
+  const [isLoading, setIsLoading] = useState(false)
+  const { plan } = usePlanContext()
 
-  const handleSavePlan = () => {
-    console.log('******************** SAVING PLAN')
-    console.log(planHistory.goals)
-    console.log(planHistory.strategies)
-    console.log(planHistory.indicators)
-    console.log('******************** SAVING PLAN *****************')
+  const handleSavePlan = async () => {
+    setIsLoading(true)
+    try {
+      const data = {
+        plan: plan.getPrismaPlan(),
+        goals: plan.getPrismaGoals(),
+        strategies: plan.getPrismaStrategies(),
+        indicators: plan.getPrismaIndicators()
+      }
+
+      const response = await PlanService.create(data)
+
+      if (!response || response.error) {
+        toaster.create({
+          title: response?.message || 'Invalid response from the server',
+          type: 'error',
+        })
+        return
+      }
+
+      return response
+    } catch (error) {
+      toaster.create({
+        title: (error as unknown)?.message,
+        type: 'error',
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  return { handleSavePlan }
+  return { handleSavePlan, isLoading }
 }

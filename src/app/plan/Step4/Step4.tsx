@@ -8,8 +8,9 @@ import { Field } from '@/components/ui/field'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 
 export function Step4({ }: Step<Plan>) {
-  const { plan } = usePlanContext()
-  const { goals, strategies, indicators, updatePlan } = plan
+  const { plan: usePlan } = usePlanContext()
+  const { plan } = usePlan
+  const { goals, strategies, indicators, updatePlan } = usePlan
   const handleDateChange = (startDate: string) => {
     const endDate = calculatePlanEndDate(startDate)
     updatePlan({ startDate, endDate })
@@ -58,7 +59,7 @@ export function Step4({ }: Step<Plan>) {
             Goals
           </Heading>
           <Stack>
-            {goals.map((goal, index) => (
+            {goals.filter((goal) => !!goal.content).map((goal, index) => (
               <Box
                 key={goal.id}
                 borderWidth="1px"
@@ -76,7 +77,7 @@ export function Step4({ }: Step<Plan>) {
                     <Heading size="sm" mb={2}>
                       Strategies
                     </Heading>
-                    {strategies.filter(strategy => strategy.goalId === goal.id).map((strategy, index) => (
+                    {strategies.filter(strategy => strategy.goalId === goal.id && !!strategy.content).map((strategy, index) => (
                       <Box key={strategy.id} mb={2}>
                         <Badge colorPalette="teal" mr={2}>
                           Strategy {index + 1}
@@ -95,7 +96,7 @@ export function Step4({ }: Step<Plan>) {
                     <Heading size="sm" mb={2}>
                       Indicators
                     </Heading>
-                    {indicators.filter(indicator => indicator.goalId === goal.id).map((indicator, index) => (
+                    {indicators.filter(indicator => indicator.goalId === goal.id && !!indicator.content).map((indicator, index) => (
                       <VStack key={index} align="start" mb={2}>
                         <HStack>
                           <Badge colorPalette="orange" mr={2}>

@@ -49,7 +49,10 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     console.log('Deleting plan and relations...')
-    await makeRequest<plans, plans>(`plan/${plan.id}`, undefined, 'DELETE')
+    const planExists = await makeRequest<plans, plans>(`plan/${plan.id}`, undefined, 'GET')
+    if (!!planExists) {
+      await makeRequest<plans, plans>(`plan/${plan.id}`, undefined, 'DELETE')
+    }
     return new Response(formatError(error), { status: 500 })
   }
 }

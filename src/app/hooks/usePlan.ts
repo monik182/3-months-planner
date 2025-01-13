@@ -147,15 +147,12 @@ export function usePlan(userId?: string): UsePlan {
 
   const getPrismaPlan = useCallback(
     () => {
-      console.log('getting instance prisma plan')
       if (!planInstance) return {} as plans
 
       try {
-        console.log('SUCCESS instance prisma plan')
         refreshState()
         return planInstance.planToPrismaType()
       } catch (error: unknown) {
-        console.log('ERROR instance prisma plan')
         console.error((error as Error).message)
       }
       return {} as plans

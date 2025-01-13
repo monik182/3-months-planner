@@ -5,9 +5,10 @@
   - include user id to the models ✅
   - create prisma schema ✅
   - create db manager ✅
-  - integrate db + backend + frontend
-  - improve api/plan/create performance
+  - integrate db + backend + frontend - Create plan ✅
+  - integrate db + backend + frontend - Track plan
   - improve BE error responses
+  - improve api/plan/create performance
   - create a model folder?
   - add cache?
 
