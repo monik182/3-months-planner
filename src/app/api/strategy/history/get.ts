@@ -4,13 +4,15 @@ import { strategyHistoryHandler } from '@/db/prismaHandler'
 
 export async function GET(request: NextRequest) {
   const strategyId = request.nextUrl.searchParams.get('strategyId')
+  const planId = request.nextUrl.searchParams.get('planId') ?? undefined
+
 
   if (!strategyId) {
     return new Response('Invalid strategy history id', { status: 400 })
   }
 
   try {
-    const response = await strategyHistoryHandler.findMany({ strategy_id: strategyId })
+    const response = await strategyHistoryHandler.findMany({ strategyId, planId })
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })
