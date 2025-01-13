@@ -8,5 +8,9 @@ export const IndicatorHistorySchema = z.object({
 })
 
 export const PartialIndicatorHistorySchema = IndicatorHistorySchema.partial()
+export const IndicatorHistorySchemaSchema = z.array(IndicatorHistorySchema)
+export const PartialIndicatorHistorySchemaSchema = z.array(PartialIndicatorHistorySchema)
 export type IndicatorHistorySchemaType = z.infer<typeof IndicatorHistorySchema>
 export type PartialIndicatorHistorySchemaType = z.infer<typeof PartialIndicatorHistorySchema>
+export type IndicatorHistorySchemaSchemaType = z.infer<typeof IndicatorHistorySchemaSchema>
+export type PartialIndicatorHistorySchemaSchemaType = z.infer<typeof PartialIndicatorHistorySchemaSchema>

@@ -11,5 +11,9 @@ export const IndicatorSchema = z.object({
 })
 
 export const PartialIndicatorSchema = IndicatorSchema.partial()
+export const IndicatorArraySchema = z.array(IndicatorSchema)
+export const PartialIndicatorArraySchema = z.array(PartialIndicatorSchema)
 export type IndicatorSchemaType = z.infer<typeof IndicatorSchema>
 export type PartialIndicatorSchemaType = z.infer<typeof PartialIndicatorSchema>
+export type IndicatorArraySchemaType = z.infer<typeof IndicatorArraySchema>
+export type PartialIndicatorArraySchemaType = z.infer<typeof PartialIndicatorArraySchema>
