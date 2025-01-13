@@ -5,10 +5,10 @@
   - include user id to the models ✅
   - create prisma schema ✅
   - create db manager ✅
-  - Refactor DB
+  - Refactor DB ✅
   - improve BE error responses
-  - Create queries to add plan_id to other tables
-  - Rename tables?
+  - Create queries to add plan_id to other tables ✅
+  - Rename tables? ❌
 - BE integration
   - integrate db + backend + frontend - Create plan ✅
   - integrate db + backend + frontend - Track plan
@@ -19,10 +19,10 @@
   - add local persistency
   - save to db after each step
   - Refactor dashboard
-  - Centralize types (interfaces / classes)
+  - Centralize types (interfaces / classes) ✅
   - Refactor usePlan hook, is still necessary?
   - Handle loading/error states of requests - react query?
-  - create a model folder?
+  - create a model folder? ❌
 
 
 # Release
