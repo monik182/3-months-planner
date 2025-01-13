@@ -26,15 +26,26 @@ export async function POST(request: NextRequest) {
   try {
 
     const planResponse = await makeRequest<plans, plans>('plan', plan)
+    const goalsResponse = await makeRequest<goals[], goals[]>('goal/bulk', goals)
 
-    const goalsResponse = await processArray<goals, goals>('goal', goals)
-    const goalsHistoryResponse = await processArray<goal_history, goal_history>('goal/history', goalHistoryList)
+    const [
+      strategiesResponse,
+      indicatorsResponse,
+    ] = await Promise.all([
+      makeRequest<strategies[], strategies[]>('strategy/bulk', strategies),
+      makeRequest<indicators[], indicators[]>('indicator/bulk', indicators),
+    ])
 
-    const strategiesResponse = await processArray<strategies, strategies>('strategy', strategies)
-    const strategiesHistoryResponse = await processArray<strategy_history, strategy_history>('strategy/history', strategyHistoryList)
+    const [
+      goalsHistoryResponse,
+      strategiesHistoryResponse,
+      indicatorsHistoryResponse,
+    ] = await Promise.all([
+      makeRequest<goal_history[], goal_history[]>('goal/history/bulk', goalHistoryList),
+      makeRequest<strategy_history[], strategy_history[]>('strategy/history/bulk', strategyHistoryList),
+      makeRequest<indicator_history[], indicator_history[]>('indicator/history/bulk', indicatorHistoryList),
+    ])
 
-    const indicatorsResponse = await processArray<indicators, indicators>('indicator', indicators)
-    const indicatorsHistoryResponse = await processArray<indicator_history, indicator_history>('indicator/history', indicatorHistoryList)
 
     const response = {
       plan: planResponse,
@@ -48,11 +59,7 @@ export async function POST(request: NextRequest) {
 
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
-    console.log('Deleting plan and relations...')
-    const planExists = await makeRequest<plans, plans>(`plan/${plan.id}`, undefined, 'GET')
-    if (!!planExists) {
-      await makeRequest<plans, plans>(`plan/${plan.id}`, undefined, 'DELETE')
-    }
+    console.log('Deleting plan and relations...', error)
     return new Response(formatError(error), { status: 500 })
   }
 }
@@ -71,8 +78,3 @@ async function makeRequest<T, R>(url: string, data: T | undefined, method = 'POS
   return await response.json()
 }
 
-async function processArray<T, R>(url: string, array: T[]): Promise<R[]> {
-  return Promise.all(
-    array.map((item: T) => makeRequest<T, R>(url, item))
-  )
-}

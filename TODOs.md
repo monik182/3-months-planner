@@ -7,8 +7,9 @@
   - create db manager ✅
   - integrate db + backend + frontend - Create plan ✅
   - integrate db + backend + frontend - Track plan
+  - improve api/plan/create performance [WIP]
+  - add local persistency
   - improve BE error responses
-  - improve api/plan/create performance
   - create a model folder?
   - add cache?
 

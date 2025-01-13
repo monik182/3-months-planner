@@ -10,7 +10,8 @@ export async function prismaHandler<T>(action: () => Promise<T>): Promise<T | nu
   try {
     return await action()
   } catch (error) {
-    console.error('Prisma Error:', formatError(error))
+    console.log('Prisma Error RAW:', error)
+    console.log('Prisma Error:', formatError(error))
     throw new Error('Something went wrong with the database operation.')
   }
 }
