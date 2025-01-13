@@ -1,6 +1,6 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
-import { indicatorsHandler } from '@/db/prismaHandler'
+import { indicatorHandler } from '@/db/prismaHandler'
 
 export async function GET(request: NextRequest) {
   const goalId = request.nextUrl.searchParams.get('goalId')
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await indicatorsHandler.findMany({ goal_id: goalId, status })
+    const response = await indicatorHandler.findMany({ goalId, status })
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })

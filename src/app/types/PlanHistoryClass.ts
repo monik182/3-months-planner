@@ -1,8 +1,7 @@
 import cuid from 'cuid'
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@/app/types'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { calculateWeekEndDate, calculateWeekStartDate } from '@/app/util'
-import { goal_history, indicator_history, strategy_history } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@prisma/client'
 
 export class PlanHistoryClass {
   private plan: Plan
@@ -27,15 +26,16 @@ export class PlanHistoryClass {
         const sequence = parseInt(week)
         const startDate = calculateWeekStartDate(this.plan.startDate, sequence)
         const endDate = calculateWeekEndDate(startDate)
-        return this.createGoalHistory(goal.id, startDate, endDate, sequence)
+        return this.createGoalHistory(goal.id, goal.planId, startDate, endDate, sequence)
       })
     }).flat()
   }
 
-  private createGoalHistory(goalId: string, startDate: string, endDate: string, sequence: number): GoalHistory {
+  private createGoalHistory(goalId: string, planId: string, startDate: Date, endDate: Date, sequence: number): GoalHistory {
     return {
       id: cuid(),
       goalId,
+      planId,
       startDate,
       endDate,
       sequence,
@@ -46,15 +46,16 @@ export class PlanHistoryClass {
     return strategies.map((strategy) => {
       return DEFAULT_WEEKS.map((week) => {
         const sequence = parseInt(week)
-        return this.createStrategyHistory(strategy.id, sequence)
+        return this.createStrategyHistory(strategy.id, strategy.planId, sequence)
       })
     }).flat()
   }
 
-  private createStrategyHistory(strategyId: string, sequence: number): StrategyHistory {
+  private createStrategyHistory(strategyId: string, planId: string, sequence: number): StrategyHistory {
     return {
       id: cuid(),
       strategyId,
+      planId,
       overdue: false,
       completed: false,
       firstUpdate: null,
@@ -67,14 +68,15 @@ export class PlanHistoryClass {
     return indicators.map((indicator) => {
       return DEFAULT_WEEKS.map((week) => {
         const sequence = parseInt(week)
-        return this.createIndicatorHistory(indicator.id, sequence)
+        return this.createIndicatorHistory(indicator.id, indicator.planId, sequence)
       })
     }).flat()
   }
 
-  private createIndicatorHistory(indicatorId: string, sequence: number): IndicatorHistory {
+  private createIndicatorHistory(indicatorId: string, planId: string, sequence: number): IndicatorHistory {
     return {
       id: cuid(),
+      planId,
       indicatorId,
       value: 0,
       sequence,
@@ -99,37 +101,6 @@ export class PlanHistoryClass {
 
   public getIndicators(): IndicatorHistory[] {
     return [...this.indicators]
-  }
-
-  public goalsToPrismaType(): goal_history[] {
-    return this.goals.map((goal) => ({
-      id: goal.id,
-      goal_id: goal.goalId,
-      start_date: new Date(goal.startDate),
-      end_date: new Date(goal.endDate),
-      sequence: goal.sequence,
-    }))
-  }
-
-  public strategiesToPrismaType(): strategy_history[] {
-    return this.strategies.map((strategy) => ({
-      id: strategy.id,
-      strategy_id: strategy.strategyId,
-      overdue: strategy.overdue,
-      completed: strategy.completed,
-      first_update: strategy.firstUpdate ? new Date(strategy.firstUpdate) : null,
-      last_update: strategy.lastUpdate ? new Date(strategy.lastUpdate) : null,
-      sequence: strategy.sequence,
-    }))
-  }
-
-  public indicatorsToPrismaType(): indicator_history[] {
-    return this.indicators.map((indicators) => ({
-      id: indicators.id,
-      indicator_id: indicators.indicatorId,
-      value: indicators.value,
-      sequence: indicators.sequence,
-    }))
   }
 
 }

@@ -5,8 +5,8 @@ export const StrategyHistorySchema = z.object({
   strategy_id: z.string().cuid(),
   overdue: z.boolean(),
   completed: z.boolean(),
-  first_update: z.string().transform((val) => new Date(val)).nullable(),
-  last_update: z.string().transform((val) => new Date(val)).nullable(),
+  first_update: z.string().datetime().nullable(),
+  lastUpdate: z.string().datetime().nullable(),
   sequence: z.number().int(),
 })
 

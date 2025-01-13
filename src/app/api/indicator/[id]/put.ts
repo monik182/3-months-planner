@@ -1,6 +1,6 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
-import { indicatorsHandler } from '@/db/prismaHandler'
+import { indicatorHandler } from '@/db/prismaHandler'
 import { SegmentData } from '@/app/types'
 import { PartialIndicatorSchema } from '@/lib/validators/indicator'
 
@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
 
   try {
     const parsedData = PartialIndicatorSchema.parse(data)
-    const indicator = await indicatorsHandler.update(params.id, parsedData)
+    const indicator = await indicatorHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(indicator), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })

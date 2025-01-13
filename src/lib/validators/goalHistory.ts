@@ -2,9 +2,9 @@ import { z } from 'zod'
 
 export const GoalHistorySchema = z.object({
   id: z.string().cuid(),
-  goal_id: z.string().cuid(),
-  start_date: z.string().transform((val) => new Date(val)),
-  end_date: z.string().transform((val) => new Date(val)),
+  goalId: z.string().cuid(),
+  startDate: z.string().datetime(),
+  endDate: z.string().datetime(),
   sequence: z.number().int(),
 })
 

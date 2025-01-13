@@ -1,19 +1,21 @@
 import { StepLayout } from '../stepLayout'
-import { Plan, Step } from '@/app/types'
+import { Step } from '@/app/types'
 import dayjs from 'dayjs'
 import { DateSelector } from './DateSelector'
 import { calculatePlanEndDate } from '@/app/util'
 import { Box, Fieldset, Grid, Input, Stack, VStack, Text, Heading, Flex, Badge, Separator, HStack } from '@chakra-ui/react'
 import { Field } from '@/components/ui/field'
 import { usePlanContext } from '@/app/providers/usePlanContext'
+import { Plan } from '@prisma/client'
 
 export function Step4({ }: Step<Plan>) {
   const { plan: usePlan } = usePlanContext()
   const { plan } = usePlan
   const { goals, strategies, indicators, updatePlan } = usePlan
   const handleDateChange = (startDate: string) => {
-    const endDate = calculatePlanEndDate(startDate)
-    updatePlan({ startDate, endDate })
+    const startDateAsDate = dayjs(startDate).toDate()
+    const endDate = calculatePlanEndDate(startDateAsDate)
+    updatePlan({ startDate: startDateAsDate, endDate })
   }
 
   return (
@@ -22,7 +24,7 @@ export function Step4({ }: Step<Plan>) {
       description="Choose the start date for your plan, marking the beginning of your journey toward achieving your goals. This is also a chance to review everything you’ve outlined so far—your vision, goals, and strategies—and ensure they align with your priorities and timeline. Take a moment to reflect and adjust if needed before you commit to taking the first step."
     >
       <Grid gap="1rem" templateColumns="1fr 1fr">
-        <DateSelector onChange={handleDateChange} date={plan.startDate} />
+        <DateSelector onChange={handleDateChange} date={dayjs(plan.startDate).format('YYYY-MM-DD')} />
         <Fieldset.Root size="lg" disabled>
           <Field label="End Date">
             <Input disabled value={dayjs(plan.endDate).format('MMMM DD, YYYY')} />

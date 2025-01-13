@@ -1,13 +1,13 @@
-import { goals, indicators, plans, strategies } from '@prisma/client'
+import { Goal, Indicator, Plan, Strategy } from '@prisma/client'
 
 interface PlanData {
-  plan: plans
-  goals: goals[]
-  strategies: strategies[]
-  indicators: indicators[]
+  plan: Plan
+  goals: Goal[]
+  strategies: Strategy[]
+  indicators: Indicator[]
 }
 
-const getByUserId = async (userId: string): Promise<plans> => {
+const getByUserId = async (userId: string): Promise<Plan> => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
     method: 'GET',
   })
@@ -25,19 +25,19 @@ const create = async (data: PlanData) => {
     .then(response => response.json())
 }
 
-const get = async (id: string): Promise<plans> => {
+const get = async (id: string): Promise<Plan> => {
   return fetch(`/api/plan/${id}`).then(response => response.json())
 }
 
-const getAll = async (userId: string): Promise<plans[]> => {
+const getAll = async (userId: string): Promise<Plan[]> => {
   const response = await fetch(`/api/plan/all?userId=${userId}`, {
     method: 'GET',
   })
-  const plans = await response.json()
-  return plans
+  const plan = await response.json()
+  return plan
 }
 
-const update = async (id: string, plan: Partial<plans>): Promise<plans> => {
+const update = async (id: string, plan: Partial<Plan>): Promise<Plan> => {
   return fetch(`/api/plan/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

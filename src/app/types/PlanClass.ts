@@ -1,8 +1,8 @@
 import cuid from 'cuid'
-import { Goal, Indicator, Plan, Status, Strategy } from '@/app/types'
 import { calculatePlanEndDate, getDate, getPlanStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
-import { goals, indicators, plans, strategies } from '@prisma/client'
+import { Goal, Indicator, Plan, Strategy } from '@prisma/client'
+import { Status } from '@/app/types'
 
 export class PlanClass {
   private readonly userId: string
@@ -60,13 +60,14 @@ export class PlanClass {
     return goal
   }
 
-  public createStrategy(goalId: string, content = '', weeks = [...DEFAULT_WEEKS], status = Status.ACTIVE): Strategy {
+  public createStrategy(goalId: string, planId: string, content = '', weeks = [...DEFAULT_WEEKS], status = Status.ACTIVE): Strategy {
     if (!this.goals.some(goal => goal.id === goalId)) {
       throw new Error(`Goal with id ${goalId} does not exist`)
     }
     const strategy = {
       id: cuid(),
       goalId,
+      planId,
       content,
       weeks,
       status,
@@ -78,6 +79,7 @@ export class PlanClass {
 
   public createIndicator(
     goalId: string,
+    planId: string,
     content = '',
     metric = '',
     startingValue = 0,
@@ -91,6 +93,7 @@ export class PlanClass {
     const indicator = {
       id: cuid(),
       goalId,
+      planId,
       content,
       metric,
       startingValue,
@@ -150,51 +153,6 @@ export class PlanClass {
 
   public getIndicators(): Indicator[] {
     return [...this.indicators]
-  }
-
-  public planToPrismaType(): plans {
-    return {
-      id: this.plan.id,
-      user_id: this.userId,
-      vision: this.plan.vision,
-      milestone: this.plan.milestone,
-      completed: this.plan.completed,
-      start_date: new Date(this.plan.startDate),
-      end_date: new Date(this.plan.endDate),
-      created: new Date(this.plan.created),
-      last_update: new Date(this.plan.lastUpdate),
-    }
-  }
-
-  public goalsToPrismaType(): goals[] {
-    return this.goals.filter(g => g.content.length > 0).map((goal) => ({
-      id: goal.id,
-      plan_id: goal.planId,
-      content: goal.content,
-      status: goal.status,
-    }))
-  }
-
-  public strategiesToPrismaType(): strategies[] {
-    return this.strategies.filter(s => s.content.length > 0).map((strategy) => ({
-      id: strategy.id,
-      goal_id: strategy.goalId,
-      content: strategy.content,
-      status: strategy.status,
-      weeks: strategy.weeks.join(','),
-    }))
-  }
-
-  public indicatorsToPrismaType(): indicators[] {
-    return this.indicators.filter(i => i.content.length > 0).map((indicators) => ({
-      id: indicators.id,
-      goal_id: indicators.goalId,
-      content: indicators.content,
-      status: indicators.status,
-      metric: indicators.metric,
-      starting_value: parseInt(indicators.startingValue + ''),
-      goal_value: parseInt(indicators.goalValue + ''),
-    }))
   }
 
 }

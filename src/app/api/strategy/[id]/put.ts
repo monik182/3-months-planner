@@ -1,6 +1,6 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
-import { strategiesHandler } from '@/db/prismaHandler'
+import { strategyHandler } from '@/db/prismaHandler'
 import { SegmentData } from '@/app/types'
 import { PartialStrategySchema } from '@/lib/validators/strategy'
 
@@ -14,7 +14,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
 
   try {
     const parsedData = PartialStrategySchema.parse(data)
-    const response = await strategiesHandler.update(params.id, parsedData)
+    const response = await strategyHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })

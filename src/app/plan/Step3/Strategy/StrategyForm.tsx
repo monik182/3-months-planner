@@ -2,12 +2,12 @@ import { Editable, Flex, IconButton, Text } from '@chakra-ui/react'
 import { WeeksSelector } from '../WeeksSelector'
 import { useEffect, useState } from 'react'
 import { SlClose } from 'react-icons/sl'
-import { Strategy as StrategyItem } from '@/app/types'
 import React from 'react'
+import { Strategy } from '@prisma/client'
 
 interface StrategyProps {
-  strategy: StrategyItem
-  onChange: (strategy: StrategyItem) => void
+  strategy: Strategy
+  onChange: (strategy: Strategy) => void
   onAdd: () => void
   onRemove: () => void
   onClick?: () => void
@@ -15,7 +15,6 @@ interface StrategyProps {
 }
 
 export const StrategyForm = React.memo(function StrategyForm({ strategy, disabled = false, onAdd, onChange, onRemove, onClick }: StrategyProps) {
-  // console.log('straterg>>', strategy)
   const [value, setValue] = useState(strategy)
   const [isEditing, setIsEditing] = useState(false)
 

@@ -1,15 +1,16 @@
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorForm } from './IndicatorForm'
-import { Indicator } from '@/app/types'
 import { Button, Flex } from '@chakra-ui/react'
 import { useState } from 'react'
 import { SlPlus, SlStar } from 'react-icons/sl'
+import { Indicator } from '@prisma/client'
 
 interface IndicatorListProps {
   goalId: string
+  planId: string
 }
 
-export function IndicatorList({ goalId }: IndicatorListProps) {
+export function IndicatorList({ goalId, planId }: IndicatorListProps) {
   const { plan } = usePlanContext()
   const { indicators, createIndicator, updateIndicator, removeIndicator } = plan
   const filteredIndicators = indicators.filter(i => i.goalId === goalId)
@@ -17,7 +18,7 @@ export function IndicatorList({ goalId }: IndicatorListProps) {
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
 
   const handleCreate = () => {
-    const newIndicator = createIndicator(goalId)
+    const newIndicator = createIndicator(goalId, planId)
     if (newIndicator?.id) {
       setIndicatorToUpdate(newIndicator)
     }

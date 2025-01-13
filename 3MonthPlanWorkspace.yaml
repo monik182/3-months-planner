@@ -81,7 +81,7 @@ resources:
         {
             "status": "1",
             "id": "cm5tqpca40008h8xk753ufxyr",
-            "goal_id": "{{goalId}}",
+            "goalId": "{{goalId}}",
             "content": "savings",
             "metric": "euros",
             "starting_value": 0,
@@ -232,7 +232,7 @@ resources:
             "id": "cm5tqpca30005h8xkfu06gmvn",
             "content": "strategy #3 for goal numero 2",
             "weeks": "1,2,3,4,5,6",
-            "goal_id": "{{goalId}}"
+            "goalId": "{{goalId}}"
         }
     parameters: []
     headers:
@@ -341,7 +341,7 @@ resources:
             "status": "1",
             "id": "ckl3x6lwb0001glnxr2fy9bvi",
             "content": "my first goal for my plan # 4",
-            "plan_id": "{{planId}}"
+            "planId": "{{planId}}"
         }
     parameters: []
     headers:
@@ -517,14 +517,14 @@ resources:
       text: |-
         {
         	"id": "{{goalId}}",
-            "user_id": "ckl3x6lwb0001glnxr2fy9bvi",
+            "userId": "ckl3x6lwb0001glnxr2fy9bvi",
             "vision": "this is my complte and full visision for all my life",
             "milestone": "THIS IS MY 3 YEAR MILESTONE TEXT",
             "completed": false,
-            "start_date": "2025-01-13T12:00:00.789Z",
-            "end_date": "2025-03-23T12:00:00.789Z",
+            "startDate": "2025-01-13T12:00:00.789Z",
+            "endDate": "2025-03-23T12:00:00.789Z",
             "created": "2025-01-12T12:34:56.789Z",
-            "last_update": "2025-01-12T12:34:56.789Z"
+            "lastUpdate": "2025-01-12T12:34:56.789Z"
         }
     parameters: []
     headers:

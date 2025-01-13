@@ -1,6 +1,6 @@
 import { PlanHistoryClass } from '@/app/types/PlanHistoryClass'
 import { formatError } from '@/lib/prismaHandler'
-import { goal_history, goals, indicator_history, indicators, plans, strategies, strategy_history } from '@prisma/client'
+import { Goal, Indicator, Plan, Strategy } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
@@ -18,43 +18,44 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Plan is required', { status: 400 })
   }
 
+  // TODO: refactor this
   const planHistoryInstance = new PlanHistoryClass(plan, goals, strategies, indicators)
-  const goalHistoryList = planHistoryInstance.goalsToPrismaType()
-  const strategyHistoryList = planHistoryInstance.strategiesToPrismaType()
-  const indicatorHistoryList = planHistoryInstance.indicatorsToPrismaType()
+  // const goalHistoryList = planHistoryInstance.goalsToPrismaType()
+  // const strategyHistoryList = planHistoryInstance.strategiesToPrismaType()
+  // const indicatorHistoryList = planHistoryInstance.indicatorsToPrismaType()
 
   try {
 
-    const planResponse = await makeRequest<plans, plans>('plan', plan)
-    const goalsResponse = await makeRequest<goals[], goals[]>('goal/bulk', goals)
+    const planResponse = await makeRequest<Plan, Plan>('plan', plan)
+    const goalsResponse = await makeRequest<Goal[], Goal[]>('goal/bulk', goals)
 
     const [
       strategiesResponse,
       indicatorsResponse,
     ] = await Promise.all([
-      makeRequest<strategies[], strategies[]>('strategy/bulk', strategies),
-      makeRequest<indicators[], indicators[]>('indicator/bulk', indicators),
+      makeRequest<Strategy[], Strategy[]>('strategy/bulk', strategies),
+      makeRequest<Indicator[], Indicator[]>('indicator/bulk', indicators),
     ])
 
-    const [
-      goalsHistoryResponse,
-      strategiesHistoryResponse,
-      indicatorsHistoryResponse,
-    ] = await Promise.all([
-      makeRequest<goal_history[], goal_history[]>('goal/history/bulk', goalHistoryList),
-      makeRequest<strategy_history[], strategy_history[]>('strategy/history/bulk', strategyHistoryList),
-      makeRequest<indicator_history[], indicator_history[]>('indicator/history/bulk', indicatorHistoryList),
-    ])
+    // const [
+    //   goalsHistoryResponse,
+    //   strategiesHistoryResponse,
+    //   indicatorsHistoryResponse,
+    // ] = await Promise.all([
+    //   makeRequest<goal_history[], goal_history[]>('goal/history/bulk', goalHistoryList),
+    //   makeRequest<strategy_history[], strategy_history[]>('strategy/history/bulk', strategyHistoryList),
+    //   makeRequest<indicator_history[], indicator_history[]>('indicator/history/bulk', indicatorHistoryList),
+    // ])
 
 
     const response = {
       plan: planResponse,
       goals: goalsResponse,
-      goalsHistory: goalsHistoryResponse,
+      // goalsHistory: goalsHistoryResponse,
       strategies: strategiesResponse,
-      strategiesHistory: strategiesHistoryResponse,
+      // strategiesHistory: strategiesHistoryResponse,
       indicators: indicatorsResponse,
-      indicatorsHistory: indicatorsHistoryResponse,
+      // indicatorsHistory: indicatorsHistoryResponse,
     }
 
     return new Response(JSON.stringify(response), { status: 200 })

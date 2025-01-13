@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const response = await goalHistoryHandler.findMany({ goal_id: goalId })
+    const response = await goalHistoryHandler.findMany({ goalId })
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })

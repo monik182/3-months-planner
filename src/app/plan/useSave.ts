@@ -11,10 +11,10 @@ export function useSave() {
     setIsLoading(true)
     try {
       const data = {
-        plan: plan.getPrismaPlan(),
-        goals: plan.getPrismaGoals(),
-        strategies: plan.getPrismaStrategies(),
-        indicators: plan.getPrismaIndicators()
+        plan: plan.plan,
+        goals: plan.goals,
+        strategies: plan.strategies,
+        indicators: plan.indicators,
       }
 
       const response = await PlanService.create(data)

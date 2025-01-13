@@ -1,15 +1,16 @@
 import { StrategyForm } from '@/app/plan/Step3/Strategy/StrategyForm'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { Strategy } from '@/app/types'
 import { Button, Flex } from '@chakra-ui/react'
+import { Strategy } from '@prisma/client'
 import { useMemo } from 'react'
 import { SlPlus } from 'react-icons/sl'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface StrategyListProps {
   goalId: string
+  planId: string
 }
-export function StrategyList({ goalId }: StrategyListProps) {
+export function StrategyList({ goalId, planId }: StrategyListProps) {
 
   const { plan } = usePlanContext()
   const { strategies, createStrategy, updateStrategy, removeStrategy } = plan
@@ -23,7 +24,7 @@ export function StrategyList({ goalId }: StrategyListProps) {
   }, 1000)
 
   const handleCreate = () => {
-    createStrategy(goalId)
+    createStrategy(goalId, planId)
   }
 
   const handleRemove = (id: string) => {
@@ -41,7 +42,7 @@ export function StrategyList({ goalId }: StrategyListProps) {
           onRemove={() => handleRemove(strategy.id)}
         />
       ))}
-      <Button size="sm" variant="outline" className="mt-5" onClick={() => createStrategy(goalId)}>
+      <Button size="sm" variant="outline" className="mt-5" onClick={() => createStrategy(goalId, planId)}>
         <SlPlus /> Add Strategy
       </Button>
     </Flex>

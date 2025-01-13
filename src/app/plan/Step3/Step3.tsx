@@ -2,10 +2,11 @@
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/stepLayout'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { Goal, Step } from '@/app/types'
+import { Step } from '@/app/types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorList } from '@/app/plan/Step3/Indicator/IndicatorList'
 import { StrategyList } from '@/app/plan/Step3/Strategy/StrategyList'
+import { Goal } from '@prisma/client'
 
 export function Step3({ }: Step<Goal[]>) {
   const { plan } = usePlanContext()
@@ -46,10 +47,10 @@ export function Step3({ }: Step<Goal[]>) {
               </Flex>
             </Card.Header>
             <Card.Body>
-              <StrategyList goalId={goal.id} />
+              <StrategyList goalId={goal.id} planId={goal.planId} />
             </Card.Body>
             <Card.Footer>
-                <IndicatorList goalId={goal.id} />
+                <IndicatorList goalId={goal.id} planId={goal.planId} />
             </Card.Footer>
           </Card.Root>
         ))}

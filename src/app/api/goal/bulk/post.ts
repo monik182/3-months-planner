@@ -1,4 +1,4 @@
-import { goalsHandler } from '@/db/prismaHandler'
+import { goalHandler } from '@/db/prismaHandler'
 import { formatError } from '@/lib/prismaHandler'
 import { GoalArraySchema } from '@/lib/validators/goal'
 import { NextRequest } from 'next/server'
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const parsedData = GoalArraySchema.parse(data)
-    const response = await goalsHandler.createMany(parsedData)
+    const response = await goalHandler.createMany(parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     console.log('error on goal bulk', error)

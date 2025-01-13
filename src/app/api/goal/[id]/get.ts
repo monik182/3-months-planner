@@ -1,6 +1,6 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
-import { goalsHandler } from '@/db/prismaHandler'
+import { goalHandler } from '@/db/prismaHandler'
 import { SegmentData } from '@/app/types'
 
 export async function GET(_: NextRequest, segmentData: SegmentData) {
@@ -11,7 +11,7 @@ export async function GET(_: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const response = await goalsHandler.findOne(params.id)
+    const response = await goalHandler.findOne(params.id)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(formatError(error), { status: 500 })

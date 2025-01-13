@@ -1,6 +1,6 @@
-import { goals } from '@prisma/client'
+import { Goal } from '@prisma/client'
 
-const create = (goal: goals) => {
+const create = (goal: Goal) => {
   return fetch(`/api/goal`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -8,15 +8,15 @@ const create = (goal: goals) => {
   }).then(response => response.json())
 }
 
-const get = async (id: string): Promise<goals> => {
+const get = async (id: string): Promise<Goal> => {
   return fetch(`/api/goal/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string): Promise<goals[]> => {
+const getByPlanId = async (planId: string): Promise<Goal[]> => {
   return fetch(`/api/goal?planId=${planId}`).then(response => response.json())
 }
 
-const update = async (id: string, goal: Partial<goals>): Promise<goals> => {
+const update = async (id: string, goal: Partial<Goal>): Promise<Goal> => {
   return fetch(`/api/goal/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

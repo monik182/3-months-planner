@@ -2,11 +2,11 @@ import { Box, Button, Field, Flex, Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { Alert } from '@/components/ui/alert'
-import { Indicator as IndicatorItem } from '@/app/types'
+import { Indicator } from '@prisma/client'
 
 interface IndicatorFormProps {
-  indicator: IndicatorItem
-  onChange: (indicator: IndicatorItem) => void
+  indicator: Indicator
+  onChange: (indicator: Indicator) => void
   onRemove: () => void
 }
 
