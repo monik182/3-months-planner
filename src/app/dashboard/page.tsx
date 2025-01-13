@@ -5,24 +5,38 @@ import { getChartData, getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { usePlanContext } from '@/app/providers/usePlanContext'
+import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { useProtectedPage } from '@/app/hooks/useProtectedPage'
 
-export default function Dashboard() {
-  const { user } = useProtectedPage()
-  const today = dayjs().format('DD MMMM YYYY')
-  const { plan: planTracker } = usePlan()
-  const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
-  const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
-  const data = getChartData(planTracker)
+function Dashboard() {
+  // const { user } = useProtectedPage()
+  // const today = dayjs().format('DD MMMM YYYY')
+  const { currentPlan, isLoading } = usePlanContext()
+  // const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
+  // const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
+  // const data = getChartData(planTracker)
 
-  if (!user) return null
+  if (isLoading) {
+    return (
+      <div>
+        Loading current plan...
+      </div>
+    )
+  }
+
+  if (!currentPlan) {
+    return (
+      <div>
+        Seems you dont have any plan open, go to create a new one...
+      </div>
+    )
+  }
   
   return (
     <div>
-      In construction...
+      {currentPlan.id}
     </div>
   )
 
@@ -74,4 +88,13 @@ export default function Dashboard() {
   //     </Box>
   //   </Grid>
   // )
+}
+
+
+export default function DashboardWithContext() {
+  return (
+    <PlanProvider>
+      <Dashboard />
+    </PlanProvider>
+  )
 }

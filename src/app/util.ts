@@ -1,8 +1,8 @@
 import dayjs from 'dayjs'
-import { Goal, Plan, Strategy, Week } from './types'
+// import { Goal, Plan, Strategy } from './types'
 
-export function getDate() {
-  return dayjs().format('YYYY-MM-DD')
+export function getDate(date?: Date) {
+  return dayjs(date).format('YYYY-MM-DD')
 }
 
 export function calculatePlanEndDate(startDate: string): string {
@@ -53,85 +53,85 @@ export function calculateWeekStartDate(startDate: string, weekNumber: number) {
   return start.format('YYYY-MM-DD')
 }
 
-export const calculateGoalScore = (goal: Goal): number => {
-  const strategyScore =
-    goal.strategies.length > 0
-      ? (goal.strategies.filter((str) => str.checked).length /
-        goal.strategies.length) *
-      100
-      : 0
+// export const calculateGoalScore = (goal: Goal): number => {
+//   const strategyScore =
+//     goal.strategies.length > 0
+//       ? (goal.strategies.filter((str) => str.checked).length /
+//         goal.strategies.length) *
+//       100
+//       : 0
 
-  return Math.round(strategyScore)
-}
+//   return Math.round(strategyScore)
+// }
 
-export const calculateWeekScore = (goals: Goal[]): number => {
-  const totalStrategies = goals.reduce(
-    (acc, goal) => acc + goal.strategies.length,
-    0
-  )
+// export const calculateWeekScore = (goals: Goal[]): number => {
+//   const totalStrategies = goals.reduce(
+//     (acc, goal) => acc + goal.strategies.length,
+//     0
+//   )
 
-  const totalCheckedStrategies = goals.reduce(
-    (acc, goal) =>
-      acc + goal.strategies.filter((strategy) => strategy.checked).length,
-    0
-  )
+//   const totalCheckedStrategies = goals.reduce(
+//     (acc, goal) =>
+//       acc + goal.strategies.filter((strategy) => strategy.checked).length,
+//     0
+//   )
 
-  return totalStrategies > 0
-    ? Math.round((totalCheckedStrategies / totalStrategies) * 100)
-    : 0
-}
+//   return totalStrategies > 0
+//     ? Math.round((totalCheckedStrategies / totalStrategies) * 100)
+//     : 0
+// }
 
-export const calculateIndicatorTrend = (
-  indicatorId: string,
-  currentWeek: Week,
-  previousWeek?: Week,
-): number => {
-  if (!previousWeek) {
-    return 0
-  }
+// export const calculateIndicatorTrend = (
+//   indicatorId: string,
+//   currentWeek: Week,
+//   previousWeek?: Week,
+// ): number => {
+//   if (!previousWeek) {
+//     return 0
+//   }
 
-  const currentIndicator = currentWeek.goals
-    .flatMap((goal) => goal.indicators)
-    .find((indicator) => indicator.id === indicatorId)
+//   const currentIndicator = currentWeek.goals
+//     .flatMap((goal) => goal.indicators)
+//     .find((indicator) => indicator.id === indicatorId)
 
-  const previousIndicator = previousWeek.goals
-    .flatMap((goal) => goal.indicators)
-    .find((indicator) => indicator.id === indicatorId)
+//   const previousIndicator = previousWeek.goals
+//     .flatMap((goal) => goal.indicators)
+//     .find((indicator) => indicator.id === indicatorId)
 
 
-  if (!currentIndicator || !previousIndicator || currentIndicator.goalNumber == null) {
-    return 0
-  }
+//   if (!currentIndicator || !previousIndicator || currentIndicator.goalNumber == null) {
+//     return 0
+//   }
 
-  const goalRange = currentIndicator.goalNumber - (currentIndicator.startingNumber || 0)
+//   const goalRange = currentIndicator.goalNumber - (currentIndicator.startingNumber || 0)
 
-  if (goalRange === 0) {
-    return 0
-  }
+//   if (goalRange === 0) {
+//     return 0
+//   }
 
-  const currentProgress = currentIndicator.value - (currentIndicator.startingNumber || 0)
-  const previousProgress = previousIndicator.value - (previousIndicator.startingNumber || 0)
+//   const currentProgress = currentIndicator.value - (currentIndicator.startingNumber || 0)
+//   const previousProgress = previousIndicator.value - (previousIndicator.startingNumber || 0)
 
-  return Math.round(((currentProgress - previousProgress) / goalRange) * 100)
-}
+//   return Math.round(((currentProgress - previousProgress) / goalRange) * 100)
+// }
 
-export function getChartData(plan: Plan) {
-  return plan.weeks.map((week) => {
-    return {
-      label: `Week ${week.weekNumber}`,
-      score: week.score,
-    }
-  })
-}
+// export function getChartData(plan: Plan) {
+//   return plan.weeks.map((week) => {
+//     return {
+//       label: `Week ${week.weekNumber}`,
+//       score: week.score,
+//     }
+//   })
+// }
 
-export function isStrategyOverdue(strategy: Strategy, weekEndDate: string): boolean {
-  const end = dayjs(weekEndDate)
-  const today = dayjs()
-  const overdue = today.isAfter(end, 'day')
+// export function isStrategyOverdue(strategy: Strategy, weekEndDate: string): boolean {
+//   const end = dayjs(weekEndDate)
+//   const today = dayjs()
+//   const overdue = today.isAfter(end, 'day')
 
-  if (overdue && !strategy.firstUpdated && !strategy.checked) {
-    return true
-  }
+//   if (overdue && !strategy.firstUpdated && !strategy.checked) {
+//     return true
+//   }
 
-  return false
-}
+//   return false
+// }

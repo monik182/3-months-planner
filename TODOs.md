@@ -5,13 +5,25 @@
   - include user id to the models ✅
   - create prisma schema ✅
   - create db manager ✅
+  - Refactor DB
+  - improve BE error responses
+  - Create queries to add plan_id to other tables
+  - Rename tables?
+- BE integration
   - integrate db + backend + frontend - Create plan ✅
   - integrate db + backend + frontend - Track plan
+  - Create page auth
   - improve api/plan/create performance [WIP]
-  - add local persistency
-  - improve BE error responses
-  - create a model folder?
   - add cache?
+- FE Fixes
+  - add local persistency
+  - save to db after each step
+  - Refactor dashboard
+  - Centralize types (interfaces / classes)
+  - Refactor usePlan hook, is still necessary?
+  - Handle loading/error states of requests - react query?
+  - create a model folder?
+
 
 # Release
 - Deploy
@@ -19,7 +31,10 @@
 
 # Extra 
 Validations:
-- Validate current step is completed
+- Validate current step is completed ✅
+
+UI:
+- Improve user feedback messages/components
 
 Responsive capabilities
 
