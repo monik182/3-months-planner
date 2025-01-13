@@ -5,6 +5,8 @@ import { UsePlan, usePlan } from '@/app/hooks/usePlan'
 import { UsePlanHistory, usePlanHistory } from '@/app/hooks/usePlanHistory'
 import { PlanService } from '@/services/plan'
 import { GoalService } from '@/services/goal'
+import { IndicatorService } from '@/services/indicator'
+import { StrategyService } from '@/services/strategy'
 
 type PlanContextType = {
   plan: UsePlan,
@@ -38,13 +40,13 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
       if (plan) {
         const goals = await GoalService.getByPlanId(plan.id)
         // TODO: refactor this to get by plan id
-        // const strategies = await StrategyService.getByPlanId(plan.id)
-        // const indicators = await IndicatorService.getByPlanId(plan.id)
+        const strategies = await StrategyService.getByPlanId(plan.id)
+        const indicators = await IndicatorService.getByPlanId(plan.id)
         const currentPlan = {
           plan,
           goals,
-          // strategies: strategies.map(new Strategy(plan.id).createFromPrisma) || [],
-          // indicators: indicators.map(new Indicator(plan.id).createFromPrisma) || [],
+          strategies,
+          indicators,
         } as Partial<UsePlan['plan']> // TODO: review this later
         setCurrentPlan(currentPlan)
       }

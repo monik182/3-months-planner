@@ -3,13 +3,9 @@ import { NextRequest } from 'next/server'
 import { strategyHandler } from '@/db/prismaHandler'
 
 export async function GET(request: NextRequest) {
-  const goalId = request.nextUrl.searchParams.get('goalId')
+  const goalId = request.nextUrl.searchParams.get('goalId') ?? undefined
   const status = request.nextUrl.searchParams.get('status') ?? undefined
   const planId = request.nextUrl.searchParams.get('planId') ?? undefined
-
-  if (!goalId) {
-    return new Response('Invalid goal id', { status: 400 })
-  }
 
   try {
     const response = await strategyHandler.findMany({ goalId, status, planId })

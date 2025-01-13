@@ -14,6 +14,7 @@ function Dashboard() {
   // const { user } = useProtectedPage()
   // const today = dayjs().format('DD MMMM YYYY')
   const { currentPlan, isLoading } = usePlanContext()
+  console.log('Current plan', currentPlan)
   // const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
   // const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
   // const data = getChartData(planTracker)
