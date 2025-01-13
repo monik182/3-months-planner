@@ -41,7 +41,7 @@ Table strategies {
   goalId String [not null]
   planId String [not null]
   content String [not null]
-  weeks String [not null]
+  weeks String[] [not null]
   status String [not null]
   goal goals [not null]
   strategyHistory strategy_history [not null]

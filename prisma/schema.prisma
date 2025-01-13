@@ -69,7 +69,7 @@ model Strategy {
   goalId         String        @map("goal_id")
   planId         String        @map("plan_id")
   content        String
-  weeks          String
+  weeks          String[]
   status         String
 
   goal           Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
