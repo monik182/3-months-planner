@@ -49,6 +49,7 @@ model goals {
 model goal_history {
   id         String   @id @default(cuid())
   goal_id    String
+  plan_id    String?
   start_date DateTime
   end_date   DateTime
   sequence   Int
@@ -56,11 +57,13 @@ model goal_history {
   goal       goals    @relation(fields: [goal_id], references: [id], onDelete: Cascade)
 
   @@index([goal_id])
+  @@index([plan_id])
 }
 
 model strategies {
   id         String        @id @default(cuid())
   goal_id    String
+  plan_id    String?
   content    String
   weeks      String
   status     String
@@ -69,11 +72,13 @@ model strategies {
   strategyHistory strategy_history[]
 
   @@index([goal_id])
+  @@index([plan_id])
 }
 
 model strategy_history {
   id            String   @id @default(cuid())
   strategy_id   String
+  plan_id       String?
   overdue       Boolean  @default(false)
   completed     Boolean  @default(false)
   first_update  DateTime?
@@ -83,11 +88,13 @@ model strategy_history {
   strategy      strategies @relation(fields: [strategy_id], references: [id], onDelete: Cascade)
 
   @@index([strategy_id])
+  @@index([plan_id])
 }
 
 model indicators {
   id              String             @id @default(cuid())
   goal_id         String
+  plan_id         String?
   content         String
   metric          String
   starting_value  Int
@@ -98,22 +105,26 @@ model indicators {
   indicatorHistory indicator_history[]
 
   @@index([goal_id])
+  @@index([plan_id])
 }
 
 model indicator_history {
   id            String     @id @default(cuid())
   indicator_id  String
+  plan_id       String?
   value         Int
   sequence      Int
 
   indicator     indicators @relation(fields: [indicator_id], references: [id], onDelete: Cascade)
 
   @@index([indicator_id])
+  @@index([plan_id])
 }
 
 model notifications {
   id          String   @id @default(cuid())
   user_id     String
+  plan_id     String?
   entity_type String
   entity_id   String
   type        String

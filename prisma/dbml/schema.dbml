@@ -29,6 +29,7 @@ Table goals {
 Table goal_history {
   id String [pk]
   goal_id String [not null]
+  plan_id String
   start_date DateTime [not null]
   end_date DateTime [not null]
   sequence Int [not null]
@@ -38,6 +39,7 @@ Table goal_history {
 Table strategies {
   id String [pk]
   goal_id String [not null]
+  plan_id String
   content String [not null]
   weeks String [not null]
   status String [not null]
@@ -48,6 +50,7 @@ Table strategies {
 Table strategy_history {
   id String [pk]
   strategy_id String [not null]
+  plan_id String
   overdue Boolean [not null, default: false]
   completed Boolean [not null, default: false]
   first_update DateTime
@@ -59,6 +62,7 @@ Table strategy_history {
 Table indicators {
   id String [pk]
   goal_id String [not null]
+  plan_id String
   content String [not null]
   metric String [not null]
   starting_value Int [not null]
@@ -71,6 +75,7 @@ Table indicators {
 Table indicator_history {
   id String [pk]
   indicator_id String [not null]
+  plan_id String
   value Int [not null]
   sequence Int [not null]
   indicator indicators [not null]
@@ -79,6 +84,7 @@ Table indicator_history {
 Table notifications {
   id String [pk]
   user_id String [not null]
+  plan_id String
   entity_type String [not null]
   entity_id String [not null]
   type String [not null]

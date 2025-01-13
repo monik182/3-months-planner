@@ -102,3 +102,6 @@ Print:
       - Indicators components list ✅
         - Show input to track current indicator value ✅
         - Show graph to compare indicator historic value? ✅
+
+
+with persistance will come success
