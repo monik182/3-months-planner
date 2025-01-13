@@ -4,20 +4,20 @@
 
 Table plans {
   id String [pk]
-  user_id String [not null]
+  userId String [not null]
   vision String [not null]
   milestone String [not null]
   completed Boolean [not null, default: false]
-  start_date DateTime [not null]
-  end_date DateTime [not null]
+  startDate DateTime [not null]
+  endDate DateTime [not null]
   created DateTime [default: `now()`, not null]
-  last_update DateTime [not null]
+  lastUpdate DateTime [not null]
   goals goals [not null]
 }
 
 Table goals {
   id String [pk]
-  plan_id String [not null]
+  planId String [not null]
   content String [not null]
   status String [not null]
   plan plans [not null]
@@ -28,18 +28,18 @@ Table goals {
 
 Table goal_history {
   id String [pk]
-  goal_id String [not null]
-  plan_id String
-  start_date DateTime [not null]
-  end_date DateTime [not null]
+  goalId String [not null]
+  planId String [not null]
+  startDate DateTime [not null]
+  endDate DateTime [not null]
   sequence Int [not null]
   goal goals [not null]
 }
 
 Table strategies {
   id String [pk]
-  goal_id String [not null]
-  plan_id String
+  goalId String [not null]
+  planId String [not null]
   content String [not null]
   weeks String [not null]
   status String [not null]
@@ -49,24 +49,24 @@ Table strategies {
 
 Table strategy_history {
   id String [pk]
-  strategy_id String [not null]
-  plan_id String
+  strategyId String [not null]
+  planId String [not null]
   overdue Boolean [not null, default: false]
   completed Boolean [not null, default: false]
-  first_update DateTime
-  last_update DateTime
+  firstUpdate DateTime
+  lastUpdate DateTime
   sequence Int [not null]
   strategy strategies [not null]
 }
 
 Table indicators {
   id String [pk]
-  goal_id String [not null]
-  plan_id String
+  goalId String [not null]
+  planId String [not null]
   content String [not null]
   metric String [not null]
-  starting_value Int [not null]
-  goal_value Int [not null]
+  startingValue Int [not null]
+  goalValue Int [not null]
   status String [not null]
   goal goals [not null]
   indicatorHistory indicator_history [not null]
@@ -74,8 +74,8 @@ Table indicators {
 
 Table indicator_history {
   id String [pk]
-  indicator_id String [not null]
-  plan_id String
+  indicatorId String [not null]
+  planId String [not null]
   value Int [not null]
   sequence Int [not null]
   indicator indicators [not null]
@@ -83,26 +83,26 @@ Table indicator_history {
 
 Table notifications {
   id String [pk]
-  user_id String [not null]
-  plan_id String
-  entity_type String [not null]
-  entity_id String [not null]
+  userId String [not null]
+  planId String [not null]
+  entityType String [not null]
+  entityId String [not null]
   type String [not null]
   message String [not null]
   status String [not null]
-  send_date DateTime [not null]
+  sendDate DateTime [not null]
   created DateTime [default: `now()`, not null]
-  last_update DateTime [not null]
+  lastUpdate DateTime [not null]
 }
 
-Ref: goals.plan_id > plans.id [delete: Cascade]
+Ref: goals.planId > plans.id [delete: Cascade]
 
-Ref: goal_history.goal_id > goals.id [delete: Cascade]
+Ref: goal_history.goalId > goals.id [delete: Cascade]
 
-Ref: strategies.goal_id > goals.id [delete: Cascade]
+Ref: strategies.goalId > goals.id [delete: Cascade]
 
-Ref: strategy_history.strategy_id > strategies.id [delete: Cascade]
+Ref: strategy_history.strategyId > strategies.id [delete: Cascade]
 
-Ref: indicators.goal_id > goals.id [delete: Cascade]
+Ref: indicators.goalId > goals.id [delete: Cascade]
 
-Ref: indicator_history.indicator_id > indicators.id [delete: Cascade]
+Ref: indicator_history.indicatorId > indicators.id [delete: Cascade]

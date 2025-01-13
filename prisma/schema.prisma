@@ -18,122 +18,130 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model plans {
+model Plan {
   id          String   @id @default(cuid())
-  user_id     String
+  userId      String   @map("user_id")
   vision      String
   milestone   String
   completed   Boolean  @default(false)
-  start_date  DateTime
-  end_date    DateTime
+  startDate   DateTime @map("start_date")
+  endDate     DateTime @map("end_date")
   created     DateTime @default(now())
-  last_update DateTime @updatedAt
+  lastUpdate  DateTime @updatedAt @map("last_update")
 
-  goals       goals[]
+  goals       Goal[]
+
+  @@map("plans")
 }
 
-model goals {
+model Goal {
   id          String      @id @default(cuid())
-  plan_id     String
+  planId      String      @map("plan_id")
   content     String
   status      String
 
-  plan        plans        @relation(fields: [plan_id], references: [id], onDelete: Cascade)
-  goalHistory goal_history[]
-  strategies  strategies[]
-  indicators  indicators[]
+  plan        Plan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  goalHistory GoalHistory[]
+  strategies  Strategy[]
+  indicators  Indicator[]
 
-  @@index([plan_id])
+  @@index([planId])
+  @@map("goals")
 }
 
-model goal_history {
+model GoalHistory {
   id         String   @id @default(cuid())
-  goal_id    String
-  plan_id    String?
-  start_date DateTime
-  end_date   DateTime
+  goalId     String   @map("goal_id")
+  planId     String   @map("plan_id")
+  startDate  DateTime @map("start_date")
+  endDate    DateTime @map("end_date")
   sequence   Int
 
-  goal       goals    @relation(fields: [goal_id], references: [id], onDelete: Cascade)
+  goal       Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
-  @@index([goal_id])
-  @@index([plan_id])
+  @@index([goalId])
+  @@index([planId])
+  @@map("goal_history")
 }
 
-model strategies {
-  id         String        @id @default(cuid())
-  goal_id    String
-  plan_id    String?
-  content    String
-  weeks      String
-  status     String
+model Strategy {
+  id             String        @id @default(cuid())
+  goalId         String        @map("goal_id")
+  planId         String        @map("plan_id")
+  content        String
+  weeks          String
+  status         String
 
-  goal       goals         @relation(fields: [goal_id], references: [id], onDelete: Cascade)
-  strategyHistory strategy_history[]
+  goal           Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  strategyHistory StrategyHistory[]
 
-  @@index([goal_id])
-  @@index([plan_id])
+  @@index([goalId])
+  @@index([planId])
+  @@map("strategies")
 }
 
-model strategy_history {
-  id            String   @id @default(cuid())
-  strategy_id   String
-  plan_id       String?
-  overdue       Boolean  @default(false)
-  completed     Boolean  @default(false)
-  first_update  DateTime?
-  last_update   DateTime?
-  sequence      Int
+model StrategyHistory {
+  id           String   @id @default(cuid())
+  strategyId   String   @map("strategy_id")
+  planId       String   @map("plan_id")
+  overdue      Boolean  @default(false)
+  completed    Boolean  @default(false)
+  firstUpdate  DateTime? @map("first_update")
+  lastUpdate   DateTime? @map("last_update")
+  sequence     Int
 
-  strategy      strategies @relation(fields: [strategy_id], references: [id], onDelete: Cascade)
+  strategy     Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
 
-  @@index([strategy_id])
-  @@index([plan_id])
+  @@index([strategyId])
+  @@index([planId])
+  @@map("strategy_history")
 }
 
-model indicators {
-  id              String             @id @default(cuid())
-  goal_id         String
-  plan_id         String?
-  content         String
-  metric          String
-  starting_value  Int
-  goal_value      Int
-  status          String
+model Indicator {
+  id             String             @id @default(cuid())
+  goalId         String             @map("goal_id")
+  planId         String             @map("plan_id")
+  content        String
+  metric         String
+  startingValue  Int                @map("starting_value")
+  goalValue      Int                @map("goal_value")
+  status         String
 
-  goal            goals              @relation(fields: [goal_id], references: [id], onDelete: Cascade)
-  indicatorHistory indicator_history[]
+  goal           Goal              @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  indicatorHistory IndicatorHistory[]
 
-  @@index([goal_id])
-  @@index([plan_id])
+  @@index([goalId])
+  @@index([planId])
+  @@map("indicators")
 }
 
-model indicator_history {
-  id            String     @id @default(cuid())
-  indicator_id  String
-  plan_id       String?
-  value         Int
-  sequence      Int
+model IndicatorHistory {
+  id           String     @id @default(cuid())
+  indicatorId  String     @map("indicator_id")
+  planId       String     @map("plan_id")
+  value        Int
+  sequence     Int
 
-  indicator     indicators @relation(fields: [indicator_id], references: [id], onDelete: Cascade)
+  indicator    Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
 
-  @@index([indicator_id])
-  @@index([plan_id])
+  @@index([indicatorId])
+  @@index([planId])
+  @@map("indicator_history")
 }
 
-model notifications {
+model Notification {
   id          String   @id @default(cuid())
-  user_id     String
-  plan_id     String?
-  entity_type String
-  entity_id   String
+  userId      String   @map("user_id")
+  planId      String   @map("plan_id")
+  entityType  String   @map("entity_type")
+  entityId    String   @map("entity_id")
   type        String
   message     String
   status      String
-  send_date   DateTime
+  sendDate    DateTime @map("send_date")
   created     DateTime @default(now())
-  last_update DateTime @updatedAt
+  lastUpdate  DateTime @updatedAt @map("last_update")
 
-
-  @@index([entity_type, entity_id])
+  @@index([entityType, entityId])
+  @@map("notifications")
 }
