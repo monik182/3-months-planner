@@ -1,6 +1,6 @@
 import { strategies } from '@prisma/client'
 
-const create = (strategy: strategies) => {
+const create = (strategy: strategies): Promise<strategies> => {
   return fetch(`/api/strategy`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -8,15 +8,15 @@ const create = (strategy: strategies) => {
   }).then(response => response.json())
 }
 
-const get = async (id: string) => {
+const get = async (id: string): Promise<strategies> => {
   return fetch(`/api/strategy/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string) => {
+const getByPlanId = async (planId: string): Promise<strategies[]> => {
   return fetch(`/api/strategy?planId=${planId}`).then(response => response.json())
 }
 
-const update = async (id: string, strategy: Partial<strategies>) => {
+const update = async (id: string, strategy: Partial<strategies>): Promise<strategies> => {
   return fetch(`/api/strategy/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

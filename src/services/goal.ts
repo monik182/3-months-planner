@@ -8,15 +8,15 @@ const create = (goal: goals) => {
   }).then(response => response.json())
 }
 
-const get = async (id: string) => {
+const get = async (id: string): Promise<goals> => {
   return fetch(`/api/goal/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string) => {
+const getByPlanId = async (planId: string): Promise<goals[]> => {
   return fetch(`/api/goal?planId=${planId}`).then(response => response.json())
 }
 
-const update = async (id: string, goal: Partial<goals>) => {
+const update = async (id: string, goal: Partial<goals>): Promise<goals> => {
   return fetch(`/api/goal/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

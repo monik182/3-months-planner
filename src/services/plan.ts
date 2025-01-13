@@ -7,7 +7,7 @@ interface PlanData {
   indicators: indicators[]
 }
 
-const getByUserId = async (userId: string) => {
+const getByUserId = async (userId: string): Promise<plans> => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
     method: 'GET',
   })
@@ -25,11 +25,11 @@ const create = async (data: PlanData) => {
     .then(response => response.json())
 }
 
-const get = async (id: string) => {
+const get = async (id: string): Promise<plans> => {
   return fetch(`/api/plan/${id}`).then(response => response.json())
 }
 
-const getAll = async (userId: string) => {
+const getAll = async (userId: string): Promise<plans[]> => {
   const response = await fetch(`/api/plan/all?userId=${userId}`, {
     method: 'GET',
   })
@@ -37,7 +37,7 @@ const getAll = async (userId: string) => {
   return plans
 }
 
-const update = async (id: string, plan: Partial<plans>) => {
+const update = async (id: string, plan: Partial<plans>): Promise<plans> => {
   return fetch(`/api/plan/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
