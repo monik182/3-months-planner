@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const IndicatorHistorySchema = z.object({
   id: z.string().cuid(),
   indicatorId: z.string().cuid(),
+  planId: z.string().cuid(),
   value: z.number().int(),
   sequence: z.number().int(),
 })

@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const StrategyHistorySchema = z.object({
   id: z.string().cuid(),
   strategyId: z.string().cuid(),
+  planId: z.string().cuid(),
   overdue: z.boolean(),
   completed: z.boolean(),
   first_update: z.string().datetime().nullable(),
