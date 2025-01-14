@@ -4,8 +4,8 @@ export const GoalHistorySchema = z.object({
   id: z.string().cuid(),
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
+  startDate: z.date(),
+  endDate: z.date(),
   sequence: z.number().int(),
 })
 

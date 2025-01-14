@@ -6,10 +6,10 @@ export const PlanSchema = z.object({
   vision: z.string().min(1, 'Vision is required'),
   milestone: z.string().min(1, 'Milestone is required'),
   completed: z.boolean(),
-  startDate: z.string().datetime(),
-  endDate: z.string().datetime(),
-  created: z.string().datetime(),
-  lastUpdate: z.string().datetime(),
+  startDate: z.date(),
+  endDate: z.date(),
+  created: z.date(),
+  lastUpdate: z.date(),
 })
 
 export const PartialPlanSchema = PlanSchema.partial()
