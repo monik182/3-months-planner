@@ -54,6 +54,10 @@ export function calculateWeekStartDate(startDate: Date, weekNumber: number) {
   return start.toDate()//.format('YYYY-MM-DD')
 }
 
+export function formatDate(date: Date | string, format = 'DD MMM') {
+  return dayjs(date).format(format)
+}
+
 // export const calculateGoalScore = (goal: Goal): number => {
 //   const strategyScore =
 //     goal.strategies.length > 0

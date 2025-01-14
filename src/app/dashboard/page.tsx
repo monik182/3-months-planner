@@ -6,12 +6,13 @@ import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
 import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
-import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+// import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+import { Week } from '@/app/dashboard/Week/Week'
 
 function Dashboard() {
-  const { planActions, goalHistoryActions } = usePlanContext()
+  const { planActions, goalActions } = usePlanContext()
   const { data: currentPlan, isLoading } = planActions.useGet()
-  const { data: goalHist } = goalHistoryActions.useGetByPlanId(currentPlan?.id as string)
+  const { data: goals } = goalActions.useGetByPlanId(currentPlan?.id as string)
   // console.log('Current plan from actions', currentPlan)
   // console.log('Current GOAL goalHist from plan from actions', goalHist)
   const today = dayjs().format('DD MMMM YYYY')
@@ -32,7 +33,7 @@ function Dashboard() {
     )
   }
 
-  if (!currentPlan) {
+  if (!currentPlan || !goals) {
     return (
       <div>
         Seems you dont have any plan open, go to create a new one...
@@ -85,11 +86,11 @@ function Dashboard() {
             ))}
             <Tabs.Indicator rounded="l2" />
           </Tabs.List>
-          {/* {planTracker.weeks.map((week) => (
-            <Tabs.Content key={week.id} value={`tab-${week.weekNumber}`}>
-              <Week week={week} />
+          {DEFAULT_WEEKS.map((week) => (
+            <Tabs.Content key={week} value={`tab-${week}`}>
+              <Week seq={Number(week)} goals={goals} plan={currentPlan} />
             </Tabs.Content>
-          ))} */}
+          ))}
         </Tabs.Root>
       </Box>
     </Grid>
