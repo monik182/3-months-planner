@@ -16,6 +16,10 @@ const getByPlanId = async (planId: string): Promise<Indicator[]> => {
   return fetch(`/api/indicator?planId=${planId}`).then(response => response.json())
 }
 
+const getByGoalId = async (goalId: string): Promise<Indicator[]> => {
+  return fetch(`/api/indicator?goalId=${goalId}`).then(response => response.json())
+}
+
 const update = async (id: string, indicator: Partial<Indicator>): Promise<Indicator> => {
   return fetch(`/api/indicator/${id}`, {
     method: 'PUT',
@@ -34,5 +38,6 @@ export const IndicatorService = {
   create,
   get,
   getByPlanId,
+  getByGoalId,
   update,
 }

@@ -1,11 +1,11 @@
 import { Goal, Indicator, Plan, Strategy } from '@prisma/client'
 
-interface PlanData {
-  plan: Plan
-  goals: Goal[]
-  strategies: Strategy[]
-  indicators: Indicator[]
-}
+// interface PlanData {
+//   plan: Plan
+//   goals: Goal[]
+//   strategies: Strategy[]
+//   indicators: Indicator[]
+// }
 
 const getByUserId = async (userId: string): Promise<Plan> => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
@@ -15,9 +15,19 @@ const getByUserId = async (userId: string): Promise<Plan> => {
   return plan
 }
 
-const create = async (data: PlanData) => {
+// const createDeprecated = async (data: PlanData) => {
+//   const body = JSON.stringify(data)
+//   return fetch(`/api/plan/create`, {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body,
+//   })
+//     .then(response => response.json())
+// }
+
+const create = async (data: Plan) => {
   const body = JSON.stringify(data)
-  return fetch(`/api/plan/create`, {
+  return fetch(`/api/plan`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body,

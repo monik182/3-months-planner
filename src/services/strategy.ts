@@ -16,6 +16,10 @@ const getByPlanId = async (planId: string): Promise<Strategy[]> => {
   return fetch(`/api/strategy?planId=${planId}`).then(response => response.json())
 }
 
+const getByGoalId = async (goalId: string): Promise<Strategy[]> => {
+  return fetch(`/api/strategy?goalId=${goalId}`).then(response => response.json())
+}
+
 const update = async (id: string, strategy: Partial<Strategy>): Promise<Strategy> => {
   return fetch(`/api/strategy/${id}`, {
     method: 'PUT',
@@ -34,5 +38,6 @@ export const StrategyService = {
   create,
   get,
   getByPlanId,
+  getByGoalId,
   update,
 }
