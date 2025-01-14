@@ -2,7 +2,7 @@
 import { Box, Button, Card, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/stepLayout'
 import { SlClose, SlPlus } from 'react-icons/sl'
-import { Step } from '@/app/types'
+import { Step } from '@/app/types/types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorList } from '@/app/plan/Step3/Indicator/IndicatorList'
 import { StrategyList } from '@/app/plan/Step3/Strategy/StrategyList'

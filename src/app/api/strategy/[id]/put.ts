@@ -1,7 +1,7 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
 import { strategyHandler } from '@/db/prismaHandler'
-import { SegmentData } from '@/app/types'
+import { SegmentData } from '@/app/types/types'
 import { PartialStrategySchema } from '@/lib/validators/strategy'
 
 export async function PUT(request: NextRequest, segmentData: SegmentData) {

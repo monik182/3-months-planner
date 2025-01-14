@@ -1,5 +1,5 @@
 import { Box, HStack } from '@chakra-ui/react'
-import { Indicator as IIndicator } from '@/app/types'
+import { Indicator as IIndicator } from '@/app/types/types'
 import { StatDownTrend, StatLabel, StatRoot, StatUpTrend, StatValueText } from '@/components/ui/stat'
 import { useState } from 'react'
 import { usePlanContext } from '@/app/providers/usePlanContext'

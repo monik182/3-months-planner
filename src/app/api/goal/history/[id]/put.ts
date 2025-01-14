@@ -1,7 +1,7 @@
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest } from 'next/server'
 import { goalHistoryHandler } from '@/db/prismaHandler'
-import { SegmentData } from '@/app/types'
+import { SegmentData } from '@/app/types/types'
 import { PartialGoalHistorySchema } from '@/lib/validators/goalHistory'
 
 export async function PUT(request: NextRequest, segmentData: SegmentData) {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@/app/types'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@/app/types/types'
 import { PlanHistoryClass } from '@/app/types/PlanHistoryClass'
 
 export function usePlanHistory(plan: Plan, goals: Goal[], strategies: Strategy[], indicators: Indicator[]): UsePlanHistory {

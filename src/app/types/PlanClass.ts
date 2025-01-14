@@ -2,7 +2,7 @@ import cuid from 'cuid'
 import { calculatePlanEndDate, getDate, getPlanStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { Goal, Indicator, Plan, Strategy } from '@prisma/client'
-import { Status } from '@/app/types'
+import { Status } from '@/app/types/types'
 
 export class PlanClass {
   private readonly userId: string

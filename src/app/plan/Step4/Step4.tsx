@@ -1,5 +1,5 @@
 import { StepLayout } from '../stepLayout'
-import { Step } from '@/app/types'
+import { Step } from '@/app/types/types'
 import dayjs from 'dayjs'
 import { DateSelector } from './DateSelector'
 import { calculatePlanEndDate } from '@/app/util'

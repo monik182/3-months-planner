@@ -1,6 +1,6 @@
 import { Box, SimpleGrid, Text } from '@chakra-ui/react'
 import dayjs from 'dayjs'
-import { WeekTracking } from '@/app/types'
+import { WeekTracking } from '@/app/types/types'
 import { Goal } from './Goal'
 
 interface WeekProps {

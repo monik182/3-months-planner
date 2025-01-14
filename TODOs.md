@@ -16,9 +16,9 @@
   - improve api/plan/create performance [WIP]
   - add cache?
 - FE Fixes
-  - add local persistency
   - save to db after each step
-  - Refactor dashboard
+  - Refactor dashboard -> see mockup references
+  - add local persistency
   - Centralize types (interfaces / classes) ✅
   - Refactor usePlan hook, is still necessary?
   - Handle loading/error states of requests - react query?

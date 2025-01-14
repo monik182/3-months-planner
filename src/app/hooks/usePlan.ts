@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { PlanClass } from '@/app/types/PlanClass'
-import { Status } from '@/app/types'
+import { Status } from '@/app/types/types'
 import { Goal, Indicator, Plan, Strategy } from '@prisma/client'
 
 export function usePlan(userId?: string): UsePlan {
