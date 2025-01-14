@@ -6,7 +6,7 @@ interface GoalProps {
   seq: number
 }
 
-export function GoalComponent({ goal, seq }: GoalProps) {
+export function GoalDetail({ goal, seq }: GoalProps) {
   const { strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
   const { data: strategies = [], isLoading: isLoadingStrategies } = strategyHistoryActions.useGetByGoalId(goal.id, seq + '')
   const { data: indicators = [], isLoading: isLoadingIndicators } = indicatorHistoryActions.useGetByGoalId(goal.id, seq + '')

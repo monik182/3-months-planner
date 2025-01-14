@@ -1,5 +1,4 @@
-import { GoalComponent } from '@/app/dashboard/Week/Goal'
-import { usePlanContext } from '@/app/providers/usePlanContext'
+import { GoalDetail } from '@/app/dashboard/Week/GoalDetail'
 import { calculatePlanEndDate, calculateWeekStartDate, formatDate } from '@/app/util'
 import { Heading } from '@chakra-ui/react'
 import { Goal, Plan } from '@prisma/client'
@@ -24,7 +23,7 @@ export function Week({ seq, goals, plan }: WeekProps) {
         <p>Week: {formatDate(startDate)} - {formatDate(endDate)}</p>
       </div>
       <div>
-        {goals.map(g => (<GoalComponent key={g.id} goal={g} seq={seq} />))}
+        {goals.map(g => (<GoalDetail key={g.id} goal={g} seq={seq} />))}
       </div>
     </div>
   )
