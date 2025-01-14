@@ -28,21 +28,24 @@ export function useStrategyActions() {
   const useGetByPlanId = (planId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId }],
-      queryFn: () => StrategyService.getByPlanId(planId)
+      queryFn: () => StrategyService.getByPlanId(planId),
+      enabled: !!planId,
     })
   }
 
   const useGetByGoalId = (goalId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { goalId }],
-      queryFn: () => StrategyService.getByGoalId(goalId)
+      queryFn: () => StrategyService.getByGoalId(goalId),
+      enabled: !!goalId,
     })
   }
 
   const useGet = (strategyId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { strategyId }],
-      queryFn: () => StrategyService.get(strategyId)
+      queryFn: () => StrategyService.get(strategyId),
+      enabled: !!strategyId,
     })
   }
 
@@ -54,3 +57,5 @@ export function useStrategyActions() {
     useGet,
   }
 }
+
+export type UseStrategyActions = ReturnType<typeof useStrategyActions>

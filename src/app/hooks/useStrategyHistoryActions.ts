@@ -1,15 +1,15 @@
-import { IndicatorService } from '@/services/indicator'
-import { Indicator } from '@prisma/client'
+import { StrategyHistoryService } from '@/services/strategyHistory'
+import { StrategyHistory } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-const QUERY_KEY = 'indicators'
+const QUERY_KEY = 'strategy-history'
 
-export function useIndicatorActions() {
+export function useStrategyHistoryActions() {
   const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (indicator: Indicator) => IndicatorService.create(indicator),
+      mutationFn: (strategy: StrategyHistory) => StrategyHistoryService.create(strategy),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
@@ -18,7 +18,7 @@ export function useIndicatorActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Partial<Indicator> }) => IndicatorService.update(indicatorId, updates),
+      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Partial<StrategyHistory> }) => StrategyHistoryService.update(strategyId, updates),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
@@ -28,7 +28,7 @@ export function useIndicatorActions() {
   const useGetByPlanId = (planId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId }],
-      queryFn: () => IndicatorService.getByPlanId(planId),
+      queryFn: () => StrategyHistoryService.getByPlanId(planId),
       enabled: !!planId,
     })
   }
@@ -36,16 +36,16 @@ export function useIndicatorActions() {
   const useGetByGoalId = (goalId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { goalId }],
-      queryFn: () => IndicatorService.getByGoalId(goalId),
+      queryFn: () => StrategyHistoryService.getByGoalId(goalId),
       enabled: !!goalId,
     })
   }
 
-  const useGet = (indicatorId: string) => {
+  const useGet = (strategyId: string) => {
     return useQuery({
-      queryKey: [QUERY_KEY, { indicatorId }],
-      queryFn: () => IndicatorService.get(indicatorId),
-      enabled: !!indicatorId,
+      queryKey: [QUERY_KEY, { strategyId }],
+      queryFn: () => StrategyHistoryService.get(strategyId),
+      enabled: !!strategyId,
     })
   }
 
@@ -58,4 +58,4 @@ export function useIndicatorActions() {
   }
 }
 
-export type UseIndicatorActions = ReturnType<typeof useIndicatorActions>
+export type UseStrategyHistoryActions = ReturnType<typeof useStrategyHistoryActions>

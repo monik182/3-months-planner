@@ -25,29 +25,28 @@ export function usePlanActions(userId: string) {
     })
   }
 
-  const useGetCurrent = (options) => {
+  const useGet = () => {
     return useQuery({
       queryKey: [QUERY_KEY, { userId }],
       queryFn: () => PlanService.getByUserId(userId),
-      options,
+      enabled: !!userId,
     })
   }
 
   const useGetAll = () => {
     return useQuery({
       queryKey: ['plans', { userId }],
-      queryFn: () => PlanService.getAll(userId)
+      queryFn: () => PlanService.getAll(userId),
+      enabled: !!userId,
     })
-  }
-
-  if (!userId) {
-    return null
   }
 
   return {
     useCreate,
     useUpdate,
-    useGetCurrent,
+    useGet,
     useGetAll,
   }
 }
+
+export type UsePlanActions = ReturnType<typeof usePlanActions>

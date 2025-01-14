@@ -1,15 +1,15 @@
-import { GoalService } from '@/services/goal'
-import { Goal } from '@prisma/client'
+import { GoalHistoryService } from '@/services/goalHistory'
+import { Goal, GoalHistory } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-const QUERY_KEY = 'goals'
+const QUERY_KEY = 'goal-history'
 
-export function useGoalActions() {
+export function useGoalHistoryActions() {
   const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (goal: Goal) => GoalService.create(goal),
+      mutationFn: (goal: GoalHistory) => GoalHistoryService.create(goal),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
@@ -18,7 +18,7 @@ export function useGoalActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ goalId, updates }: { goalId: string, updates: Partial<Goal> }) => GoalService.update(goalId, updates),
+      mutationFn: ({ goalId, updates }: { goalId: string, updates: Partial<Goal> }) => GoalHistoryService.update(goalId, updates),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
@@ -28,7 +28,7 @@ export function useGoalActions() {
   const useGetByPlanId = (planId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId }],
-      queryFn: () => GoalService.getByPlanId(planId),
+      queryFn: () => GoalHistoryService.getByPlanId(planId),
       enabled: !!planId,
     })
   }
@@ -36,7 +36,7 @@ export function useGoalActions() {
   const useGet = (goalId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { goalId }],
-      queryFn: () => GoalService.get(goalId),
+      queryFn: () => GoalHistoryService.get(goalId),
       enabled: !!goalId,
     })
   }
@@ -49,4 +49,4 @@ export function useGoalActions() {
   }
 }
 
-export type UseGoalActions = ReturnType<typeof useGoalActions>
+export type UseGoalHistoryActions = ReturnType<typeof useGoalHistoryActions>
