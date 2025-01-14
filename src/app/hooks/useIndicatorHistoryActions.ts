@@ -25,18 +25,18 @@ export function useIndicatorHistoryActions() {
     })
   }
 
-  const useGetByPlanId = (planId: string) => {
+  const useGetByPlanId = (planId: string, sequence?: string) => {
     return useQuery({
-      queryKey: [QUERY_KEY, { planId }],
-      queryFn: () => IndicatorHistoryService.getByPlanId(planId),
+      queryKey: [QUERY_KEY, { planId, sequence }],
+      queryFn: () => IndicatorHistoryService.getByPlanId(planId, sequence),
       enabled: !!planId,
     })
   }
 
-  const useGetByGoalId = (goalId: string) => {
+  const useGetByGoalId = (goalId: string, sequence?: string) => {
     return useQuery({
-      queryKey: [QUERY_KEY, { goalId }],
-      queryFn: () => IndicatorHistoryService.getByGoalId(goalId),
+      queryKey: [QUERY_KEY, { goalId, sequence }],
+      queryFn: () => IndicatorHistoryService.getByGoalId(goalId, sequence),
       enabled: !!goalId,
     })
   }

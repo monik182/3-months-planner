@@ -25,10 +25,10 @@ export function useGoalHistoryActions() {
     })
   }
 
-  const useGetByPlanId = (planId: string) => {
+  const useGetByPlanId = (planId: string, sequence?: string) => {
     return useQuery({
-      queryKey: [QUERY_KEY, { planId }],
-      queryFn: () => GoalHistoryService.getByPlanId(planId),
+      queryKey: [QUERY_KEY, { planId, sequence }],
+      queryFn: () => GoalHistoryService.getByPlanId(planId, sequence),
       enabled: !!planId,
     })
   }
