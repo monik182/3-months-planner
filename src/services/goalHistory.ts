@@ -13,8 +13,8 @@ const get = async (id: string): Promise<GoalHistory> => {
   return fetch(`/api/goal/history/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string): Promise<GoalHistoryExtended[]> => {
-  return fetch(`/api/goal/history?planId=${planId}`).then(response => response.json())
+const getByPlanId = async (planId: string, sequence?: string): Promise<GoalHistoryExtended[]> => {
+  return fetch(`/api/goal/history?planId=${planId}&sequence=${sequence}`).then(response => response.json())
 }
 
 const update = async (id: string, goal: Partial<GoalHistory>): Promise<GoalHistory> => {

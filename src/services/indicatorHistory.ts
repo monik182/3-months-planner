@@ -13,12 +13,12 @@ const get = async (id: string): Promise<IndicatorHistory> => {
   return fetch(`/api/indicator/history/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string): Promise<IndicatorHistoryExtended[]> => {
-  return fetch(`/api/indicator/history?planId=${planId}`).then(response => response.json())
+const getByPlanId = async (planId: string, sequence?: string): Promise<IndicatorHistoryExtended[]> => {
+  return fetch(`/api/indicator/history?planId=${planId}&sequence=${sequence}`).then(response => response.json())
 }
 
-const getByGoalId = async (goalId: string): Promise<IndicatorHistoryExtended[]> => {
-  return fetch(`/api/indicator/history?goalId=${goalId}`).then(response => response.json())
+const getByGoalId = async (goalId: string, sequence?: string): Promise<IndicatorHistoryExtended[]> => {
+  return fetch(`/api/indicator/history?goalId=${goalId}&sequence=${sequence}`).then(response => response.json())
 }
 
 const update = async (id: string, indicator: Partial<IndicatorHistory>): Promise<IndicatorHistory> => {

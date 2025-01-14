@@ -49,8 +49,29 @@ export const strategyHandler = {
 export const strategyHistoryHandler = {
   create: async (data: StrategyHistory) => prismaHandler(() => prisma.strategyHistory.create({ data })),
   createMany: async (data: StrategyHistory[]) => prismaHandler(() => prisma.strategyHistory.createMany({ data })),
-  findMany: async (where?: Prisma.StrategyHistoryWhereInput) => prismaHandler(() => prisma.strategyHistory.findMany({
-    where, include: {
+  findMany: async (where?: Prisma.StrategyHistoryWhereInput, seq?: string) => prismaHandler(() => prisma.strategyHistory.findMany({
+    where: {
+      ...where,
+      strategy: {
+        ...(seq && { weeks: { has: seq } })
+      },
+    }, include: {
+      strategy: {
+        select: {
+          content: true,
+          weeks: true,
+        }
+      }
+    }
+  })),
+  findManyByGoalId: async (goalId: string, where?: Prisma.StrategyHistoryWhereInput, seq?: string) => prismaHandler(() => prisma.strategyHistory.findMany({
+    where: {
+      ...where,
+      strategy: {
+        goalId,
+        ...(seq && { weeks: { has: seq } })
+      },
+    }, include: {
       strategy: {
         select: {
           content: true,
@@ -78,6 +99,23 @@ export const indicatorHistoryHandler = {
   createMany: async (data: IndicatorHistory[]) => prismaHandler(() => prisma.indicatorHistory.createMany({ data })),
   findMany: async (where?: Prisma.IndicatorHistoryWhereInput) => prismaHandler(() => prisma.indicatorHistory.findMany({
     where, include: {
+      indicator: {
+        select: {
+          content: true,
+          startingValue: true,
+          goalValue: true,
+          metric: true,
+        }
+      }
+    }
+  })),
+  findManyByGoalId: async (goalId: string, where?: Prisma.IndicatorHistoryWhereInput) => prismaHandler(() => prisma.indicatorHistory.findMany({
+    where: {
+      ...where,
+      indicator: {
+        goalId,
+      },
+    }, include: {
       indicator: {
         select: {
           content: true,
