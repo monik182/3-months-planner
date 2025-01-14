@@ -9,14 +9,14 @@ import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { useProtectedPage } from '@/app/hooks/useProtectedPage'
+import { useState } from 'react'
 
 function Dashboard() {
-  // const { user } = useProtectedPage()
-  // const today = dayjs().format('DD MMMM YYYY')
-  const { currentPlan, isLoading } = usePlanContext()
-  console.log('Current plan', currentPlan)
-  // const endOfYPlan = dayjs(planTracker.endDate).format('DD MMMM YYYY')
-  // const currentWeek = getCurrentWeekFromStartDate(planTracker.startDate)
+  const { planActions } = usePlanContext()
+  const { data: currentPlan, isLoading } = planActions.useGetCurrent()
+  console.log('Current plan from actions', currentPlan)
+  const endOfYPlan = dayjs(currentPlan.endDate).format('DD MMMM YYYY')
+  const currentWeek = getCurrentWeekFromStartDate(currentPlan.startDate)
   // const data = getChartData(planTracker)
 
   if (isLoading) {

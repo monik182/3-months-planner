@@ -1,18 +1,20 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useState } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { UsePlan, usePlan } from '@/app/hooks/usePlan'
-import { UsePlanHistory, usePlanHistory } from '@/app/hooks/usePlanHistory'
-import { PlanService } from '@/services/plan'
-import { GoalService } from '@/services/goal'
-import { IndicatorService } from '@/services/indicator'
-import { StrategyService } from '@/services/strategy'
+import { usePlanActions } from '@/app/hooks/usePlanActions'
+import { useGoalActions } from '@/app/hooks/useGoalActions'
+import { useStrategyActions } from '@/app/hooks/useStrategyActions'
+import { useIndicatorActions } from '@/app/hooks/useIndicatorActions'
 
 type PlanContextType = {
   plan: UsePlan,
   isLoading: boolean
   currentPlan?: Partial<UsePlan['plan']>
-  planHistory: UsePlanHistory,
+  planActions: any // FIXME: to 
+  goalActions: any // FIXME: to 
+  strategyActions: any // FIXME: to 
+  indicatorActions: any // FIXME: to 
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(
@@ -28,39 +30,16 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const [currentPlan, setCurrentPlan] = useState<Partial<UsePlan['plan']>>()
   const [isLoadingPlan, setIsLoading] = useState(false)
   const plan = usePlan(user?.sub as string)
-  const planHistory = usePlanHistory(plan?.plan, plan?.goals, plan?.strategies, plan?.indicators)
-
-  useEffect(() => { 
-    async function fetchUserPlan() {
-      setIsLoading(true)
-      console.log(';inside effe t', user)
-      if (!user?.sub) return
-      const plan = await PlanService.getByUserId(user.sub)
-      console.log('user plan>>>>>', plan)
-      if (plan) {
-        const goals = await GoalService.getByPlanId(plan.id)
-        // TODO: refactor this to get by plan id
-        const strategies = await StrategyService.getByPlanId(plan.id)
-        const indicators = await IndicatorService.getByPlanId(plan.id)
-        const currentPlan = {
-          plan,
-          goals,
-          strategies,
-          indicators,
-        } as Partial<UsePlan['plan']> // TODO: review this later
-        setCurrentPlan(currentPlan)
-      }
-      setIsLoading(false)
-    }
-    fetchUserPlan()
-  }, [user])
-
+  const planActions = usePlanActions(user?.sub as string)
+  const goalActions = useGoalActions()
+  const strategyActions = useStrategyActions()
+  const indicatorActions = useIndicatorActions()
 
   if (isLoading) {
     return <div>Loading....</div>
   }
 
-  if (!plan?.plan || !planHistory) {
+  if (!user || !plan?.plan) {
     return null
   }
 
@@ -70,7 +49,10 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         plan,
         isLoading: isLoading || isLoadingPlan,
         currentPlan,
-        planHistory,
+        planActions,
+        goalActions,
+        strategyActions,
+        indicatorActions,
       }}
     >
       {children}
