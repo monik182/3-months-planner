@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useState } from "react"
+import React, { createContext, useContext } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { UsePlan, usePlan } from '@/app/hooks/usePlan'
 import { usePlanActions } from '@/app/hooks/usePlanActions'
@@ -9,8 +9,7 @@ import { useIndicatorActions } from '@/app/hooks/useIndicatorActions'
 
 type PlanContextType = {
   plan: UsePlan,
-  isLoading: boolean
-  currentPlan?: Partial<UsePlan['plan']>
+  isLoading: boolean,
   planActions: any // FIXME: to 
   goalActions: any // FIXME: to 
   strategyActions: any // FIXME: to 
@@ -27,8 +26,6 @@ interface PlanTrackingProviderProps {
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const { user, isLoading } = useUser()
-  const [currentPlan, setCurrentPlan] = useState<Partial<UsePlan['plan']>>()
-  const [isLoadingPlan, setIsLoading] = useState(false)
   const plan = usePlan(user?.sub as string)
   const planActions = usePlanActions(user?.sub as string)
   const goalActions = useGoalActions()
@@ -47,8 +44,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     <PlanContext.Provider
       value={{
         plan,
-        isLoading: isLoading || isLoadingPlan,
-        currentPlan,
+        isLoading,
         planActions,
         goalActions,
         strategyActions,
