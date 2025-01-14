@@ -2,18 +2,25 @@
 import React, { createContext, useContext } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { UsePlan, usePlan } from '@/app/hooks/usePlan'
-import { usePlanActions } from '@/app/hooks/usePlanActions'
-import { useGoalActions } from '@/app/hooks/useGoalActions'
-import { useStrategyActions } from '@/app/hooks/useStrategyActions'
-import { useIndicatorActions } from '@/app/hooks/useIndicatorActions'
+import { UsePlanActions, usePlanActions } from '@/app/hooks/usePlanActions'
+import { UseGoalActions, useGoalActions } from '@/app/hooks/useGoalActions'
+import { UseStrategyActions, useStrategyActions } from '@/app/hooks/useStrategyActions'
+import { UseIndicatorActions, useIndicatorActions } from '@/app/hooks/useIndicatorActions'
+import { UseGoalHistoryActions, useGoalHistoryActions } from '@/app/hooks/useGoalHistoryActions'
+import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hooks/useStrategyHistoryActions'
+import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
 
 type PlanContextType = {
   plan: UsePlan,
   isLoading: boolean,
-  planActions: any // FIXME: to 
-  goalActions: any // FIXME: to 
-  strategyActions: any // FIXME: to 
-  indicatorActions: any // FIXME: to 
+  planActions: UsePlanActions
+  goalActions: UseGoalActions
+  strategyActions: UseStrategyActions
+  indicatorActions: UseIndicatorActions
+
+  goalHistoryActions: UseGoalHistoryActions
+  strategyHistoryActions: UseStrategyHistoryActions
+  indicatorHistoryActions: UseIndicatorHistoryActions
 }
 
 const PlanContext = createContext<PlanContextType | undefined>(
@@ -32,6 +39,10 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const strategyActions = useStrategyActions()
   const indicatorActions = useIndicatorActions()
 
+  const goalHistoryActions = useGoalHistoryActions()
+  const strategyHistoryActions = useStrategyHistoryActions()
+  const indicatorHistoryActions = useIndicatorHistoryActions()
+
   if (isLoading) {
     return <div>Loading....</div>
   }
@@ -49,6 +60,9 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         goalActions,
         strategyActions,
         indicatorActions,
+        goalHistoryActions,
+        strategyHistoryActions,
+        indicatorHistoryActions,
       }}
     >
       {children}
