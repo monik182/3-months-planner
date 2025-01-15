@@ -12,7 +12,7 @@ import { Week } from '@/app/dashboard/Week/Week'
 function Dashboard() {
   const { planActions, goalActions } = usePlanContext()
   const { data: currentPlan, isLoading } = planActions.useGet()
-  const { data: goals } = goalActions.useGetByPlanId(currentPlan?.id as string)
+  const { data: goals = [] } = goalActions.useGetByPlanId(currentPlan?.id as string)
   // console.log('Current plan from actions', currentPlan)
   // console.log('Current GOAL goalHist from plan from actions', goalHist)
   const today = dayjs().format('DD MMMM YYYY')
@@ -33,20 +33,13 @@ function Dashboard() {
     )
   }
 
-  if (!currentPlan || !goals) {
+  if (!currentPlan) {
     return (
       <div>
         Seems you dont have any plan open, go to create a new one...
       </div>
     )
   }
-  
-  // return (
-  //   <div>
-  //     {currentPlan.id}
-  //   </div>
-  // )
-
 
   return (
     <Grid>

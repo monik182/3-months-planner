@@ -71,7 +71,7 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
       {isEditing ? (
         <WeeksSelector weeks={value.weeks} setWeeks={handleWeekUpdate} onFocusOutside={() => toggleWeeksSelector()} />
       ) : (
-        <Text textStyle="sx" onClick={toggleWeeksSelector}>Due: {value.weeks.length === 12 ? 'Every week' : `Weeks ${value.weeks.join(', ')}`}</Text>
+        <Text textStyle="xs" onClick={toggleWeeksSelector}>Due: {value.weeks.length === 12 ? 'Every week' : `Weeks ${value.weeks.join(', ')}`}</Text>
       )}
     </Flex>
   )

@@ -59,3 +59,4 @@ export function useStrategyHistoryActions() {
 }
 
 export type UseStrategyHistoryActions = ReturnType<typeof useStrategyHistoryActions>
+export type UseUpdate = ReturnType<ReturnType<typeof useStrategyHistoryActions>['useUpdate']>

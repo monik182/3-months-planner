@@ -59,3 +59,5 @@ export function useIndicatorHistoryActions() {
 }
 
 export type UseIndicatorHistoryActions = ReturnType<typeof useIndicatorHistoryActions>
+
+export type UseUpdate = ReturnType<ReturnType<typeof useIndicatorHistoryActions>['useUpdate']>
