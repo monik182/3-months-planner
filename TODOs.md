@@ -9,17 +9,17 @@
   - improve BE error responses
   - Create queries to add plan_id to other tables ✅
   - Rename tables? ❌
+  - Add frequency to goal model? ✅
 - BE integration
-  - integrate db + backend + frontend - Create plan ✅
-  - Add frequency to goal model? 🟠
-  - Refactor CREATE PLAN 🟠
-  - integrate db + backend + frontend - Track plan
-  - Create page auth
   - improve api/plan/create performance [WIP]
+  - Create page auth
   - add cache?
+  - integrate db + backend + frontend - Create plan ✅
+  - integrate db + backend + frontend - Track plan ✅
 - FE Fixes
   - Refactor dashboard -> see mockup references
   - save to db after each step 🟠
+  - Refactor CREATE PLAN flow 🟠 -> add a welcome page to plan + confirm button
   - add local persistency
   - Add de/select all weeks button
   - Centralize types (interfaces / classes) ✅

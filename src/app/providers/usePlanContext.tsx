@@ -1,7 +1,6 @@
 'use client'
 import React, { createContext, useContext } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
-import { UsePlan, usePlan } from '@/app/hooks/usePlan'
 import { UsePlanActions, usePlanActions } from '@/app/hooks/usePlanActions'
 import { UseGoalActions, useGoalActions } from '@/app/hooks/useGoalActions'
 import { UseStrategyActions, useStrategyActions } from '@/app/hooks/useStrategyActions'
@@ -9,9 +8,10 @@ import { UseIndicatorActions, useIndicatorActions } from '@/app/hooks/useIndicat
 import { UseGoalHistoryActions, useGoalHistoryActions } from '@/app/hooks/useGoalHistoryActions'
 import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hooks/useStrategyHistoryActions'
 import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
+import { Plan } from '@prisma/client'
 
 type PlanContextType = {
-  plan: UsePlan,
+  plan: Plan | undefined,
   isLoading: boolean,
   planActions: UsePlanActions
   goalActions: UseGoalActions
@@ -33,21 +33,21 @@ interface PlanTrackingProviderProps {
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const { user, isLoading } = useUser()
-  const plan = usePlan(user?.sub as string)
-  const planActions = usePlanActions(user?.sub as string)
+  const planActions = usePlanActions()
   const goalActions = useGoalActions()
   const strategyActions = useStrategyActions()
   const indicatorActions = useIndicatorActions()
+  const { data: plan, isLoading: isLoadingPlan } = planActions.useGet(user?.sub as string)
 
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
   const indicatorHistoryActions = useIndicatorHistoryActions()
 
-  if (isLoading) {
+  if (isLoading || isLoadingPlan) {
     return <div>Loading....</div>
   }
 
-  if (!user || !plan?.plan) {
+  if (!user) {
     return null
   }
 
