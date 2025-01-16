@@ -5,30 +5,36 @@ import { Step1 } from './Step1'
 import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
-import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useState } from 'react'
 import { useSave } from '@/app/plan/useSave'
 import { useRouter } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 
-function PlanPage() {
+export default function PlanPage() {
   const router = useRouter()
-  const { plan } = usePlanContext()
+  const { plan, planActions, goalActions, strategyActions, indicatorActions } = usePlanContext()
   const [nextText, setNextText] = useState('Next')
   const [step, setStep] = useState(0)
   const { handleSavePlan, isLoading } = useSave()
+  console.log('cyrrent polan plage>>>>', plan)
+
+  if (!plan) {
+    router.replace('/plan/new')
+    return null
+  }
 
   const steps = [
     { title: 'Define Vision', content: <Step1 goNext={() => console} /> },
-    { title: '3-Year Milestone', content: <Step2 /> },
-    { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
-    { title: 'Start Date & Review', content: <Step4 /> },
+    // { title: '3-Year Milestone', content: <Step2 /> },
+    // { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
+    // { title: 'Start Date & Review', content: <Step4 /> },
   ]
 
   const handleStepChange = async ({ step }: { step: number }) => {
     console.log('NEXT STEP>>>>', step)
 
-    if (step === 1 && !plan.plan.vision) {
+    if (step === 1 && !plan.vision) {
       setStep(0)
       toaster.create({
         title: 'Create your vision to move to the next step',
@@ -37,7 +43,7 @@ function PlanPage() {
       return
     }
 
-    if (step === 2 && !plan.plan.milestone) {
+    if (step === 2 && !plan.milestone) {
       setStep(0)
       toaster.create({
         title: 'Create your 3-year milestone to move to the next step',
@@ -111,10 +117,10 @@ function PlanPage() {
   )
 }
 
-export default function PlanWithProvider() {
-  return (
-    <PlanProvider>
-      <PlanPage />
-    </PlanProvider>
-  )
-}
+// export default function PlanWithProvider() {
+//   return (
+//     <PlanProvider>
+//       <PlanPage />
+//     </PlanProvider>
+//   )
+// }

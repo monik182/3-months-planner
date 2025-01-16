@@ -4,12 +4,12 @@ import { getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { MdCelebration } from 'react-icons/md'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { PlanProvider, usePlanContext } from '@/app/providers/usePlanContext'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 // import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Week } from '@/app/dashboard/Week/Week'
 
-function Dashboard() {
+export default function Dashboard() {
   const { planActions, goalActions } = usePlanContext()
   const { data: currentPlan, isLoading } = planActions.useGet()
   const { data: goals = [] } = goalActions.useGetByPlanId(currentPlan?.id as string)
@@ -87,14 +87,5 @@ function Dashboard() {
         </Tabs.Root>
       </Box>
     </Grid>
-  )
-}
-
-
-export default function DashboardWithContext() {
-  return (
-    <PlanProvider>
-      <Dashboard />
-    </PlanProvider>
   )
 }
