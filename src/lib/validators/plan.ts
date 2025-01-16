@@ -1,15 +1,9 @@
 import { z } from 'zod'
 
 export const PlanSchema = z.object({
-  id: z.string().cuid(),
-  userId: z.string(),
-  vision: z.string().min(1, 'Vision is required'),
-  milestone: z.string().min(1, 'Milestone is required'),
-  completed: z.boolean(),
-  startDate: z.date(),
-  endDate: z.date(),
-  created: z.date(),
-  lastUpdate: z.date(),
+  userId: z.string().nonempty('User ID is required'),
+  startDate: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date({ required_error: 'Start date is required' })),
+  endDate: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date({ required_error: 'End date is required' })),
 })
 
 export const PartialPlanSchema = PlanSchema.partial()

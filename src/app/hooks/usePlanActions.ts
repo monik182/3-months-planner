@@ -1,31 +1,31 @@
 import { PlanService } from '@/services/plan'
-import { Plan } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'plan'
 
-export function usePlanActions(userId: string) {
+export function usePlanActions() {
   const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (plan: Plan) => PlanService.create(plan),
+      mutationFn: (plan: Prisma.PlanCreateInput) => PlanService.create(plan),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY, 'plans'] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
     })
   }
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ planId, updates }: { planId: string, updates: Partial<Plan> }) => PlanService.update(planId, updates),
+      mutationFn: ({ planId, updates }: { planId: string, updates: Prisma.PlanUpdateInput }) => PlanService.update(planId, updates),
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY, 'plans'] })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
     })
   }
 
-  const useGet = () => {
+  const useGet = (userId: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { userId }],
       queryFn: () => PlanService.getByUserId(userId),
@@ -33,7 +33,7 @@ export function usePlanActions(userId: string) {
     })
   }
 
-  const useGetAll = () => {
+  const useGetAll = (userId: string) => {
     return useQuery({
       queryKey: ['plans', { userId }],
       queryFn: () => PlanService.getAll(userId),
