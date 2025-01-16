@@ -5,8 +5,8 @@
 Table plans {
   id String [pk]
   userId String [not null]
-  vision String
-  milestone String
+  vision String [not null, default: '']
+  milestone String [not null, default: '']
   completed Boolean [not null, default: false]
   startDate DateTime [not null]
   endDate DateTime [not null]
