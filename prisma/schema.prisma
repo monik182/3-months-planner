@@ -21,8 +21,8 @@ datasource db {
 model Plan {
   id          String   @id @default(cuid())
   userId      String   @map("user_id")
-  vision      String
-  milestone   String
+  vision      String?
+  milestone   String?
   completed   Boolean  @default(false)
   startDate   DateTime @map("start_date")
   endDate     DateTime @map("end_date")
@@ -71,6 +71,7 @@ model Strategy {
   content        String
   weeks          String[]
   status         String
+  frequency      Int           
 
   goal           Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
   strategyHistory StrategyHistory[]
@@ -89,6 +90,7 @@ model StrategyHistory {
   firstUpdate  DateTime? @map("first_update")
   lastUpdate   DateTime? @map("last_update")
   sequence     Int
+  frequencies  Boolean[] @default([])
 
   strategy     Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
 

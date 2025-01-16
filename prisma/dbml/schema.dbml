@@ -5,8 +5,8 @@
 Table plans {
   id String [pk]
   userId String [not null]
-  vision String [not null]
-  milestone String [not null]
+  vision String
+  milestone String
   completed Boolean [not null, default: false]
   startDate DateTime [not null]
   endDate DateTime [not null]
@@ -43,6 +43,7 @@ Table strategies {
   content String [not null]
   weeks String[] [not null]
   status String [not null]
+  frequency Int [not null]
   goal goals [not null]
   strategyHistory strategy_history [not null]
 }
@@ -56,6 +57,7 @@ Table strategy_history {
   firstUpdate DateTime
   lastUpdate DateTime
   sequence Int [not null]
+  frequencies Boolean[] [not null]
   strategy strategies [not null]
 }
 
