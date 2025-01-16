@@ -38,7 +38,7 @@ model Goal {
   id          String      @id @default(cuid())
   planId      String      @map("plan_id")
   content     String
-  status      String
+  status      String      @default("1")
 
   plan        Plan         @relation(fields: [planId], references: [id], onDelete: Cascade)
   goalHistory GoalHistory[]
@@ -70,7 +70,7 @@ model Strategy {
   planId         String        @map("plan_id")
   content        String
   weeks          String[]
-  status         String
+  status         String        @default("1")
   frequency      Int           
 
   goal           Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
@@ -105,9 +105,9 @@ model Indicator {
   planId         String             @map("plan_id")
   content        String
   metric         String
-  startingValue  Int                @map("starting_value")
+  initialValue   Int                @map("initial_value")
   goalValue      Int                @map("goal_value")
-  status         String
+  status         String             @default("1")
 
   goal           Goal              @relation(fields: [goalId], references: [id], onDelete: Cascade)
   indicatorHistory IndicatorHistory[]
