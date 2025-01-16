@@ -1,12 +1,13 @@
 import { z } from 'zod'
 
 export const StrategySchema = z.object({
-  id: z.string().cuid(),
+  id: z.string().optional(),
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
+  frequency: z.number().nonnegative().min(1, 'Frequency is required').max(7),
   content: z.string().min(1, 'Content is required'),
   weeks: z.string().min(1, 'Weeks is required'),
-  status: z.string().min(1, 'Status is required'),
+  status: z.string().default('1'),
 })
 
 export const PartialStrategySchema = StrategySchema.partial()

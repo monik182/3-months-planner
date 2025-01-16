@@ -1,14 +1,15 @@
 import { z } from 'zod'
 
 export const StrategyHistorySchema = z.object({
-  id: z.string().cuid(),
+  id: z.string().optional(),
   strategyId: z.string().cuid(),
   planId: z.string().cuid(),
-  overdue: z.boolean(),
-  completed: z.boolean(),
-  first_update: z.date().nullable(),
+  overdue: z.boolean().default(false),
+  completed: z.boolean().default(false),
+  firstUpdate: z.date().nullable(),
   lastUpdate: z.date().nullable(),
   sequence: z.number().int(),
+  frequencies: z.array(z.boolean()).default([]),
 })
 
 export const PartialStrategyHistorySchema = StrategyHistorySchema.partial()

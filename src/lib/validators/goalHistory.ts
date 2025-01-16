@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 export const GoalHistorySchema = z.object({
-  id: z.string().cuid(),
+  id: z.string().optional(),
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
   startDate: z.date(),
