@@ -1,6 +1,6 @@
-import { Indicator } from '@prisma/client'
+import { Indicator, Prisma } from '@prisma/client'
 
-const create = (indicator: Indicator): Promise<Indicator> => {
+const create = (indicator: Prisma.IndicatorCreateInput): Promise<Indicator> => {
   return fetch(`/api/indicator`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -20,7 +20,7 @@ const getByGoalId = async (goalId: string): Promise<Indicator[]> => {
   return fetch(`/api/indicator?goalId=${goalId}`).then(response => response.json())
 }
 
-const update = async (id: string, indicator: Partial<Indicator>): Promise<Indicator> => {
+const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Indicator> => {
   return fetch(`/api/indicator/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
