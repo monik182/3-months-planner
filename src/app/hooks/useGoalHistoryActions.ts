@@ -1,5 +1,5 @@
 import { GoalHistoryService } from '@/services/goalHistory'
-import { Goal, GoalHistory } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'goal-history'
@@ -9,7 +9,7 @@ export function useGoalHistoryActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (goal: GoalHistory) => GoalHistoryService.create(goal),
+      mutationFn: (goal: Prisma.GoalHistoryCreateInput) => GoalHistoryService.create(goal),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
@@ -18,7 +18,7 @@ export function useGoalHistoryActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ goalId, updates }: { goalId: string, updates: Partial<Goal> }) => GoalHistoryService.update(goalId, updates),
+      mutationFn: ({ goalId, updates }: { goalId: string, updates: Prisma.GoalHistoryUpdateInput }) => GoalHistoryService.update(goalId, updates),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }

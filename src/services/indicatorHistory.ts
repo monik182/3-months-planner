@@ -1,7 +1,7 @@
 import { IndicatorHistoryExtended } from '@/app/types/types'
-import { IndicatorHistory } from '@prisma/client'
+import { IndicatorHistory, Prisma } from '@prisma/client'
 
-const create = (indicator: IndicatorHistory): Promise<IndicatorHistory> => {
+const create = (indicator: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
   return fetch(`/api/indicator/history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -21,7 +21,7 @@ const getByGoalId = async (goalId: string, sequence?: string): Promise<Indicator
   return fetch(`/api/indicator/history?goalId=${goalId}&sequence=${sequence}`).then(response => response.json())
 }
 
-const update = async (id: string, indicator: Partial<IndicatorHistory>): Promise<IndicatorHistory> => {
+const update = async (id: string, indicator: Prisma.IndicatorHistoryUpdateInput): Promise<IndicatorHistory> => {
   return fetch(`/api/indicator/history/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

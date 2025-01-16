@@ -1,5 +1,5 @@
 import { IndicatorHistoryService } from '@/services/indicatorHistory'
-import { IndicatorHistory } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'indicator-history'
@@ -9,7 +9,7 @@ export function useIndicatorHistoryActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (indicator: IndicatorHistory) => IndicatorHistoryService.create(indicator),
+      mutationFn: (indicator: Prisma.IndicatorHistoryCreateInput) => IndicatorHistoryService.create(indicator),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }
@@ -18,7 +18,7 @@ export function useIndicatorHistoryActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Partial<IndicatorHistory> }) => IndicatorHistoryService.update(indicatorId, updates),
+      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorHistoryUpdateInput }) => IndicatorHistoryService.update(indicatorId, updates),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }

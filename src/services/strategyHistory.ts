@@ -1,7 +1,7 @@
 import { StrategyHistoryExtended } from '@/app/types/types'
-import { StrategyHistory } from '@prisma/client'
+import { Prisma, StrategyHistory } from '@prisma/client'
 
-const create = (strategy: StrategyHistory): Promise<StrategyHistory> => {
+const create = (strategy: Prisma.StrategyHistoryCreateInput): Promise<StrategyHistory> => {
   return fetch(`/api/strategy/history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -21,7 +21,7 @@ const getByGoalId = async (goalId: string, sequence?: string): Promise<StrategyH
   return fetch(`/api/strategy/history?goalId=${goalId}&sequence=${sequence}`).then(response => response.json())
 }
 
-const update = async (id: string, strategy: Partial<StrategyHistory>): Promise<StrategyHistory> => {
+const update = async (id: string, strategy: Prisma.StrategyHistoryUpdateInput): Promise<StrategyHistory> => {
   return fetch(`/api/strategy/history/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
