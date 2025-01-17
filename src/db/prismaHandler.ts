@@ -102,7 +102,7 @@ export const indicatorHistoryHandler = {
       indicator: {
         select: {
           content: true,
-          startingValue: true,
+          initialValue: true,
           goalValue: true,
           metric: true,
         }
@@ -119,7 +119,7 @@ export const indicatorHistoryHandler = {
       indicator: {
         select: {
           content: true,
-          startingValue: true,
+          initialValue: true,
           goalValue: true,
           metric: true,
         }

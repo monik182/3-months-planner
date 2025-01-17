@@ -2,9 +2,9 @@ import { z } from 'zod'
 
 export const GoalSchema = z.object({
   id: z.string().optional(),
-  planId: z.string().cuid(),
-  content: z.string().min(1, 'Content is required'),
+  content: z.string(),
   status: z.string().default('1'),
+  plan: z.object({ connect: z.object({ id: z.string() }) })
 })
 
 export const PartialGoalSchema = GoalSchema.partial()
