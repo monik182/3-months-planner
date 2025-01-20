@@ -1,9 +1,10 @@
-import { Flex, Spinner, Textarea } from '@chakra-ui/react'
+import { Flex, Textarea } from '@chakra-ui/react'
 import { StepLayout } from './stepLayout'
 import { Step, Vision } from '@/app/types/types'
 import { useState } from 'react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useDebouncedCallback } from 'use-debounce'
+import { SavingSpinner } from '@/components/SavingSpinner'
 
 export function Step1({ }: Step<Vision>) {
   const { plan, planActions } = usePlanContext()
@@ -35,11 +36,7 @@ export function Step1({ }: Step<Vision>) {
           onChange={handleOnChange}
           placeholder="Think big. What are the dreams you’ve always wanted to pursue? How would your life look if you reached your full potential? Be bold and dream unapologetically."
         />
-        <Flex gap="1rem" height="1rem" justifyContent="flex-end" alignItems="center">
-          {update.isPending && (
-            <><Spinner size="xs" /> Saving</>
-          )}
-        </Flex>
+        <SavingSpinner loading={update.isPending} />
       </Flex>
     </StepLayout>
   )
