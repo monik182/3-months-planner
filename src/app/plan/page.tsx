@@ -24,10 +24,10 @@ export default function PlanPage() {
   }
 
   const steps = [
-    { title: 'Define Vision', content: <Step1 goNext={() => console} /> },
+    { title: 'Define Vision', content: <Step1 /> },
     { title: '3-Year Milestone', content: <Step2 /> },
     { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
-    // { title: 'Review', content: <Step4 /> },
+    { title: 'Review', content: <Step4 /> },
   ]
 
   const handleStepChange = async ({ step }: { step: number }) => {

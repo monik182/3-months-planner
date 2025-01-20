@@ -1,5 +1,5 @@
 'use client'
-import { DateSelector } from '@/app/plan/Step4/DateSelector'
+import { DateSelector } from '@/components/DateSelector'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { calculatePlanEndDate, formatDate, getPlanStartDate } from '@/app/util'
 import { Button } from '@/components/ui/button'
