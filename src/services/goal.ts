@@ -8,6 +8,14 @@ const create = (goal: Prisma.GoalCreateInput) => {
   }).then(response => response.json())
 }
 
+const createBulk = (goals: Prisma.GoalCreateManyInput[]) => {
+  return fetch(`/api/goal/bulk`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(goals),
+  }).then(response => response.json())
+}
+
 const get = async (id: string): Promise<Goal> => {
   return fetch(`/api/goal/${id}`).then(response => response.json())
 }
@@ -32,6 +40,7 @@ const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Goal> =
 
 export const GoalService = {
   create,
+  createBulk,
   get,
   getByPlanId,
   update,

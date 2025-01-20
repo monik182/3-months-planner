@@ -16,6 +16,15 @@ export function useGoalActions() {
     })
   }
 
+  const useCreateBulk = () => {
+    return useMutation({
+      mutationFn: (goals: Prisma.GoalCreateManyInput[]) => GoalService.createBulk(goals),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      }
+    })
+  }
+
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ goalId, updates }: { goalId: string, updates: Prisma.GoalUpdateInput }) => GoalService.update(goalId, updates),
@@ -43,6 +52,7 @@ export function useGoalActions() {
 
   return {
     useCreate,
+    useCreateBulk,
     useUpdate,
     useGetByPlanId,
     useGet,
