@@ -1,31 +1,14 @@
-# Auth & Persistency
-- Create auth provider ✅
+# Auth & Persistency P2
 - Save data to DB
-  - clean up interfaces ✅
-  - include user id to the models ✅
-  - create prisma schema ✅
-  - create db manager ✅
-  - Refactor DB ✅ 
   - improve BE error responses
-  - Create queries to add plan_id to other tables ✅
-  - Rename tables? ❌
-  - Add frequency to goal model? ✅
 - BE integration
   - Refactor api/plan/create performance [WIP]
+  - integrate db + backend + frontend - Track plan [WIP]
   - add cache?
-  - integrate db + backend + frontend - Create plan ✅
-  - integrate db + backend + frontend - Track plan 
 - FE Fixes
   - Create page auth
   - Refactor dashboard -> see mockup references
-  - save to db after each step ✅
-  - Refactor CREATE PLAN flow -> add a welcome page to plan + confirm button ✅
   - add local persistency ❓
-  - Add de/select all weeks button ✅
-  - Centralize types (interfaces / classes) ✅
-  - Refactor usePlan hook, is still necessary? - Removed ✅ 
-  - Handle loading/error states of requests - react query? ✅
-  - create a model folder? Not needed, using prisma generated types ❌
 
 
 # Release
@@ -33,6 +16,12 @@
 
 
 # Extra 
+AI:
+- 3-year milestone summary generator
+- Goals from vision generator
+- Strategies from vision goal
+- Indicators from vision goal
+
 Validations:
 - Validate current step is completed ✅
 
@@ -45,12 +34,6 @@ Complimentary Pages:
  - Vision & 3-year Milestone
  - Goals & Strategies editor
  - Past years
-
-AI:
-- 3-year milestone summary generator
-- Goals from vision generator
-- Strategies from vision goal
-- Indicators from vision goal
 
 For each goal reflect on:
 - List commitment costs for each goal
@@ -108,3 +91,25 @@ Print:
 
 
 with persistance will come success
+
+# Auth & Persistency P1
+- Create auth provider ✅
+- Save data to DB
+  - clean up interfaces ✅
+  - include user id to the models ✅
+  - create prisma schema ✅
+  - create db manager ✅
+  - Refactor DB ✅ 
+  - Create queries to add plan_id to other tables ✅
+  - Rename tables? ❌
+  - Add frequency to goal model? ✅
+- BE integration
+  - integrate db + backend + frontend - Create plan ✅
+- FE Fixes
+  - save to db after each step ✅
+  - Refactor CREATE PLAN flow -> add a welcome page to plan + confirm button ✅
+  - Add de/select all weeks button ✅
+  - Centralize types (interfaces / classes) ✅
+  - Refactor usePlan hook, is still necessary? - Removed ✅ 
+  - Handle loading/error states of requests - react query? ✅
+  - create a model folder? Not needed, using prisma generated types ❌
