@@ -1,3 +1,4 @@
+import { Status } from '@/app/types/types'
 import { Goal, Prisma } from '@prisma/client'
 
 const create = (goal: Prisma.GoalCreateInput) => {
@@ -20,8 +21,8 @@ const get = async (id: string): Promise<Goal> => {
   return fetch(`/api/goal/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string): Promise<Goal[]> => {
-  return fetch(`/api/goal?planId=${planId}`).then(response => response.json())
+const getByPlanId = async (planId: string, status?: Status): Promise<Goal[]> => {
+  return fetch(`/api/goal?planId=${planId}&status=${status}`).then(response => response.json())
 }
 
 const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Goal> => {

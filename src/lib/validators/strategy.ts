@@ -5,8 +5,8 @@ export const StrategySchema = z.object({
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
   frequency: z.number().nonnegative().min(1, 'Frequency is required').max(7),
-  content: z.string().min(1, 'Content is required'),
-  weeks: z.string().min(1, 'Weeks is required'),
+  content: z.string(),
+  weeks: z.array(z.string()),
   status: z.string().default('1'),
 })
 

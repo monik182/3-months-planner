@@ -7,7 +7,7 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorList } from '@/app/plan/Step3/Indicator/IndicatorList'
 import { StrategyList } from '@/app/plan/Step3/Strategy/StrategyList'
 import { Goal } from '@prisma/client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { OpenChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/collapsible/namespace'
 import cuid from 'cuid'
 import { useDebouncedCallback } from 'use-debounce'
@@ -15,7 +15,7 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 
 export function Step3({ }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
-  const { data: _goals = [] } = goalActions.useGetByPlanId(plan!.id)
+  const { data: _goals = [] } = goalActions.useGetByPlanId(plan!.id, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
   const create = goalActions.useCreate()
   const update = goalActions.useUpdate()
@@ -42,7 +42,7 @@ export function Step3({ }: Step<Goal[]>) {
     debouncedRemove(id)
   }
 
-  const saveGoals = (goal: Omit<Goal, 'status'>) => {
+  const saveGoal = (goal: Omit<Goal, 'status'>) => {
     create.mutate({...goal, plan: { connect: { id: plan!.id } }})
   }
 
@@ -54,9 +54,15 @@ export function Step3({ }: Step<Goal[]>) {
     update.mutate({ goalId: id, updates: { status: Status.DELETED } })
   }
 
-  const debouncedSave = useDebouncedCallback((goal: Omit<Goal, 'status'>) => saveGoals(goal), 2000)
+  const debouncedSave = useDebouncedCallback((goal: Omit<Goal, 'status'>) => saveGoal(goal), 2000)
   const debouncedUpdate = useDebouncedCallback((id: string, content: string) => updateGoals(id, content), 2000)
   const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
+
+  useEffect(() => {
+    if (!goals.length) {
+      setGoals(_goals)
+    }
+  }, [_goals, goals])
 
   return (
     <StepLayout

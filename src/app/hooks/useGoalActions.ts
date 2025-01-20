@@ -1,3 +1,4 @@
+import { Status } from '@/app/types/types'
 import { GoalService } from '@/services/goal'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -34,10 +35,10 @@ export function useGoalActions() {
     })
   }
 
-  const useGetByPlanId = (planId: string) => {
+  const useGetByPlanId = (planId: string, status?: Status) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId }],
-      queryFn: () => GoalService.getByPlanId(planId),
+      queryFn: () => GoalService.getByPlanId(planId, status),
       enabled: !!planId,
     })
   }
