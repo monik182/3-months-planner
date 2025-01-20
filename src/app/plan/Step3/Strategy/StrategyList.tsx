@@ -1,10 +1,11 @@
+import { DEFAULT_WEEKS } from '@/app/constants'
 import { StrategyForm } from '@/app/plan/Step3/Strategy/StrategyForm'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { Button, Flex } from '@chakra-ui/react'
 import { Strategy } from '@prisma/client'
-import { useMemo } from 'react'
+import cuid from 'cuid'
+import { useState } from 'react'
 import { SlPlus } from 'react-icons/sl'
-import { useDebouncedCallback } from 'use-debounce'
 
 interface StrategyListProps {
   goalId: string
@@ -12,37 +13,41 @@ interface StrategyListProps {
 }
 export function StrategyList({ goalId, planId }: StrategyListProps) {
 
-  const { plan } = usePlanContext()
-  const { strategies, createStrategy, updateStrategy, removeStrategy } = plan
-  const filteredStrategies = useMemo(
-    () => strategies.filter((strategy) => strategy.goalId === goalId),
-    [strategies, goalId]
-  )
+  const { strategyActions } = usePlanContext()
+  const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
+  const [strategies, setStrategies] = useState<Omit<Strategy, 'status'>[]>([..._strategies])
 
-  const handleUpdateDebounced = useDebouncedCallback((id: string,strategy: Partial<Strategy>) => {
-    updateStrategy(id, strategy)
-  }, 1000)
+  const handleUpdate = (id: string, strategy: Partial<Strategy>) => {
+    setStrategies(prev => prev.map(s => s.id === id ? { ...s, ...strategy } : s))
+  }
 
   const handleCreate = () => {
-    createStrategy(goalId, planId)
+    setStrategies(prev => [...prev, {
+      id: cuid(),
+      goalId,
+      planId,
+      content: '',
+      weeks: [...DEFAULT_WEEKS],
+      frequency: 7
+    }])
   }
 
   const handleRemove = (id: string) => {
-    removeStrategy(id)
+    setStrategies(prev => prev.filter(s => s.id !== id))
   }
 
   return (
     <Flex gap="10px" direction="column">
-      {filteredStrategies.map((strategy) => (
+      {strategies.map((strategy) => (
         <StrategyForm
           key={strategy.id}
           strategy={strategy}
           onAdd={handleCreate}
-          onChange={(strategy) => handleUpdateDebounced(strategy.id, strategy)}
+          onChange={(strategy) => handleUpdate(strategy.id, strategy)}
           onRemove={() => handleRemove(strategy.id)}
         />
       ))}
-      <Button size="sm" variant="outline" className="mt-5" onClick={() => createStrategy(goalId, planId)}>
+      <Button size="sm" variant="outline" className="mt-5" onClick={handleCreate}>
         <SlPlus /> Add Strategy
       </Button>
     </Flex>

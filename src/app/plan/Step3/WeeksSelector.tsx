@@ -1,6 +1,7 @@
 import { createListCollection } from '@chakra-ui/react'
 import { SelectContent, SelectItem, SelectRoot, SelectTrigger, SelectValueText } from '@/components/ui/select'
-import { DEFAULT_WEEKS_LIST } from '@/app/constants'
+import { DEFAULT_WEEKS, DEFAULT_WEEKS_LIST } from '@/app/constants'
+import { ValueChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/select/namespace'
 
 interface WeeksSelectorProps {
   weeks: string[]
@@ -13,21 +14,33 @@ const WEEKS_COLLECTION = createListCollection({
 })
 
 export const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelectorProps) => {
+  const handleOnValueChange = (e: ValueChangeDetails) => {
+    setWeeks(e.value)
+  }
+
+  const handleOnOpenChange = () => {
+    const hasValues = weeks.length > 0
+    if (!hasValues) {
+      setWeeks([...DEFAULT_WEEKS])
+    }
+  }
+
   return (
     <SelectRoot
       open
       multiple
       collection={WEEKS_COLLECTION}
       size="sm"
-      width="320px"
+      width="200px"
       value={weeks}
-      onValueChange={(e) => setWeeks(e.value)}
+      onValueChange={handleOnValueChange}
       onFocusOutside={onFocusOutside}
+      onOpenChange={handleOnOpenChange}
     >
-      <SelectTrigger>
+      <SelectTrigger clearable>
         <SelectValueText placeholder="Weeks" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent onMouseLeave={onFocusOutside}>
         {WEEKS_COLLECTION.items.map((week) => (
           <SelectItem item={week} key={week.value}>
             {week.label}

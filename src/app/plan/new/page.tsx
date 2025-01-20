@@ -28,7 +28,6 @@ export default function NewPlan() {
       userId: user!.sub as string,
       endDate: calculatePlanEndDate(date)
     }
-    console.log('to create this plan>>>', plan)
     createPlan.mutate(plan, {
       onSuccess() {
         toaster.create({
