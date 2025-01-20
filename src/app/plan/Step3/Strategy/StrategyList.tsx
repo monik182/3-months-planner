@@ -17,7 +17,7 @@ interface StrategyListProps {
 
 export function StrategyList({ goalId, planId }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
-  const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
+  const { data: _strategies = [], isLoading } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Omit<Strategy, 'status'>[]>([..._strategies])
   const create = strategyActions.useCreate()
   const update = strategyActions.useUpdate()
@@ -63,10 +63,10 @@ export function StrategyList({ goalId, planId }: StrategyListProps) {
   const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
 
   useEffect(() => {
-    if (!strategies.length) {
+    if (!isLoading && !strategies.length) {
       setStrategies(_strategies)
     }
-  }, [_strategies, strategies])
+  }, [_strategies, strategies, isLoading])
 
   return (
     <Flex gap="10px" direction="column">

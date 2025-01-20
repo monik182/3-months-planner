@@ -15,7 +15,7 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 
 export function Step3({ }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
-  const { data: _goals = [] } = goalActions.useGetByPlanId(plan!.id, Status.ACTIVE)
+  const { data: _goals = [], isLoading } = goalActions.useGetByPlanId(plan!.id, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
   const create = goalActions.useCreate()
   const update = goalActions.useUpdate()
@@ -59,10 +59,10 @@ export function Step3({ }: Step<Goal[]>) {
   const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
 
   useEffect(() => {
-    if (!goals.length) {
+    if (!isLoading && !goals.length) {
       setGoals(_goals)
     }
-  }, [_goals, goals])
+  }, [_goals, goals, isLoading])
 
   return (
     <StepLayout
