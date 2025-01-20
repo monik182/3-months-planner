@@ -5,8 +5,8 @@ import { Alert } from '@/components/ui/alert'
 import { Indicator } from '@prisma/client'
 
 interface IndicatorFormProps {
-  indicator: Indicator
-  onChange: (indicator: Indicator) => void
+  indicator: Omit<Indicator, 'status'>
+  onChange: (indicator: Omit<Indicator, 'status'>) => void
   onRemove: () => void
 }
 
@@ -19,7 +19,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
     if (!value) {
       return
     }
-    if (!value.content || value.startingValue == null || value.goalValue == null || !value.metric) {
+    if (!value.content || value.initialValue == null || value.goalValue == null || !value.metric) {
       setError('Please fill out all fields')
       return
     }
@@ -59,7 +59,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is your starting number?</Field.Label>
-          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.startingValue?.toString() || ''} onChange={(e) => handleEdit(e, 'startingValue')} />
+          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.initialValue?.toString() || ''} onChange={(e) => handleEdit(e, 'initialValue')} />
         </Box>
       </Field.Root>
       <Field.Root>

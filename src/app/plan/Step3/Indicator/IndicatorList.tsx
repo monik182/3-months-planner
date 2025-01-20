@@ -4,6 +4,7 @@ import { Button, Flex } from '@chakra-ui/react'
 import { useState } from 'react'
 import { SlPlus, SlStar } from 'react-icons/sl'
 import { Indicator } from '@prisma/client'
+import cuid from 'cuid'
 
 interface IndicatorListProps {
   goalId: string
@@ -11,26 +12,33 @@ interface IndicatorListProps {
 }
 
 export function IndicatorList({ goalId, planId }: IndicatorListProps) {
-  const { plan } = usePlanContext()
-  const { indicators, createIndicator, updateIndicator, removeIndicator } = plan
-  const filteredIndicators = indicators.filter(i => i.goalId === goalId)
-  const disableIndicator = !!filteredIndicators.some((indicator) => indicator.startingValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
-  const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
+  const { indicatorActions } = usePlanContext()
+  const { data: _indicators = [] } = indicatorActions.useGetByGoalId(goalId)
+  const [indicators, setIndicators] = useState<Omit<Indicator, 'status'>[]>([..._indicators])
+  const disableIndicator = !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
+  const [indicatorToUpdate, setIndicatorToUpdate] = useState<Omit<Indicator, 'status'> | null>()
 
   const handleCreate = () => {
-    const newIndicator = createIndicator(goalId, planId)
-    if (newIndicator?.id) {
-      setIndicatorToUpdate(newIndicator)
+    const newIndicator: Omit<Indicator, 'status'> = {
+      id: cuid(),
+      goalId,
+      planId,
+      content: '',
+      metric: '',
+      initialValue: 0,
+      goalValue: 0,
     }
+    setIndicators(prev => [...prev, newIndicator])
+    setIndicatorToUpdate(newIndicator)
   }
 
   const handleChange = (id: string, indicator: Partial<Indicator>) => {
-    updateIndicator(id, indicator)
+    setIndicators(prev => prev.map(i => i.id === id ? { ...i, ...indicator } : i))
     setIndicatorToUpdate(null)
   }
 
   const handleRemove = (id: string) => {
-    removeIndicator(id)
+    setIndicators(prev => prev.filter(s => s.id !== id))
     setIndicatorToUpdate(null)
   }
 
@@ -44,7 +52,7 @@ export function IndicatorList({ goalId, planId }: IndicatorListProps) {
         />
       )}
       <Flex gap="10px">
-        {filteredIndicators.map((indicator) => (
+        {indicators.map((indicator) => (
           <Button key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" onClick={() => setIndicatorToUpdate(indicator)}>
             <SlStar /> {indicator.content}
           </Button>

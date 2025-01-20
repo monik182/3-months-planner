@@ -12,7 +12,6 @@ interface StrategyListProps {
   planId: string
 }
 export function StrategyList({ goalId, planId }: StrategyListProps) {
-
   const { strategyActions } = usePlanContext()
   const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Omit<Strategy, 'status'>[]>([..._strategies])
