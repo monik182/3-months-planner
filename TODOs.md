@@ -11,21 +11,21 @@
   - Rename tables? ❌
   - Add frequency to goal model? ✅
 - BE integration
-  - improve api/plan/create performance [WIP]
-  - Create page auth
+  - Refactor api/plan/create performance [WIP]
   - add cache?
   - integrate db + backend + frontend - Create plan ✅
-  - integrate db + backend + frontend - Track plan ✅
+  - integrate db + backend + frontend - Track plan 
 - FE Fixes
+  - Create page auth
   - Refactor dashboard -> see mockup references
-  - save to db after each step 🟠
-  - Refactor CREATE PLAN flow 🟠 -> add a welcome page to plan + confirm button
-  - add local persistency
-  - Add de/select all weeks button
+  - save to db after each step ✅
+  - Refactor CREATE PLAN flow -> add a welcome page to plan + confirm button ✅
+  - add local persistency ❓
+  - Add de/select all weeks button ✅
   - Centralize types (interfaces / classes) ✅
-  - Refactor usePlan hook, is still necessary?
-  - Handle loading/error states of requests - react query?
-  - create a model folder? ❌
+  - Refactor usePlan hook, is still necessary? - Removed ✅ 
+  - Handle loading/error states of requests - react query? ✅
+  - create a model folder? Not needed, using prisma generated types ❌
 
 
 # Release
