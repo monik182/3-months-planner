@@ -77,7 +77,7 @@ Table indicator_history {
   id String [pk]
   indicatorId String [not null]
   planId String [not null]
-  value Int [not null]
+  value Int [not null, default: 0]
   sequence Int [not null]
   indicator indicators [not null]
 }
