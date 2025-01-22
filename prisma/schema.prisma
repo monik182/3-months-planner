@@ -24,6 +24,7 @@ model Plan {
   vision      String   @default("")
   milestone   String   @default("")
   completed   Boolean  @default(false)
+  started     Boolean  @default(false)
   startDate   DateTime @map("start_date")
   endDate     DateTime @map("end_date")
   created     DateTime @default(now())

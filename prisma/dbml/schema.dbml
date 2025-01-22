@@ -8,6 +8,7 @@ Table plans {
   vision String [not null, default: '']
   milestone String [not null, default: '']
   completed Boolean [not null, default: false]
+  started Boolean [not null, default: false]
   startDate DateTime [not null]
   endDate DateTime [not null]
   created DateTime [default: `now()`, not null]
