@@ -54,8 +54,6 @@ model GoalHistory {
   id         String   @id @default(cuid())
   goalId     String   @map("goal_id")
   planId     String   @map("plan_id")
-  startDate  DateTime @map("start_date")
-  endDate    DateTime @map("end_date")
   sequence   Int
 
   goal       Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
@@ -122,7 +120,7 @@ model IndicatorHistory {
   id           String     @id @default(cuid())
   indicatorId  String     @map("indicator_id")
   planId       String     @map("plan_id")
-  value        Int
+  value        Int        @default(0)
   sequence     Int
 
   indicator    Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)

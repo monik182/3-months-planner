@@ -31,8 +31,6 @@ Table goal_history {
   id String [pk]
   goalId String [not null]
   planId String [not null]
-  startDate DateTime [not null]
-  endDate DateTime [not null]
   sequence Int [not null]
   goal goals [not null]
 }
