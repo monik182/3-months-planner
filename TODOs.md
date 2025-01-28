@@ -1,9 +1,10 @@
 # Auth & Persistency P2
-- Save data to DB
-  - improve BE error responses
 - BE integration
-  - Refactor api/plan/create performance [WIP]
+  - Refactor api/plan/create ✅
+  - Refactor api/plan/history performance [WIP]
   - integrate db + backend + frontend - Track plan [WIP]
+  - improve BE error responses
+  - only save on click
   - add cache?
 - FE Fixes
   - Create page auth
