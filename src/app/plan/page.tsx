@@ -7,16 +7,16 @@ import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useState } from 'react'
-import { useSave } from '@/app/plan/useSave'
 import { useRouter } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
+import { useHistoryActions } from '@/app/hooks/useHistoryActions'
 
 export default function PlanPage() {
   const router = useRouter()
   const { plan } = usePlanContext()
   const [nextText, setNextText] = useState('Next')
   const [step, setStep] = useState(0)
-  const { handleSavePlan, isLoading } = useSave()
+  const createHistory = useHistoryActions().useCreate()
 
   if (!plan) {
     router.replace('/plan/new')
@@ -54,18 +54,15 @@ export default function PlanPage() {
     if (step === 3) {
       setNextText('Save')
     } else if (step > 3) {
-      try {
-        const plan = await handleSavePlan()
-        if (!plan) {
+      createHistory.mutate(plan.id, {
+        onSuccess: () => {
+          setNextText('Saved')
+          router.replace('/dashboard')
+        },
+        onError: () => {
           setStep(3)
-          return
         }
-        setNextText('Saved')
-        router.replace('/dashboard')
-      } catch {
-        setStep(3)
-        return
-      }
+      })
     } else {
       setNextText('Next')
     }
@@ -101,8 +98,8 @@ export default function PlanPage() {
               </Button>
             </StepsPrevTrigger>
             <StepsNextTrigger asChild>
-              <Button variant="outline" size="sm" disabled={isLoading}>
-                {isLoading ?
+              <Button variant="outline" size="sm" disabled={createHistory.isPending}>
+                {createHistory.isPending ?
                   <Spinner />
                   :
                   nextText
