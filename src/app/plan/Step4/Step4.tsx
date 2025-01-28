@@ -21,7 +21,7 @@ export function Step4({ }: Step<Plan>) {
 
   return (
     <StepLayout
-      title="Reflect"
+      title="Review & Reflect"
       description="This is a chance to review everything you’ve outlined so far—your vision, goals, and strategies—and ensure they align with your priorities and timeline. Take a moment to reflect and adjust if needed before you commit to taking the first step."
     >
       <Box maxW="6xl" mx="auto" p={6} overflowY="auto">

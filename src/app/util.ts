@@ -1,3 +1,5 @@
+import { DEFAULT_WEEKS } from '@/app/constants'
+import { Goal, Indicator, Prisma, Strategy } from '@prisma/client'
 import dayjs from 'dayjs'
 
 export function getDate(date?: Date) {
@@ -53,4 +55,44 @@ export function calculateWeekStartDate(startDate: Date, weekNumber: number) {
 
 export function formatDate(date: Date | string, format = 'DD MMM') {
   return dayjs(date).format(format)
+}
+
+export function createGoalHistoryList(planId: string, goals: Goal[]): Prisma.GoalHistoryCreateManyInput[] {
+  return goals.map((goal) => {
+    return DEFAULT_WEEKS.map((week) => {
+      const sequence = parseInt(week)
+      return {
+        planId,
+        goalId: goal.id,
+        sequence,
+      }
+    })
+  }).flat()
+}
+
+export function createStrategyHistoryList(planId: string, strategies: Strategy[]): Prisma.StrategyHistoryCreateManyInput[] {
+  return strategies.map((strategy) => {
+    return strategy.weeks.map((week) => {
+      const sequence = parseInt(week)
+      return {
+        planId,
+        sequence,
+        strategyId: strategy.id,
+      }
+    })
+  }).flat()
+}
+
+export function createIndicatorHistoryList(planId: string, indicators: Indicator[]): Prisma.IndicatorHistoryCreateManyInput[] {
+  return indicators.map((indicator) => {
+    return DEFAULT_WEEKS.map((week) => {
+      const sequence = parseInt(week)
+      return {
+        planId,
+        sequence,
+        indicatorId: indicator.id,
+        value: 0,
+      }
+    })
+  }).flat()
 }

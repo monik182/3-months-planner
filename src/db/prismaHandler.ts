@@ -6,7 +6,8 @@ export const planHandler = {
   create: async (data: Prisma.PlanCreateInput) => prismaHandler(() => prisma.plan.create({ data })),
   findMany: async (where?: Prisma.PlanWhereInput) => prismaHandler(() => prisma.plan.findMany({ where })),
   findOne: async (id: string) => prismaHandler(() => prisma.plan.findUnique({ where: { id } })),
-  findCurrent: async (userId: string) => prismaHandler(() => prisma.plan.findFirst({ where: { userId, completed: false } })),
+  findInProgress: async (userId: string) => prismaHandler(() => prisma.plan.findFirst({ where: { userId, completed: false } })),
+  findStarted: async (userId: string) => prismaHandler(() => prisma.plan.findFirst({ where: { userId, completed: false, started: true } })),
   update: async (id: string, data: Prisma.PlanUpdateInput) => prismaHandler(() => prisma.plan.update({ where: { id }, data })),
   delete: async (id: string) => prismaHandler(() => prisma.plan.delete({ where: { id } })),
 }
@@ -14,7 +15,10 @@ export const planHandler = {
 export const goalHandler = {
   create: async (data: Prisma.GoalCreateInput) => prismaHandler(() => prisma.goal.create({ data })),
   createMany: async (data: Prisma.GoalCreateManyInput[]) => prismaHandler(() => prisma.goal.createMany({ data })),
-  findMany: async (where?: Prisma.GoalWhereInput) => prismaHandler(() => prisma.goal.findMany({ where })),
+  findMany: async (where?: Prisma.GoalWhereInput, select?: Prisma.GoalSelect) => prismaHandler(() => prisma.goal.findMany({
+    where,
+    ...(select ? { select } : {}),
+  })),
   findOne: async (id: string) => prismaHandler(() => prisma.goal.findUnique({ where: { id } })),
   update: async (id: string, data: Prisma.GoalUpdateInput) => prismaHandler(() => prisma.goal.update({ where: { id }, data })),
   delete: async (id: string) => prismaHandler(() => prisma.goal.delete({ where: { id } })),
@@ -40,7 +44,7 @@ export const goalHistoryHandler = {
 export const strategyHandler = {
   create: async (data: Prisma.StrategyCreateInput) => prismaHandler(() => prisma.strategy.create({ data })),
   createMany: async (data: Prisma.StrategyCreateManyInput[]) => prismaHandler(() => prisma.strategy.createMany({ data })),
-  findMany: async (where?: Prisma.StrategyWhereInput) => prismaHandler(() => prisma.strategy.findMany({ where })),
+  findMany: async (where?: Prisma.StrategyWhereInput, select?: Prisma.StrategySelect) => prismaHandler(() => prisma.strategy.findMany({ where, ...(select ? { select } : {}), })),
   findOne: async (id: string) => prismaHandler(() => prisma.strategy.findUnique({ where: { id } })),
   update: async (id: string, data: Prisma.StrategyUpdateInput) => prismaHandler(() => prisma.strategy.update({ where: { id }, data })),
   delete: async (id: string) => prismaHandler(() => prisma.strategy.delete({ where: { id } })),
@@ -88,7 +92,7 @@ export const strategyHistoryHandler = {
 export const indicatorHandler = {
   create: async (data: Prisma.IndicatorCreateInput) => prismaHandler(() => prisma.indicator.create({ data })),
   createMany: async (data: Prisma.IndicatorCreateManyInput[]) => prismaHandler(() => prisma.indicator.createMany({ data })),
-  findMany: async (where?: Prisma.IndicatorWhereInput) => prismaHandler(() => prisma.indicator.findMany({ where })),
+  findMany: async (where?: Prisma.IndicatorWhereInput, select?: Prisma.IndicatorSelect) => prismaHandler(() => prisma.indicator.findMany({ where, ...(select ? { select } : {}), })),
   findOne: async (id: string) => prismaHandler(() => prisma.indicator.findUnique({ where: { id } })),
   update: async (id: string, data: Prisma.IndicatorUpdateInput) => prismaHandler(() => prisma.indicator.update({ where: { id }, data })),
   delete: async (id: string) => prismaHandler(() => prisma.indicator.delete({ where: { id } })),
