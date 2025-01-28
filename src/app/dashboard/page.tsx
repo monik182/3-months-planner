@@ -8,20 +8,22 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 // import { CartesianGrid, Legend, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 import { Week } from '@/app/dashboard/Week/Week'
+import { useUser } from '@auth0/nextjs-auth0/client'
 
 export default function Dashboard() {
+  const {user} = useUser()
   const { planActions, goalActions } = usePlanContext()
-  const { data: currentPlan, isLoading } = planActions.useGet()
-  const { data: goals = [] } = goalActions.useGetByPlanId(currentPlan?.id as string)
-  // console.log('Current plan from actions', currentPlan)
+  const { data: plan, isLoading } = planActions.useGet(user?.sub as string)
+  const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string)
+  // console.log('Current plan from actions', plan)
   // console.log('Current GOAL goalHist from plan from actions', goalHist)
   const today = dayjs().format('DD MMMM YYYY')
-  const endOfYPlan = dayjs(currentPlan?.endDate).format('DD MMMM YYYY')
-  const currentWeek = getCurrentWeekFromStartDate(currentPlan?.startDate as Date)
+  const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
+  const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date)
   console.log({
     endOfYPlan,
-    currentPlan,
-    start: currentPlan?.startDate
+    plan,
+    start: plan?.startDate
   })
   // const data = getChartData(planTracker)
 
@@ -33,7 +35,7 @@ export default function Dashboard() {
     )
   }
 
-  if (!currentPlan) {
+  if (!plan?.started) {
     return (
       <div>
         Seems you dont have any plan open, go to create a new one...
@@ -81,7 +83,7 @@ export default function Dashboard() {
           </Tabs.List>
           {DEFAULT_WEEKS.map((week) => (
             <Tabs.Content key={week} value={`tab-${week}`}>
-              <Week seq={Number(week)} goals={goals} plan={currentPlan} />
+              <Week seq={Number(week)} goals={goals} plan={plan} />
             </Tabs.Content>
           ))}
         </Tabs.Root>

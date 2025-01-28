@@ -3,8 +3,8 @@ import { Flex, HStack, Heading, Separator, Text } from '@chakra-ui/react'
 import { ColorModeButton } from './ui/color-mode'
 import { SegmentedControl } from './ui/segmented-control'
 import { SlHome, SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, usePathname } from 'next/navigation'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { Avatar } from './ui/avatar'
 import { RxDashboard } from 'react-icons/rx'
@@ -14,12 +14,16 @@ export function Header() {
   const { user } = useUser()
   const [value, setValue] = useState('home')
   const router = useRouter()
+  const pathname = usePathname()
   const filteredItems = items.map((item) => ({ ...item, hide: item.value === 'home' ? false : !user })).filter((item) => !item.hide)
 
   const handleOnChange = (value: string) => {
     setValue(value)
     router.push(pageMap[value])
   }
+  useEffect(() => {
+    setValue(pageMap[pathname])
+  }, [pathname])
 
   return (
     <header>
@@ -61,6 +65,9 @@ const pageMap: Record<string, string> = {
   home: '/',
   dashboard: '/dashboard',
   plan: '/plan',
+  '/': 'home',
+  '/dashboard': 'dashboard',
+  '/plan': 'plan',
 }
 
 const items = [
