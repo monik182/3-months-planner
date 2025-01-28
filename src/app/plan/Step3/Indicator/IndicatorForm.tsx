@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { Alert } from '@/components/ui/alert'
 import { Indicator } from '@prisma/client'
+import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
+import { ValueChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/number-input/namespace'
+import { Field as UiField } from '@/components/ui/field'
 
 interface IndicatorFormProps {
   indicator: Omit<Indicator, 'status'>
@@ -31,7 +34,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
     if (!value) {
       return
     }
-    const isNumber = prop === 'startingNumber' || prop === 'goalNumber'
+    const isNumber = prop === 'initialValue' || prop === 'goalValue'
 
     if (isNumber && isNaN(parseInt(e.target.value))) {
       setValue({ ...value, [prop]: null })
@@ -40,6 +43,12 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
 
     const parsedValue = isNumber ? parseInt(e.target.value || '0') : e.target.value
     setValue({ ...value, [prop]: parsedValue })
+  }
+
+  const handleValueChange = ({ valueAsNumber }: ValueChangeDetails, prop: string) => {
+    if (!isNaN(valueAsNumber)) {
+      setValue({ ...value, [prop]: valueAsNumber })
+    }
   }
 
   useEffect(() => {
@@ -53,25 +62,41 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What indicator are you tracking?</Field.Label>
-          <Input className="peer" placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.content} onChange={(e) => handleEdit(e, 'content')} />
+          <Input placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.content} onChange={(e) => handleEdit(e, 'content')} />
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
-          <Field.Label>What is your starting number?</Field.Label>
-          <Input className="peer" placeholder="Enter your current value, for example, 100." value={value.initialValue?.toString() || ''} onChange={(e) => handleEdit(e, 'initialValue')} />
+          <UiField label="" helperText="Enter your current value, for example, 100.">
+            <NumberInputRoot
+              step={1}
+              min={0}
+              value={value.initialValue?.toString() || ''}
+              onValueChange={(e) => handleValueChange(e, 'initialValue')}
+            >
+              <NumberInputField />
+            </NumberInputRoot>
+          </UiField>
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
-          <Field.Label>What is your goal number?</Field.Label>
-          <Input className="peer" placeholder="Enter your goal value, for example, 200." value={value.goalValue?.toString() || ''} onChange={(e) => handleEdit(e, 'goalValue')} />
+          <UiField label="What is your starting number?<" helperText="Enter your goal value, for example, 200.">
+            <NumberInputRoot
+              step={1}
+              min={0}
+              value={value.goalValue?.toString() || ''}
+              onValueChange={(e) => handleValueChange(e, 'goalValue')}
+            >
+              <NumberInputField />
+            </NumberInputRoot>
+          </UiField>
         </Box>
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
           <Field.Label>What is the unit of measurement?</Field.Label>
-          <Input className="peer" placeholder="Indicate the unit, such as kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} />
+          <Input placeholder="Indicate the unit, such as kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} />
         </Box>
       </Field.Root>
       {error && <Alert status="error" title={error} />}
