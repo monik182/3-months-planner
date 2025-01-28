@@ -1,5 +1,5 @@
 'use client'
-import { Button, Grid, GridItem, Group, Spinner } from '@chakra-ui/react'
+import { Button, Center, Flex, Grid, GridItem, Group, Spinner } from '@chakra-ui/react'
 import { StepsCompletedContent, StepsContent, StepsItem, StepsList, StepsNextTrigger, StepsPrevTrigger, StepsRoot } from '@/components/ui/steps'
 import { Step1 } from './Step1'
 import { Step2 } from './Step2'
@@ -10,16 +10,25 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 import { useHistoryActions } from '@/app/hooks/useHistoryActions'
+import { EmptyState } from '@/components/ui/empty-state'
+import { MdOutlineCelebration } from 'react-icons/md'
 
 export default function PlanPage() {
   const router = useRouter()
-  const { plan } = usePlanContext()
+  const { plan, planActions } = usePlanContext()
   const [nextText, setNextText] = useState('Next')
   const [step, setStep] = useState(0)
   const createHistory = useHistoryActions().useCreate()
+  const updatePlan = planActions.useUpdate()
+  const loading = updatePlan.isPending || createHistory.isPending
 
   if (!plan) {
     router.replace('/plan/new')
+    return null
+  }
+
+  if (plan.started) {
+    router.replace('/dashboard')
     return null
   }
 
@@ -31,7 +40,6 @@ export default function PlanPage() {
   ]
 
   const handleStepChange = async ({ step }: { step: number }) => {
-    console.log('NEXT STEP>>>>', step)
 
     if (step === 1 && !plan.vision) {
       setStep(0)
@@ -54,13 +62,28 @@ export default function PlanPage() {
     if (step === 3) {
       setNextText('Save')
     } else if (step > 3) {
-      createHistory.mutate(plan.id, {
+      await createHistory.mutateAsync(plan.id, {
         onSuccess: () => {
           setNextText('Saved')
-          router.replace('/dashboard')
+          updatePlan.mutate({ planId: plan.id, updates: { started: true } }, {
+            onSuccess: () => {
+              router.replace('/dashboard')
+            },
+            onError: () => {
+              setStep(3)
+              toaster.create({
+                title: 'There was an error saving the plan',
+                type: 'error'
+              })
+            }
+          })
         },
         onError: () => {
           setStep(3)
+          toaster.create({
+            title: 'There was an error saving the plan',
+            type: 'error'
+          })
         }
       })
     } else {
@@ -87,7 +110,18 @@ export default function PlanPage() {
             </StepsContent>
           ))}
           <StepsCompletedContent>
-            Congrats, you have created your 3-month plan!
+            <Center>
+              <EmptyState
+                icon={<MdOutlineCelebration />}
+                title="Congrats!"
+                size="lg"
+                description="You have created your 3-month plan!"
+              >
+                <Flex gap="1rem" direction="column">
+                  <Button onClick={() => router.replace('/dashboard')}>Go to dashboard</Button>
+                </Flex>
+              </EmptyState>
+            </Center>
           </StepsCompletedContent>
         </GridItem>
         <GridItem>
@@ -98,8 +132,8 @@ export default function PlanPage() {
               </Button>
             </StepsPrevTrigger>
             <StepsNextTrigger asChild>
-              <Button variant="outline" size="sm" disabled={createHistory.isPending}>
-                {createHistory.isPending ?
+              <Button variant="outline" size="sm" disabled={loading}>
+                {loading ?
                   <Spinner />
                   :
                   nextText
