@@ -1,27 +1,20 @@
 import { StrategyService } from '@/services/strategy'
 import { Prisma } from '@prisma/client'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 const QUERY_KEY = 'strategies'
 
 export function useStrategyActions() {
-  const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (strategy: Prisma.StrategyCreateInput) => StrategyService.create(strategy),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
-      }
     })
   }
 
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyUpdateInput }) => StrategyService.update(strategyId, updates),
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
-      }
     })
   }
 
