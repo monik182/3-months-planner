@@ -1,16 +1,28 @@
 import { GoalDetail } from '@/app/dashboard/Week/GoalDetail'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 import { calculatePlanEndDate, calculateWeekStartDate, formatDate } from '@/app/util'
 import { Box, Flex, Grid, Heading, Text } from '@chakra-ui/react'
-import { Goal, Plan } from '@prisma/client'
+import { Plan } from '@prisma/client'
 
 interface WeekProps {
   seq: number
-  goals: Goal[]
   plan: Plan
 }
-export function Week({ seq, goals, plan }: WeekProps) {  
+
+export function Week({ seq, plan }: WeekProps) {  
+  const { goalHistoryActions } = usePlanContext()
+  //TODO: filter by status active
+  const { data: goals = [], isLoading } = goalHistoryActions.useGetByPlanId(plan?.id as string, seq.toString())
   const startDate = calculateWeekStartDate(plan.startDate, seq)
   const endDate = calculatePlanEndDate(startDate)
+
+  if (isLoading) {
+    return (
+      <div>
+        Loading goals...
+      </div>
+    )
+  }
 
   return (
     <Flex gap="2rem" flexDirection="column">

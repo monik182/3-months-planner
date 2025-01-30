@@ -12,22 +12,17 @@ import { useUser } from '@auth0/nextjs-auth0/client'
 
 export default function Dashboard() {
   const {user} = useUser()
-  const { planActions, goalActions } = usePlanContext()
+  const { planActions } = usePlanContext()
   const { data: plan, isLoading } = planActions.useGet(user?.sub as string)
-  const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string)
   // console.log('Current plan from actions', plan)
   // console.log('Current GOAL goalHist from plan from actions', goalHist)
   const today = dayjs().format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date)
-  console.log({
-    endOfYPlan,
-    plan,
-    start: plan?.startDate
-  })
   // const data = getChartData(planTracker)
 
   if (isLoading) {
+    //TODO: do screen
     return (
       <div>
         Loading current plan...
@@ -36,6 +31,7 @@ export default function Dashboard() {
   }
 
   if (!plan?.started) {
+    //TODO: do screen + redirect
     return (
       <div>
         Seems you dont have any plan open, go to create a new one...
@@ -83,7 +79,7 @@ export default function Dashboard() {
           </Tabs.List>
           {DEFAULT_WEEKS.map((week) => (
             <Tabs.Content key={week} value={`tab-${week}`}>
-              <Week seq={Number(week)} goals={goals} plan={plan} />
+              <Week seq={Number(week)} plan={plan} />
             </Tabs.Content>
           ))}
         </Tabs.Root>

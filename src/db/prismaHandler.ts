@@ -80,6 +80,7 @@ export const strategyHistoryHandler = {
         select: {
           content: true,
           weeks: true,
+          frequency: true,
         }
       }
     }
