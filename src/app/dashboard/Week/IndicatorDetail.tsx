@@ -13,7 +13,7 @@ interface IndicatorDetailProps {
 }
 export function IndicatorDetail({ indicator, onChange }: IndicatorDetailProps) {
   const [edit, setEdit] = useState(false)
-  const { content, metric, startingValue, goalValue } = indicator.indicator
+  const { content, metric, initialValue, goalValue } = indicator.indicator
   const [value, setValue] = useState(indicator.value)
 
   const handleOnValueChange = ({ valueAsNumber }: ValueChangeDetails) => {
@@ -30,8 +30,8 @@ export function IndicatorDetail({ indicator, onChange }: IndicatorDetailProps) {
     }
     onChange({ indicatorId: indicator.id, updates: { value } })
   }
-  const isGoalBigger = goalValue > startingValue
-  const tagText = isGoalBigger ? `${value} out of ${goalValue}` : `Down from ${startingValue} to ${value}`
+  const isGoalBigger = goalValue > initialValue
+  const tagText = isGoalBigger ? `${value} out of ${goalValue}` : `Down from ${initialValue} to ${value}`
   const tagColor = value >= goalValue ? 'green' : 'yellow'
 
   return (

@@ -37,8 +37,8 @@ export default function RootLayout({
       >
         <UserProvider>
           <ReactQueryProvider>
-            <PlanProvider>
-              <Provider>
+            <Provider>
+              <PlanProvider>
                 <Box margin="0 2rem">
                   <Grid templateRows="1fr auto" height="100vh">
                     <GridItem><Header /></GridItem>
@@ -46,8 +46,8 @@ export default function RootLayout({
                   </Grid>
                   <Toaster />
                 </Box>
-              </Provider>
-            </PlanProvider>
+              </PlanProvider>
+            </Provider>
           </ReactQueryProvider>
         </UserProvider>
       </body>
