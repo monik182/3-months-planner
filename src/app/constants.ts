@@ -10,7 +10,7 @@ export const DEFAULT_FREQUENCY_LIST = [...Array(DEFAULT_FREQUENCY).keys()]
   .map((n) => n + 1)
   .map((n) => {
     let label = `${n} days a week`
-    if (n === 7) label = 'Every day'
+    if (n === 7) label = 'Daily'
     if (n === 1) label = 'Once a week'
     if (n === 2) label = 'Twice a week'
     return {

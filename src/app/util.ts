@@ -1,4 +1,5 @@
 import { DEFAULT_WEEKS } from '@/app/constants'
+import { StrategyHistoryExtended } from '@/app/types/types'
 import { Goal, Indicator, Prisma, Strategy } from '@prisma/client'
 import dayjs from 'dayjs'
 
@@ -95,4 +96,23 @@ export function createIndicatorHistoryList(planId: string, indicators: Indicator
       }
     })
   }).flat()
+}
+
+export function calculateCompletionScore(strategies: StrategyHistoryExtended[]): number {
+
+  if (!strategies.length) {
+    return 0
+  }
+
+  let totalScore = 0
+
+  for (const strategy of strategies) {
+    const { strategy: { frequency }, frequencies } = strategy
+    const completedTimes = frequencies.filter(Boolean).length
+    const strategyScore = frequency === 0 ? 1 : Math.min(1, completedTimes / frequency)
+    totalScore += strategyScore
+  }
+
+  const total = totalScore / strategies.length
+  return Math.floor(total * 100)
 }
