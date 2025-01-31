@@ -1,19 +1,24 @@
-# Auth & Persistency P2
+# Auth & Persistency For release
 - BE integration
-  - Refactor api/plan/create ✅
-  - Refactor api/plan/history performance [WIP]
-  - integrate db + backend + frontend - Track plan [WIP]
-  - improve BE error responses
+  - integrate db + backend + frontend - Track plan ✅
   - only save on click
-  - add cache?
 - FE Fixes
   - Create page auth
-  - Refactor dashboard -> see mockup references
-  - add local persistency ❓
+  - Refactor dashboard -> see mockup references ✅
 
 
 # Release
 - Deploy
+
+
+# Auth & Persistency P3
+- BE integration
+  - improve BE error responses
+  - Refactor api/plan/history performance
+  - add cache?
+  - Refactor api/plan/create ✅
+- FE Fixes
+  - add local persistency ❓
 
 
 # Extra 

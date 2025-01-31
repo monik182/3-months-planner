@@ -9,6 +9,8 @@ import { UseGoalHistoryActions, useGoalHistoryActions } from '@/app/hooks/useGoa
 import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hooks/useStrategyHistoryActions'
 import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
 import { Plan } from '@prisma/client'
+import { Center, Spinner } from '@chakra-ui/react'
+import { useRouter } from 'next/navigation'
 
 type PlanContextType = {
   plan: Plan | undefined,
@@ -32,6 +34,7 @@ interface PlanTrackingProviderProps {
 }
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
+  const router = useRouter()
   const { user, isLoading } = useUser()
   const planActions = usePlanActions()
   const goalActions = useGoalActions()
@@ -44,11 +47,15 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const indicatorHistoryActions = useIndicatorHistoryActions()
 
   if (isLoading || isLoadingPlan) {
-    return <div>Loading....</div>
+    return (
+      <Center height="100vh">
+        <Spinner size="xl" />
+      </Center>
+    )
   }
 
   if (!user) {
-    return null
+    router.replace('/')
   }
 
   return (

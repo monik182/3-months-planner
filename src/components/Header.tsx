@@ -36,7 +36,7 @@ export function Header() {
             size="lg"
             value={value}
             onValueChange={(e) => handleOnChange(e.value)}
-            items={filteredItems}
+            items={!user ? [] : filteredItems}
           />
         </Flex>
         <Flex gap="5px" alignItems="center">
