@@ -1,10 +1,12 @@
+import { Status } from '@/app/types/types'
 import { StrategyHistoryService } from '@/services/strategyHistory'
 import { Prisma } from '@prisma/client'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'strategy-history'
 
 export function useStrategyHistoryActions() {
+  const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
@@ -15,21 +17,24 @@ export function useStrategyHistoryActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyHistoryUpdateInput }) => StrategyHistoryService.update(strategyId, updates),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      }
     })
   }
 
-  const useGetByPlanId = (planId: string, sequence?: string) => {
+  const useGetByPlanId = (planId: string, sequence?: string, status = Status.ACTIVE) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId, sequence }],
-      queryFn: () => StrategyHistoryService.getByPlanId(planId, sequence),
+      queryFn: () => StrategyHistoryService.getByPlanId(planId, sequence, status),
       enabled: !!planId,
     })
   }
 
-  const useGetByGoalId = (goalId: string, sequence?: string) => {
+  const useGetByGoalId = (goalId: string, sequence?: string, status = Status.ACTIVE) => {
     return useQuery({
       queryKey: [QUERY_KEY, { goalId, sequence }],
-      queryFn: () => StrategyHistoryService.getByGoalId(goalId, sequence),
+      queryFn: () => StrategyHistoryService.getByGoalId(goalId, sequence, status),
       enabled: !!goalId,
     })
   }

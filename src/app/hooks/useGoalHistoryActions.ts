@@ -1,3 +1,4 @@
+import { Status } from '@/app/types/types'
 import { GoalHistoryService } from '@/services/goalHistory'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -18,10 +19,10 @@ export function useGoalHistoryActions() {
     })
   }
 
-  const useGetByPlanId = (planId: string, sequence?: string) => {
+  const useGetByPlanId = (planId: string, sequence?: string, status = Status.ACTIVE) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId, sequence }],
-      queryFn: () => GoalHistoryService.getByPlanId(planId, sequence),
+      queryFn: () => GoalHistoryService.getByPlanId(planId, sequence, status),
       enabled: !!planId,
     })
   }

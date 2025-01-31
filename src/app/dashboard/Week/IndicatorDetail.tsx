@@ -6,6 +6,7 @@ import { Flex, NumberInputRoot, Text } from '@chakra-ui/react'
 import { ValueChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/number-input/namespace'
 import { useState } from 'react'
 import { LuActivity } from 'react-icons/lu'
+import { useDebouncedCallback } from 'use-debounce'
 
 interface IndicatorDetailProps {
   indicator: IndicatorHistoryExtended
@@ -15,10 +16,12 @@ export function IndicatorDetail({ indicator, onChange }: IndicatorDetailProps) {
   const [edit, setEdit] = useState(false)
   const { content, metric, initialValue, goalValue } = indicator.indicator
   const [value, setValue] = useState(indicator.value)
+  const debouncedOnChange = useDebouncedCallback(onChange, 1000)
 
   const handleOnValueChange = ({ valueAsNumber }: ValueChangeDetails) => {
     if (!isNaN(valueAsNumber)) {
       setValue(valueAsNumber)
+      debouncedOnChange({ indicatorId: indicator.id, updates: { value: valueAsNumber } })
     }
   }
 
@@ -28,7 +31,6 @@ export function IndicatorDetail({ indicator, onChange }: IndicatorDetailProps) {
       setValue(indicator.value)
       return
     }
-    onChange({ indicatorId: indicator.id, updates: { value } })
   }
   const isGoalBigger = goalValue > initialValue
   const tagText = isGoalBigger ? `${value} out of ${goalValue}` : `Down from ${initialValue} to ${value}`
