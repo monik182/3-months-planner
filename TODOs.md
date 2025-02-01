@@ -3,6 +3,8 @@
   - Add local persistency
   - Create home page 
   - Refactor dashboard -> see mockup references ✅
+- Auth Refactor
+  - Replace Auth0 with Supabase auth 🚨
 - BE integration
   - integrate db + backend + frontend - Track plan ✅
 
