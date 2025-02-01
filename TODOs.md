@@ -1,10 +1,10 @@
 # Auth & Persistency For release
+- FE Fixes
+  - Add local persistency
+  - Create home page 
+  - Refactor dashboard -> see mockup references ✅
 - BE integration
   - integrate db + backend + frontend - Track plan ✅
-- FE Fixes
-  - Create home page 
-  - add local persistency
-  - Refactor dashboard -> see mockup references ✅
 
 
 # Release
