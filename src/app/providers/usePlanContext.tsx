@@ -13,7 +13,8 @@ import { Center, Spinner } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 
 type PlanContextType = {
-  plan: Plan | undefined,
+  plan: Plan | undefined
+  hasPlan: boolean
   isLoading: boolean,
   planActions: UsePlanActions
   goalActions: UseGoalActions
@@ -41,6 +42,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const strategyActions = useStrategyActions()
   const indicatorActions = useIndicatorActions()
   const { data: plan, isLoading: isLoadingPlan } = planActions.useGet(user?.sub as string)
+  const hasPlan = !!plan?.started
 
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
@@ -62,6 +64,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
     <PlanContext.Provider
       value={{
         plan,
+        hasPlan,
         isLoading,
         planActions,
         goalActions,

@@ -1,9 +1,9 @@
 # Auth & Persistency For release
 - BE integration
   - integrate db + backend + frontend - Track plan ✅
-  - only save on click
 - FE Fixes
-  - Create page auth
+  - Create home page 
+  - add local persistency
   - Refactor dashboard -> see mockup references ✅
 
 
@@ -17,8 +17,10 @@
   - Refactor api/plan/history performance
   - add cache?
   - Refactor api/plan/create ✅
-- FE Fixes
-  - add local persistency ❓
+  - only save on click ❓
+- FE Improvements
+  - Create plan read only view
+  - Create route guard
 
 
 # Extra 
