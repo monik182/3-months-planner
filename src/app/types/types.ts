@@ -1,4 +1,4 @@
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@prisma/client'
 
 // FIXME: will this be the final enums?
 export enum Status {
@@ -38,4 +38,9 @@ export enum EntityType {
   Goal = 'goal',
   Strategy = 'strategy',
   Indicator = 'Indicator'
+}
+
+export interface DixiePlan extends Omit<Plan, 'completed' | 'started'> {
+  completed: number
+  started: number
 }
