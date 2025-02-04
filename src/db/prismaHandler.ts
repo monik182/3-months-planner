@@ -27,7 +27,7 @@ export const goalHandler = {
 export const goalHistoryHandler = {
   create: async (data: Prisma.GoalHistoryCreateInput) => prismaHandler(() => prisma.goalHistory.create({ data })),
   createMany: async (data: Prisma.GoalHistoryCreateManyInput[]) => prismaHandler(() => prisma.goalHistory.createMany({ data })),
-  findMany: async (where?: Prisma.GoalHistoryWhereInput, status?: string) => prismaHandler(() => prisma.goalHistory.findMany({
+  findMany: async (where: Prisma.GoalHistoryWhereInput = {}, status?: string) => prismaHandler(() => prisma.goalHistory.findMany({
     where: {
       ...where,
       goal: {
@@ -58,7 +58,7 @@ export const strategyHandler = {
 export const strategyHistoryHandler = {
   create: async (data: Prisma.StrategyHistoryCreateInput) => prismaHandler(() => prisma.strategyHistory.create({ data })),
   createMany: async (data: Prisma.StrategyHistoryCreateManyInput[]) => prismaHandler(() => prisma.strategyHistory.createMany({ data })),
-  findMany: async (where?: Prisma.StrategyHistoryWhereInput, seq?: string, status?: string) => prismaHandler(() => prisma.strategyHistory.findMany({
+  findMany: async (where: Prisma.StrategyHistoryWhereInput = {}, seq?: string, status?: string) => prismaHandler(() => prisma.strategyHistory.findMany({
     where: {
       ...where,
       strategy: {
@@ -74,7 +74,7 @@ export const strategyHistoryHandler = {
       }
     }
   })),
-  findManyByGoalId: async (goalId: string, where?: Prisma.StrategyHistoryWhereInput, seq?: string, status?: string) => prismaHandler(() => prisma.strategyHistory.findMany({
+  findManyByGoalId: async (goalId: string, where: Prisma.StrategyHistoryWhereInput = {}, seq?: string, status?: string) => prismaHandler(() => prisma.strategyHistory.findMany({
     where: {
       ...where,
       strategy: {
@@ -121,7 +121,7 @@ export const indicatorHistoryHandler = {
       }
     }
   })),
-  findManyByGoalId: async (goalId: string, where?: Prisma.IndicatorHistoryWhereInput) => prismaHandler(() => prisma.indicatorHistory.findMany({
+  findManyByGoalId: async (goalId: string, where: Prisma.IndicatorHistoryWhereInput = {}) => prismaHandler(() => prisma.indicatorHistory.findMany({
     where: {
       ...where,
       indicator: {
