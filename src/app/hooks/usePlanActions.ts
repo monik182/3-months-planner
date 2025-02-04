@@ -1,14 +1,18 @@
 import { PlanService } from '@/services/plan'
 import { Prisma } from '@prisma/client'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'plan'
 
 export function usePlanActions() {
+  const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (plan: Prisma.PlanCreateInput) => PlanService.create(plan),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      }
     })
   }
 
