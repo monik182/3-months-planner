@@ -1,10 +1,8 @@
 # Auth & Persistency For release
 - FE Fixes
-  - Add local persistency
+  - Add local persistency [WIP]
   - Create home page 
   - Refactor dashboard -> see mockup references ✅
-- Auth Refactor
-  - Replace Auth0 with Supabase auth 🚨
 - BE integration
   - integrate db + backend + frontend - Track plan ✅
 
@@ -23,6 +21,8 @@
 - FE Improvements
   - Create plan read only view
   - Create route guard
+- Auth Refactor
+  - Replace Auth0 with Supabase auth 🚨
 
 
 # Extra 
