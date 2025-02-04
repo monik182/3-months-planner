@@ -1,7 +1,8 @@
+import cuid from 'cuid'
 import { z } from 'zod'
 
 export const PlanSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   userId: z.string(),
   vision: z.string().default(''),
   milestone: z.string().default(''),

@@ -1,7 +1,8 @@
+import cuid from 'cuid'
 import { z } from 'zod'
 
 export const IndicatorHistorySchema = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   indicatorId: z.string().cuid(),
   planId: z.string().cuid(),
   value: z.number().int(),

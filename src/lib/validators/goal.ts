@@ -1,14 +1,15 @@
+import cuid from 'cuid'
 import { z } from 'zod'
 
 export const GoalSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   content: z.string(),
   status: z.string().default('1'),
   plan: z.object({ connect: z.object({ id: z.string() }) })
 })
 
 export const GoalSchemaMany = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   content: z.string(),
   planId: z.string(),
   status: z.string().default('1'),

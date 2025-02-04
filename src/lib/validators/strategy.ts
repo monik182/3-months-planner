@@ -1,7 +1,8 @@
+import cuid from 'cuid'
 import { z } from 'zod'
 
 export const StrategySchema = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
   frequency: z.number().nonnegative().min(1, 'Frequency is required').max(7),

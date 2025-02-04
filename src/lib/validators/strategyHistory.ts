@@ -1,7 +1,8 @@
+import cuid from 'cuid'
 import { z } from 'zod'
 
 export const StrategyHistorySchema = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   strategyId: z.string().cuid(),
   planId: z.string().cuid(),
   overdue: z.boolean().default(false),

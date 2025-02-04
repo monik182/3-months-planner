@@ -1,7 +1,8 @@
+import cuid from 'cuid'
 import { z } from 'zod'
 
 export const GoalHistorySchema = z.object({
-  id: z.string().optional(),
+  id: z.string().default(() => cuid()),
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
   startDate: z.date(),
