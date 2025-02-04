@@ -13,7 +13,7 @@ import { Center, Spinner } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 
 type PlanContextType = {
-  plan: Plan | undefined
+  plan: Plan | null | undefined,
   hasPlan: boolean
   isLoading: boolean,
   planActions: UsePlanActions
