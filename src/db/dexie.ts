@@ -13,7 +13,7 @@ class IdxDB extends Dexie {
   notifications!: Table<Notification>
 
   constructor() {
-    super('my_db')
+    super('LocalDB')
     this.version(1).stores({
       plans: 'id, userId, completed, started',
       goals: 'id, planId, status',
