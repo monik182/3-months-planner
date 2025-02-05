@@ -67,7 +67,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
-          <UiField label="" helperText="Enter your current value, for example, 100.">
+          <UiField label="What is your current value?" helperText="Enter your current value, for example, 100.">
             <NumberInputRoot
               step={1}
               min={0}
@@ -81,7 +81,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
       </Field.Root>
       <Field.Root>
         <Box pos="relative" w="full">
-          <UiField label="What is your starting number?<" helperText="Enter your goal value, for example, 200.">
+          <UiField label="What is your goal value?" helperText="Enter your goal value, for example, 200.">
             <NumberInputRoot
               step={1}
               min={0}

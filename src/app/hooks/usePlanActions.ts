@@ -19,6 +19,9 @@ export function usePlanActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ planId, updates }: { planId: string, updates: Prisma.PlanUpdateInput }) => PlanService.update(planId, updates),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      }
     })
   }
 
