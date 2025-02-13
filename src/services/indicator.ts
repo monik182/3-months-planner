@@ -2,25 +2,22 @@ import { indicatorHandler } from '@/db/dexieHandler'
 import { IndicatorSchema, PartialIndicatorSchema } from '@/lib/validators/indicator'
 import { Indicator, Prisma } from '@prisma/client'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const create = async (indicator: Prisma.IndicatorCreateInput): Promise<Indicator> => {
   const parsedData = IndicatorSchema.parse(indicator)
+  await indicatorHandler.create(parsedData)
+
   if (!ENABLE_CLOUD_SYNC) {
-    await indicatorHandler.create(parsedData)
     return parsedData
   }
 
   return fetch(`/api/indicator`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(indicator),
+    body: JSON.stringify(parsedData),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await indicatorHandler.create(parsedData)
-      return response
-    })
 }
 
 const get = async (id: string): Promise<Indicator | null> => {
@@ -67,8 +64,9 @@ const getByGoalId = async (goalId: string): Promise<Indicator[]> => {
 
 const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Indicator> => {
   const parsedData = PartialIndicatorSchema.parse(indicator)
+  await indicatorHandler.update(id, parsedData)
+
   if (!ENABLE_CLOUD_SYNC) {
-    await indicatorHandler.update(id, parsedData)
     return parsedData as Indicator
   }
 
@@ -78,10 +76,6 @@ const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promi
     body: JSON.stringify(indicator),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await indicatorHandler.update(id, parsedData)
-      return response
-    })
 }
 
 export const IndicatorService = {

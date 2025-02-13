@@ -1,5 +1,4 @@
-import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList } from '@/app/util'
-import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, strategyHandler, strategyHistoryHandler } from '@/db/prismaHandler'
+import { goalHistoryHandler, indicatorHistoryHandler, strategyHistoryHandler } from '@/db/prismaHandler'
 import { formatError } from '@/lib/prismaHandler'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -10,20 +9,13 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Invalid or missing data', { status: 400 })
   }
 
-  if (!data.planId) {
-    return new NextResponse('planId is required', { status: 400 })
+  if (!data.goalHistory) {
+    return new NextResponse('goal history is required', { status: 400 })
   }
 
-  const { planId } = data
+  const { goalHistory, strategiesHistory, indicatorsHistory } = data
 
   try {
-    const goals = (await goalHandler.findMany({ planId }, { id: true })) || []
-    const strategies = (await strategyHandler.findMany({ planId }, { id: true, weeks: true })) || []
-    const indicators = (await indicatorHandler.findMany({ planId }, { id: true })) || []
-
-    const goalHistory = createGoalHistoryList(planId, goals)
-    const strategiesHistory = createStrategyHistoryList(planId, strategies)
-    const indicatorsHistory = createIndicatorHistoryList(planId, indicators)
 
     await Promise.all([
       goalHistoryHandler.createMany(goalHistory),

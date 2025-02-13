@@ -3,25 +3,22 @@ import { GoalHistoryExtended } from '@/app/types/types'
 import { Prisma, GoalHistory } from '@prisma/client'
 import { GoalHistorySchema, PartialGoalHistorySchema } from '@/lib/validators/goalHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const create = async (goal: Prisma.GoalHistoryCreateInput): Promise<GoalHistory> => {
   const parsedData = GoalHistorySchema.parse(goal)
+  await goalHistoryHandler.create(parsedData)
+
   if (!ENABLE_CLOUD_SYNC) {
-    await goalHistoryHandler.create(parsedData)
     return parsedData
   }
 
   return fetch(`/api/goal/history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(goal),
+    body: JSON.stringify(parsedData),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await goalHistoryHandler.create(parsedData)
-      return response
-    })
 }
 
 const get = async (id: string): Promise<GoalHistory | null> => {
@@ -52,8 +49,9 @@ const getByPlanId = async (planId: string, sequence?: number, status?: string): 
 
 const update = async (id: string, goal: Prisma.GoalHistoryUpdateInput): Promise<GoalHistory> => {
   const parsedData = PartialGoalHistorySchema.parse(goal)
+  await goalHistoryHandler.update(id, parsedData)
+
   if (!ENABLE_CLOUD_SYNC) {
-    await goalHistoryHandler.update(id, parsedData)
     return goal as GoalHistory
   }
 
@@ -63,10 +61,6 @@ const update = async (id: string, goal: Prisma.GoalHistoryUpdateInput): Promise<
     body: JSON.stringify(goal),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await goalHistoryHandler.update(id, parsedData)
-      return response
-    })
 }
 
 export const GoalHistoryService = {

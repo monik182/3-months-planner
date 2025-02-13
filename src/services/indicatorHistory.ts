@@ -3,25 +3,22 @@ import { IndicatorHistoryExtended } from '@/app/types/types'
 import { IndicatorHistory, Prisma } from '@prisma/client'
 import { IndicatorHistorySchema, PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const create = async (indicator: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
   const parsedData = IndicatorHistorySchema.parse(indicator)
+  await indicatorHistoryHandler.create(parsedData)
+
   if (!ENABLE_CLOUD_SYNC) {
-    await indicatorHistoryHandler.create(parsedData)
     return parsedData
   }
 
   return fetch(`/api/indicator/history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(indicator),
+    body: JSON.stringify(parsedData),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await indicatorHistoryHandler.create(parsedData)
-      return response
-    })
 }
 
 const get = async (id: string): Promise<IndicatorHistory | null> => {
@@ -65,9 +62,9 @@ const getByGoalId = async (goalId: string, sequence?: number): Promise<Indicator
 
 const update = async (id: string, indicator: Prisma.IndicatorHistoryUpdateInput): Promise<IndicatorHistory> => {
   const parsedData = PartialIndicatorHistorySchema.parse(indicator)
+  await indicatorHistoryHandler.update(id, parsedData)
 
   if (!ENABLE_CLOUD_SYNC) {
-    await indicatorHistoryHandler.update(id, parsedData)
     return indicator as IndicatorHistory
   }
 
@@ -77,10 +74,6 @@ const update = async (id: string, indicator: Prisma.IndicatorHistoryUpdateInput)
     body: JSON.stringify(indicator),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await indicatorHistoryHandler.update(id, parsedData)
-      return response
-    })
 }
 
 export const IndicatorHistoryService = {

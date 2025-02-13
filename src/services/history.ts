@@ -4,16 +4,16 @@ import { GoalHistoryArraySchema } from '@/lib/validators/goalHistory'
 import { IndicatorHistoryArraySchema } from '@/lib/validators/indicatorHistory'
 import { StrategyHistoryArraySchema } from '@/lib/validators/strategyHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const create = async (planId: string) => {
-  const response = await localCreate(planId)
+  const response = await localCreate(planId).then(response => response.json())
 
   if (!ENABLE_CLOUD_SYNC) {
     return response
   }
 
-  const body = JSON.stringify({ planId })
+  const body = JSON.stringify(response)
   return fetch(`/api/history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -44,9 +44,7 @@ async function localCreate(planId: string) {
       indicatorHistoryHandler.createMany(indicatorsHistory),
     ])
 
-    const response = { message: "All data was created successfully" }
-
-    return new Response(JSON.stringify(response), { status: 200 })
+    return new Response(JSON.stringify({ goalHistory, strategiesHistory, indicatorsHistory }), { status: 200 })
   } catch (error) {
     console.error('Local storage history error:', error)
     return new Response(`Error processing request: ${error.message}`, { status: 500 })

@@ -3,7 +3,7 @@ import { planHandler } from '@/db/dexieHandler'
 import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { Plan, Prisma } from '@prisma/client'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const getByUserId = async (userId: string): Promise<Plan | null> => {
   const planLocal = await planHandler.findInProgress(userId)
@@ -24,13 +24,14 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
 }
 
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
+  const parsedData = PlanSchema.parse(data)
+  await planHandler.create(planToDixie(parsedData))
+
   if (!ENABLE_CLOUD_SYNC) {
-    const plan = PlanSchema.parse(data)
-    await planHandler.create(planToDixie(plan))
-    return plan
+    return parsedData
   }
 
-  const body = JSON.stringify(data)
+  const body = JSON.stringify({ ...data, id: parsedData.id })
 
   return fetch(`/api/plan`, {
     method: 'POST',
@@ -38,10 +39,6 @@ const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
     body,
   })
     .then(response => response.json())
-    .then(async (plan) => {
-      await planHandler.create(planToDixie(plan))
-      return plan
-    })
 }
 
 const get = async (id: string): Promise<Plan | null> => {
@@ -75,9 +72,10 @@ const getAll = async (userId: string): Promise<Plan[]> => {
 }
 
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
+  await planHandler.update(id, planToDixie(plan as Plan))
+
   if (!ENABLE_CLOUD_SYNC) {
-    await planHandler.update(id, planToDixie(plan as Plan))
-    return PartialPlanSchema.parse(plan)
+    return PartialPlanSchema.parse({ ...plan, id })
   }
 
   return fetch(`/api/plan/${id}`, {
@@ -85,10 +83,6 @@ const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(plan),
   }).then(response => response.json())
-    .then(async () => {
-      await planHandler.update(id, planToDixie(plan as Plan))
-      return PartialPlanSchema.parse(plan)
-    })
 }
 
 export const PlanService = {
@@ -112,7 +106,7 @@ function dixieToPlan(plan: DixiePlan): Plan {
 function planToDixie(plan: Plan): DixiePlan {
   return {
     ...plan,
-    completed: Number(plan.completed),
-    started: Number(plan.started)
+    completed: Number(Boolean(plan.completed)),
+    started: Number(Boolean(plan.started))
   }
 }

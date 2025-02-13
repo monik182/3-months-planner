@@ -2,25 +2,22 @@ import { strategyHandler } from '@/db/dexieHandler'
 import { PartialStrategySchema, StrategySchema } from '@/lib/validators/strategy'
 import { Prisma, Strategy } from '@prisma/client'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const create = async (strategy: Prisma.StrategyCreateInput): Promise<Strategy> => {
   const parsedData = StrategySchema.parse(strategy)
+  await strategyHandler.create(parsedData)
+
   if (!ENABLE_CLOUD_SYNC) {
-    await strategyHandler.create(parsedData)
     return parsedData
   }
 
   return fetch(`/api/strategy`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(strategy),
+    body: JSON.stringify(parsedData),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await strategyHandler.create(parsedData)
-      return response
-    })
 }
 
 const get = async (id: string): Promise<Strategy | null> => {
@@ -67,9 +64,9 @@ const getByGoalId = async (goalId: string): Promise<Strategy[]> => {
 
 const update = async (id: string, strategy: Prisma.IndicatorUpdateInput): Promise<Strategy> => {
   const parsedData = PartialStrategySchema.parse(strategy)
+  await strategyHandler.update(id, parsedData)
 
   if (!ENABLE_CLOUD_SYNC) {
-    await strategyHandler.update(id, parsedData)
     return parsedData as Strategy
   }
 
@@ -79,10 +76,6 @@ const update = async (id: string, strategy: Prisma.IndicatorUpdateInput): Promis
     body: JSON.stringify(strategy),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await strategyHandler.update(id, parsedData)
-      return response
-    })
 }
 
 export const StrategyService = {

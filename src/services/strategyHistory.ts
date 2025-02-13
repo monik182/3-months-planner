@@ -3,26 +3,22 @@ import { StrategyHistoryExtended } from '@/app/types/types'
 import { Prisma, StrategyHistory } from '@prisma/client'
 import { PartialStrategyHistorySchema, StrategyHistorySchema } from '@/lib/validators/strategyHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
 const create = async (strategy: Prisma.StrategyHistoryCreateInput): Promise<StrategyHistory> => {
   const parsedData = StrategyHistorySchema.parse(strategy)
+  await strategyHistoryHandler.create(parsedData)
 
   if (!ENABLE_CLOUD_SYNC) {
-    await strategyHistoryHandler.create(parsedData)
     return parsedData
   }
 
   return fetch(`/api/strategy/history`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(strategy),
+    body: JSON.stringify(parsedData),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await strategyHistoryHandler.create(parsedData)
-      return response
-    })
 }
 
 const get = async (id: string): Promise<StrategyHistory | null> => {
@@ -66,9 +62,9 @@ const getByGoalId = async (goalId: string, sequence?: number, status?: string): 
 
 const update = async (id: string, strategy: Prisma.StrategyHistoryUpdateInput): Promise<StrategyHistory> => {
   const parsedData = PartialStrategyHistorySchema.parse(strategy)
+  await strategyHistoryHandler.update(id, parsedData)
 
   if (!ENABLE_CLOUD_SYNC) {
-    await strategyHistoryHandler.update(id, parsedData)
     return strategy as StrategyHistory
   }
 
@@ -78,10 +74,6 @@ const update = async (id: string, strategy: Prisma.StrategyHistoryUpdateInput): 
     body: JSON.stringify(strategy),
   })
     .then(response => response.json())
-    .then(async (response) => {
-      await strategyHistoryHandler.update(id, parsedData)
-      return response
-    })
 }
 
 export const StrategyHistoryService = {
