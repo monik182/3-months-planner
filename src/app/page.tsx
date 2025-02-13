@@ -19,10 +19,18 @@ export default function Home() {
   }
 
   return (
-    <Flex justifyContent="center" alignItems="center" height="calc(100vh - 10rem)" flexDir="column" gap="1rem">
-      <Heading size="7xl">The Planner</Heading>
-      <Text>Plan your life, achieve your dreams.</Text>
-      <Button size="xl" onClick={() => router.push('/api/auth/login')} colorPalette="cyan" variant="subtle">Get Started <RiArrowRightLine /></Button>
-    </Flex>
+    <div className="container">
+      <section className="page page1">
+        <Heading size="7xl">The Planner</Heading>
+        <Flex flexDir="column" gap="1rem" alignItems="center">
+          <Text>Plan your life, achieve your dreams.</Text>
+          <Button size="xl" onClick={() => router.push('/#pricing')} colorPalette="cyan" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
+          <Text fontSize="xs">Already have an account?</Text>
+        </Flex>
+        <Button size="xs" onClick={() => router.push('/api/auth/login')} variant="plain" textDecoration="underline">Login</Button>
+      </section>
+      <section className="page page2" id="pricing">Pricing Page</section>
+      <section className="page page3">Wait List Page</section>
+    </div>
   )
 }
