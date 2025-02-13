@@ -62,11 +62,10 @@ export function WaitListSection() {
       justifyContent="center"
     >
       <Heading as="h1" fontSize="3xl" fontWeight="bold" mb={4}>
-        Join Our Waitlist: Be One of the First to Discover What&apos;s Coming!
+        Join Our Waitlist: Be the First to Discover What&apos;s Coming!
       </Heading>
       <Text fontSize="lg" color="gray.600" mb={6}>
-        This landing page is built specially to <strong>save your time.</strong>
-        Find the <strong>product-market-fit</strong> before you launch.
+        Stay Focused and Achieve More: Get Early Access to <strong>The Planner</strong>, Your 12-Week Year Success Tool!
       </Text>
 
       <VStack gap={4} width={{ base: "90%", md: "40%" }}>
