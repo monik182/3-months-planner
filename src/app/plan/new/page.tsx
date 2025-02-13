@@ -10,7 +10,7 @@ import { Center, Flex } from '@chakra-ui/react'
 import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
 
 export default function NewPlan() {
@@ -38,10 +38,11 @@ export default function NewPlan() {
     })
   }
 
-  if (!!plan) {
-    router.replace('/plan')
-    return null
-  }
+  useEffect(() => {
+    if (!!plan) {
+      router.replace('/plan')
+    }
+  }, [plan, router])
 
   return (
     <Center>

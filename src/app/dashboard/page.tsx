@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { Week } from '@/app/dashboard/Week/Week'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Dashboard() {
   const router = useRouter()
@@ -17,7 +18,15 @@ export default function Dashboard() {
   const today = dayjs().format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 0
-  const progressValue = currentWeek / 12 * 100
+  const progressValue = currentWeek < 0 ? 0 : currentWeek / 12 * 100
+
+  // TODO: handle future plan start
+
+  useEffect(() => {
+    if (!plan?.started) {
+      router.replace('/plan')
+    }
+  }, [plan, router])
 
   if (isLoading) {
     return (
@@ -27,11 +36,9 @@ export default function Dashboard() {
     )
   }
 
-  if (!plan?.started) {
-    router.replace('/plan')
+  if (!plan) {
     return null
   }
-
   return (
     <Grid>
       <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0" alignItems="center">
@@ -71,7 +78,7 @@ export default function Dashboard() {
           </Tabs.List>
           {DEFAULT_WEEKS.map((week) => (
             <Tabs.Content key={week} value={`tab-${week}`}>
-              <Week seq={Number(week)} plan={plan} />
+              <Week seq={Number(week)} plan={plan!} />
             </Tabs.Content>
           ))}
         </Tabs.Root>

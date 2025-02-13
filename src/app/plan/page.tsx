@@ -6,7 +6,7 @@ import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 import { useHistoryActions } from '@/app/hooks/useHistoryActions'
@@ -22,15 +22,13 @@ export default function PlanPage() {
   const updatePlan = planActions.useUpdate()
   const loading = updatePlan.isPending || createHistory.isPending
 
-  if (!plan) {
-    router.replace('/plan/new')
-    return null
-  }
-
-  if (plan.started) {
-    router.replace('/dashboard')
-    return null
-  }
+  useEffect(() => {
+    if (!plan) {
+      router.replace('/plan/new')
+    } else if (plan.started) {
+      router.replace('/dashboard')
+    }
+  }, [plan, router])
 
   const steps = [
     { title: 'Define Vision', content: <Step1 /> },
@@ -40,6 +38,7 @@ export default function PlanPage() {
   ]
 
   const handleStepChange = async ({ step }: { step: number }) => {
+    if (!plan) return
 
     if (step === 1 && !plan.vision) {
       setStep(0)
