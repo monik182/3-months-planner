@@ -3,6 +3,7 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { Button, Flex, Heading, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { RiArrowRightLine } from 'react-icons/ri'
 
 export default function Home() {
@@ -10,9 +11,11 @@ export default function Home() {
   const { hasPlan } = usePlanContext()
   const router = useRouter()
 
-  if (hasPlan) {
-    router.push('/dashboard')
-  }
+  useEffect(() => {
+      if (hasPlan) {
+        router.push('/dashboard')
+      }
+  }, [router, hasPlan])
 
   if (!!user && !hasPlan) {
     router.push('/plan')
