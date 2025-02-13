@@ -19,8 +19,8 @@
   - Refactor api/plan/create ✅
   - only save on click ❓
 - FE Improvements
-  - Create plan read only view
   - Create route guard
+  - Create plan read only view ✅
 - Auth Refactor
   - Replace Auth0 with Supabase auth 🚨
 

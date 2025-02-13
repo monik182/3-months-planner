@@ -15,7 +15,7 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 
 export function Step3({ }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
-  const { data: _goals = [], isLoading } = goalActions.useGetByPlanId(plan!.id, Status.ACTIVE)
+  const { data: _goals = [], isLoading } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
   const create = goalActions.useCreate()
   const update = goalActions.useUpdate()
@@ -58,18 +58,39 @@ export function Step3({ }: Step<Goal[]>) {
   const debouncedUpdate = useDebouncedCallback((id: string, content: string) => updateGoals(id, content), 2000)
   const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
 
+  // useEffect(() => {
+  //   if (!isLoading && !goals.length) {
+  //     setGoals(_goals)
+  //   }
+  // }, [_goals, goals, isLoading])
+
+  // const stableGoals = useMemo(() => _goals, [_goals]); // Memoize _goals
+
+  // useEffect(() => {
+  //   if (!isLoading && !goals.length) {
+  //     setGoals(stableGoals);
+  //   }
+  // }, [stableGoals, goals, isLoading]);
+
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //     setGoals(prevGoals => (prevGoals.length === 0 ? _goals : prevGoals));
+  //   }
+  // }, [isLoading, _goals]);
+
   useEffect(() => {
-    if (!isLoading && !goals.length) {
-      setGoals(_goals)
+    if (!isLoading && goals.length === 0 && _goals.length > 0 && goals !== _goals) {
+      setGoals(_goals);
     }
-  }, [_goals, goals, isLoading])
+  }, [isLoading, _goals, goals]);
+
 
   return (
     <StepLayout
       title="Set your 1-Year Goals"
       description={Description()}
     >
-      <Box flex="1" overflowY="auto" px={2} minHeight="0">
+      <Box flex="1" overflowY="auto" px={2} minHeight="0" display={!goals?.length ? "none" : "block"}>
         {goals.map((goal) => (
           <Card.Root key={goal.id} marginBottom="1rem">
             <Card.Header>

@@ -4,20 +4,33 @@ import dayjs from 'dayjs'
 import { Box, Stack, VStack, Text, Heading, Flex, Badge, Separator, HStack, Spinner } from '@chakra-ui/react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { Plan } from '@prisma/client'
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 
 export function Step4({ }: Step<Plan>) {
+  const router = useRouter()
   const { plan, isLoading: loadingPlan, goalActions, strategyActions, indicatorActions } = usePlanContext()
-  const { data: goals = [], isLoading: loadingGoals } = goalActions.useGetByPlanId(plan!.id)
-  const { data: strategies = [], isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan!.id)
-  const { data: indicators = [], isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan!.id)
+  const { data: goals = [], isLoading: loadingGoals } = goalActions.useGetByPlanId(plan?.id as string)
+  const { data: strategies = [], isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan?.id as string)
+  const { data: indicators = [], isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan?.id as string)
 
   const loading = loadingPlan || loadingGoals || loadingStrategies || loadingIndicators
+
+  useEffect(() => {
+    if (!plan) {
+      router.replace('/plan/new')
+    } else if (plan.started) {
+      router.replace('/dashboard')
+    }
+  }, [plan, router])
 
   if (loading) {
     return (
       <Spinner />
     )
   }
+
+  if (!plan) return null
 
   return (
     <StepLayout

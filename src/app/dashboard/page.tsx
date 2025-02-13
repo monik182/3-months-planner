@@ -21,7 +21,7 @@ export default function Dashboard() {
   const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 0
-  const hasNotStarted = currentWeek < 0
+  const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
   const week = hasNotStarted ? 1 : currentWeek
 

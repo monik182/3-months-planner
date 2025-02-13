@@ -8,9 +8,9 @@ import { useEffect } from 'react'
 export default function PlanView() {
   const router = useRouter()
   const { plan, isLoading: loadingPlan, goalActions, strategyActions, indicatorActions } = usePlanContext()
-  const { data: goals = [], isLoading: loadingGoals } = goalActions.useGetByPlanId(plan!.id)
-  const { data: strategies = [], isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan!.id)
-  const { data: indicators = [], isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan!.id)
+  const { data: goals = [], isLoading: loadingGoals } = goalActions.useGetByPlanId(plan?.id as string)
+  const { data: strategies = [], isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan?.id as string)
+  const { data: indicators = [], isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan?.id as string)
 
   const loading = loadingPlan || loadingGoals || loadingStrategies || loadingIndicators
 
@@ -25,6 +25,8 @@ export default function PlanView() {
       <Spinner />
     )
   }
+
+  if (!plan) return null
 
   return (
     <Box maxW="6xl" mx="auto" p={6} overflowY="auto">
