@@ -12,14 +12,14 @@ export default function Home() {
   const router = useRouter()
 
   useEffect(() => {
-      if (hasPlan) {
-        router.push('/dashboard')
-      }
-  }, [router, hasPlan])
+    if (hasPlan) {
+      router.push('/dashboard')
+    }
 
-  if (!!user && !hasPlan) {
-    router.push('/plan')
-  }
+    if (!!user && !hasPlan) {
+      router.push('/plan')
+    }
+  }, [router, hasPlan, user])
 
   return (
     <div className="container">
