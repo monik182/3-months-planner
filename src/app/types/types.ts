@@ -44,3 +44,9 @@ export interface DixiePlan extends Omit<Plan, 'completed' | 'started'> {
   completed: number
   started: number
 }
+
+export interface ParentProps {
+  planId?: string
+  goalId?: string
+  status?: string
+}

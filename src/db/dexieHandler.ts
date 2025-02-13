@@ -1,4 +1,4 @@
-import { DixiePlan } from '@/app/types/types'
+import { DixiePlan, ParentProps } from '@/app/types/types'
 import { db } from '@/db/dexie'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification } from '@prisma/client'
 
@@ -40,13 +40,13 @@ export const goalHandler = {
 export const goalHistoryHandler = {
   create: async (data: GoalHistory) => db.goalHistory.add(data),
   createMany: async (data: GoalHistory[]) => db.goalHistory.bulkAdd(data),
-  findMany: async (where?: Partial<GoalHistory>, status?: string) => {
+  findMany: async ({ status, planId }: ParentProps, where?: Partial<GoalHistory>) => {
     const goalHistories = await db.goalHistory.where(where ?? {}).toArray()
 
     const result = await Promise.all(
       goalHistories.map(async (goalHistory) => {
         const goal = await db.goals
-          .where({ id: goalHistory.goalId, status })
+          .where({ id: goalHistory.goalId, status, planId })
           .first()
 
         if (goal) {
@@ -80,13 +80,13 @@ export const strategyHandler = {
 export const strategyHistoryHandler = {
   create: async (data: StrategyHistory) => db.strategyHistory.add(data),
   createMany: async (data: StrategyHistory[]) => db.strategyHistory.bulkAdd(data),
-  findMany: async (where?: Partial<StrategyHistory>, seq?: string, status?: string) => {
+  findMany: async ({ planId, goalId, status }: ParentProps, where?: Partial<StrategyHistory>, seq?: string) => {
     const strategyHistories = await db.strategyHistory.where(where ?? {}).toArray()
 
     const result = await Promise.all(
       strategyHistories.map(async (strategyHistory) => {
         const strategy = await db.strategies
-          .where({ id: strategyHistory.strategyId, status })
+          .where({ id: strategyHistory.strategyId, status, planId, goalId })
           .first()
 
         if (strategy && (!seq || strategy.weeks.includes(seq))) {
@@ -104,7 +104,7 @@ export const strategyHistoryHandler = {
 
     return result.filter((item) => item !== null)
   },
-  findManyByGoalId: async (goalId: string, where?: Partial<StrategyHistory>, seq?: string, status?: string) => {
+  findManyByGoalId: async ({ goalId, status }: ParentProps, where?: Partial<StrategyHistory>, seq?: string) => {
     const strategyHistories = await db.strategyHistory.where(where ?? {}).toArray()
 
     const result = await Promise.all(
@@ -146,12 +146,12 @@ export const indicatorHandler = {
 export const indicatorHistoryHandler = {
   create: async (data: IndicatorHistory) => db.indicatorHistory.add(data),
   createMany: async (data: IndicatorHistory[]) => db.indicatorHistory.bulkAdd(data),
-  findMany: async (where?: Partial<IndicatorHistory>) => {
+  findMany: async ({ planId, goalId, status }: ParentProps, where?: Partial<IndicatorHistory>) => {
     const indicatorHistories = await db.indicatorHistory.where(where ?? {}).toArray()
 
     const result = await Promise.all(
       indicatorHistories.map(async (indicatorHistory) => {
-        const indicator = await db.indicators.where({ id: indicatorHistory.indicatorId }).first()
+        const indicator = await db.indicators.where({ id: indicatorHistory.indicatorId, goalId, planId, status }).first()
 
         if (indicator) {
           return {
@@ -170,13 +170,13 @@ export const indicatorHistoryHandler = {
 
     return result.filter((item) => item !== null)
   },
-  findManyByGoalId: async (goalId: string, where?: Partial<IndicatorHistory>) => {
+  findManyByGoalId: async ({ goalId, status }: ParentProps, where?: Partial<IndicatorHistory>) => {
     const indicatorHistories = await db.indicatorHistory.where(where ?? {}).toArray()
 
     const result = await Promise.all(
       indicatorHistories.map(async (indicatorHistory) => {
         const indicator = await db.indicators
-          .where({ id: indicatorHistory.indicatorId, goalId })
+          .where({ id: indicatorHistory.indicatorId, goalId, status })
           .first()
 
         if (indicator) {
