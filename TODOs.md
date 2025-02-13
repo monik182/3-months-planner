@@ -1,14 +1,25 @@
 # Auth & Persistency For release
 - FE Fixes
-  - Create home page 
+  - Create home page [WIP]
   - Add local persistency ✅
   - Refactor dashboard -> see mockup references ✅
 - BE integration
   - integrate db + backend + frontend - Track plan ✅
 
 
+# Pre release
+- Only allow up to 10 users to test
+- Save to db unique user ids
+- Allow anonymous testing
+- Create wait list section
+- Create feedback button
+
 # Release
 - Deploy
+
+# Post Release
+- Pricing page
+- Stripe integration
 
 
 # Auth & Persistency P3
