@@ -114,7 +114,7 @@ export default function PlanPage() {
                 icon={<MdOutlineCelebration />}
                 title="Congrats!"
                 size="lg"
-                description="You have created your 3-month plan!"
+                description="You have created your plan!"
               >
                 <Flex gap="1rem" direction="column">
                   <Button onClick={() => router.replace('/dashboard')}>Go to dashboard</Button>

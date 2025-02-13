@@ -42,7 +42,7 @@ export function Header() {
       <Flex justify="space-between" align="center" marginTop="1rem">
         <Flex gap="1rem" align="center">
           <Heading size="2xl" onClick={goToHome} cursor="pointer">
-            3-Month Plan
+            The Planner
           </Heading>
           {hasPlan && (
             <SegmentedControl
