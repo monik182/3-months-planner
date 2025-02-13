@@ -19,7 +19,7 @@ export function useGoalHistoryActions() {
     })
   }
 
-  const useGetByPlanId = (planId: string, sequence?: string, status = Status.ACTIVE) => {
+  const useGetByPlanId = (planId: string, sequence?: number, status = Status.ACTIVE) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId, sequence }],
       queryFn: () => GoalHistoryService.getByPlanId(planId, sequence, status),

@@ -31,7 +31,7 @@ export function useStrategyHistoryActions() {
     })
   }
 
-  const useGetByGoalId = (goalId: string, sequence?: string, status = Status.ACTIVE) => {
+  const useGetByGoalId = (goalId: string, sequence?: number, status = Status.ACTIVE) => {
     return useQuery({
       queryKey: [QUERY_KEY, { goalId, sequence }],
       queryFn: () => StrategyHistoryService.getByGoalId(goalId, sequence, status),

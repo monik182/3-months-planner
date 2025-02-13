@@ -18,7 +18,7 @@ export function useIndicatorHistoryActions() {
     })
   }
 
-  const useGetByPlanId = (planId: string, sequence?: string) => {
+  const useGetByPlanId = (planId: string, sequence?: number) => {
     return useQuery({
       queryKey: [QUERY_KEY, { planId, sequence }],
       queryFn: () => IndicatorHistoryService.getByPlanId(planId, sequence),
@@ -26,7 +26,7 @@ export function useIndicatorHistoryActions() {
     })
   }
 
-  const useGetByGoalId = (goalId: string, sequence?: string) => {
+  const useGetByGoalId = (goalId: string, sequence?: number) => {
     return useQuery({
       queryKey: [QUERY_KEY, { goalId, sequence }],
       queryFn: () => IndicatorHistoryService.getByGoalId(goalId, sequence),

@@ -79,6 +79,8 @@ export function createStrategyHistoryList(planId: string, strategies: Strategy[]
         planId,
         sequence,
         strategyId: strategy.id,
+        firstUpdate: null,
+        lastUpdate: null,
       }
     })
   }).flat()

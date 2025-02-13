@@ -14,8 +14,8 @@ interface GoalProps {
 
 export function GoalDetail({ goal, seq, onScoreCalculated }: GoalProps) {
   const { strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
-  const { data: strategies = [], isLoading: isLoadingStrategies, isRefetching } = strategyHistoryActions.useGetByGoalId(goal.goalId, seq + '')
-  const { data: indicators = [], isLoading: isLoadingIndicators } = indicatorHistoryActions.useGetByGoalId(goal.goalId, seq + '')
+  const { data: strategies = [], isLoading: isLoadingStrategies, isRefetching } = strategyHistoryActions.useGetByGoalId(goal.goalId, seq)
+  const { data: indicators = [], isLoading: isLoadingIndicators } = indicatorHistoryActions.useGetByGoalId(goal.goalId, seq)
 
   const updateStrategy = strategyHistoryActions.useUpdate()
   const updateIndicator = indicatorHistoryActions.useUpdate()
