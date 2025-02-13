@@ -1,6 +1,7 @@
 # Auth & Persistency For release
 - FE Fixes
   - Create home page [WIP]
+  - Fix scroll on plan/view ✅
   - Add local persistency ✅
   - Refactor dashboard -> see mockup references ✅
 - BE integration
@@ -14,8 +15,10 @@
 - Create wait list section
 - Create feedback button
 
+
 # Release
 - Deploy
+
 
 # Post Release
 - Pricing page

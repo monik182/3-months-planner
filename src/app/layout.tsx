@@ -40,9 +40,9 @@ export default function RootLayout({
             <Provider>
               <PlanProvider>
                 <Box margin="0 2rem">
-                  <Grid templateRows="1fr auto" height="100vh">
+                  <Grid templateRows="10% auto" height="100vh">
                     <GridItem><Header /></GridItem>
-                    <GridItem height="90vh">{children}</GridItem>
+                    <GridItem overflow="auto">{children}</GridItem>
                   </Grid>
                   <Toaster />
                 </Box>

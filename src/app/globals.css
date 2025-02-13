@@ -44,5 +44,4 @@ body {
   align-items: center;
   flex-direction: column;
   scroll-snap-align: start;
-  width: 100vw;
 }
