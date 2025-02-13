@@ -58,7 +58,7 @@ const get = async (id: string): Promise<Goal | null> => {
   return fetch(`/api/goal/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string, status?: Status): Promise<Goal[]> => {
+const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Goal[]> => {
   const goals = await goalHandler.findMany({ planId, status })
 
   if (goals) {

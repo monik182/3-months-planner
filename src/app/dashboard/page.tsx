@@ -1,5 +1,5 @@
 'use client'
-import { Box, Center, Grid, HStack, Heading, Spinner, Tabs, Text } from '@chakra-ui/react'
+import { Box, Button, Center, Flex, Grid, HStack, Heading, Spinner, Tabs, Text } from '@chakra-ui/react'
 import { getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
@@ -9,18 +9,21 @@ import { Week } from '@/app/dashboard/Week/Week'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { EmptyState } from '@/components/ui/empty-state'
+import { MdOutlineBeachAccess } from 'react-icons/md'
 
 export default function Dashboard() {
   const router = useRouter()
-  const {user} = useUser()
+  const { user } = useUser()
   const { planActions } = usePlanContext()
   const { data: plan, isLoading } = planActions.useGet(user?.sub as string)
   const today = dayjs().format('DD MMMM YYYY')
+  const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 0
-  const progressValue = currentWeek < 0 ? 0 : currentWeek / 12 * 100
-
-  // TODO: handle future plan start
+  const hasNotStarted = currentWeek < 0
+  const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
+  const week = hasNotStarted ? 1 : currentWeek
 
   useEffect(() => {
     if (!plan?.started) {
@@ -43,17 +46,19 @@ export default function Dashboard() {
     <Grid>
       <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0" alignItems="center">
         <Box>
-          <Heading size="4xl">Week {currentWeek}</Heading>
+          <Heading size="4xl">Week {week}</Heading>
+          {hasNotStarted && <Text fontSize="xs"> (Your plan has not yet started)</Text>}
           <Box>
             <Grid gridTemplateColumns="80% 20%" gap="1rem" alignItems="center">
               <ProgressRoot colorPalette="green" value={progressValue}>
                 <HStack gap="5">
                   <ProgressBar flex="1" />
-                  <ProgressValueText>{currentWeek}/12</ProgressValueText>
+                  <ProgressValueText>{week}/12</ProgressValueText>
                 </HStack>
               </ProgressRoot>
             </Grid>
           </Box>
+          <Text><b>Start of year:</b> {startOfYPlan}</Text>
           <Text><b>End of year:</b> {endOfYPlan}</Text>
           <Text><b>Today:</b> {today}</Text>
         </Box>
@@ -68,21 +73,35 @@ export default function Dashboard() {
         </LineChart> */}
       </Grid>
 
-      <Box marginTop="2rem">
-        <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle">
-          <Tabs.List>
+      {hasNotStarted ?
+        <EmptyState
+          icon={<MdOutlineBeachAccess />}
+          size="lg"
+          title={`Your plan starts on ${startOfYPlan}`}
+          description="Go ahead and enjoy your time off. Your plan will start soon."
+        >
+          <Flex gap="1rem" direction="column">
+            <Button onClick={() => router.replace('/plan/view')}>View Plan</Button>
+          </Flex>
+        </EmptyState>
+        :
+        <Box marginTop="2rem">
+          <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle">
+            <Tabs.List>
+              {DEFAULT_WEEKS.map((week) => (
+                <Tabs.Trigger key={`week-${week}`} value={`tab-${week}`}>W-{week}</Tabs.Trigger>
+              ))}
+              <Tabs.Indicator rounded="l2" />
+            </Tabs.List>
             {DEFAULT_WEEKS.map((week) => (
-              <Tabs.Trigger key={`week-${week}`} value={`tab-${week}`}>W-{week}</Tabs.Trigger>
+              <Tabs.Content key={week} value={`tab-${week}`}>
+                <Week seq={Number(week)} plan={plan!} />
+              </Tabs.Content>
             ))}
-            <Tabs.Indicator rounded="l2" />
-          </Tabs.List>
-          {DEFAULT_WEEKS.map((week) => (
-            <Tabs.Content key={week} value={`tab-${week}`}>
-              <Week seq={Number(week)} plan={plan!} />
-            </Tabs.Content>
-          ))}
-        </Tabs.Root>
-      </Box>
+          </Tabs.Root>
+        </Box>
+      }
+
     </Grid>
   )
 }
