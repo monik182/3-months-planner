@@ -96,11 +96,11 @@ Table notifications {
   lastUpdate DateTime [not null]
 }
 
-Table Waitlist {
+Table waitlist {
   id String [pk]
   email String [unique, not null]
   name String
-  position Int [not null, default: 0]
+  position Int [unique, not null, default: 0]
   invited Boolean [not null, default: false]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]

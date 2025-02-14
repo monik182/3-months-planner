@@ -151,8 +151,11 @@ model Waitlist {
   id         String   @id @default(cuid())
   email      String   @unique
   name       String?  
-  position   Int      @default(0)
+  position   Int      @default(0) @unique
   invited    Boolean  @default(false)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
+
+  @@index([email, id]) 
+  @@map("waitlist")
 }
