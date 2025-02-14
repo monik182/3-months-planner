@@ -15,11 +15,12 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 
 export function Step3({ onLoading }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
-  const { data: _goals = [], isLoading } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
+  const { data: _goals = [] } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
   const create = goalActions.useCreate()
   const update = goalActions.useUpdate()
-  const loading = create.isPending || update.isPending
+  const remove = goalActions.useDelete()
+  const loading = create.isPending || update.isPending || remove.isPending
 
   const createGoal = () => {
     const newGoal = {
@@ -50,19 +51,13 @@ export function Step3({ onLoading }: Step<Goal[]>) {
     update.mutate({ goalId: id, updates: { content } })
   }
 
-  const updateState = (id: string) => {
-    update.mutate({ goalId: id, updates: { status: Status.DELETED } })
+  const deleteGoal = (id: string) => {
+    remove.mutate(id)
   }
 
   const debouncedSave = useDebouncedCallback((goal: Omit<Goal, 'status'>) => saveGoal(goal), 1000)
   const debouncedUpdate = useDebouncedCallback((id: string, content: string) => updateGoals(id, content), 500)
-  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 0)
-
-  useEffect(() => {
-    if (!isLoading && goals.length === 0 && _goals.length > 0 && goals !== _goals) {
-      setGoals(_goals)
-    }
-  }, [isLoading, _goals, goals])
+  const debouncedRemove = useDebouncedCallback((id: string) => deleteGoal(id), 0)
 
   useEffect(() => {
     onLoading?.(loading)

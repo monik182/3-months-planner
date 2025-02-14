@@ -1,6 +1,8 @@
 # Auth & Persistency For release
 - FE Fixes
-  - Create home page [WIP]
+  - Something weird with creating/updating strategy
+  - Create home page ✅
+  - Remove is not removing ✅
   - Fix scroll on plan/view ✅
   - Add local persistency ✅
   - Refactor dashboard -> see mockup references ✅
@@ -21,8 +23,10 @@
 
 
 # Post Release
-- Pricing page
-- Stripe integration
+- Improve HOME page with steps and everything
+- Delayed sync
+- Pricing page ❓
+- Stripe integration ❓
 
 
 # Auth & Persistency P3
