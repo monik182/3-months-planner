@@ -73,7 +73,7 @@ const update = async (id: string, strategy: Prisma.IndicatorUpdateInput): Promis
   return fetch(`/api/strategy/${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(strategy),
+    body: JSON.stringify(parsedData),
   })
     .then(response => response.json())
 }

@@ -36,7 +36,7 @@ export function StrategyList({ goalId, planId, onLoading }: StrategyListProps) {
       planId,
       content: '',
       weeks: [...DEFAULT_WEEKS],
-      frequency: 7
+      frequency: 7,
     }
     setStrategies(prev => [...prev, newStrategy])
     debouncedSave(newStrategy)
@@ -79,13 +79,13 @@ export function StrategyList({ goalId, planId, onLoading }: StrategyListProps) {
         <StrategyForm
           key={strategy.id}
           strategy={strategy}
-          onAdd={handleCreate}
           onChange={(strategy) => handleUpdate(strategy.id, strategy)}
           onRemove={() => handleRemove(strategy.id)}
+          disabled={loading}
         />
       ))}
       <SavingSpinner loading={loading} />
-      <Button size="sm" variant="outline" className="mt-5" onClick={handleCreate}>
+      <Button size="sm" variant="outline" className="mt-5" onClick={handleCreate} disabled={loading}>
         <SlPlus /> Add Strategy
       </Button>
     </Flex>

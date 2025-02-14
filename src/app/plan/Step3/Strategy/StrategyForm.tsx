@@ -10,7 +10,7 @@ import { DEFAULT_FREQUENCY_LIST } from '@/app/constants'
 interface StrategyProps {
   strategy: Omit<Strategy, 'status'>
   onChange: (strategy: Omit<Strategy, 'status'>) => void
-  onAdd: () => void
+  onAdd?: () => void
   onRemove: () => void
   onClick?: () => void
   disabled?: boolean
@@ -49,7 +49,7 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      onAdd()
+      onAdd?.()
     }
   }
 
@@ -69,7 +69,7 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
           disabled={disabled}
         >
           <Editable.Preview />
-          <Editable.Input />
+          <Editable.Input disabled={disabled} />
         </Editable.Root>
       </Flex>
       {isEditing ? (
