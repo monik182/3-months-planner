@@ -33,7 +33,8 @@ export function StrategyDetail({ strategy, onChange }: StrategyDetailProps) {
         <Checkbox 
           key={index} 
           size="lg" 
-          defaultChecked={value} 
+          defaultChecked={value}
+          variant="subtle"
           onCheckedChange={(e) => handleOnCheckedChange(e, index)}
         />
       ))}
