@@ -95,10 +95,10 @@ export function Step3({ onLoading }: Step<Goal[]>) {
               </Flex>
             </Card.Header>
             <Card.Body>
-              <StrategyList goalId={goal.id} planId={goal.planId} onLoading={onLoading} />
+              <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={10} onLoading={onLoading} />
             </Card.Body>
             <Card.Footer>
-              <IndicatorList goalId={goal.id} planId={goal.planId} onLoading={onLoading} />
+              <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} />
             </Card.Footer>
           </Card.Root>
         ))}

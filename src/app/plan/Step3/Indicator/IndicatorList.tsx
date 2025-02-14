@@ -1,29 +1,32 @@
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorForm } from './IndicatorForm'
-import { Button, Flex } from '@chakra-ui/react'
+import { Alert, Button, Flex, Tag } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { SlPlus, SlStar } from 'react-icons/sl'
+import { SlPlus } from 'react-icons/sl'
 import { Indicator } from '@prisma/client'
 import cuid from 'cuid'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { useDebouncedCallback } from 'use-debounce'
+import { GoGraph } from 'react-icons/go'
 
 interface IndicatorListProps {
   goalId: string
   planId: string
+  maxLimit?: number
   onLoading?: (loading: boolean) => void
 }
 
-export function IndicatorList({ goalId, planId, onLoading }: IndicatorListProps) {
+export function IndicatorList({ goalId, planId, maxLimit, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
   const { data: _indicators = [] } = indicatorActions.useGetByGoalId(goalId)
   const [indicators, setIndicators] = useState<Omit<Indicator, 'status'>[]>([..._indicators])
-  const disableIndicator = !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Omit<Indicator, 'status'> | null>()
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
   const remove = indicatorActions.useDelete()
   const loading = create.isPending || update.isPending || remove.isPending
+  const canAdd = maxLimit ? indicators.length < maxLimit : true
+  const disableIndicator = !canAdd || !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
 
   const handleCreate = () => {
     const newIndicator: Omit<Indicator, 'status'> = {
@@ -86,17 +89,28 @@ export function IndicatorList({ goalId, planId, onLoading }: IndicatorListProps)
           onRemove={() => handleRemove(indicatorToUpdate.id)}
         />
       )}
-      <Flex gap="10px">
+      <Flex gap="10px" alignItems="center">
         {indicators.map((indicator) => (
-          <Button key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" onClick={() => setIndicatorToUpdate(indicator)}>
-            <SlStar /> {indicator.content}
-          </Button>
+          <Tag.Root key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" onClick={() => setIndicatorToUpdate(indicator)} cursor="pointer">
+            <Tag.StartElement>
+              <GoGraph />
+            </Tag.StartElement>
+            <Tag.Label>{indicator.content}</Tag.Label>
+          </Tag.Root>
         ))}
+        <Button size="xs" variant="outline" className="mt-5" onClick={handleCreate} disabled={disableIndicator}>
+          <SlPlus /> Add Indicator
+        </Button>
+        <SavingSpinner loading={loading} />
       </Flex>
-      <SavingSpinner loading={loading} />
-      <Button size="xs" variant="outline" className="mt-5" onClick={handleCreate} disabled={disableIndicator}>
-        <SlPlus /> Add Indicator
-      </Button>
+      {!canAdd && (
+        <Alert.Root status="info" size="sm" variant="outline">
+          <Alert.Indicator />
+          <Alert.Title>
+            You have reached the maximum number of indicators for this goal
+          </Alert.Title>
+        </Alert.Root>
+      )}
     </Flex>
   )
 }

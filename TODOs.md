@@ -1,16 +1,5 @@
-# Auth & Persistency For release
-- FE Fixes
-  - Something weird with creating/updating/loading strategy
-  - Create home page ✅
-  - Remove is not removing ✅
-  - Fix scroll on plan/view ✅
-  - Add local persistency ✅
-  - Refactor dashboard -> see mockup references ✅
-- BE integration
-  - integrate db + backend + frontend - Track plan ✅
-
-
 # Pre release
+- Test y prod db
 - Quitarle el autocomplete a todos los campos
 - Create wait list section [WIP] -> Wire up with db
 - Create feedback button
@@ -145,3 +134,14 @@ with persistance will come success
   - Refactor usePlan hook, is still necessary? - Removed ✅ 
   - Handle loading/error states of requests - react query? ✅
   - create a model folder? Not needed, using prisma generated types ❌
+
+  # Auth & Persistency For release
+- FE Fixes
+  - Something weird with creating/updating/loading strategy ✅
+  - Create home page ✅
+  - Remove is not removing ✅
+  - Fix scroll on plan/view ✅
+  - Add local persistency ✅
+  - Refactor dashboard -> see mockup references ✅
+- BE integration
+  - integrate db + backend + frontend - Track plan ✅

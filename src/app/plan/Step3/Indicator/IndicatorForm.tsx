@@ -1,11 +1,12 @@
-import { Box, Button, Field, Flex, Input } from '@chakra-ui/react'
+import { Flex, Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { Alert } from '@/components/ui/alert'
 import { Indicator } from '@prisma/client'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { ValueChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/number-input/namespace'
-import { Field as UiField } from '@/components/ui/field'
+import { Field } from '@/components/ui/field'
+import { Button } from '@/components/ui/button'
 
 interface IndicatorFormProps {
   indicator: Omit<Indicator, 'status'>
@@ -58,56 +59,46 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
   }, [indicator])
 
   return (
-    <Flex direction="column" w="full" width="500px" gap="1rem" flex="1">
-      <Field.Root>
-        <Box pos="relative" w="full">
-          <Field.Label>What indicator are you tracking?</Field.Label>
-          <Input placeholder="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'." value={value.content} onChange={(e) => handleEdit(e, 'content')} />
-        </Box>
-      </Field.Root>
-      <Field.Root>
-        <Box pos="relative" w="full">
-          <UiField label="What is your current value?" helperText="Enter your current value, for example, 100.">
-            <NumberInputRoot
-              step={1}
-              min={0}
-              value={value.initialValue?.toString() || ''}
-              onValueChange={(e) => handleValueChange(e, 'initialValue')}
-            >
-              <NumberInputField />
-            </NumberInputRoot>
-          </UiField>
-        </Box>
-      </Field.Root>
-      <Field.Root>
-        <Box pos="relative" w="full">
-          <UiField label="What is your goal value?" helperText="Enter your goal value, for example, 200.">
-            <NumberInputRoot
-              step={1}
-              min={0}
-              value={value.goalValue?.toString() || ''}
-              onValueChange={(e) => handleValueChange(e, 'goalValue')}
-            >
-              <NumberInputField />
-            </NumberInputRoot>
-          </UiField>
-        </Box>
-      </Field.Root>
-      <Field.Root>
-        <Box pos="relative" w="full">
-          <Field.Label>What is the unit of measurement?</Field.Label>
-          <Input placeholder="Indicate the unit, such as kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} />
-        </Box>
-      </Field.Root>
+    <Flex w="full" gap="1rem" flex="1" margin="1rem 0" padding="1rem">
+      <Flex gap="1rem" alignItems="center">
+        <Field label="What indicator are you tracking?" helperText="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'.">
+          <Input size="xs" placeholder="Eg. Bodyweight, Savings Growth, Project Completion" value={value.content} onChange={(e) => handleEdit(e, 'content')} />
+        </Field>
+
+        <Field label="What is your current value?" helperText="Enter your current value, for example, 100.">
+          <NumberInputRoot
+            size="xs"
+            step={1}
+            min={0}
+            value={value.initialValue?.toString() || ''}
+            onValueChange={(e) => handleValueChange(e, 'initialValue')}
+          >
+            <NumberInputField />
+          </NumberInputRoot>
+        </Field>
+
+        <Field label="What is your goal value?" helperText="Enter your goal value, for example, 200.">
+          <NumberInputRoot
+            size="xs"
+            step={1}
+            min={0}
+            value={value.goalValue?.toString() || ''}
+            onValueChange={(e) => handleValueChange(e, 'goalValue')}
+          >
+            <NumberInputField />
+          </NumberInputRoot>
+        </Field>
+        <Field label="What is the unit of measurement?" helperText="Indicate the unit, such as kilograms, euros, number of calls, or transactions.">
+          <Input size="xs" placeholder="Eg. kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} />
+        </Field>
+      </Flex>
       {error && <Alert status="error" title={error} />}
-      <Flex justify="flex-end" gap="5px">
-        <Button size="xs" variant="outline" onClick={onRemove}>
-          <CiTrash />
-          Remove
-        </Button>
-        <Button size="xs" variant="outline" onClick={handleUpdate}>
+      <Flex direction="column" justify="center" gap="5px">
+        <Button size="xs" variant="outline" onClick={handleUpdate} colorPalette="green" title="Save">
           <CiFloppyDisk />
-          Save
+        </Button>
+        <Button size="xs" variant="outline" onClick={onRemove} colorPalette="red" title="Remove">
+          <CiTrash />
         </Button>
       </Flex>
     </Flex>
