@@ -1,4 +1,4 @@
-import { formatError } from '@/lib/prismaHandler'
+
 import { NextRequest } from 'next/server'
 import { indicatorHistoryHandler } from '@/db/prismaHandler'
 import { SegmentData } from '@/app/types/types'
@@ -17,6 +17,6 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
     const indicator = await indicatorHistoryHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(indicator), { status: 200 })
   } catch (error) {
-    return new Response(formatError(error), { status: 500 })
+    return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
   }
 }

@@ -1,4 +1,4 @@
-import { formatError } from '@/lib/prismaHandler'
+
 import { NextRequest } from 'next/server'
 import { goalHistoryHandler } from '@/db/prismaHandler'
 
@@ -13,6 +13,6 @@ export async function GET(request: NextRequest) {
     const response = await goalHistoryHandler.findMany({ goalId, planId, sequence }, status)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
-    return new Response(formatError(error), { status: 500 })
+    return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
   }
 }

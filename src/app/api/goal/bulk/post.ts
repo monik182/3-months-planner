@@ -1,5 +1,5 @@
 import { goalHandler } from '@/db/prismaHandler'
-import { formatError } from '@/lib/prismaHandler'
+
 import { GoalArraySchema } from '@/lib/validators/goal'
 import { NextRequest } from 'next/server'
 
@@ -16,6 +16,6 @@ export async function POST(request: NextRequest) {
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     console.log('error on goal bulk', error)
-    return new Response(formatError(error), { status: 500 })
+    return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
   }
 }

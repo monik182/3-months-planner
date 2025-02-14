@@ -1,5 +1,5 @@
 import { strategyHistoryHandler } from '@/db/prismaHandler'
-import { formatError } from '@/lib/prismaHandler'
+
 import { StrategyHistoryArraySchema } from '@/lib/validators/strategyHistory'
 import { NextRequest } from 'next/server'
 
@@ -15,6 +15,6 @@ export async function POST(request: NextRequest) {
     const response = await strategyHistoryHandler.createMany(parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
-    return new Response(formatError(error), { status: 500 })
+    return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
   }
 }

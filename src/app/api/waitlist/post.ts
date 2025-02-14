@@ -1,5 +1,5 @@
 import { waitlistHandler } from '@/db/prismaHandler'
-import { formatError } from '@/lib/prismaHandler'
+
 import { WaitlistSchema } from '@/lib/validators/waitlist'
 import { NextRequest } from 'next/server'
 
@@ -23,6 +23,6 @@ export async function POST(request: NextRequest) {
     const response = await waitlistHandler.create(parsedData)
     return new Response(JSON.stringify({ ...response, ok: true }), { status: 200 })
   } catch (error) {
-    return new Response(formatError(error), { status: 500 })
+    return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
   }
 }
