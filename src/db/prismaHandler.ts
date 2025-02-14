@@ -150,3 +150,13 @@ export const notificationHandler = {
   update: async (id: string, data: Prisma.NotificationUpdateInput) => prismaHandler(() => prisma.notification.update({ where: { id }, data })),
   delete: async (id: string) => prismaHandler(() => prisma.notification.delete({ where: { id } })),
 }
+
+export const waitlistHandler = {
+  create: async (data: Prisma.WaitlistCreateInput) => prismaHandler(() => prisma.waitlist.create({ data })),
+  createMany: async (data: Prisma.WaitlistCreateManyInput[]) => prismaHandler(() => prisma.waitlist.createMany({ data })),
+  findMany: async (where?: Prisma.WaitlistWhereInput, select?: Prisma.WaitlistSelect) =>
+    prismaHandler(() => prisma.waitlist.findMany({ where, ...(select ? { select } : {}) })),
+  findOne: async (id: string) => prismaHandler(() => prisma.waitlist.findUnique({ where: { id } })),
+  update: async (id: string, data: Prisma.WaitlistUpdateInput) => prismaHandler(() => prisma.waitlist.update({ where: { id }, data })),
+  delete: async (id: string) => prismaHandler(() => prisma.waitlist.delete({ where: { id } })),
+}
