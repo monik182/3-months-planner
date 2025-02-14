@@ -1,6 +1,6 @@
 # Auth & Persistency For release
 - FE Fixes
-  - Something weird with creating/updating strategy
+  - Something weird with creating/updating/loading strategy
   - Create home page ✅
   - Remove is not removing ✅
   - Fix scroll on plan/view ✅
@@ -11,11 +11,12 @@
 
 
 # Pre release
-- Only allow up to 10 users to test
-- Save to db unique user ids
-- Allow anonymous testing
-- Create wait list section
+- Quitarle el autocomplete a todos los campos
+- Create wait list section [WIP] -> Wire up with db
 - Create feedback button
+- Save to db unique user ids
+- Only allow up to 10 users to test
+- Allow anonymous testing
 
 
 # Release
@@ -23,7 +24,10 @@
 
 
 # Post Release
+- Make indicator creation a 1 liner + change the icon and button color
+- Improve the goals/strategies/indicator creation forms
 - Improve HOME page with steps and everything
+- Improve the plan view and colors and reuse component in step4
 - Delayed sync
 - Pricing page ❓
 - Stripe integration ❓
