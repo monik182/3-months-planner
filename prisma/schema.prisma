@@ -146,3 +146,13 @@ model Notification {
   @@index([entityType, entityId])
   @@map("notifications")
 }
+
+model Waitlist {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?  
+  position   Int      @default(0)
+  invited    Boolean  @default(false)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+}
