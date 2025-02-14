@@ -8,7 +8,7 @@ export enum Status {
 }
 
 export interface Step<T> {
-  goNext?: () => void
+  onLoading?: (loading: boolean) => void
   onChange?: (value: T) => void
 }
 

@@ -13,7 +13,7 @@ import cuid from 'cuid'
 import { useDebouncedCallback } from 'use-debounce'
 import { SavingSpinner } from '@/components/SavingSpinner'
 
-export function Step3({ }: Step<Goal[]>) {
+export function Step3({ onLoading }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
   const { data: _goals = [], isLoading } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
@@ -54,36 +54,19 @@ export function Step3({ }: Step<Goal[]>) {
     update.mutate({ goalId: id, updates: { status: Status.DELETED } })
   }
 
-  const debouncedSave = useDebouncedCallback((goal: Omit<Goal, 'status'>) => saveGoal(goal), 2000)
-  const debouncedUpdate = useDebouncedCallback((id: string, content: string) => updateGoals(id, content), 2000)
-  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
-
-  // useEffect(() => {
-  //   if (!isLoading && !goals.length) {
-  //     setGoals(_goals)
-  //   }
-  // }, [_goals, goals, isLoading])
-
-  // const stableGoals = useMemo(() => _goals, [_goals]); // Memoize _goals
-
-  // useEffect(() => {
-  //   if (!isLoading && !goals.length) {
-  //     setGoals(stableGoals);
-  //   }
-  // }, [stableGoals, goals, isLoading]);
-
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     setGoals(prevGoals => (prevGoals.length === 0 ? _goals : prevGoals));
-  //   }
-  // }, [isLoading, _goals]);
+  const debouncedSave = useDebouncedCallback((goal: Omit<Goal, 'status'>) => saveGoal(goal), 1000)
+  const debouncedUpdate = useDebouncedCallback((id: string, content: string) => updateGoals(id, content), 500)
+  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 0)
 
   useEffect(() => {
     if (!isLoading && goals.length === 0 && _goals.length > 0 && goals !== _goals) {
-      setGoals(_goals);
+      setGoals(_goals)
     }
-  }, [isLoading, _goals, goals]);
+  }, [isLoading, _goals, goals])
 
+  useEffect(() => {
+    onLoading?.(loading)
+  }, [loading])
 
   return (
     <StepLayout
@@ -109,6 +92,7 @@ export function Step3({ }: Step<Goal[]>) {
                   aria-label="Remove list goal"
                   variant="ghost"
                   size="sm"
+                  disabled={update.isPending}
                   onClick={() => removeGoal(goal.id)}
                 >
                   <SlClose />
@@ -116,10 +100,10 @@ export function Step3({ }: Step<Goal[]>) {
               </Flex>
             </Card.Header>
             <Card.Body>
-              <StrategyList goalId={goal.id} planId={goal.planId} />
+              <StrategyList goalId={goal.id} planId={goal.planId} onLoading={onLoading} />
             </Card.Body>
             <Card.Footer>
-              <IndicatorList goalId={goal.id} planId={goal.planId} />
+              <IndicatorList goalId={goal.id} planId={goal.planId} onLoading={onLoading} />
             </Card.Footer>
           </Card.Root>
         ))}

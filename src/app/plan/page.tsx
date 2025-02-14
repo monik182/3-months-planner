@@ -17,6 +17,7 @@ export default function PlanPage() {
   const router = useRouter()
   const { plan, planActions } = usePlanContext()
   const [nextText, setNextText] = useState('Next')
+  const [isLoadingStep, setIsLoadingStep] = useState(false)
   const [step, setStep] = useState(0)
   const createHistory = useHistoryActions().useCreate()
   const updatePlan = planActions.useUpdate()
@@ -31,9 +32,9 @@ export default function PlanPage() {
   }, [plan, router])
 
   const steps = [
-    { title: 'Define Vision', content: <Step1 /> },
-    { title: '3-Year Milestone', content: <Step2 /> },
-    { title: 'Set Goals, Actions & Metrics', content: <Step3 /> },
+    { title: 'Define Vision', content: <Step1 onLoading={setIsLoadingStep} /> },
+    { title: '3-Year Milestone', content: <Step2 onLoading={setIsLoadingStep} /> },
+    { title: 'Set Goals, Actions & Metrics', content: <Step3 onLoading={setIsLoadingStep} /> },
     { title: 'Review', content: <Step4 /> },
   ]
 
@@ -131,7 +132,7 @@ export default function PlanPage() {
               </Button>
             </StepsPrevTrigger>
             <StepsNextTrigger asChild>
-              <Button variant="outline" size="sm" disabled={loading}>
+              <Button variant="outline" size="sm" disabled={loading || isLoadingStep}>
                 {loading ?
                   <Spinner />
                   :

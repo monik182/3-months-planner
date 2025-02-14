@@ -1,27 +1,30 @@
 import { Flex, Textarea } from '@chakra-ui/react'
 import { StepLayout } from './stepLayout'
 import { Step, Vision } from '@/app/types/types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useDebouncedCallback } from 'use-debounce'
 import { SavingSpinner } from '@/components/SavingSpinner'
 
-export function Step2({ }: Step<Vision>) {
+export function Step2({ onLoading }: Step<Vision>) {
   const { plan, planActions } = usePlanContext()
   const [value, setValue] = useState(plan?.milestone ?? '')
   const update = planActions.useUpdate()
 
-
   const debounced = useDebouncedCallback(
     (milestone: string) => {
       update.mutate({ planId: plan!.id, updates: { milestone } })
-    }, 2000)
+    }, 1000)
 
   const handleOnChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const milestone = e.target.value
     setValue(milestone)
     debounced(milestone)
   }
+
+  useEffect(() => {
+    onLoading?.(update.isPending)
+  }, [update.isPending])
 
   return (
     <StepLayout

@@ -12,9 +12,10 @@ import { useDebouncedCallback } from 'use-debounce'
 interface IndicatorListProps {
   goalId: string
   planId: string
+  onLoading?: (loading: boolean) => void
 }
 
-export function IndicatorList({ goalId, planId }: IndicatorListProps) {
+export function IndicatorList({ goalId, planId, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
   const { data: _indicators = [], isLoading } = indicatorActions.useGetByGoalId(goalId)
   const [indicators, setIndicators] = useState<Omit<Indicator, 'status'>[]>([..._indicators])
@@ -42,7 +43,6 @@ export function IndicatorList({ goalId, planId }: IndicatorListProps) {
     const indicatorExists = !!_indicators.find(i => i.id === id)
     setIndicators(prev => prev.map(i => i.id === id ? { ...i, ...indicator } : i))
     setIndicatorToUpdate(null)
-    console.log('exists...', indicatorExists)
     if (indicatorExists) {
       updateIndicator(id, indicator)
     } else {
@@ -71,13 +71,17 @@ export function IndicatorList({ goalId, planId }: IndicatorListProps) {
     update.mutate({ indicatorId: id, updates: { status: Status.DELETED } })
   }
 
-  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
+  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 0)
 
   useEffect(() => {
     if (!isLoading && !indicators.length) {
       setIndicators(_indicators)
     }
   }, [_indicators, indicators, isLoading])
+
+  useEffect(() => {
+    onLoading?.(loading)
+  }, [loading])
 
   return (
     <Flex gap="10px" direction="column" wrap="wrap">

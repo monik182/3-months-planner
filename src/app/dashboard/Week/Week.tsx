@@ -12,7 +12,7 @@ interface WeekProps {
 
 export function Week({ seq, plan }: WeekProps) {  
   const { goalHistoryActions } = usePlanContext()
-  const { data: goals = [], isLoading } = goalHistoryActions.useGetByPlanId(plan?.id as string, seq.toString())
+  const { data: goals = [], isLoading } = goalHistoryActions.useGetByPlanId(plan?.id as string, seq)
   const startDate = calculateWeekStartDate(plan.startDate, seq)
   const endDate = calculateWeekEndDate(startDate)
   const [score, setScore] = useState<number[]>(Array(goals.length).fill(0))

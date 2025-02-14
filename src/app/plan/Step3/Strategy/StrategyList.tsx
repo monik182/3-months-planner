@@ -13,9 +13,10 @@ import { useDebouncedCallback } from 'use-debounce'
 interface StrategyListProps {
   goalId: string
   planId: string
+  onLoading?: (loading: boolean) => void
 }
 
-export function StrategyList({ goalId, planId }: StrategyListProps) {
+export function StrategyList({ goalId, planId, onLoading }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
   const { data: _strategies = [], isLoading } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Omit<Strategy, 'status'>[]>([..._strategies])
@@ -58,15 +59,19 @@ export function StrategyList({ goalId, planId }: StrategyListProps) {
     update.mutate({ strategyId: id, updates: { status: Status.DELETED } })
   }
 
-  const debouncedSave = useDebouncedCallback((strategy: Omit<Strategy, 'status'>) => saveStrategy(strategy), 2000)
-  const debouncedUpdate = useDebouncedCallback((id: string, updates: Partial<Strategy>) => updateStrategy(id, updates), 2000)
-  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 2000)
+  const debouncedSave = useDebouncedCallback((strategy: Omit<Strategy, 'status'>) => saveStrategy(strategy), 1000)
+  const debouncedUpdate = useDebouncedCallback((id: string, updates: Partial<Strategy>) => updateStrategy(id, updates), 500)
+  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 0)
 
   useEffect(() => {
     if (!isLoading && !strategies.length) {
       setStrategies(_strategies)
     }
   }, [_strategies, strategies, isLoading])
+
+  useEffect(() => {
+    onLoading?.(loading)
+  }, [loading])
 
   return (
     <Flex gap="10px" direction="column">
