@@ -11,10 +11,12 @@ import {
 import { FaLinkedin, FaInstagram } from 'react-icons/fa'
 import { toaster } from '@/components/ui/toaster'
 import { Button } from '@/components/ui/button'
+import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 
 export function WaitListSection() {
   const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { useCreate } = useWaitlistActions()
+  const create = useCreate()
 
   const handleSubmit = async () => {
     if (!email.includes('@')) {
@@ -27,27 +29,30 @@ export function WaitListSection() {
       return
     }
 
-    setLoading(true)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+    create.mutate({ email }, {
+      onSuccess: (response) => {
+        if (!response.ok) {
+          throw new Error(response.message)
+        }
 
-      toaster.create({
-        title: 'Success!',
-        description: "You've been added to the waitlist 🎉",
-        type: 'success',
-        duration: 4000,
-      })
+        toaster.create({
+          title: 'Success!',
+          description: "You've been added to the waitlist 🎉",
+          type: 'success',
+          duration: 4000,
+        })
 
-      setEmail('')
-    } catch {
-      toaster.create({
-        title: 'Error',
-        description: 'Something went wrong. Try again later.',
-        type: 'error',
-        duration: 4000,
-      })
-    }
-    setLoading(false)
+        setEmail('')
+      },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error',
+          description: error.message || 'Something went wrong. Try again later.',
+          type: 'error',
+          duration: 4000,
+        })
+      },
+    })
   }
 
   return (
@@ -86,7 +91,7 @@ export function WaitListSection() {
           width="100%"
           _hover={{ opacity: 0.8 }}
           onClick={handleSubmit}
-          loading={loading}
+          loading={create.isPending}
           loadingText="Joining..."
         >
           Get Early Access

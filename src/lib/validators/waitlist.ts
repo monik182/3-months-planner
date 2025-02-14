@@ -1,0 +1,21 @@
+import cuid from 'cuid';
+import { z } from 'zod';
+
+export const WaitlistSchema = z.object({
+  id: z.string().default(() => cuid()),
+  email: z.string().email(),
+  name: z.string().optional(),
+  position: z.number().int().default(0),
+  invited: z.boolean().default(false),
+  createdAt: z.date().default(() => new Date()),
+  updatedAt: z.date().default(() => new Date()),
+})
+
+export const PartialWaitlistSchema = WaitlistSchema.partial()
+export const WaitlistArraySchema = z.array(WaitlistSchema)
+export const PartialWaitlistArraySchema = z.array(PartialWaitlistSchema)
+export type WaitlistSchemaType = z.infer<typeof WaitlistSchema>
+export type PartialWaitlistSchemaType = z.infer<typeof PartialWaitlistSchema>
+export type WaitlistArraySchemaType = z.infer<typeof WaitlistArraySchema>
+export type PartialWaitlistArraySchemaType = z.infer<typeof PartialWaitlistArraySchema>
+
