@@ -22,7 +22,8 @@ export function StrategyList({ goalId, planId, onLoading }: StrategyListProps) {
   const [strategies, setStrategies] = useState<Omit<Strategy, 'status'>[]>([..._strategies])
   const create = strategyActions.useCreate()
   const update = strategyActions.useUpdate()
-  const loading = create.isPending || update.isPending
+  const remove = strategyActions.useDelete()
+  const loading = create.isPending || update.isPending || remove.isPending
 
   const handleUpdate = (id: string, strategy: Partial<Strategy>) => {
     setStrategies(prev => prev.map(s => s.id === id ? { ...s, ...strategy } : s))
@@ -55,19 +56,13 @@ export function StrategyList({ goalId, planId, onLoading }: StrategyListProps) {
     update.mutate({ strategyId: id, updates })
   }
 
-  const updateState = (id: string) => {
-    update.mutate({ strategyId: id, updates: { status: Status.DELETED } })
+  const removeStrategy = (id: string) => {
+    remove.mutate(id)
   }
 
   const debouncedSave = useDebouncedCallback((strategy: Omit<Strategy, 'status'>) => saveStrategy(strategy), 1000)
   const debouncedUpdate = useDebouncedCallback((id: string, updates: Partial<Strategy>) => updateStrategy(id, updates), 500)
-  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 0)
-
-  useEffect(() => {
-    if (!isLoading && !strategies.length) {
-      setStrategies(_strategies)
-    }
-  }, [_strategies, strategies, isLoading])
+  const debouncedRemove = useDebouncedCallback((id: string) => removeStrategy(id), 0)
 
   useEffect(() => {
     onLoading?.(loading)
@@ -85,7 +80,7 @@ export function StrategyList({ goalId, planId, onLoading }: StrategyListProps) {
         />
       ))}
       <SavingSpinner loading={loading} />
-      <Button size="sm" variant="outline" className="mt-5" onClick={handleCreate} disabled={loading}>
+      <Button size="sm" variant="outline" className="mt-5" onClick={handleCreate}>
         <SlPlus /> Add Strategy
       </Button>
     </Flex>

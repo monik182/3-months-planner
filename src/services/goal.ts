@@ -85,10 +85,21 @@ const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Goal> =
     })
 }
 
+const deleteItem = async (id: string) => {
+  await goalHandler.delete(id)
+
+  if (!ENABLE_CLOUD_SYNC) {
+    return
+  }
+
+  return fetch(`/api/goal/${id}`, { method: 'DELETE' })
+}
+
 export const GoalService = {
   create,
   createBulk,
   get,
   getByPlanId,
   update,
+  deleteItem,
 }

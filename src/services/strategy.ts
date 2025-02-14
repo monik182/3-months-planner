@@ -78,10 +78,24 @@ const update = async (id: string, strategy: Prisma.IndicatorUpdateInput): Promis
     .then(response => response.json())
 }
 
+const deleteItem = async (id: string): Promise<Strategy> => {
+  await strategyHandler.delete(id)
+
+  if (!ENABLE_CLOUD_SYNC) {
+    return { id } as Strategy
+  }
+
+  return fetch(`/api/strategy/${id}`, {
+    method: 'DELETE',
+  })
+    .then(response => response.json())
+}
+
 export const StrategyService = {
   create,
   get,
   getByPlanId,
   getByGoalId,
   update,
+  deleteItem,
 }

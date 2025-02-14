@@ -6,7 +6,6 @@ import { SlPlus, SlStar } from 'react-icons/sl'
 import { Indicator } from '@prisma/client'
 import cuid from 'cuid'
 import { SavingSpinner } from '@/components/SavingSpinner'
-import { Status } from '@/app/types/types'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface IndicatorListProps {
@@ -17,13 +16,14 @@ interface IndicatorListProps {
 
 export function IndicatorList({ goalId, planId, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
-  const { data: _indicators = [], isLoading } = indicatorActions.useGetByGoalId(goalId)
+  const { data: _indicators = [] } = indicatorActions.useGetByGoalId(goalId)
   const [indicators, setIndicators] = useState<Omit<Indicator, 'status'>[]>([..._indicators])
   const disableIndicator = !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Omit<Indicator, 'status'> | null>()
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
-  const loading = create.isPending || update.isPending
+  const remove = indicatorActions.useDelete()
+  const loading = create.isPending || update.isPending || remove.isPending
 
   const handleCreate = () => {
     const newIndicator: Omit<Indicator, 'status'> = {
@@ -67,17 +67,11 @@ export function IndicatorList({ goalId, planId, onLoading }: IndicatorListProps)
     update.mutate({ indicatorId: id, updates })
   }
 
-  const updateState = (id: string) => {
-    update.mutate({ indicatorId: id, updates: { status: Status.DELETED } })
+  const removeIndicator = (id: string) => {
+    remove.mutate(id)
   }
 
-  const debouncedRemove = useDebouncedCallback((id: string) => updateState(id), 0)
-
-  useEffect(() => {
-    if (!isLoading && !indicators.length) {
-      setIndicators(_indicators)
-    }
-  }, [_indicators, indicators, isLoading])
+  const debouncedRemove = useDebouncedCallback((id: string) => removeIndicator(id), 0)
 
   useEffect(() => {
     onLoading?.(loading)

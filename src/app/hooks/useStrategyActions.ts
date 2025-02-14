@@ -42,12 +42,19 @@ export function useStrategyActions() {
     })
   }
 
+  const useDelete = () => {
+    return useMutation({
+      mutationFn: (strategyId: string) => StrategyService.deleteItem(strategyId),
+    })
+  }
+
   return {
     useCreate,
     useUpdate,
     useGetByPlanId,
     useGetByGoalId,
     useGet,
+    useDelete,
   }
 }
 
