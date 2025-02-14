@@ -14,14 +14,14 @@ class IdxDB extends Dexie {
 
   constructor() {
     super('LocalDB')
-    this.version(1).stores({
+    this.version(2).stores({
       plans: 'id, userId, completed, started',
       goals: 'id, planId, status',
-      goalHistory: 'id, goalId, planId',
+      goalHistory: 'id, goalId, planId, sequence',
       strategies: 'id, goalId, planId, status, weeks',
       strategyHistory: 'id, strategyId, planId, sequence',
       indicators: 'id, goalId, planId',
-      indicatorHistory: 'id, indicatorId, planId, value',
+      indicatorHistory: 'id, indicatorId, planId, value, sequence',
       notifications: 'id, userId, planId',
     })
   }
