@@ -93,7 +93,7 @@ export function WaitListSection() {
         </Button>
       </VStack>
 
-      <Text fontSize="md" color="gray.600" mt={6}>
+      {/* <Text fontSize="md" color="gray.600" mt={6}>
         Check us out on social media ⚡
       </Text>
 
@@ -104,7 +104,7 @@ export function WaitListSection() {
         <Link href="#">
           <FaInstagram size={20} />
         </Link>
-      </HStack>
+      </HStack> */}
     </Box>
   )
 }

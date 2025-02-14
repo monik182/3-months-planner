@@ -29,9 +29,9 @@ export default function Home() {
         <Flex flexDir="column" gap="1rem" alignItems="center">
           <Text>Stay Focused and Achieve More</Text>
           <Button size="xl" onClick={() => router.push('/#wait-list')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
-          <Text fontSize="xs">Already have an account?</Text>
+          {/* <Text fontSize="xs">Already have an account?</Text> */}
         </Flex>
-        <Button size="xs" onClick={() => router.push('/api/auth/login')} variant="plain" textDecoration="underline">Login</Button>
+        {/* <Button size="xs" onClick={() => router.push('/api/auth/login')} variant="plain" textDecoration="underline">Login</Button> */}
       </section>
       {/* <section className="page" id="description">
         <Heading size="5xl">Create Your Plan</Heading>
