@@ -19,6 +19,7 @@ export function Header() {
   const router = useRouter()
   const pathname = usePathname()
   const [value, setValue] = useState('plan')
+  const showCreatePlanButton = !hasPlan && pathname !== '/plan'
 
   const goToHome = () => {
     router.push('/')
@@ -56,8 +57,8 @@ export function Header() {
         <Flex gap="5px" alignItems="center">
           {user ? (
             <Flex gap="1rem" alignItems="center">
-              {!hasPlan && (
-                <Button variant="outline" colorPalette="green" onClick={handleCreatePage}>
+              {showCreatePlanButton && (
+                <Button variant="outline" colorPalette="yellow" onClick={handleCreatePage}>
                   <LuNotebookPen />
                   Create Plan
                 </Button>
