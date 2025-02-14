@@ -61,7 +61,7 @@ export function WaitListSection() {
       alignItems="center"
       justifyContent="center"
     >
-      <Heading as="h1" fontSize="3xl" fontWeight="bold" mb={4}>
+      <Heading fontSize="3xl" fontWeight="bold" mb={4}>
         Join Our Waitlist: Be the First to Discover What&apos;s Coming!
       </Heading>
       <Text fontSize="lg" color="gray.600" mb={6}>
@@ -89,7 +89,7 @@ export function WaitListSection() {
           loading={loading}
           loadingText="Joining..."
         >
-          Submit
+          Get Early Access
         </Button>
       </VStack>
 
