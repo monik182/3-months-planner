@@ -1,6 +1,6 @@
 # Pre release
+- Create feedback box [WIP]
 - Test y prod db
-- Create feedback box
 - Save to db unique user ids
 - Only allow up to 10 users to test
 - Allow anonymous testing
