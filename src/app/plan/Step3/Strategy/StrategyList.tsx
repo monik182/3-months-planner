@@ -82,7 +82,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
           onRemove={() => handleRemove(strategy.id)}
         />
       ))}
-      <Button size="sm" variant="outline" className="mt-5" onClick={handleCreate} disabled={!canAdd}>
+      <Button size="xs" variant="ghost" className="mt-5" onClick={handleCreate} disabled={!canAdd}>
         <SlPlus /> Add Strategy
       </Button>
       <SavingSpinner loading={loading} />

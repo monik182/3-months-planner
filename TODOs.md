@@ -1,11 +1,11 @@
 # Pre release
 - Test y prod db
-- Quitarle el autocomplete a todos los campos
-- Create wait list section [WIP] -> Wire up with db
-- Create feedback button
+- Create feedback box
 - Save to db unique user ids
 - Only allow up to 10 users to test
 - Allow anonymous testing
+- Quitarle el autocomplete a todos los campos ✅
+- Create wait list section -> Wire up with db ✅
 
 
 # Release

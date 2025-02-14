@@ -62,7 +62,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
     <Flex w="full" gap="1rem" flex="1" margin="1rem 0" padding="1rem">
       <Flex gap="1rem" alignItems="center">
         <Field label="What indicator are you tracking?" helperText="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'.">
-          <Input size="xs" placeholder="Eg. Bodyweight, Savings Growth, Project Completion" value={value.content} onChange={(e) => handleEdit(e, 'content')} />
+          <Input size="xs" placeholder="Eg. Bodyweight, Savings Growth, Project Completion" value={value.content} onChange={(e) => handleEdit(e, 'content')} autoComplete="off" />
         </Field>
 
         <Field label="What is your current value?" helperText="Enter your current value, for example, 100.">
@@ -89,15 +89,15 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
           </NumberInputRoot>
         </Field>
         <Field label="What is the unit of measurement?" helperText="Indicate the unit, such as kilograms, euros, number of calls, or transactions.">
-          <Input size="xs" placeholder="Eg. kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} />
+          <Input size="xs" placeholder="Eg. kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} autoComplete="off" />
         </Field>
       </Flex>
       {error && <Alert status="error" title={error} />}
       <Flex direction="column" justify="center" gap="5px">
-        <Button size="xs" variant="outline" onClick={handleUpdate} colorPalette="green" title="Save">
+        <Button size="xs" variant="ghost" onClick={handleUpdate} colorPalette="green" title="Save">
           <CiFloppyDisk />
         </Button>
-        <Button size="xs" variant="outline" onClick={onRemove} colorPalette="red" title="Remove">
+        <Button size="xs" variant="ghost" onClick={onRemove} colorPalette="red" title="Remove">
           <CiTrash />
         </Button>
       </Flex>

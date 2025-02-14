@@ -69,7 +69,7 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
           disabled={disabled}
         >
           <Editable.Preview />
-          <Editable.Input disabled={disabled} />
+          <Editable.Input disabled={disabled} autoComplete="off" />
         </Editable.Root>
       </Flex>
       {isEditing ? (

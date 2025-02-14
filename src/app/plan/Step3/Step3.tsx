@@ -81,7 +81,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
                   onValueChange={(e) => updateGoalContent(goal.id, e.value)}
                 >
                   <Editable.Preview />
-                  <Editable.Input />
+                  <Editable.Input autoComplete="off" />
                 </Editable.Root>
                 <IconButton
                   aria-label="Remove list goal"
@@ -104,7 +104,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
         ))}
       </Box>
       <SavingSpinner loading={loading} />
-      <Button variant="outline" className="mt-5" onClick={() => createGoal()}>
+      <Button variant="ghost" className="mt-5" onClick={() => createGoal()}>
         <SlPlus /> New Goal
       </Button>
     </StepLayout>
