@@ -148,15 +148,17 @@ model Notification {
 }
 
 model Waitlist {
-  id         String   @id @default(cuid())
-  email      String   @unique
-  name       String?  
-  position   Int      @default(0) @unique
-  invited    Boolean  @default(false)
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?  
+  position    Int      @default(0) @unique
+  invited     Boolean  @default(false)
+  inviteToken String?  @unique @map("invite_token")
+  invitedAt   DateTime? @map("invited_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@index([email, id]) 
+  @@index([email, id, inviteToken]) 
   @@map("waitlist")
 }
 
