@@ -159,3 +159,13 @@ model Waitlist {
   @@index([email, id]) 
   @@map("waitlist")
 }
+
+model Feedback {
+  id          String   @id @default(cuid())
+  userId      String?  @map("user_id")
+  email       String   @unique
+  feedback    String  
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("feedbacks")
+}

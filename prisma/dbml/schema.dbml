@@ -106,6 +106,14 @@ Table waitlist {
   updatedAt DateTime [not null]
 }
 
+Table feedbacks {
+  id String [pk]
+  userId String
+  email String [unique, not null]
+  feedback String [not null]
+  createdAt DateTime [default: `now()`, not null]
+}
+
 Ref: goals.planId > plans.id [delete: Cascade]
 
 Ref: goal_history.goalId > goals.id [delete: Cascade]
