@@ -168,3 +168,14 @@ export const feedbackHandler = {
   update: async (id: string, data: Prisma.FeedbackUpdateInput) => prisma.feedback.update({ where: { id }, data }),
   delete: async (id: string) => prisma.feedback.delete({ where: { id } }),
 }
+
+export const userHandler = {
+  create: async (data: Prisma.UserCreateInput) => prisma.user.create({ data }),
+  createMany: async (data: Prisma.UserCreateManyInput[]) => prisma.user.createMany({ data }),
+  findMany: async (where?: Prisma.UserWhereInput, select?: Prisma.UserSelect) => prisma.user.findMany({ where, ...(select ? { select } : {}) }),
+  findOne: async (id: string) => prisma.user.findUnique({ where: { id } }),
+  findOneByEmail: async (email: string) => prisma.user.findUnique({ where: { email } }),
+  findOneByAuth0Id: async (auth0Id: string) => prisma.user.findUnique({ where: { auth0Id } }),
+  update: async (id: string, data: Prisma.UserUpdateInput) => prisma.user.update({ where: { id }, data }),
+  delete: async (id: string) => prisma.user.delete({ where: { id } }),
+}
