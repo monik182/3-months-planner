@@ -116,10 +116,10 @@ Table feedbacks {
   createdAt DateTime [default: `now()`, not null]
 }
 
-Table User {
+Table users {
   id String [pk]
   auth0Id String [unique, not null]
-  email String [unique]
+  email String [unique, not null]
   waitlistId String [unique]
   createdAt DateTime [default: `now()`, not null]
 }
