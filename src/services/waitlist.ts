@@ -10,6 +10,11 @@ const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> =
     .then(response => response.json())
 }
 
+const getByToken = async (token: string): Promise<Waitlist | null> => {
+  return fetch(`/api/waitlist/token/${token}`).then(response => response.json())
+}
+
 export const WaitlistService = {
+  getByToken,
   create,
 }

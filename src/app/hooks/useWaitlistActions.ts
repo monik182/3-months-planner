@@ -1,7 +1,8 @@
 import { WaitlistService } from '@/services/waitlist'
 import { Prisma } from '@prisma/client'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
+const QUERY_KEY = 'waitlist'
 export function useWaitlistActions() {
 
   const useCreate = () => {
@@ -10,8 +11,18 @@ export function useWaitlistActions() {
     })
   }
 
+
+  const useGet = (token: string) => {
+    return useQuery({
+      queryKey: [QUERY_KEY, { token }],
+      queryFn: () => WaitlistService.getByToken(token),
+      enabled: !!token,
+    })
+  }
+
   return {
     useCreate,
+    useGet,
   }
 }
 

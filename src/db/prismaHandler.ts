@@ -155,6 +155,7 @@ export const waitlistHandler = {
   createMany: async (data: Prisma.WaitlistCreateManyInput[]) => prisma.waitlist.createMany({ data }),
   findMany: async (where?: Prisma.WaitlistWhereInput, select?: Prisma.WaitlistSelect) => prisma.waitlist.findMany({ where, ...(select ? { select } : {}) }),
   findOne: async (email: string) => prisma.waitlist.findUnique({ where: { email } }),
+  findOneByToken: async (inviteToken: string) => prisma.waitlist.findUnique({ where: { inviteToken } }),
   update: async (id: string, data: Prisma.WaitlistUpdateInput) => prisma.waitlist.update({ where: { id }, data }),
   delete: async (id: string) => prisma.waitlist.delete({ where: { id } }),
 }
