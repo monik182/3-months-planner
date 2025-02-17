@@ -19,29 +19,29 @@ datasource db {
 }
 
 model Plan {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  vision      String   @default("")
-  milestone   String   @default("")
-  completed   Boolean  @default(false)
-  started     Boolean  @default(false)
-  startDate   DateTime @map("start_date")
-  endDate     DateTime @map("end_date")
-  created     DateTime @default(now())
-  lastUpdate  DateTime @updatedAt @map("last_update")
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  vision     String   @default("")
+  milestone  String   @default("")
+  completed  Boolean  @default(false)
+  started    Boolean  @default(false)
+  startDate  DateTime @map("start_date")
+  endDate    DateTime @map("end_date")
+  created    DateTime @default(now())
+  lastUpdate DateTime @updatedAt @map("last_update")
 
-  goals       Goal[]
+  goals Goal[]
 
   @@map("plans")
 }
 
 model Goal {
-  id          String      @id @default(cuid())
-  planId      String      @map("plan_id")
-  content     String
-  status      String      @default("1")
+  id      String @id @default(cuid())
+  planId  String @map("plan_id")
+  content String
+  status  String @default("1")
 
-  plan        Plan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  plan        Plan          @relation(fields: [planId], references: [id], onDelete: Cascade)
   goalHistory GoalHistory[]
   strategies  Strategy[]
   indicators  Indicator[]
@@ -51,12 +51,12 @@ model Goal {
 }
 
 model GoalHistory {
-  id         String   @id @default(cuid())
-  goalId     String   @map("goal_id")
-  planId     String   @map("plan_id")
-  sequence   Int
+  id       String @id @default(cuid())
+  goalId   String @map("goal_id")
+  planId   String @map("plan_id")
+  sequence Int
 
-  goal       Goal    @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
   @@index([goalId])
   @@index([planId])
@@ -64,15 +64,15 @@ model GoalHistory {
 }
 
 model Strategy {
-  id             String        @id @default(cuid())
-  goalId         String        @map("goal_id")
-  planId         String        @map("plan_id")
-  content        String
-  weeks          String[]
-  status         String        @default("1")
-  frequency      Int           
+  id        String   @id @default(cuid())
+  goalId    String   @map("goal_id")
+  planId    String   @map("plan_id")
+  content   String
+  weeks     String[]
+  status    String   @default("1")
+  frequency Int
 
-  goal           Goal          @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goal            Goal              @relation(fields: [goalId], references: [id], onDelete: Cascade)
   strategyHistory StrategyHistory[]
 
   @@index([goalId])
@@ -81,17 +81,17 @@ model Strategy {
 }
 
 model StrategyHistory {
-  id           String   @id @default(cuid())
-  strategyId   String   @map("strategy_id")
-  planId       String   @map("plan_id")
-  overdue      Boolean  @default(false)
-  completed    Boolean  @default(false)
-  firstUpdate  DateTime? @map("first_update")
-  lastUpdate   DateTime? @map("last_update")
-  sequence     Int
-  frequencies  Boolean[] @default([])
+  id          String    @id @default(cuid())
+  strategyId  String    @map("strategy_id")
+  planId      String    @map("plan_id")
+  overdue     Boolean   @default(false)
+  completed   Boolean   @default(false)
+  firstUpdate DateTime? @map("first_update")
+  lastUpdate  DateTime? @map("last_update")
+  sequence    Int
+  frequencies Boolean[] @default([])
 
-  strategy     Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
+  strategy Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
 
   @@index([strategyId])
   @@index([planId])
@@ -99,16 +99,16 @@ model StrategyHistory {
 }
 
 model Indicator {
-  id             String             @id @default(cuid())
-  goalId         String             @map("goal_id")
-  planId         String             @map("plan_id")
-  content        String
-  metric         String
-  initialValue   Int                @map("initial_value")
-  goalValue      Int                @map("goal_value")
-  status         String             @default("1")
+  id           String @id @default(cuid())
+  goalId       String @map("goal_id")
+  planId       String @map("plan_id")
+  content      String
+  metric       String
+  initialValue Int    @map("initial_value")
+  goalValue    Int    @map("goal_value")
+  status       String @default("1")
 
-  goal           Goal              @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goal             Goal               @relation(fields: [goalId], references: [id], onDelete: Cascade)
   indicatorHistory IndicatorHistory[]
 
   @@index([goalId])
@@ -117,13 +117,13 @@ model Indicator {
 }
 
 model IndicatorHistory {
-  id           String     @id @default(cuid())
-  indicatorId  String     @map("indicator_id")
-  planId       String     @map("plan_id")
-  value        Int        @default(0)
-  sequence     Int
+  id          String @id @default(cuid())
+  indicatorId String @map("indicator_id")
+  planId      String @map("plan_id")
+  value       Int    @default(0)
+  sequence    Int
 
-  indicator    Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  indicator Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
 
   @@index([indicatorId])
   @@index([planId])
@@ -131,63 +131,63 @@ model IndicatorHistory {
 }
 
 model Notification {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  planId      String   @map("plan_id")
-  entityType  String   @map("entity_type")
-  entityId    String   @map("entity_id")
-  type        String
-  message     String
-  status      String
-  sendDate    DateTime @map("send_date")
-  created     DateTime @default(now())
-  lastUpdate  DateTime @updatedAt @map("last_update")
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  planId     String   @map("plan_id")
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  type       String
+  message    String
+  status     String
+  sendDate   DateTime @map("send_date")
+  created    DateTime @default(now())
+  lastUpdate DateTime @updatedAt @map("last_update")
 
   @@index([entityType, entityId])
   @@map("notifications")
 }
 
 model Waitlist {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String?  
-  position    Int      @default(0) @unique
-  invited     Boolean  @default(false)
-  inviteToken String?  @unique @map("invite_token")
+  id          String    @id @default(cuid())
+  email       String    @unique
+  name        String?
+  position    Int       @unique @default(0)
+  invited     Boolean   @default(false)
+  inviteToken String?   @unique @map("invite_token")
   invitedAt   DateTime? @map("invited_at")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
 
-  @@index([email, id, inviteToken]) 
+  @@index([email, id, inviteToken])
   @@map("waitlist")
 }
 
 model Feedback {
-  id          String   @id @default(cuid())
-  userId      String?  @map("user_id")
-  email       String?
-  feedback    String  
-  createdAt   DateTime @default(now()) @map("created_at")
+  id        String   @id @default(cuid())
+  userId    String?  @map("user_id")
+  email     String?
+  feedback  String
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("feedbacks")
 }
 
 model User {
-  id         String   @id @default(cuid())
-  auth0Id    String   @unique
-  email      String   @unique
-  role       Role     @default(USER)
-  waitlistId String?  @unique @map("waitlist_id")
-  createdAt  DateTime @default(now())
+  id           String        @id @default(cuid())
+  auth0Id      String        @unique @map("auth0_id")
+  email        String        @unique
+  role         Role          @default(USER)
+  waitlistId   String?       @unique @map("waitlist_id")
+  createdAt    DateTime      @default(now()) @map("created_at")
 
-  @@index([email, id, waitlistId, role])  
+  @@index([email, id, waitlistId, role])
   @@map("users")
 }
 
 enum Role {
-  GUEST       // Anonymous or non-authenticated users (local storage only) // ????
-  USER        // Regular free users with authentication
-  SUBSCRIBER  // Paying customers with remote DB access
-  ADMIN       // Internal admin users with full platform access
-  SUPERADMIN  // Highest-level access, useful for system-level control
+  GUEST // Anonymous or non-authenticated users (local storage only) // ????
+  USER // Regular free users with authentication
+  SUBSCRIBER // Paying customers with remote DB access
+  ADMIN // Internal admin users with full platform access
+  SUPERADMIN // Highest-level access, useful for system-level control
 }
