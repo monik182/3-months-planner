@@ -158,3 +158,12 @@ export const waitlistHandler = {
   update: async (id: string, data: Prisma.WaitlistUpdateInput) => prisma.waitlist.update({ where: { id }, data }),
   delete: async (id: string) => prisma.waitlist.delete({ where: { id } }),
 }
+
+export const feedbackHandler = {
+  create: async (data: Prisma.FeedbackCreateInput) => prisma.feedback.create({ data }),
+  createMany: async (data: Prisma.FeedbackCreateManyInput[]) => prisma.feedback.createMany({ data }),
+  findMany: async (where?: Prisma.FeedbackWhereInput, select?: Prisma.FeedbackSelect) => prisma.feedback.findMany({ where, ...(select ? { select } : {}) }),
+  findOne: async (id: string) => prisma.feedback.findUnique({ where: { id } }),
+  update: async (id: string, data: Prisma.FeedbackUpdateInput) => prisma.feedback.update({ where: { id }, data }),
+  delete: async (id: string) => prisma.feedback.delete({ where: { id } }),
+}

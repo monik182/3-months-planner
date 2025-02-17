@@ -1,5 +1,5 @@
-import cuid from 'cuid';
-import { z } from 'zod';
+import cuid from 'cuid'
+import { z } from 'zod'
 
 export const WaitlistSchema = z.object({
   id: z.string().default(() => cuid()),
@@ -18,4 +18,3 @@ export type WaitlistSchemaType = z.infer<typeof WaitlistSchema>
 export type PartialWaitlistSchemaType = z.infer<typeof PartialWaitlistSchema>
 export type WaitlistArraySchemaType = z.infer<typeof WaitlistArraySchema>
 export type PartialWaitlistArraySchemaType = z.infer<typeof PartialWaitlistArraySchema>
-
