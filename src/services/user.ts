@@ -19,10 +19,20 @@ const create = async (user: Prisma.UserCreateInput): Promise<User> => {
 }
 
 const get = async (id: string): Promise<User | null> => {
+  const user = await userHandler.findOne(id)
+  if (user) {
+    return user
+  }
+
   return fetch(`/api/user/${id}`).then(response => response.json())
 }
 
 const getByEmail = async (email: string): Promise<User | null> => {
+  const user = await userHandler.findOneByEmail(email)
+  if (user) {
+    return user
+  }
+
   const response = await fetch(`/api/user/email/${email}`)
 
   if (!response.ok) {
