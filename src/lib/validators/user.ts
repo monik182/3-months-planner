@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 export const UserSchema = z.object({
   id: z.string().default(() => cuid()),
-  auth0Id: z.string().optional().nullable(),
+  auth0Id: z.string().optional(),
   email: z.string().email(),
   role: z.nativeEnum(Role).default(Role.USER),
   waitlistId: z.string().optional().nullable(),

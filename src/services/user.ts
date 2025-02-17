@@ -1,13 +1,21 @@
+import { userHandler } from '@/db/dexieHandler'
 import { Prisma, User } from '@prisma/client'
 
 const create = async (user: Prisma.UserCreateInput): Promise<User> => {
-
   return fetch(`/api/user`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(user),
   })
-    .then(response => response.json())
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error('Failed to create user')
+      }
+      const user = await response.json()
+      await userHandler.create(user)
+      return user
+    })
+
 }
 
 const get = async (id: string): Promise<User | null> => {
