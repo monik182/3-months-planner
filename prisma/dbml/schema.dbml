@@ -118,7 +118,7 @@ Table feedbacks {
 
 Table users {
   id String [pk]
-  auth0Id String [unique, not null]
+  auth0Id String
   email String [unique, not null]
   role Role [not null, default: 'USER']
   waitlistId String [unique]

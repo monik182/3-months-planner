@@ -174,7 +174,7 @@ model Feedback {
 
 model User {
   id           String        @id @default(cuid())
-  auth0Id      String        @unique @map("auth0_id")
+  auth0Id      String?       @map("auth0_id")
   email        String        @unique
   role         Role          @default(USER)
   waitlistId   String?       @unique @map("waitlist_id")
@@ -205,7 +205,7 @@ model Subscription {
 }
 
 enum Role {
-  GUEST // Anonymous or non-authenticated users (local storage only) // ????
+  GUEST // Anonymous or non-authenticated users (local storage only)
   USER // Regular free users with authentication
   SUBSCRIBER // Paying customers with remote DB access
   ADMIN // Internal admin users with full platform access
