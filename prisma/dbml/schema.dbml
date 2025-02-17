@@ -111,7 +111,7 @@ Table waitlist {
 Table feedbacks {
   id String [pk]
   userId String
-  email String [unique, not null]
+  email String
   feedback String [not null]
   createdAt DateTime [default: `now()`, not null]
 }

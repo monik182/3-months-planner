@@ -165,7 +165,7 @@ model Waitlist {
 model Feedback {
   id          String   @id @default(cuid())
   userId      String?  @map("user_id")
-  email       String   @unique
+  email       String?
   feedback    String  
   createdAt   DateTime @default(now()) @map("created_at")
 
