@@ -9,6 +9,7 @@ import { ReactQueryProvider } from './providers/ReactQueryProvider'
 import { PlanProvider } from '@/app/providers/usePlanContext'
 import { Extra } from '@/components/Extra'
 import { AccountProvider } from '@/app/providers/useAccountContext'
+import { Toaster } from '@/components/ui/toaster'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -48,8 +49,9 @@ export default function RootLayout({
                     </Grid>
                   </Box>
                 </PlanProvider>
+                <Extra />
               </AccountProvider>
-              <Extra />
+              <Toaster />
             </Provider>
           </ReactQueryProvider>
         </UserProvider>
