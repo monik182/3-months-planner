@@ -123,6 +123,22 @@ Table users {
   role Role [not null, default: 'USER']
   waitlistId String [unique]
   createdAt DateTime [default: `now()`, not null]
+  Subscription subscriptions
+}
+
+Table subscriptions {
+  id String [pk]
+  userId String [unique, not null]
+  user users [not null]
+  status SubscriptionStatus [not null, default: 'ACTIVE']
+  plan SubscriptionPlan [not null]
+  startedAt DateTime [default: `now()`, not null]
+  expiresAt DateTime
+  renewalDate DateTime
+  canceledAt DateTime
+  trialEndsAt DateTime
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
 }
 
 Enum Role {
@@ -131,6 +147,25 @@ Enum Role {
   SUBSCRIBER
   ADMIN
   SUPERADMIN
+}
+
+Enum SubscriptionStatus {
+  ACTIVE
+  TRIAL
+  CANCELED
+  EXPIRED
+  PAUSED
+  PENDING
+  GRACE_PERIOD
+  RENEWAL_DUE
+  FAILED
+  UPCOMING
+}
+
+Enum SubscriptionPlan {
+  FREE
+  BASIC
+  PREMIUM
 }
 
 Ref: goals.planId > plans.id [delete: Cascade]
@@ -144,3 +179,5 @@ Ref: strategy_history.strategyId > strategies.id [delete: Cascade]
 Ref: indicators.goalId > goals.id [delete: Cascade]
 
 Ref: indicator_history.indicatorId > indicators.id [delete: Cascade]
+
+Ref: subscriptions.userId - users.id [delete: Cascade]
