@@ -1,6 +1,6 @@
 import { DixiePlan, ParentProps } from '@/app/types/types'
 import { db } from '@/db/dexie'
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User } from '@prisma/client'
 
 export const planHandler = {
   create: async (data: DixiePlan) => db.plans.add(data),
@@ -207,4 +207,12 @@ export const notificationHandler = {
   findOne: async (id: string) => db.notifications.get(id),
   update: async (id: string, data: Partial<Notification>) => db.notifications.update(id, data),
   delete: async (id: string) => db.notifications.delete(id),
+}
+
+export const userHandler = {
+  create: async (data: User) => db.users.add(data),
+  findOne: async (id: string) => db.users.get(id),
+  findOneByEmail: async (email: string) => db.users.where('email').equals(email).first(),
+  update: async (id: string, data: Partial<User>) => db.users.update(id, data),
+  delete: async (id: string) => db.users.delete(id),
 }
