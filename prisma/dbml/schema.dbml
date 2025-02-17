@@ -116,6 +116,14 @@ Table feedbacks {
   createdAt DateTime [default: `now()`, not null]
 }
 
+Table User {
+  id String [pk]
+  auth0Id String [unique, not null]
+  email String [unique]
+  waitlistId String [unique]
+  createdAt DateTime [default: `now()`, not null]
+}
+
 Ref: goals.planId > plans.id [delete: Cascade]
 
 Ref: goal_history.goalId > goals.id [delete: Cascade]
