@@ -9,7 +9,7 @@ import { useUserActions } from '@/app/hooks/useUserActions'
 import { UserExtended } from '@/app/types/types'
 
 type AccountContextType = {
-  user?: UserExtended
+  user?: UserExtended | null
   isLoading: boolean
 }
 
@@ -31,7 +31,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const { data: waitlistData, isLoading: isLoadingWaitlist } = waitlistActions.useGet(token as string)
   const { data: userData = {}, isLoading: isLoadingUser } = userActions.useGetByEmail(waitlistData?.email as string)
   const loading = isLoadingAuth0User || isLoadingWaitlist || isLoadingUser
-  const user = { ...userData, sub: auth0User?.sub } as UserExtended
+  const user = !userData && !auth0User ? null : { ...userData, sub: auth0User?.sub } as UserExtended
 
   useEffect(() => {
     if (loading) return
