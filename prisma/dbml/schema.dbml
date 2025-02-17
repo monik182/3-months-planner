@@ -120,8 +120,17 @@ Table users {
   id String [pk]
   auth0Id String [unique, not null]
   email String [unique, not null]
+  role Role [not null, default: 'USER']
   waitlistId String [unique]
   createdAt DateTime [default: `now()`, not null]
+}
+
+Enum Role {
+  GUEST
+  USER
+  SUBSCRIBER
+  ADMIN
+  SUPERADMIN
 }
 
 Ref: goals.planId > plans.id [delete: Cascade]
