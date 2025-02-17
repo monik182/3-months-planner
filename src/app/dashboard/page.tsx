@@ -6,15 +6,15 @@ import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/pr
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 import { Week } from '@/app/dashboard/Week/Week'
-import { useUser } from '@auth0/nextjs-auth0/client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 
 export default function Dashboard() {
   const router = useRouter()
-  const { user } = useUser()
+  const { user } = useAccountContext()
   const { planActions } = usePlanContext()
   const { data: plan, isLoading } = planActions.useGet(user?.sub as string)
   const today = dayjs().format('DD MMMM YYYY')

@@ -5,17 +5,17 @@ import { calculatePlanEndDate, formatDate, getPlanStartDate } from '@/app/util'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { toaster } from '@/components/ui/toaster'
-import { useUser } from '@auth0/nextjs-auth0/client'
 import { Center, Flex } from '@chakra-ui/react'
 import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 
 export default function NewPlan() {
   const router = useRouter()
-  const { user } = useUser()
+  const { user } = useAccountContext()
   const { plan, planActions } = usePlanContext()
   const createPlan = planActions.useCreate()
   const [startDate, setStartDate] = useState<string | undefined>(formatDate(getPlanStartDate(), 'YYYY-MM-DD'))

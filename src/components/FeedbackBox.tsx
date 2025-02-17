@@ -6,9 +6,8 @@ import { BsChatRight } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
 import { useFeedbackActions } from '@/app/hooks/useFeedbackActions'
 import { Button } from '@/components/ui/button'
-import { useUser } from '@auth0/nextjs-auth0/client'
 import { CloseButton } from '@/components/ui/close-button'
-import { MdOutlineAttachment } from 'react-icons/md'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 
 const MAX_FILES = 3
 
@@ -17,7 +16,7 @@ export function FloatingFeedback() {
   const [feedback, setFeedback] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const boxRef = useRef<HTMLDivElement>(null)
-  const { user } = useUser()
+  const { user } = useAccountContext()
   const { useCreate } = useFeedbackActions()
   const create = useCreate()
   const disableUpload = files.length >= MAX_FILES

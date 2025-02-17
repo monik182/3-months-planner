@@ -1,6 +1,5 @@
 'use client'
-import React, { createContext, useContext } from "react"
-import { useUser } from '@auth0/nextjs-auth0/client'
+import React, { createContext, useContext } from 'react'
 import { UsePlanActions, usePlanActions } from '@/app/hooks/usePlanActions'
 import { UseGoalActions, useGoalActions } from '@/app/hooks/useGoalActions'
 import { UseStrategyActions, useStrategyActions } from '@/app/hooks/useStrategyActions'
@@ -10,6 +9,7 @@ import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hook
 import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
 import { Plan } from '@prisma/client'
 import { Center, Spinner } from '@chakra-ui/react'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 
 type PlanContextType = {
   plan: Plan | null | undefined,
@@ -34,7 +34,7 @@ interface PlanTrackingProviderProps {
 }
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
-  const { user, isLoading } = useUser()
+  const { user, isLoading } = useAccountContext()
   const planActions = usePlanActions()
   const goalActions = useGoalActions()
   const strategyActions = useStrategyActions()
@@ -78,7 +78,7 @@ export const usePlanContext = (): PlanContextType => {
   const context = useContext(PlanContext)
   if (!context) {
     throw new Error(
-      "usePlan must be used within a PlanProvider"
+      'usePlan must be used within a PlanProvider'
     )
   }
   return context

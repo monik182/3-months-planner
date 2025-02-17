@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useUser } from '@auth0/nextjs-auth0/client'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 
 export function useProtectedPage(redirectTo = '/') {
-  const { user, isLoading } = useUser()
+  const { user, isLoading } = useAccountContext()
   const router = useRouter()
 
   useEffect(() => {

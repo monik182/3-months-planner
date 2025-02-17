@@ -1,14 +1,14 @@
 'use client'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { WaitListSection } from '@/components/WaitlistSection'
-import { useUser } from '@auth0/nextjs-auth0/client'
 import { Button, Flex, Heading, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { RiArrowRightLine } from 'react-icons/ri'
 
 export default function Home() {
-  const { user } = useUser()
+  const { user } = useAccountContext()
   const { hasPlan } = usePlanContext()
   const router = useRouter()
 

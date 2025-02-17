@@ -8,6 +8,7 @@ import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { ReactQueryProvider } from './providers/ReactQueryProvider'
 import { PlanProvider } from '@/app/providers/usePlanContext'
 import { Extra } from '@/components/Extra'
+import { AccountProvider } from '@/app/providers/useAccountContext'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,15 +39,17 @@ export default function RootLayout({
         <UserProvider>
           <ReactQueryProvider>
             <Provider>
-              <PlanProvider>
-                <Box margin="0 2rem">
-                  <Grid templateRows="10% auto" height="100vh">
-                    <GridItem><Header /></GridItem>
-                    <GridItem overflow="auto">{children}</GridItem>
-                  </Grid>
-                  <Extra />
-                </Box>
-              </PlanProvider>
+              <AccountProvider>
+                <PlanProvider>
+                  <Box margin="0 2rem">
+                    <Grid templateRows="10% auto" height="100vh">
+                      <GridItem><Header /></GridItem>
+                      <GridItem overflow="auto">{children}</GridItem>
+                    </Grid>
+                  </Box>
+                </PlanProvider>
+              </AccountProvider>
+              <Extra />
             </Provider>
           </ReactQueryProvider>
         </UserProvider>

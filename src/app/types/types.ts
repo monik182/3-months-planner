@@ -1,4 +1,5 @@
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory } from '@prisma/client'
+import { UserProfile } from '@auth0/nextjs-auth0/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory, User } from '@prisma/client'
 
 // FIXME: will this be the final enums?
 export enum Status {
@@ -50,3 +51,5 @@ export interface ParentProps {
   goalId?: string
   status?: string
 }
+
+export type UserExtended = User & Pick<UserProfile, 'sub'>

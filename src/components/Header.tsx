@@ -3,7 +3,6 @@ import { Flex, HStack, Heading, Separator, Text } from '@chakra-ui/react'
 import { ColorModeButton } from './ui/color-mode'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { usePathname, useRouter } from 'next/navigation'
-import { useUser } from '@auth0/nextjs-auth0/client'
 import { Avatar } from './ui/avatar'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -12,9 +11,10 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useEffect, useState } from 'react'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RxDashboard } from 'react-icons/rx'
+import { useAccountContext } from '@/app/providers/useAccountContext'
 
 export function Header() {
-  const { user } = useUser()
+  const { user } = useAccountContext()
   const { hasPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
