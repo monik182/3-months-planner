@@ -6,7 +6,7 @@ export function useFeedbackActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (plan: Prisma.FeedbackCreateInput) => FeedbackService.create(plan),
+      mutationFn: (feedback: Prisma.FeedbackCreateInput) => FeedbackService.create(feedback),
     })
   }
 

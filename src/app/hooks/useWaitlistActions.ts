@@ -7,7 +7,7 @@ export function useWaitlistActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (plan: Prisma.WaitlistCreateInput) => WaitlistService.create(plan),
+      mutationFn: (waitlist: Prisma.WaitlistCreateInput) => WaitlistService.create(waitlist),
     })
   }
 
