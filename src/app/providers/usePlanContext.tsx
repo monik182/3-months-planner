@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext } from "react"
+import React, { createContext, useContext, useEffect } from "react"
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { UsePlanActions, usePlanActions } from '@/app/hooks/usePlanActions'
 import { UseGoalActions, useGoalActions } from '@/app/hooks/useGoalActions'
@@ -10,7 +10,7 @@ import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hook
 import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
 import { Plan } from '@prisma/client'
 import { Center, Spinner } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 type PlanContextType = {
   plan: Plan | null | undefined,
@@ -36,6 +36,7 @@ interface PlanTrackingProviderProps {
 
 export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, isLoading } = useUser()
   const planActions = usePlanActions()
   const goalActions = useGoalActions()
@@ -43,10 +44,17 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const indicatorActions = useIndicatorActions()
   const { data: plan, isLoading: isLoadingPlan } = planActions.useGet(user?.sub as string)
   const hasPlan = !!plan?.started
+  const token = searchParams.get('token')
 
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
   const indicatorHistoryActions = useIndicatorHistoryActions()
+
+  useEffect(() => {
+    if (!user && !token) {
+      router.replace('/')
+    }
+  }, [user, token])
 
   if (isLoading || isLoadingPlan) {
     return (
@@ -54,10 +62,6 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         <Spinner size="xl" />
       </Center>
     )
-  }
-
-  if (!user) {
-    router.replace('/')
   }
 
   return (
