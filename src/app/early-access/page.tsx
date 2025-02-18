@@ -1,4 +1,6 @@
 'use client'
+import withToken, { WithTokenPageProps } from '@/app/hoc/withToken'
+import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import { Button } from '@/components/ui/button'
 import { toaster } from '@/components/ui/toaster'
@@ -6,9 +8,11 @@ import { Container, Heading, Text, VStack } from '@chakra-ui/react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 
-export default function EarlyAccess() {
+function EarlyAccess(props: WithTokenPageProps) {
+  const { waitlistData } = props
   const router = useRouter()
-  const { waitlistData, userActions, waitlistActions } = useAccountContext()
+  const { userActions } = useAccountContext()
+  const waitlistActions = useWaitlistActions()
   const create = userActions.useCreate()
   const update = waitlistActions.useUpdate()
   const loading = create.isPending || update.isPending
@@ -21,7 +25,7 @@ export default function EarlyAccess() {
     }
     create.mutate(newUser, {
       onSuccess: () => {
-        router.push('/plan/new')
+        router.replace('/plan/new')
       },
       onError: (error) => {
         toaster.create({
@@ -54,3 +58,5 @@ export default function EarlyAccess() {
     </Container>
   )
 }
+
+export default withToken(EarlyAccess)
