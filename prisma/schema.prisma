@@ -181,7 +181,7 @@ model User {
   createdAt    DateTime      @default(now()) @map("created_at")
   Subscription Subscription?
 
-  @@index([email, id, waitlistId, role])
+  @@index([email, id, waitlistId, role, auth0Id])
   @@map("users")
 }
 
