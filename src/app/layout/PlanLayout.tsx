@@ -9,7 +9,7 @@ interface PlanLayoutProps {
 }
 
 const PlanLayout = ({ children }: PlanLayoutProps) => {
-  const { plan, hasPlan } = usePlanContext()
+  const { plan, hasPlan, hasStartedPlan } = usePlanContext()
   const pathname = usePathname()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
@@ -23,13 +23,13 @@ const PlanLayout = ({ children }: PlanLayoutProps) => {
         return
       }
   
-      if (hasPlan && !plan?.started) {
+      if (hasPlan && !hasStartedPlan) {
         setLoading(false)
         router.replace('/plan')
         return
       }
   
-      if (hasPlan && plan?.started) {
+      if (hasPlan && hasStartedPlan) {
         setLoading(false)
         router.replace('/dashboard')
         return
@@ -37,7 +37,7 @@ const PlanLayout = ({ children }: PlanLayoutProps) => {
     }
 
     setLoading(false)
-  }, [hasPlan, plan, router, isPlanRelatedPage])
+  }, [hasPlan, plan, hasStartedPlan, router, isPlanRelatedPage])
 
   if (loading) return null
 

@@ -12,8 +12,10 @@ import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import withAuth from '@/app/hoc/withAuth'
+import { useRouter } from 'next/navigation'
 
 function NewPlan() {
+  const router = useRouter()
   const { user } = useAccountContext()
   const { planActions } = usePlanContext()
   const createPlan = planActions.useCreate()
@@ -33,7 +35,15 @@ function NewPlan() {
           title: 'Plan successfully created',
           type: 'success'
         })
+        router.replace('/plan')
       },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error creating plan',
+          type: 'error',
+          description: error.message
+        })
+      }
     })
   }
 

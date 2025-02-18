@@ -1,21 +1,16 @@
 'use client'
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext } from 'react'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { Center, Spinner } from '@chakra-ui/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { UseWaitlistActions, useWaitlistActions } from '@/app/hooks/useWaitlistActions'
-import { toaster } from '@/components/ui/toaster'
 import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
 import { UserExtended } from '@/app/types/types'
-import { Role, Waitlist } from '@prisma/client'
+import { Role } from '@prisma/client'
 
 type AccountContextType = {
   user?: UserExtended | null
   isGuest: boolean
-  waitlistData?: Waitlist | null
   isLoading: boolean
   userActions: UseUserActions
-  waitlistActions: UseWaitlistActions
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(
@@ -27,33 +22,13 @@ interface AccountTrackingProviderProps {
 }
 
 export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const { user: auth0User, isLoading: isLoadingAuth0User } = useUser()
-  const token = searchParams.get('token')
-  const waitlistActions = useWaitlistActions()
   const userActions = useUserActions()
-  const { data: waitlistData, isLoading: isLoadingWaitlist } = waitlistActions.useGet(token as string)
-  const { data: userData, isLoading: isLoadingUser } = userActions.useGetByEmail(waitlistData?.email as string)
   const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
-  const isLoading = isLoadingAuth0User || isLoadingWaitlist || isLoadingUser || isLoadingUserLocal
+  const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0User?.sub as string, !userLocal)
+  const isLoading = isLoadingAuth0User || isLoadingUserLocal || isLoadingUserData
   const user = (!userData ? null : { ...userData, sub: auth0User?.sub } as UserExtended) || userLocal
   const isGuest = user?.role === Role.GUEST
-
-  useEffect(() => {
-    if (isLoading) return
-
-    if (!auth0User && !token) {
-      // router.replace('/')
-    } else if (token && !waitlistData) {
-      toaster.create({
-        type: 'info',
-        title: 'Invalid Token',
-        description: 'The token you provided is invalid. Please try logging in.',
-      })
-      // router.replace('/')
-    }
-  }, [auth0User, token, waitlistData, isLoading])
 
   if (isLoading) {
     return (
@@ -68,10 +43,8 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
       value={{
         user,
         isGuest,
-        waitlistData,
         isLoading,
         userActions,
-        waitlistActions,
       }}
     >
       {children}

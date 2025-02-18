@@ -38,11 +38,20 @@ export function useUserActions() {
     })
   }
 
+  const useGetByAuth0Id = (id: string, enabled = true) => {
+    return useQuery({
+      queryKey: [QUERY_KEY, { id }],
+      queryFn: () => UserService.getByAuth0Id(id),
+      enabled: !!id && enabled,
+    })
+  }
+
   return {
     useCreate,
     useGet,
     useGetByEmail,
     useGetLocal,
+    useGetByAuth0Id,
   }
 }
 

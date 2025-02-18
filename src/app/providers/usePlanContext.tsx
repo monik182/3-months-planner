@@ -14,6 +14,7 @@ import { useAccountContext } from '@/app/providers/useAccountContext'
 type PlanContextType = {
   plan: Plan | null | undefined,
   hasPlan: boolean
+  hasStartedPlan: boolean
   isLoading: boolean,
   planActions: UsePlanActions
   goalActions: UseGoalActions
@@ -40,7 +41,8 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const strategyActions = useStrategyActions()
   const indicatorActions = useIndicatorActions()
   const { data: plan, isLoading: isLoadingPlan } = planActions.useGet(user?.id as string)
-  const hasPlan = !!plan?.started
+  const hasPlan = !!plan
+  const hasStartedPlan = !!plan?.started
 
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
@@ -59,6 +61,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
       value={{
         plan,
         hasPlan,
+        hasStartedPlan,
         isLoading,
         planActions,
         goalActions,
