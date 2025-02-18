@@ -3,6 +3,7 @@
 
 
 # Post Release
+- Auth for prod
 - Create test DB replica
 - Upload screenshots for feedback
 - Make indicator creation a 1 liner + change the icon and button color ✅
@@ -22,6 +23,7 @@
   - Refactor api/plan/create ✅
   - only save on click ❓
 - FE Improvements
+  - Save user data to DB on signup
   - Create route guard
   - Create plan read only view ✅
 - Auth Refactor
