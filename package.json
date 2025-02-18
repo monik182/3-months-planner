@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prisma": "npx prisma generate && npx prisma migrate dev --name"
+    "prisma": "npx prisma generate && npx prisma migrate dev --name \"$npm_config_migration\" && mv migrations/* prod/migrations",
+    "prisma-test": "npx prisma generate --schema=prisma/schema.test.prisma && npx prisma migrate dev --name \"$npm_config_migration\" && mv migrations/* test/migrations"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
