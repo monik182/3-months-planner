@@ -1,9 +1,10 @@
 import { WaitlistService } from '@/services/waitlist'
 import { Prisma } from '@prisma/client'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'waitlist'
 export function useWaitlistActions() {
+  const queryClient = useQueryClient()
 
   const useCreate = () => {
     return useMutation({
@@ -20,9 +21,19 @@ export function useWaitlistActions() {
     })
   }
 
+  const useUpdate = () => {
+    return useMutation({
+      mutationFn: ({ id, updates }: { id: string, updates: Prisma.WaitlistUpdateInput }) => WaitlistService.update(id, updates),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      }
+    })
+  }
+
   return {
     useCreate,
     useGet,
+    useUpdate,
   }
 }
 
