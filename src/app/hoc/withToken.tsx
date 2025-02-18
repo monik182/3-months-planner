@@ -42,6 +42,12 @@ const withToken = (WrappedComponent: React.FC<WithTokenPageProps>) => {
           description: 'The token you provided is invalid. Please try logging in.',
         })
         router.replace('/')
+      } else if (!waitlistData?.invited) {
+        toaster.create({
+          type: 'info',
+          title: 'Invitation Pending',
+          description: 'You have not been invited yet. Please wait for an invitation to gain access.'
+        })
       }
     }, [token, waitlistData, loading, user, router])
 

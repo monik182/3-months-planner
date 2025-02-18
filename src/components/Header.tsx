@@ -65,8 +65,8 @@ export function Header() {
               )}
               <Avatar
                 name="User"
-                src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Test%20User'}
                 shape="full"
+                src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
                 size="md"
               />
               {!isGuest && (

@@ -3,10 +3,12 @@ import withToken, { WithTokenPageProps } from '@/app/hoc/withToken'
 import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import { Button } from '@/components/ui/button'
+import { EmptyState } from '@/components/ui/empty-state'
 import { toaster } from '@/components/ui/toaster'
 import { Flex, Heading, Text, VStack } from '@chakra-ui/react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import { PiMailboxThin } from 'react-icons/pi'
 
 function EarlyAccess(props: WithTokenPageProps) {
   const { waitlistData } = props
@@ -16,6 +18,8 @@ function EarlyAccess(props: WithTokenPageProps) {
   const create = userActions.useCreate()
   const update = waitlistActions.useUpdate()
   const loading = create.isPending || update.isPending
+  const notInvited = !waitlistData.invited
+  const disabled = loading || notInvited
 
   const handleCreateUser = () => {
     const newUser = {
@@ -37,12 +41,27 @@ function EarlyAccess(props: WithTokenPageProps) {
     })
   }
 
+  if (notInvited) {
+    return (
+      <EmptyState
+        icon={<PiMailboxThin />}
+        title="Your Invitation is on the Way! 🎉"
+        size="lg"
+        description="You haven’t been invited yet, but don’t worry—it’s coming soon! Keep an eye on your inbox, and you’ll be able to join as soon as your invitation arrives."
+      >
+        <Flex gap="1rem" direction="column">
+          <Button onClick={() => router.replace('/')}>Go to home</Button>
+        </Flex>
+      </EmptyState>
+    )
+  }
+
   return (
     <Flex maxW="container.lg" alignItems="center" justifyContent="center" height="calc(100% - 5rem)">
       <VStack gap={6} textAlign="center">
         <Heading size="4xl">Welcome to the Early Access!</Heading>
         <Text fontSize="lg" color="gray.600">
-          Thank you for being an early user. Your feedback helps shape the future of this app.
+          Thank you for being an early user. Your feedback helps shape the future of <strong>The Planner</strong>.
         </Text>
         <Button
           size="lg"
@@ -50,7 +69,7 @@ function EarlyAccess(props: WithTokenPageProps) {
           colorPalette="yellow"
           onClick={handleCreateUser}
           loading={loading}
-          disabled={loading}
+          disabled={disabled}
         >
           Get Started
         </Button>
