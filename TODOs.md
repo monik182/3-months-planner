@@ -1,6 +1,6 @@
 # Pre release
-- Only allow up to 10 users to test
-- Test y prod db
+- Test y prod db [WIP] (sync not working)
+- Only allow up to 10 users to test ✅ (Fixed with limited invites)
 - Test welcome page ✅
 - Save to db unique user ids ✅
 - Allow anonymous testing ✅
