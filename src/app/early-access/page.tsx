@@ -1,10 +1,48 @@
 'use client'
-
-import { Button, Container, Heading, Text, VStack } from '@chakra-ui/react'
+import { useAccountContext } from '@/app/providers/useAccountContext'
+import { Button } from '@/components/ui/button'
+import { toaster } from '@/components/ui/toaster'
+import { Container, Heading, Text, VStack } from '@chakra-ui/react'
+import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function EarlyAccess() {
   const router = useRouter()
+  const { user, waitlistData, userActions, waitlistActions } = useAccountContext()
+  const create = userActions.useCreate()
+  const update = waitlistActions.useUpdate()
+  const loading = create.isPending || update.isPending
+
+  const handleCreateUser = () => {
+    const newUser = {
+      role: Role.GUEST,
+      email: waitlistData!.email,
+      waitlistId: waitlistData!.id,
+    }
+    create.mutate(newUser, {
+      onSuccess: () => {
+        update.mutate({ id: waitlistData!.id, updates: { inviteToken: null } }, {
+          onSuccess: () => {
+            router.push('/plan/new')
+          }
+        })
+      },
+      onError: (error) => {
+        toaster.create({
+          type: 'error',
+          title: 'Error',
+          description: error.message
+        })
+      },
+    })
+  }
+
+  useEffect(() => {
+    if (user || !waitlistData) {
+      router.push('/')
+    }
+  }, [user, waitlistData])
 
   return (
     <Container maxW="container.lg" centerContent py={16}>
@@ -17,7 +55,9 @@ export default function EarlyAccess() {
           size="lg"
           variant="subtle"
           colorPalette="yellow"
-          onClick={() => router.push('/plan/new')}
+          onClick={handleCreateUser}
+          loading={loading}
+          disabled={loading}
         >
           Get Started
         </Button>
