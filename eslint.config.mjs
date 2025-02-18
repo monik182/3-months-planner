@@ -14,6 +14,8 @@ const eslintConfig = [
   ...compat.config({
     extends: ['next'],
     rules: {
+      'react/no-unescaped-entities': 'off',
+      '@next/next/no-page-custom-font': 'off',
       'react-hooks/exhaustive-deps': 'off',
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
