@@ -37,15 +37,20 @@ const getByEmail = async (email: string): Promise<User | null> => {
 
   if (!response.ok) {
     const errorData = await response.json()
-    console.log(errorData)
     throw new Error(errorData.message || 'Something went wrong')
   }
 
   return response.json()
 }
 
+const getLocal = async (): Promise<User | null> => {
+  const user = await userHandler.findFirst()
+  return user as User
+}
+
 export const UserService = {
   get,
   create,
   getByEmail,
+  getLocal,
 }

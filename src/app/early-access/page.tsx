@@ -5,11 +5,10 @@ import { toaster } from '@/components/ui/toaster'
 import { Container, Heading, Text, VStack } from '@chakra-ui/react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 
 export default function EarlyAccess() {
   const router = useRouter()
-  const { user, waitlistData, userActions, waitlistActions } = useAccountContext()
+  const { waitlistData, userActions, waitlistActions } = useAccountContext()
   const create = userActions.useCreate()
   const update = waitlistActions.useUpdate()
   const loading = create.isPending || update.isPending
@@ -22,11 +21,7 @@ export default function EarlyAccess() {
     }
     create.mutate(newUser, {
       onSuccess: () => {
-        update.mutate({ id: waitlistData!.id, updates: { inviteToken: null } }, {
-          onSuccess: () => {
-            router.push('/plan/new')
-          }
-        })
+        router.push('/plan/new')
       },
       onError: (error) => {
         toaster.create({
@@ -37,12 +32,6 @@ export default function EarlyAccess() {
       },
     })
   }
-
-  useEffect(() => {
-    if (user || !waitlistData) {
-      router.push('/')
-    }
-  }, [user, waitlistData])
 
   return (
     <Container maxW="container.lg" centerContent py={16}>

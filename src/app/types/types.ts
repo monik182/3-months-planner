@@ -52,4 +52,4 @@ export interface ParentProps {
   status?: string
 }
 
-export type UserExtended = User & Pick<UserProfile, 'sub'>
+export type UserExtended = User & Pick<UserProfile, 'sub' | 'picture'>

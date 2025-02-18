@@ -14,7 +14,7 @@ import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 
 export function Header() {
-  const { user } = useAccountContext()
+  const { user, isGuest } = useAccountContext()
   const { hasPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
@@ -25,8 +25,8 @@ export function Header() {
     router.push('/')
   }
 
-  const handleCreatePage = () => {
-    router.push('/plan')
+  const handleCreatePlan = () => {
+    router.push('/plan/new')
   }
 
   const handleOnChange = (value: string) => {
@@ -58,21 +58,25 @@ export function Header() {
           {user ? (
             <Flex gap="1rem" alignItems="center">
               {showCreatePlanButton && (
-                <Button variant="outline" colorPalette="yellow" onClick={handleCreatePage}>
+                <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>
                   <LuNotebookPen />
                   Create Plan
                 </Button>
               )}
               <Avatar
-                name={user?.name || 'User'}
-                src={user?.picture || ''}
+                name="User"
+                src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Test%20User'}
                 shape="full"
-                size="lg"
+                size="md"
               />
-              <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
+              {!isGuest && (
+                <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
+              )}
             </Flex>
           ) : (
-            <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
+            !isGuest && (
+              <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
+            )
           )}
           <ColorModeButton />
         </Flex>

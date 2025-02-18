@@ -7,10 +7,11 @@ import { UseWaitlistActions, useWaitlistActions } from '@/app/hooks/useWaitlistA
 import { toaster } from '@/components/ui/toaster'
 import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
 import { UserExtended } from '@/app/types/types'
-import { Waitlist } from '@prisma/client'
+import { Role, Waitlist } from '@prisma/client'
 
 type AccountContextType = {
   user?: UserExtended | null
+  isGuest: boolean
   waitlistData?: Waitlist | null
   isLoading: boolean
   userActions: UseUserActions
@@ -34,21 +35,23 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const userActions = useUserActions()
   const { data: waitlistData, isLoading: isLoadingWaitlist } = waitlistActions.useGet(token as string)
   const { data: userData, isLoading: isLoadingUser } = userActions.useGetByEmail(waitlistData?.email as string)
-  const isLoading = isLoadingAuth0User || isLoadingWaitlist || isLoadingUser
-  const user = !userData && !auth0User ? null : { ...userData, sub: auth0User?.sub } as UserExtended
+  const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
+  const isLoading = isLoadingAuth0User || isLoadingWaitlist || isLoadingUser || isLoadingUserLocal
+  const user = (!userData ? null : { ...userData, sub: auth0User?.sub } as UserExtended) || userLocal
+  const isGuest = user?.role === Role.GUEST
 
   useEffect(() => {
     if (isLoading) return
 
     if (!auth0User && !token) {
-      router.replace('/')
+      // router.replace('/')
     } else if (token && !waitlistData) {
       toaster.create({
         type: 'info',
         title: 'Invalid Token',
         description: 'The token you provided is invalid. Please try logging in.',
       })
-      router.replace('/')
+      // router.replace('/')
     }
   }, [auth0User, token, waitlistData, isLoading])
 
@@ -64,6 +67,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     <AccountContext.Provider
       value={{
         user,
+        isGuest,
         waitlistData,
         isLoading,
         userActions,
