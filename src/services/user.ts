@@ -45,7 +45,7 @@ const getByEmail = async (email: string): Promise<User | null> => {
 
 const getLocal = async (): Promise<User | null> => {
   const user = await userHandler.findFirst()
-  return user as User
+  return user as User || null
 }
 
 const getByAuth0Id = async (id: string): Promise<User | null> => {

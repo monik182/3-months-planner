@@ -4,7 +4,7 @@ import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import { Button } from '@/components/ui/button'
 import { toaster } from '@/components/ui/toaster'
-import { Container, Heading, Text, VStack } from '@chakra-ui/react'
+import { Flex, Heading, Text, VStack } from '@chakra-ui/react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 
@@ -38,7 +38,7 @@ function EarlyAccess(props: WithTokenPageProps) {
   }
 
   return (
-    <Container maxW="container.lg" centerContent py={16}>
+    <Flex maxW="container.lg" alignItems="center" justifyContent="center" height="calc(100% - 5rem)">
       <VStack gap={6} textAlign="center">
         <Heading size="4xl">Welcome to the Early Access!</Heading>
         <Text fontSize="lg" color="gray.600">
@@ -55,7 +55,7 @@ function EarlyAccess(props: WithTokenPageProps) {
           Get Started
         </Button>
       </VStack>
-    </Container>
+    </Flex>
   )
 }
 

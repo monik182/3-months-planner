@@ -1,10 +1,10 @@
 # Pre release
-- Create feedback box [WIP]
-- Save to db unique user ids
 - Only allow up to 10 users to test
-- Allow anonymous testing
-- Test welcome page
 - Test y prod db
+- Test welcome page ✅
+- Save to db unique user ids ✅
+- Allow anonymous testing ✅
+- Create feedback box ✅
 - Quitarle el autocomplete a todos los campos ✅
 - Create wait list section -> Wire up with db ✅
 
@@ -14,7 +14,8 @@
 
 
 # Post Release
-- Make indicator creation a 1 liner + change the icon and button color
+- Upload screenshots for feedback
+- Make indicator creation a 1 liner + change the icon and button color ✅
 - Improve the goals/strategies/indicator creation forms
 - Improve HOME page with steps and everything
 - Improve the plan view and colors and reuse component in step4
