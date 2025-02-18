@@ -3,14 +3,18 @@ import React, { createContext, useContext, useEffect } from 'react'
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { Center, Spinner } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
+import { UseWaitlistActions, useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 import { toaster } from '@/components/ui/toaster'
-import { useUserActions } from '@/app/hooks/useUserActions'
+import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
 import { UserExtended } from '@/app/types/types'
+import { Waitlist } from '@prisma/client'
 
 type AccountContextType = {
   user?: UserExtended | null
+  waitlistData?: Waitlist | null
   isLoading: boolean
+  userActions: UseUserActions
+  waitlistActions: UseWaitlistActions
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(
@@ -29,12 +33,12 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const waitlistActions = useWaitlistActions()
   const userActions = useUserActions()
   const { data: waitlistData, isLoading: isLoadingWaitlist } = waitlistActions.useGet(token as string)
-  const { data: userData = {}, isLoading: isLoadingUser } = userActions.useGetByEmail(waitlistData?.email as string)
-  const loading = isLoadingAuth0User || isLoadingWaitlist || isLoadingUser
+  const { data: userData, isLoading: isLoadingUser } = userActions.useGetByEmail(waitlistData?.email as string)
+  const isLoading = isLoadingAuth0User || isLoadingWaitlist || isLoadingUser
   const user = !userData && !auth0User ? null : { ...userData, sub: auth0User?.sub } as UserExtended
 
   useEffect(() => {
-    if (loading) return
+    if (isLoading) return
 
     if (!auth0User && !token) {
       router.replace('/')
@@ -46,9 +50,9 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
       })
       router.replace('/')
     }
-  }, [auth0User, token, waitlistData, loading])
+  }, [auth0User, token, waitlistData, isLoading])
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Center height="100vh">
         <Spinner size="xl" />
@@ -60,7 +64,10 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     <AccountContext.Provider
       value={{
         user,
-        isLoading: loading,
+        waitlistData,
+        isLoading,
+        userActions,
+        waitlistActions,
       }}
     >
       {children}
