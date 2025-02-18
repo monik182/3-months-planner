@@ -16,7 +16,7 @@ export default function Dashboard() {
   const router = useRouter()
   const { user } = useAccountContext()
   const { planActions } = usePlanContext()
-  const { data: plan, isLoading } = planActions.useGet(user?.sub as string)
+  const { data: plan, isLoading } = planActions.useGet(user?.id as string)
   const today = dayjs().format('DD MMMM YYYY')
   const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')

@@ -25,7 +25,7 @@ export default function NewPlan() {
     
     const plan: Prisma.PlanCreateInput = {
       startDate: date,
-      userId: user!.sub as string,
+      userId: user!.id as string,
       endDate: calculatePlanEndDate(date)
     }
     createPlan.mutate(plan, {

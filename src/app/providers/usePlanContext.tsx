@@ -39,7 +39,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const goalActions = useGoalActions()
   const strategyActions = useStrategyActions()
   const indicatorActions = useIndicatorActions()
-  const { data: plan, isLoading: isLoadingPlan } = planActions.useGet(user?.sub as string)
+  const { data: plan, isLoading: isLoadingPlan } = planActions.useGet(user?.id as string)
   const hasPlan = !!plan?.started
 
   const goalHistoryActions = useGoalHistoryActions()
