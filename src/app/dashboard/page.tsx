@@ -7,12 +7,12 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import dayjs from 'dayjs'
 import { Week } from '@/app/dashboard/Week/Week'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
 import { useAccountContext } from '@/app/providers/useAccountContext'
+import withAuth from '@/app/hoc/withAuth'
 
-export default function Dashboard() {
+function Dashboard() {
   const router = useRouter()
   const { user } = useAccountContext()
   const { planActions } = usePlanContext()
@@ -25,12 +25,6 @@ export default function Dashboard() {
   const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
   const week = hasNotStarted ? 1 : currentWeek
 
-  useEffect(() => {
-    if (!plan?.started) {
-      router.replace('/plan')
-    }
-  }, [plan, router])
-
   if (isLoading) {
     return (
       <Center height="100vh">
@@ -39,9 +33,8 @@ export default function Dashboard() {
     )
   }
 
-  if (!plan) {
-    return null
-  }
+  if (!plan) return null
+
   return (
     <Grid>
       <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0" alignItems="center">
@@ -105,3 +98,5 @@ export default function Dashboard() {
     </Grid>
   )
 }
+
+export default withAuth(Dashboard)

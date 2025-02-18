@@ -8,15 +8,14 @@ import { toaster } from '@/components/ui/toaster'
 import { Center, Flex } from '@chakra-ui/react'
 import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
 import { useAccountContext } from '@/app/providers/useAccountContext'
+import withAuth from '@/app/hoc/withAuth'
 
-export default function NewPlan() {
-  const router = useRouter()
+function NewPlan() {
   const { user } = useAccountContext()
-  const { plan, planActions } = usePlanContext()
+  const { planActions } = usePlanContext()
   const createPlan = planActions.useCreate()
   const [startDate, setStartDate] = useState<string | undefined>(formatDate(getPlanStartDate(), 'YYYY-MM-DD'))
 
@@ -38,12 +37,6 @@ export default function NewPlan() {
     })
   }
 
-  useEffect(() => {
-    if (!!plan) {
-      router.replace('/plan')
-    }
-  }, [plan, router])
-
   return (
     <Center>
       <EmptyState
@@ -60,3 +53,5 @@ export default function NewPlan() {
     </Center>
   )
 }
+
+export default withAuth(NewPlan)

@@ -1,24 +1,15 @@
 'use client'
+import withAuth from '@/app/hoc/withAuth'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { Box, Flex, Heading, Separator, Stack, VStack, Text, HStack, Badge, Spinner } from '@chakra-ui/react'
 import dayjs from 'dayjs'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 
-export default function PlanView() {
-  const router = useRouter()
+function PlanView() {
   const { plan, isLoading: loadingPlan, goalActions, strategyActions, indicatorActions } = usePlanContext()
   const { data: goals = [], isLoading: loadingGoals } = goalActions.useGetByPlanId(plan?.id as string)
   const { data: strategies = [], isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan?.id as string)
   const { data: indicators = [], isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan?.id as string)
-
   const loading = loadingPlan || loadingGoals || loadingStrategies || loadingIndicators
-
-  useEffect(() => {
-    if (!plan?.started) {
-      router.replace('/plan')
-    }
-  }, [plan, router])
 
   if (loading) {
     return (
@@ -131,3 +122,5 @@ export default function PlanView() {
     </Box>
   )
 }
+
+export default withAuth(PlanView)

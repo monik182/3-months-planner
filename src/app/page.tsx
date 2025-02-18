@@ -1,26 +1,11 @@
 'use client'
-import { useAccountContext } from '@/app/providers/useAccountContext'
-import { usePlanContext } from '@/app/providers/usePlanContext'
 import { WaitListSection } from '@/components/WaitlistSection'
 import { Button, Flex, Heading, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import { RiArrowRightLine } from 'react-icons/ri'
 
 export default function Home() {
-  const { user } = useAccountContext()
-  const { hasPlan } = usePlanContext()
   const router = useRouter()
-
-  useEffect(() => {
-    if (hasPlan) {
-      router.push('/dashboard')
-    }
-
-    if (!!user && !hasPlan) {
-      router.push('/plan')
-    }
-  }, [router, hasPlan, user])
 
   return (
     <div className="container">

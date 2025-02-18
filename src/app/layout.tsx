@@ -10,6 +10,7 @@ import { PlanProvider } from '@/app/providers/usePlanContext'
 import { Extra } from '@/components/Extra'
 import { AccountProvider } from '@/app/providers/useAccountContext'
 import { Toaster } from '@/components/ui/toaster'
+import PlanLayout from '@/app/layout/PlanLayout'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -42,12 +43,14 @@ export default function RootLayout({
             <Provider>
               <AccountProvider>
                 <PlanProvider>
-                  <Box margin="0 2rem">
-                    <Grid templateRows="10% auto" height="100vh">
-                      <GridItem><Header /></GridItem>
-                      <GridItem overflow="auto">{children}</GridItem>
-                    </Grid>
-                  </Box>
+                  <PlanLayout>
+                    <Box margin="0 2rem">
+                      <Grid templateRows="10% auto" height="100vh">
+                        <GridItem><Header /></GridItem>
+                        <GridItem overflow="auto">{children}</GridItem>
+                      </Grid>
+                    </Box>
+                  </PlanLayout>
                 </PlanProvider>
                 <Extra />
               </AccountProvider>

@@ -6,14 +6,15 @@ import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 import { useHistoryActions } from '@/app/hooks/useHistoryActions'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineCelebration } from 'react-icons/md'
+import withAuth from '@/app/hoc/withAuth'
 
-export default function PlanPage() {
+function PlanPage() {
   const router = useRouter()
   const { plan, planActions } = usePlanContext()
   const [nextText, setNextText] = useState('Next')
@@ -22,14 +23,6 @@ export default function PlanPage() {
   const createHistory = useHistoryActions().useCreate()
   const updatePlan = planActions.useUpdate()
   const loading = updatePlan.isPending || createHistory.isPending
-
-  useEffect(() => {
-    if (!plan) {
-      router.replace('/plan/new')
-    } else if (plan.started) {
-      router.replace('/dashboard')
-    }
-  }, [plan, router])
 
   const steps = [
     { title: 'Define Vision', content: <Step1 onLoading={setIsLoadingStep} /> },
@@ -92,6 +85,8 @@ export default function PlanPage() {
     setStep(step)
   }
 
+  if (!plan) return null
+
   return (
     <StepsRoot linear variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={handleStepChange}>
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
@@ -146,3 +141,5 @@ export default function PlanPage() {
     </StepsRoot>
   )
 }
+
+export default withAuth(PlanPage)
