@@ -48,9 +48,19 @@ const getLocal = async (): Promise<User | null> => {
   return user as User
 }
 
+const getByAuth0Id = async (id: string): Promise<User | null> => {
+  const user = await userHandler.findOneByAuth0Id(id)
+  if (user) {
+    return user
+  }
+
+  return fetch(`/api/user/auth0/${id}`).then(response => response.json())
+}
+
 export const UserService = {
   get,
   create,
   getByEmail,
   getLocal,
+  getByAuth0Id,
 }

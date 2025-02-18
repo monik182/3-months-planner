@@ -15,7 +15,7 @@ class IdxDB extends Dexie {
 
   constructor() {
     super('LocalDB')
-    this.version(2.1).stores({
+    this.version(2.2).stores({
       plans: 'id, userId, completed, started',
       goals: 'id, planId, status',
       goalHistory: 'id, goalId, planId, sequence',
@@ -24,7 +24,7 @@ class IdxDB extends Dexie {
       indicators: 'id, goalId, planId',
       indicatorHistory: 'id, indicatorId, planId, value, sequence',
       notifications: 'id, userId, planId',
-      users: 'id, email, waitlistId, role',
+      users: 'id, email, waitlistId, role, auth0Id',
     })
   }
 }

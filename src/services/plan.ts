@@ -33,12 +33,18 @@ const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
 
   const body = JSON.stringify({ ...data, id: parsedData.id })
 
-  return fetch(`/api/plan`, {
+  const response = await fetch(`/api/plan`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body,
   })
-    .then(response => response.json())
+
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData.message || 'Something went wrong')
+  }
+
+  return response.json()
 }
 
 const get = async (id: string): Promise<Plan | null> => {

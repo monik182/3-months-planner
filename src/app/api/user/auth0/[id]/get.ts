@@ -10,7 +10,7 @@ export async function GET(_: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const response = await userHandler.findOneByEmail(params.id);
+    const response = await userHandler.findOneByAuth0Id(params.id);
 
     if (!response) {
       return NextResponse.json({ message: 'User not found', ok: false }, { status: 404 });

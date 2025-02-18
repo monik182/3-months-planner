@@ -214,6 +214,7 @@ export const userHandler = {
   findOne: async (id: string) => db.users.get(id),
   findFirst: async () => db.users.where('id').notEqual('null').first(),
   findOneByEmail: async (email: string) => db.users.where('email').equals(email).first(),
+  findOneByAuth0Id: async (auth0Id: string) => db.users.where('auth0Id').equals(auth0Id).first(),
   update: async (id: string, data: Partial<User>) => db.users.update(id, data),
   delete: async (id: string) => db.users.delete(id),
 }

@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   const data = await request.json()
 
   if (!data) {
-    return new Response('Invalid data', { status: 400 })
+    return new Response(JSON.stringify({ message: 'Invalid data', ok: false }), { status: 400 })
   }
 
   try {
@@ -15,11 +15,11 @@ export async function POST(request: NextRequest) {
     const planInProgress = await planHandler.findInProgress(data.userId)
 
     if (!!planInProgress) {
-      return new Response("The user already has a plan in progress", { status: 400 })
+      return new Response(JSON.stringify({ message: 'The user already has a plan in progress', ok: false }), { status: 400 })
     }
 
     const response = await planHandler.create(parsedData)
-    return new Response(JSON.stringify(response), { status: 200 })
+    return new Response(JSON.stringify({ ...response, ok: true }), { status: 200 })
   } catch (error) {
     return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
   }
