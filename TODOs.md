@@ -1,19 +1,9 @@
-# Pre release
-- Test y prod db [WIP] (sync not working)
-- Only allow up to 10 users to test ✅ (Fixed with limited invites)
-- Test welcome page ✅
-- Save to db unique user ids ✅
-- Allow anonymous testing ✅
-- Create feedback box ✅
-- Quitarle el autocomplete a todos los campos ✅
-- Create wait list section -> Wire up with db ✅
-
-
 # Release
 - Deploy
 
 
 # Post Release
+- Create test DB replica
 - Upload screenshots for feedback
 - Make indicator creation a 1 liner + change the icon and button color ✅
 - Improve the goals/strategies/indicator creation forms
@@ -137,7 +127,7 @@ with persistance will come success
   - Handle loading/error states of requests - react query? ✅
   - create a model folder? Not needed, using prisma generated types ❌
 
-  # Auth & Persistency For release
+# Auth & Persistency For release
 - FE Fixes
   - Something weird with creating/updating/loading strategy ✅
   - Create home page ✅
@@ -147,3 +137,13 @@ with persistance will come success
   - Refactor dashboard -> see mockup references ✅
 - BE integration
   - integrate db + backend + frontend - Track plan ✅
+
+# Pre release
+- Test y prod db ✅
+- Only allow up to 10 users to test ✅ (Fixed with limited invites)
+- Test welcome page ✅
+- Save to db unique user ids ✅
+- Allow anonymous testing ✅
+- Create feedback box ✅
+- Quitarle el autocomplete a todos los campos ✅
+- Create wait list section -> Wire up with db ✅
