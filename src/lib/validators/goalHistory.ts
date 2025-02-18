@@ -6,6 +6,7 @@ export const GoalHistorySchema = z.object({
   goalId: z.string().cuid(),
   planId: z.string().cuid(),
   sequence: z.number().int(),
+  goal: z.object({ connect: z.object({ id: z.string() }) })
 })
 
 export const PartialGoalHistorySchema = GoalHistorySchema.partial()

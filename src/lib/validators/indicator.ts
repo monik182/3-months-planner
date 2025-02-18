@@ -10,6 +10,7 @@ export const IndicatorSchema = z.object({
   initialValue: z.number().int(),
   goalValue: z.number().int(),
   status: z.string().default('1'),
+  goal: z.object({ connect: z.object({ id: z.string() }) }),
 })
 
 export const PartialIndicatorSchema = IndicatorSchema.partial()

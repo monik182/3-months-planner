@@ -1,6 +1,6 @@
 'use client'
 import { useState, useRef } from 'react'
-import { Box, Flex, Input, Text, Textarea, Image } from '@chakra-ui/react'
+import { Box, Flex, Text, Textarea, Image } from '@chakra-ui/react'
 import { toaster } from '@/components/ui/toaster'
 import { BsChatRight } from 'react-icons/bs'
 import { IoMdClose } from 'react-icons/io'
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { CloseButton } from '@/components/ui/close-button'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 
-const MAX_FILES = 3
+// const MAX_FILES = 3
 
 export function FloatingFeedback() {
   const [isOpen, setIsOpen] = useState(false)
@@ -19,7 +19,7 @@ export function FloatingFeedback() {
   const { user } = useAccountContext()
   const { useCreate } = useFeedbackActions()
   const create = useCreate()
-  const disableUpload = files.length >= MAX_FILES
+  // const disableUpload = files.length >= MAX_FILES
   const disabled = create.isPending || !feedback.trim()
 
   const handleSubmit = () => {
@@ -34,7 +34,7 @@ export function FloatingFeedback() {
     }
 
     create.mutate({ feedback, email: user?.email as string }, {
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         if (!data.ok) {
           throw new Error(JSON.stringify(data.error))
         }
@@ -63,20 +63,20 @@ export function FloatingFeedback() {
 
   const handleToggle = () => setIsOpen((prev) => !prev)
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = event.target.files ? Array.from(event.target.files) : []
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const newFiles = event.target.files ? Array.from(event.target.files) : []
 
-    if (files.length + newFiles.length > MAX_FILES) {
-      toaster.create({
-        title: `Max ${MAX_FILES} files allowed.`,
-        type: "warning",
-        duration: 3000,
-      })
-      return
-    }
+  //   if (files.length + newFiles.length > MAX_FILES) {
+  //     toaster.create({
+  //       title: `Max ${MAX_FILES} files allowed.`,
+  //       type: "warning",
+  //       duration: 3000,
+  //     })
+  //     return
+  //   }
 
-    setFiles((prev) => [...prev, ...newFiles])
-  }
+  //   setFiles((prev) => [...prev, ...newFiles])
+  // }
 
   const removeFile = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index))

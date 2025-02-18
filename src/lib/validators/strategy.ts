@@ -9,6 +9,7 @@ export const StrategySchema = z.object({
   content: z.string().default(''),
   weeks: z.array(z.string()),
   status: z.string().default('1'),
+  goal: z.object({ connect: z.object({ id: z.string() }) }),
 })
 
 export const PartialStrategySchema = StrategySchema.partial()

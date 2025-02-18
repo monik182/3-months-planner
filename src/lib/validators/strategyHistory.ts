@@ -11,6 +11,7 @@ export const StrategyHistorySchema = z.object({
   lastUpdate: z.date().nullable(),
   sequence: z.number().int(),
   frequencies: z.array(z.boolean()).default([]),
+  strategy: z.object({ connect: z.object({ id: z.string() }) }),
 })
 
 export const PartialStrategyHistorySchema = StrategyHistorySchema.partial()

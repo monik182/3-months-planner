@@ -3,6 +3,7 @@ import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHand
 import { GoalHistoryArraySchema } from '@/lib/validators/goalHistory'
 import { IndicatorHistoryArraySchema } from '@/lib/validators/indicatorHistory'
 import { StrategyHistoryArraySchema } from '@/lib/validators/strategyHistory'
+import { Goal } from '@prisma/client'
 
 const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
@@ -34,7 +35,7 @@ async function localCreate(planId: string) {
     const strategies = (await strategyHandler.findMany({ planId })) || []
     const indicators = (await indicatorHandler.findMany({ planId })) || []
 
-    const goalHistory = GoalHistoryArraySchema.parse(createGoalHistoryList(planId, goals))
+    const goalHistory = GoalHistoryArraySchema.parse(createGoalHistoryList(planId, goals as Goal[]))
     const strategiesHistory = StrategyHistoryArraySchema.parse(createStrategyHistoryList(planId, strategies))
     const indicatorsHistory = IndicatorHistoryArraySchema.parse(createIndicatorHistoryList(planId, indicators))
 
@@ -47,6 +48,6 @@ async function localCreate(planId: string) {
     return new Response(JSON.stringify({ goalHistory, strategiesHistory, indicatorsHistory }), { status: 200 })
   } catch (error) {
     console.error('Local storage history error:', error)
-    return new Response(`Error processing request: ${error.message}`, { status: 500 })
+    return new Response(`Error processing request: ${(error as any).message}`, { status: 500 })
   }
 }

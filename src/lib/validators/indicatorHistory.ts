@@ -7,6 +7,7 @@ export const IndicatorHistorySchema = z.object({
   planId: z.string().cuid(),
   value: z.number().int(),
   sequence: z.number().int(),
+  indicator: z.object({ connect: z.object({ id: z.string() }) })
 })
 
 export const PartialIndicatorHistorySchema = IndicatorHistorySchema.partial()

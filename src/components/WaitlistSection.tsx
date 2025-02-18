@@ -5,10 +5,10 @@ import {
   Text,
   VStack,
   Heading,
-  HStack,
-  Link,
+  // HStack,
+  // Link,
 } from '@chakra-ui/react'
-import { FaLinkedin, FaInstagram } from 'react-icons/fa'
+// import { FaLinkedin, FaInstagram } from 'react-icons/fa'
 import { toaster } from '@/components/ui/toaster'
 import { Button } from '@/components/ui/button'
 import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
@@ -30,7 +30,7 @@ export function WaitListSection() {
     }
 
     create.mutate({ email }, {
-      onSuccess: (response) => {
+      onSuccess: (response: any) => {
         if (!response.ok) {
           throw new Error(response.message)
         }
