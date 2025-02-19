@@ -1,5 +1,6 @@
+import { toaster } from '@/components/ui/toaster'
 import { StrategyService } from '@/services/strategy'
-import { Prisma } from '@prisma/client'
+import { Prisma, Strategy } from '@prisma/client'
 import { useMutation, useQuery } from '@tanstack/react-query'
 
 const QUERY_KEY = 'strategies'
@@ -8,7 +9,14 @@ export function useStrategyActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (strategy: Prisma.StrategyCreateInput) => StrategyService.create(strategy),
+      mutationFn: (strategy: Strategy) => StrategyService.create(strategy),
+      onError: (error) => {
+        toaster.create({
+          type: 'error',
+          title: 'Error creating the strategy',
+          description: error.message,
+        })
+      }
     })
   }
 

@@ -1,6 +1,7 @@
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { StrategyForm } from '@/app/plan/Step3/Strategy/StrategyForm'
 import { usePlanContext } from '@/app/providers/usePlanContext'
+import { Status } from '@/app/types/types'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Alert, Button, Flex } from '@chakra-ui/react'
 import { Strategy } from '@prisma/client'
@@ -19,7 +20,7 @@ interface StrategyListProps {
 export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
   const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
-  const [strategies, setStrategies] = useState<Omit<Strategy, 'status'>[]>([..._strategies])
+  const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
   const create = strategyActions.useCreate()
   const update = strategyActions.useUpdate()
   const remove = strategyActions.useDelete()
@@ -41,8 +42,8 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
       content: '',
       weeks: [...DEFAULT_WEEKS],
       frequency: 7,
+      status: Status.ACTIVE,
     }
-    setStrategies(prev => [...prev, newStrategy])
     debouncedSave(newStrategy)
   }
 
@@ -51,8 +52,12 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
     debouncedRemove(id)
   }
 
-  const saveStrategy = (strategy: Omit<Strategy, 'status'>) => {
-    create.mutate({ ...strategy, goal: { connect: { id: goalId } } })
+  const saveStrategy = (strategy: Strategy) => {
+      create.mutate(strategy, {
+      onSuccess: () => {
+        setStrategies(prev => [...prev, strategy])
+      }
+    })
   }
 
   const updateStrategy = (id: string, updates: Partial<Strategy>) => {
@@ -63,13 +68,17 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
     remove.mutate(id)
   }
 
-  const debouncedSave = useDebouncedCallback((strategy: Omit<Strategy, 'status'>) => saveStrategy(strategy), 0)
+  const debouncedSave = useDebouncedCallback((strategy: Strategy) => saveStrategy(strategy), 0)
   const debouncedUpdate = useDebouncedCallback((id: string, updates: Partial<Strategy>) => updateStrategy(id, updates), 500)
   const debouncedRemove = useDebouncedCallback((id: string) => removeStrategy(id), 0)
 
   useEffect(() => {
     onLoading?.(loading)
   }, [loading])
+
+  useEffect(() => {
+    setStrategies(_strategies)
+  }, [_strategies])
 
   return (
     <Flex gap="10px" direction="column">

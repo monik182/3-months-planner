@@ -1,23 +1,28 @@
 import { strategyHandler } from '@/db/dexieHandler'
-import { PartialStrategySchema, StrategySchema } from '@/lib/validators/strategy'
+import { PartialStrategySchema } from '@/lib/validators/strategy'
 import { Prisma, Strategy } from '@prisma/client'
 
 const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
-const create = async (strategy: Prisma.StrategyCreateInput): Promise<Strategy> => {
-  const parsedData = StrategySchema.parse(strategy)
-  await strategyHandler.create(parsedData)
+const create = async (strategy: Strategy): Promise<Strategy> => {
 
   if (!ENABLE_CLOUD_SYNC) {
-    return parsedData
+    await strategyHandler.create(strategy)
+    return strategy
   }
-
   return fetch(`/api/strategy`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(parsedData),
+    body: JSON.stringify(strategy),
   })
-    .then(response => response.json())
+    .then(async (response) => {
+      if (!response.ok) {
+        const res = await response.json()
+        throw new Error(JSON.stringify(res.error) || 'Failed to create strategy')
+      }
+      await strategyHandler.create(strategy)
+      return strategy
+    })
 }
 
 const get = async (id: string): Promise<Strategy | null> => {
