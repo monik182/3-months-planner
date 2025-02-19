@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prisma": "npx prisma generate && npx prisma migrate dev --name",
-    "prisma:deploy": "npx prisma generate && npx prisma migrate deploy"
+    "prisma:deploy": "npx prisma generate"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^3.5.0",
