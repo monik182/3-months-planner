@@ -1,10 +1,11 @@
-# Release
-- Deploy
-
-
 # Post Release
+- FIX CREATE PLAN 🚨
 - Auth for prod
 - Create test DB replica
+- Test app responsive
+- Test app theme dark
+- invite guests
+- plan overview is unreadable in dark mode 
 - Upload screenshots for feedback
 - Make indicator creation a 1 liner + change the icon and button color ✅
 - Improve the goals/strategies/indicator creation forms
@@ -149,3 +150,6 @@ with persistance will come success
 - Create feedback box ✅
 - Quitarle el autocomplete a todos los campos ✅
 - Create wait list section -> Wire up with db ✅
+
+# Release
+- Deploy ✅
