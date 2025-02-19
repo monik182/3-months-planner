@@ -1,6 +1,5 @@
 'use client'
 import { Flex, HStack, Heading, Separator, Text } from '@chakra-ui/react'
-import { ColorModeButton } from './ui/color-mode'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { usePathname, useRouter } from 'next/navigation'
 import { Avatar } from './ui/avatar'
@@ -78,7 +77,6 @@ export function Header() {
               <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
             )
           )}
-          <ColorModeButton />
         </Flex>
       </Flex>
       <Separator margin="1rem 0" />
