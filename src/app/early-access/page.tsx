@@ -18,7 +18,7 @@ function EarlyAccess(props: WithTokenPageProps) {
   const create = userActions.useCreate()
   const update = waitlistActions.useUpdate()
   const loading = create.isPending || update.isPending
-  const notInvited = !waitlistData.invited
+  const notInvited = !waitlistData?.invited
   const disabled = loading || notInvited
 
   const handleCreateUser = () => {
