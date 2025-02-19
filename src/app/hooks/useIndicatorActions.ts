@@ -1,3 +1,4 @@
+import { toaster } from '@/components/ui/toaster'
 import { IndicatorService } from '@/services/indicator'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -12,6 +13,13 @@ export function useIndicatorActions() {
       mutationFn: (indicator: Prisma.IndicatorCreateInput) => IndicatorService.create(indicator),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      },
+      onError: (error) => {
+        toaster.create({
+          type: 'error',
+          title: 'Error creating the indicator',
+          description: error.message,
+        })
       }
     })
   }

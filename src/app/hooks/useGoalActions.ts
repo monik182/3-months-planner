@@ -1,4 +1,5 @@
 import { Status } from '@/app/types/types'
+import { toaster } from '@/components/ui/toaster'
 import { GoalService } from '@/services/goal'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -13,6 +14,13 @@ export function useGoalActions() {
       mutationFn: (goal: Prisma.GoalCreateInput) => GoalService.create(goal),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      },
+      onError: (error) => {
+        toaster.create({
+          type: 'error',
+          title: 'Error creating the goal',
+          description: error.message,
+        })
       }
     })
   }
