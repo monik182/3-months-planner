@@ -92,16 +92,19 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
           indicator={indicatorToUpdate}
           onChange={(indicator) => handleChange(indicatorToUpdate.id, indicator)}
           onRemove={() => handleRemove(indicatorToUpdate.id)}
-          loading={create.isPending}
+          loading={loading}
         />
       )}
       <Flex gap="10px" alignItems="center">
         {indicators.map((indicator) => (
-          <Tag.Root key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" onClick={() => setIndicatorToUpdate(indicator)} cursor="pointer">
+          <Tag.Root key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" cursor="pointer">
             <Tag.StartElement>
               <GoGraph />
             </Tag.StartElement>
-            <Tag.Label>{indicator.content}</Tag.Label>
+            <Tag.Label onClick={() => setIndicatorToUpdate(indicator)}>{indicator.content}</Tag.Label>
+            <Tag.EndElement cursor="pointer">
+              <Tag.CloseTrigger onClick={() => handleRemove(indicator.id)} />
+            </Tag.EndElement>
           </Tag.Root>
         ))}
         <Button size="xs" variant="outline" className="mt-5" onClick={handleCreate} disabled={disableIndicator}>

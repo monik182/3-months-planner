@@ -67,8 +67,14 @@ export function Step3({ onLoading }: Step<Goal[]>) {
   }, [loading])
 
   useEffect(() => {
-    setGoals(_goals)
-  }, [_goals])
+    if (!loading) {
+      setGoals(prev => {
+        if (!prev.length) return _goals
+        if (prev.length !== _goals.length) return _goals
+        return prev
+      })
+    }
+  }, [_goals, loading])
 
   return (
     <StepLayout

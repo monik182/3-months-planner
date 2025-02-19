@@ -61,7 +61,7 @@ export function IndicatorForm({ indicator, loading, onChange, onRemove }: Indica
 
   return (
     <Flex w="full" gap="1rem" flex="1" margin="1rem 0" padding="1rem">
-      <Flex gap="1rem" alignItems="center">
+      <Flex gap="1rem" alignItems="flex-start">
         <Field label="What indicator are you tracking?" helperText="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'.">
           <Input size="xs" placeholder="Eg. Bodyweight, Savings Growth, Project Completion" value={value.content} onChange={(e) => handleEdit(e, 'content')} autoComplete="off" />
         </Field>

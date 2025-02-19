@@ -57,6 +57,9 @@ export function useIndicatorActions() {
   const useDelete = () => {
     return useMutation({
       mutationFn: (indicatorId: string) => IndicatorService.deleteItem(indicatorId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      },
     })
   }
 
