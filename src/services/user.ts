@@ -15,7 +15,6 @@ const create = async (user: Prisma.UserCreateInput): Promise<User> => {
       await userHandler.create(user)
       return user
     })
-
 }
 
 const get = async (id: string): Promise<User | null> => {

@@ -29,7 +29,6 @@ export function Step3({ onLoading }: Step<Goal[]>) {
       content: '',
     }
 
-    setGoals(prev => [...prev, newGoal])
     debouncedSave(newGoal)
   }
 
@@ -44,7 +43,11 @@ export function Step3({ onLoading }: Step<Goal[]>) {
   }
 
   const saveGoal = (goal: Omit<Goal, 'status'>) => {
-    create.mutate({...goal, plan: { connect: { id: plan!.id } }})
+    create.mutate({...goal, plan: { connect: { id: plan!.id } }}, {
+      onSuccess: () => {
+        setGoals(prev => [...prev, goal])
+      }
+    })
   }
 
   const updateGoals = (id: string, content: string) => {

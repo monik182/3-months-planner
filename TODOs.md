@@ -16,7 +16,7 @@
 - plan overview is unreadable in dark mode 
 - Improve the plan view and colors and reuse component in step4
 - Delayed sync
-- Pricing page ❓
+- Pricing page ❓ (self deployed)
 - Stripe integration ❓
 - Make indicator creation a 1 liner + change the icon and button color ✅
 
@@ -30,7 +30,9 @@
   - only save on click ❓
 - FE Improvements
   - Save user data to DB on signup
-  - Create route guard
+  - Create overview progress page
+  - Create plan history page
+  - Create route guard ✅
   - Create plan read only view ✅
 - Auth Refactor
   - Replace Auth0 with Supabase auth 🚨

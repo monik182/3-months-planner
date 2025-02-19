@@ -42,7 +42,6 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
 
   const handleChange = (id: string, indicator: Partial<Indicator>) => {
     const indicatorExists = !!indicators.find(i => i.id === id)
-    setIndicatorToUpdate(null)
     if (indicatorExists) {
       updateIndicator(id, indicator)
     } else {
@@ -59,11 +58,19 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
   }
 
   const saveIndicator = (indicator: Omit<Indicator, 'status'>) => {
-    create.mutate({ ...indicator, goal: { connect: { id: goalId } } })
+    create.mutate({ ...indicator, goal: { connect: { id: goalId } } }, {
+      onSuccess: () => {
+        setIndicatorToUpdate(null)
+      }
+    })
   }
 
   const updateIndicator = (id: string, updates: Partial<Indicator>) => {
-    update.mutate({ indicatorId: id, updates })
+    update.mutate({ indicatorId: id, updates }, {
+      onSuccess: () => {
+        setIndicatorToUpdate(null)
+      }
+    })
   }
 
   const removeIndicator = (id: string) => {
