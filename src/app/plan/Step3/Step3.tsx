@@ -63,6 +63,10 @@ export function Step3({ onLoading }: Step<Goal[]>) {
     onLoading?.(loading)
   }, [loading])
 
+  useEffect(() => {
+    setGoals(_goals)
+  }, [_goals])
+
   return (
     <StepLayout
       title="Set your 1-Year Goals"
@@ -103,10 +107,10 @@ export function Step3({ onLoading }: Step<Goal[]>) {
           </Card.Root>
         ))}
       </Box>
-      <SavingSpinner loading={loading} />
       <Button variant="ghost" className="mt-5" onClick={() => createGoal()}>
         <SlPlus /> New Goal
       </Button>
+      <SavingSpinner loading={loading} />
     </StepLayout>
   )
 }
