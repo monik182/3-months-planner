@@ -12,9 +12,10 @@ interface IndicatorFormProps {
   indicator: Omit<Indicator, 'status'>
   onChange: (indicator: Omit<Indicator, 'status'>) => void
   onRemove: () => void
+  loading: boolean
 }
 
-export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormProps) {
+export function IndicatorForm({ indicator, loading, onChange, onRemove }: IndicatorFormProps) {
   const [value, setValue] = useState(indicator)
   const [error, setError] = useState('')
 
@@ -94,7 +95,7 @@ export function IndicatorForm({ indicator, onChange, onRemove }: IndicatorFormPr
       </Flex>
       {error && <Alert status="error" title={error} />}
       <Flex direction="column" justify="center" gap="5px">
-        <Button size="xs" variant="ghost" onClick={handleUpdate} colorPalette="green" title="Save">
+        <Button size="xs" variant="ghost" onClick={handleUpdate} colorPalette="green" title="Save" loading={loading}>
           <CiFloppyDisk />
         </Button>
         <Button size="xs" variant="ghost" onClick={onRemove} colorPalette="red" title="Remove">

@@ -1,6 +1,4 @@
 import { indicatorHandler } from '@/db/prismaHandler'
-
-import { IndicatorSchema } from '@/lib/validators/indicator'
 import { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -11,8 +9,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const parsedData = IndicatorSchema.parse(data)
-    const response = await indicatorHandler.create(parsedData)
+    const response = await indicatorHandler.create(data)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(JSON.stringify({ error, ok: false }), { status: 500 })

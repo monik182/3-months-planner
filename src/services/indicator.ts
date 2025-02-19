@@ -1,23 +1,28 @@
 import { indicatorHandler } from '@/db/dexieHandler'
-import { IndicatorSchema, PartialIndicatorSchema } from '@/lib/validators/indicator'
+import { PartialIndicatorSchema } from '@/lib/validators/indicator'
 import { Indicator, Prisma } from '@prisma/client'
 
 const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
 
-const create = async (indicator: Prisma.IndicatorCreateInput): Promise<Indicator> => {
-  const parsedData = IndicatorSchema.parse(indicator)
-  await indicatorHandler.create(parsedData)
-
+const create = async (indicator: Indicator): Promise<Indicator> => {
   if (!ENABLE_CLOUD_SYNC) {
-    return parsedData
+    await indicatorHandler.create(indicator)
+    return indicator
   }
 
   return fetch(`/api/indicator`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(parsedData),
+    body: JSON.stringify(indicator),
   })
-    .then(response => response.json())
+    .then(async (response) => {
+      if (!response.ok) {
+        const res = await response.json()
+        throw new Error(JSON.stringify(res.error) || 'Failed to create indicator')
+      }
+      await indicatorHandler.create(indicator)
+      return indicator
+    })
 }
 
 const get = async (id: string): Promise<Indicator | null> => {

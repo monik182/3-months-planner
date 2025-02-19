@@ -8,6 +8,7 @@ import cuid from 'cuid'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { useDebouncedCallback } from 'use-debounce'
 import { GoGraph } from 'react-icons/go'
+import { Status } from '@/app/types/types'
 
 interface IndicatorListProps {
   goalId: string
@@ -19,7 +20,7 @@ interface IndicatorListProps {
 export function IndicatorList({ goalId, planId, maxLimit, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
   const { data: indicators = [] } = indicatorActions.useGetByGoalId(goalId)
-  const [indicatorToUpdate, setIndicatorToUpdate] = useState<Omit<Indicator, 'status'> | null>()
+  const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
   const remove = indicatorActions.useDelete()
@@ -28,7 +29,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
   const disableIndicator = !canAdd || !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
 
   const handleCreate = () => {
-    const newIndicator: Omit<Indicator, 'status'> = {
+    const newIndicator: Indicator = {
       id: cuid(),
       goalId,
       planId,
@@ -36,6 +37,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
       metric: '',
       initialValue: 0,
       goalValue: 0,
+      status: Status.ACTIVE,
     }
     setIndicatorToUpdate(newIndicator)
   }
@@ -57,8 +59,8 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
     }
   }
 
-  const saveIndicator = (indicator: Omit<Indicator, 'status'>) => {
-    create.mutate({ ...indicator, goal: { connect: { id: goalId } } }, {
+  const saveIndicator = (indicator: Indicator) => {
+    create.mutate(indicator, {
       onSuccess: () => {
         setIndicatorToUpdate(null)
       }
@@ -90,6 +92,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
           indicator={indicatorToUpdate}
           onChange={(indicator) => handleChange(indicatorToUpdate.id, indicator)}
           onRemove={() => handleRemove(indicatorToUpdate.id)}
+          loading={create.isPending}
         />
       )}
       <Flex gap="10px" alignItems="center">
