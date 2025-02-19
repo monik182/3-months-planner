@@ -18,8 +18,7 @@ interface IndicatorListProps {
 
 export function IndicatorList({ goalId, planId, maxLimit, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
-  const { data: _indicators = [] } = indicatorActions.useGetByGoalId(goalId)
-  const [indicators, setIndicators] = useState<Omit<Indicator, 'status'>[]>([..._indicators])
+  const { data: indicators = [] } = indicatorActions.useGetByGoalId(goalId)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Omit<Indicator, 'status'> | null>()
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
@@ -38,13 +37,11 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
       initialValue: 0,
       goalValue: 0,
     }
-    setIndicators(prev => [...prev, newIndicator])
     setIndicatorToUpdate(newIndicator)
   }
 
   const handleChange = (id: string, indicator: Partial<Indicator>) => {
-    const indicatorExists = !!_indicators.find(i => i.id === id)
-    setIndicators(prev => prev.map(i => i.id === id ? { ...i, ...indicator } : i))
+    const indicatorExists = !!indicators.find(i => i.id === id)
     setIndicatorToUpdate(null)
     if (indicatorExists) {
       updateIndicator(id, indicator)
@@ -54,9 +51,8 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
   }
 
   const handleRemove = (id: string) => {
-    setIndicators(prev => prev.filter(s => s.id !== id))
     setIndicatorToUpdate(null)
-    const indicatorExists = !!_indicators.find(i => i.id === id)
+    const indicatorExists = !!indicators.find(i => i.id === id)
     if (indicatorExists) {
       debouncedRemove(id)
     }
