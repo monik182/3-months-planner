@@ -80,6 +80,10 @@ Table indicator_history {
   value Int [not null, default: 0]
   sequence Int [not null]
   indicator indicators [not null]
+
+  indexes {
+    (indicatorId, sequence) [unique]
+  }
 }
 
 Table notifications {

@@ -125,6 +125,7 @@ model IndicatorHistory {
 
   indicator Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
 
+  @@unique([indicatorId, sequence]) 
   @@index([indicatorId])
   @@index([planId])
   @@map("indicator_history")
