@@ -54,7 +54,7 @@ export function Header() {
           )}
         </Flex>
         <Flex gap="5px" alignItems="center">
-          {user ? (
+          {/* {user ? ( */}
             <Flex gap="1rem" alignItems="center">
               {showCreatePlanButton && (
                 <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>
@@ -68,15 +68,15 @@ export function Header() {
                 src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
                 size="md"
               />
-              {!isGuest && (
+              {/* {!isGuest && (
                 <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
-              )}
+              )} */}
             </Flex>
-          ) : (
+          {/* ) : (
             !isGuest && (
               <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
             )
-          )}
+          )} */}
         </Flex>
       </Flex>
       <Separator margin="1rem 0" />
