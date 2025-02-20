@@ -1,10 +1,11 @@
 # Post Release MOST IMPORTANT - Deadline Feb 21
-- FIX CREATE PLAN 🚨
-- Auth for prod
-- Test app responsive
-- invite guests
-- disable dark mode
 - FF for enable/disable remote sync
+- Auth for prod
+- invite guests
+- Test app responsive
+- FIX CREATE PLAN - duplicate error 🚨 ✅
+- FIX CREATE PLAN 🚨 ✅
+- disable dark mode ✅
 
 
 # Post Release

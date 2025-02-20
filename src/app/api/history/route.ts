@@ -1,4 +1,5 @@
 import { goalHistoryHandler, indicatorHistoryHandler, strategyHistoryHandler } from '@/db/prismaHandler'
+import { prisma } from '@/lib/prisma'
 
 import { NextRequest } from 'next/server'
 
@@ -17,11 +18,13 @@ export async function POST(request: NextRequest) {
 
   try {
 
-    await Promise.all([
-      goalHistoryHandler.createMany(goalHistory),
-      strategyHistoryHandler.createMany(strategiesHistory),
-      indicatorHistoryHandler.createMany(indicatorsHistory),
-    ]);
+    await prisma.$transaction(async () => {
+      return Promise.all([
+        goalHistoryHandler.createMany(goalHistory),
+        strategyHistoryHandler.createMany(strategiesHistory),
+        indicatorHistoryHandler.createMany(indicatorsHistory),
+      ]);
+    });
 
     const response = { message: "all was created successfully" }
     return new Response(JSON.stringify(response), { status: 200 })

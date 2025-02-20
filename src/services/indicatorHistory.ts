@@ -36,7 +36,7 @@ const get = async (id: string): Promise<IndicatorHistory | null> => {
 
 const getByPlanId = async (planId: string, sequence?: number): Promise<IndicatorHistoryExtended[]> => {
   const history = await indicatorHistoryHandler.findMany({ planId }, { sequence })
-  if (history) {
+  if (history?.length) {
     return history as IndicatorHistoryExtended[]
   }
 
@@ -49,7 +49,7 @@ const getByPlanId = async (planId: string, sequence?: number): Promise<Indicator
 
 const getByGoalId = async (goalId: string, sequence?: number): Promise<IndicatorHistoryExtended[]> => {
   const history = await indicatorHistoryHandler.findManyByGoalId({ goalId }, { sequence })
-  if (history) {
+  if (history?.length) {
     return history as IndicatorHistoryExtended[]
   }
 

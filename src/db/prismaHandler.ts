@@ -25,7 +25,7 @@ export const goalHandler = {
 
 export const goalHistoryHandler = {
   create: async (data: Prisma.GoalHistoryCreateInput) => prisma.goalHistory.create({ data }),
-  createMany: async (data: Prisma.GoalHistoryCreateManyInput[]) => prisma.goalHistory.createMany({ data }),
+  createMany: async (data: Prisma.GoalHistoryCreateManyInput[]) => prisma.goalHistory.createMany({ data, skipDuplicates: true }),
   findMany: async (where: Prisma.GoalHistoryWhereInput = {}, status?: string) => prisma.goalHistory.findMany({
     where: {
       ...where,
@@ -56,7 +56,7 @@ export const strategyHandler = {
 
 export const strategyHistoryHandler = {
   create: async (data: Prisma.StrategyHistoryCreateInput) => prisma.strategyHistory.create({ data }),
-  createMany: async (data: Prisma.StrategyHistoryCreateManyInput[]) => prisma.strategyHistory.createMany({ data }),
+  createMany: async (data: Prisma.StrategyHistoryCreateManyInput[]) => prisma.strategyHistory.createMany({ data, skipDuplicates: true }),
   findMany: async (where: Prisma.StrategyHistoryWhereInput = {}, seq?: string, status?: string) => prisma.strategyHistory.findMany({
     where: {
       ...where,
@@ -107,7 +107,7 @@ export const indicatorHandler = {
 
 export const indicatorHistoryHandler = {
   create: async (data: Prisma.IndicatorHistoryCreateInput) => prisma.indicatorHistory.create({ data }),
-  createMany: async (data: Prisma.IndicatorHistoryCreateManyInput[]) => prisma.indicatorHistory.createMany({ data }),
+  createMany: async (data: Prisma.IndicatorHistoryCreateManyInput[]) => prisma.indicatorHistory.createMany({ data, skipDuplicates: true }),
   findMany: async (where?: Prisma.IndicatorHistoryWhereInput) => prisma.indicatorHistory.findMany({
     where, include: {
       indicator: {
