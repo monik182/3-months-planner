@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Card, Collapsible, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
+import { Alert, Box, Button, Card, Collapsible, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/stepLayout'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { Status, Step } from '@/app/types/types'
@@ -13,6 +13,7 @@ import cuid from 'cuid'
 import { useDebouncedCallback } from 'use-debounce'
 import { SavingSpinner } from '@/components/SavingSpinner'
 
+const maxLimit = 4
 export function Step3({ onLoading }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
   const { data: _goals = [] } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
@@ -21,6 +22,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
   const update = goalActions.useUpdate()
   const remove = goalActions.useDelete()
   const loading = create.isPending || update.isPending || remove.isPending
+  const canAdd = maxLimit ? goals.length < maxLimit : true
 
   const createGoal = () => {
     const newGoal = {
@@ -108,10 +110,10 @@ export function Step3({ onLoading }: Step<Goal[]>) {
               </Flex>
             </Card.Header>
             <Card.Body>
-              <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={10} onLoading={onLoading} />
+              <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} />
             </Card.Body>
             <Card.Footer>
-              <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} />
+              <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} onLoading={onLoading} />
             </Card.Footer>
           </Card.Root>
         ))}
@@ -120,6 +122,14 @@ export function Step3({ onLoading }: Step<Goal[]>) {
         <SlPlus /> New Goal
       </Button>
       <SavingSpinner loading={loading} />
+      {!canAdd && (
+        <Alert.Root status="info" size="sm" variant="outline">
+          <Alert.Indicator />
+          <Alert.Title>
+            You have reached the maximum number of strategies for this goal
+          </Alert.Title>
+        </Alert.Root>
+      )}
     </StepLayout>
   )
 }
@@ -139,6 +149,7 @@ function Description() {
             <List.Item><Text textStyle="sm" className="inline"><b>Realistic Ambition:</b> Set goals that are challenging yet attainable within the resources and time you have.</Text></List.Item>
             <List.Item><Text textStyle="sm" className="inline"><b>Time-Bound:</b> Tie each goal to a specific due date, whether it marks the completion of the objective or the execution of the action.</Text></List.Item>
           </List.Root>
+          <Text textStyle="sm">You can create up to 4 goals, with a maximum of 5 strategies for each goal, and up to 2 indicators per goal to track progress effectively.</Text>
           <Text textStyle="sm">Example: Instead of &apos;Stop procrastinating,&apos; write &apos;Complete my weekly project tasks by Friday.&apos; This ensures your goals are actionable, motivating, and directly tied to your progress.</Text>
           <Text textStyle="sm"><Em>You can add as many goals as you want, but for better results, focus on no more than three goals at a time. This will help you channel your energy and efforts effectively to maximize impact.</Em></Text>
         </Collapsible.Content>
