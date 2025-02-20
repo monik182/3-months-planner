@@ -33,6 +33,10 @@ Table goal_history {
   planId String [not null]
   sequence Int [not null]
   goal goals [not null]
+
+  indexes {
+    (goalId, sequence) [unique]
+  }
 }
 
 Table strategies {
@@ -58,6 +62,10 @@ Table strategy_history {
   sequence Int [not null]
   frequencies Boolean[] [not null]
   strategy strategies [not null]
+
+  indexes {
+    (strategyId, sequence) [unique]
+  }
 }
 
 Table indicators {

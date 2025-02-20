@@ -58,6 +58,7 @@ model GoalHistory {
 
   goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
+  @@unique([goalId, sequence])
   @@index([goalId])
   @@index([planId])
   @@map("goal_history")
@@ -93,6 +94,7 @@ model StrategyHistory {
 
   strategy Strategy @relation(fields: [strategyId], references: [id], onDelete: Cascade)
 
+  @@unique([strategyId, sequence])
   @@index([strategyId])
   @@index([planId])
   @@map("strategy_history")
@@ -125,7 +127,7 @@ model IndicatorHistory {
 
   indicator Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
 
-  @@unique([indicatorId, sequence]) 
+  @@unique([indicatorId, sequence])
   @@index([indicatorId])
   @@index([planId])
   @@map("indicator_history")
