@@ -19,7 +19,7 @@ export function GoalDetail({ goal, seq, onScoreCalculated }: GoalProps) {
 
   const updateStrategy = strategyHistoryActions.useUpdate()
   const updateIndicator = indicatorHistoryActions.useUpdate()
-  const score = calculateCompletionScore(strategies)
+  const score = calculateCompletionScore(strategies.filter((strategy) => !!strategy.strategy.content))
 
   const isLoading = isLoadingStrategies || isLoadingIndicators
   const isLoadingUpdate = updateStrategy.isPending || isLoadingStrategies || isRefetching
@@ -43,7 +43,7 @@ export function GoalDetail({ goal, seq, onScoreCalculated }: GoalProps) {
         <Text fontSize="xs">{isLoadingUpdate ? <Spinner size="xs" /> : score}/100%</Text>
       </Card.Header>
       <Card.Body className="flex gap-5">
-        {strategies.map((strategy) => (<StrategyDetail key={strategy.id} strategy={strategy} onChange={updateStrategy.mutate} />))}
+        {strategies.filter((strategy) => !!strategy.strategy.content).map((strategy) => (<StrategyDetail key={strategy.id} strategy={strategy} onChange={updateStrategy.mutate} />))}
       </Card.Body>
       <Card.Footer className="flex gap-5" alignItems="flex-end">
         {indicators.map((indicator) => (<IndicatorDetail key={indicator.id} indicator={indicator} onChange={updateIndicator.mutate} />))}

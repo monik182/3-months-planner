@@ -14,8 +14,21 @@ export const StrategyHistorySchema = z.object({
   strategy: z.object({ connect: z.object({ id: z.string() }) }),
 })
 
+export const StrategyHistoryNoStrategySchema = z.object({
+  id: z.string().default(() => cuid()),
+  strategyId: z.string().cuid(),
+  planId: z.string().cuid(),
+  overdue: z.boolean().default(false),
+  completed: z.boolean().default(false),
+  firstUpdate: z.date().nullable(),
+  lastUpdate: z.date().nullable(),
+  sequence: z.number().int(),
+  frequencies: z.array(z.boolean()).default([]),
+})
+
 export const PartialStrategyHistorySchema = StrategyHistorySchema.partial()
 export const StrategyHistoryArraySchema = z.array(StrategyHistorySchema)
+export const StrategyHistoryNoStrategyArraySchema = z.array(StrategyHistoryNoStrategySchema)
 export const PartialStrategyHistoryArraySchema = z.array(PartialStrategyHistorySchema)
 export type StrategyHistorySchemaType = z.infer<typeof StrategyHistorySchema>
 export type PartialStrategyHistorySchemaType = z.infer<typeof PartialStrategyHistorySchema>

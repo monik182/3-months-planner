@@ -9,8 +9,16 @@ export const GoalHistorySchema = z.object({
   goal: z.object({ connect: z.object({ id: z.string() }) })
 })
 
+export const GoalHistoryNoGoal = z.object({
+  id: z.string().default(() => cuid()),
+  goalId: z.string().cuid(),
+  planId: z.string().cuid(),
+  sequence: z.number().int(),
+})
+
 export const PartialGoalHistorySchema = GoalHistorySchema.partial()
 export const GoalHistoryArraySchema = z.array(GoalHistorySchema)
+export const GoalHistoryNoGoalArraySchema = z.array(GoalHistoryNoGoal)
 export const PartialGoalHistoryArraySchema = z.array(PartialGoalHistorySchema)
 export type GoalHistorySchemaType = z.infer<typeof GoalHistorySchema>
 export type PartialGoalHistorySchemaType = z.infer<typeof PartialGoalHistorySchema>
