@@ -1,24 +1,24 @@
 # Post Release MOST IMPORTANT - Deadline Feb 21
-- FF for enable/disable remote sync
-- Auth for prod
-- invite guests
 - Test app responsive
+- invite guests flow ✅
+- Auth for prod ✅ [Not needed yet]
 - FIX CREATE PLAN - duplicate error 🚨 ✅
 - FIX CREATE PLAN 🚨 ✅
 - disable dark mode ✅
 
 
 # Post Release
-- Create test DB replica
-- Test app theme dark
-- Upload screenshots for feedback
+- FF for enable/disable remote sync
 - Improve the goals/strategies/indicator creation forms
 - Improve HOME page with steps and everything
-- plan overview is unreadable in dark mode 
-- Improve the plan view and colors and reuse component in step4
 - Delayed sync
+- Improve the plan view and colors and reuse component in step4
+- Upload screenshots for feedback
+- plan overview is unreadable in dark mode (related to next item)
+- Test app theme dark
 - Pricing page ❓ (self deployed)
 - Stripe integration ❓
+- Create test DB replica ✅
 - Make indicator creation a 1 liner + change the icon and button color ✅
 
 
