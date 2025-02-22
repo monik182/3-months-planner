@@ -37,7 +37,6 @@ export function WaitListSection() {
 
     create.mutate({ email, invited: !ENABLE_CLOUD_SYNC, inviteToken  }, {
       onSuccess: (response: any) => {
-        console.log('response>>>>', response)
         if (!response.ok) {
           throw new Error(response.message)
         }

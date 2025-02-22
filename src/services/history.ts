@@ -9,8 +9,14 @@ const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC |
 
 const create = async (planId: string) => {
   const data = await parseData(planId)
+  const { goalHistory, strategiesHistory, indicatorsHistory } = data
 
   if (!ENABLE_CLOUD_SYNC) {
+    await Promise.all([
+      goalHistoryHandler.createMany(goalHistory),
+      strategyHistoryHandler.createMany(strategiesHistory),
+      indicatorHistoryHandler.createMany(indicatorsHistory),
+    ])
     return data
   }
 
@@ -25,7 +31,6 @@ const create = async (planId: string) => {
         const res = await response.json()
         throw new Error(JSON.stringify(res.error) || 'Failed to create indicator')
       }
-      const { goalHistory, strategiesHistory, indicatorsHistory } = data
       await Promise.all([
         goalHistoryHandler.createMany(goalHistory),
         strategyHistoryHandler.createMany(strategiesHistory),

@@ -113,7 +113,7 @@ function PlanPage() {
               <EmptyState
                 icon={<MdOutlineCelebration />}
                 title="Congrats!"
-                size="lg"
+                size={{ base: "sm", lg: "lg" }}
                 description="You have created your plan!"
               >
                 <Flex gap="1rem" direction="column">

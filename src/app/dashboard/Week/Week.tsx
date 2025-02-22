@@ -25,7 +25,7 @@ export function Week({ seq, plan }: WeekProps) {
     })
   }
 
-  const weekScore = Math.floor(score.reduce((acc, score) => acc + score, 0) / goals.length)
+  const weekScore = Math.floor(score.reduce((acc, score) => acc + score, 0) / (goals.length || 1))
 
   if (isLoading) {
     return (
