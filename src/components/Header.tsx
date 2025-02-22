@@ -1,9 +1,9 @@
 'use client'
-import { Flex, HStack, Heading, Separator, Text } from '@chakra-ui/react'
-import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
+import { Flex, HStack, Heading, Separator } from '@chakra-ui/react'
+import { SlNotebook } from 'react-icons/sl'
 import { usePathname, useRouter } from 'next/navigation'
 import { Avatar } from './ui/avatar'
-import Link from 'next/link'
+// import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { LuNotebookPen } from 'react-icons/lu'
 import { usePlanContext } from '@/app/providers/usePlanContext'
@@ -38,7 +38,7 @@ export function Header() {
   }, [pathname])
 
   return (
-    <header>
+    <header style={{ backgroundColor: "white" }}>
       <Flex justify="space-between" align="center" marginTop="1rem">
         <Flex gap="1rem" align="center">
           <Heading size="2xl" onClick={goToHome} cursor="pointer">
@@ -46,7 +46,7 @@ export function Header() {
           </Heading>
           {hasStartedPlan && (
             <SegmentedControl
-              size="lg"
+              size={{ base: "sm", lg: "lg" }}
               value={value}
               onValueChange={(e) => handleOnChange(e.value)}
               items={items}

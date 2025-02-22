@@ -37,7 +37,7 @@ function Dashboard() {
 
   return (
     <Grid>
-      <Grid gap="1rem" gridTemplateColumns="30% 70%" padding="1rem 0" alignItems="center">
+      <Grid gap="1rem" gridTemplateColumns={{ base: "none", lg: "30% 70%" }} padding="1rem 0" alignItems="center" marginTop="1rem">
         <Box>
           <Heading size="4xl">Week {week}</Heading>
           {hasNotStarted && <Text fontSize="xs"> (Your plan has not yet started)</Text>}
@@ -79,8 +79,13 @@ function Dashboard() {
         </EmptyState>
         :
         <Box marginTop="2rem">
-          <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle">
-            <Tabs.List>
+          <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle"  width="calc(100vw - 6rem)">
+            <Tabs.List
+              overflowX="auto"
+              whiteSpace="nowrap"
+              scrollBehavior="smooth"
+              gap="1rem"
+            >
               {DEFAULT_WEEKS.map((week) => (
                 <Tabs.Trigger key={`week-${week}`} value={`tab-${week}`}>W-{week}</Tabs.Trigger>
               ))}

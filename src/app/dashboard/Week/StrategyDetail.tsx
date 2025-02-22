@@ -27,17 +27,19 @@ export function StrategyDetail({ strategy, onChange }: StrategyDetailProps) {
   }, [strategy.frequencies, frequency])
 
   return (
-    <Flex gap="5px">
+    <Flex gap="5px" flexDirection={{ base: "column", lg: "row" }}>
       <Text fontSize="md">{content}</Text>
-      {frequencies.map((value, index) => (
-        <Checkbox 
-          key={index} 
-          size="lg" 
-          defaultChecked={value}
-          variant="subtle"
-          onCheckedChange={(e) => handleOnCheckedChange(e, index)}
-        />
-      ))}
+      <Flex gap="5px">
+        {frequencies.map((value, index) => (
+          <Checkbox 
+            key={index} 
+            size="lg" 
+            defaultChecked={value}
+            variant="subtle"
+            onCheckedChange={(e) => handleOnCheckedChange(e, index)}
+          />
+        ))}
+      </Flex>
     </Flex>
   )
 }

@@ -44,7 +44,7 @@ export function Week({ seq, plan }: WeekProps) {
         </Box>
         <Text fontSize="lg">{weekScore}/100%</Text>
       </Flex>
-      <Grid gap="1.5rem" gridTemplateColumns="1fr 1fr">
+      <Grid gap="1.5rem" gridTemplateColumns={{lg: "1fr 1fr", base: "1fr"}}>
         {goals.map((g, index) => (<GoalDetail key={g.id} goal={g} seq={seq} onScoreCalculated={(score) => handleGoalScoreUpdate(index, score)} />))}
       </Grid>
     </Flex>
