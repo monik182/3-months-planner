@@ -1,5 +1,5 @@
 'use client'
-import { Alert, Box, Button, Card, Collapsible, Editable, Em, Flex, IconButton, List, Text } from '@chakra-ui/react'
+import { Alert, Box, Button, Card, Collapsible, Editable, Em, Flex, IconButton, List, Separator, Text } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/stepLayout'
 import { SlClose, SlPlus } from 'react-icons/sl'
 import { Status, Step } from '@/app/types/types'
@@ -21,6 +21,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
   const create = goalActions.useCreate()
   const update = goalActions.useUpdate()
   const remove = goalActions.useDelete()
+  const loadingText = create.isPending ? 'Creating' : 'Saving'
   const loading = create.isPending || update.isPending || remove.isPending
   const canAdd = maxLimit ? goals.length < maxLimit : true
 
@@ -90,7 +91,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
               <Flex key={goal.id} justify="space-between">
                 <Editable.Root
                   value={goal.content}
-                  placeholder="Click to edit"
+                  placeholder="Define your goal"
                   defaultEdit
                   width="100%"
                   onValueChange={(e) => updateGoalContent(goal.id, e.value)}
@@ -112,6 +113,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
             <Card.Body>
               <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} />
             </Card.Body>
+            <Separator />
             <Card.Footer>
               <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} onLoading={onLoading} />
             </Card.Footer>
@@ -121,7 +123,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
       <Button variant="ghost" className="mt-5" onClick={() => createGoal()}>
         <SlPlus /> New Goal
       </Button>
-      <SavingSpinner loading={loading} />
+      <SavingSpinner loading={loading} text={loadingText} />
       {!canAdd && (
         <Alert.Root status="info" size="sm" variant="outline">
           <Alert.Indicator />

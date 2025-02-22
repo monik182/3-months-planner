@@ -58,7 +58,11 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
   }, [strategy])
 
   return (
-    <Grid templateColumns="45% 1fr 1fr 2.5rem" alignItems="center" gap="1rem" onClick={onClick}>
+    <Grid
+      templateColumns={{ base: "none", md: "45% 1fr 1fr 2.5rem" }}
+      templateRows={{ base: "repeat(4, auto)", md: "none" }}
+      alignItems="center" gap="1rem" onClick={onClick}
+    >
       <Flex justify="space-between" align="center" gap="1rem">
         <Editable.Root
           value={value.content}
@@ -71,6 +75,15 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
           <Editable.Preview />
           <Editable.Input disabled={disabled} autoComplete="off" />
         </Editable.Root>
+        <IconButton
+          size="xs"
+          variant="ghost"
+          aria-label="Remove list item"
+          onClick={onRemove}
+          display={{ base: "block", md: "none" }}
+        >
+          <SlClose size="xs" />
+        </IconButton>
       </Flex>
       {isEditing ? (
         <WeeksSelector weeks={value.weeks} setWeeks={handleWeekUpdate} onFocusOutside={toggleWeeksSelector} />
@@ -83,13 +96,14 @@ export const StrategyForm = React.memo(function StrategyForm({ strategy, disable
             <FrequencySelector frequency={value.frequency} setFrequency={handleFrequencyUpdate} onFocusOutside={toggleFrequencySelector} />
           ) : (
             <Text textStyle="sm" onClick={toggleFrequencySelector}>{DEFAULT_FREQUENCY_LIST[value.frequency - 1].label}</Text>
-        )}
+          )}
       </Box>
       <IconButton
         size="xs"
         variant="ghost"
         aria-label="Remove list item"
         onClick={onRemove}
+        display={{ base: "none", md: "block" }}
       >
         <SlClose size="xs" />
       </IconButton>

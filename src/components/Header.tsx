@@ -14,11 +14,11 @@ import { useAccountContext } from '@/app/providers/useAccountContext'
 
 export function Header() {
   const { user, isGuest } = useAccountContext()
-  const { hasPlan } = usePlanContext()
+  const { hasStartedPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
   const [value, setValue] = useState('plan')
-  const showCreatePlanButton = !hasPlan && pathname !== '/plan'
+  const showCreatePlanButton = !!user && !isGuest && !hasStartedPlan && pathname !== '/plan'
 
   const goToHome = () => {
     router.push('/')
@@ -44,7 +44,7 @@ export function Header() {
           <Heading size="2xl" onClick={goToHome} cursor="pointer">
             The Planner
           </Heading>
-          {hasPlan && (
+          {hasStartedPlan && (
             <SegmentedControl
               size="lg"
               value={value}

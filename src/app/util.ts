@@ -87,7 +87,7 @@ export function createStrategyHistoryList(planId: string, strategies: Strategy[]
 }
 
 export function createIndicatorHistoryList(planId: string, indicators: Indicator[]): Prisma.IndicatorHistoryCreateManyInput[] {
-  return indicators.map((indicator) => {
+  return indicators?.map((indicator) => {
     return DEFAULT_WEEKS.map((week) => {
       const sequence = parseInt(week)
       return {

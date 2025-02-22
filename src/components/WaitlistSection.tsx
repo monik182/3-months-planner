@@ -66,10 +66,10 @@ export function WaitListSection() {
       alignItems="center"
       justifyContent="center"
     >
-      <Heading fontSize="3xl" fontWeight="bold" mb={4}>
+      <Heading fontSize={{ lg: "3xl", base: "xl" }} fontWeight="bold" mb={4}>
         Join Our Waitlist: Be the First to Discover What&apos;s Coming!
       </Heading>
-      <Text fontSize="lg" color="gray.600" mb={6}>
+      <Text fontSize={{ lg: "lg", base: "md" }} color="gray.600" mb={6}>
         Stay Focused and Achieve More: Get Early Access to <strong>The Planner</strong>, Your 12-Week Year Success Tool!
       </Text>
 

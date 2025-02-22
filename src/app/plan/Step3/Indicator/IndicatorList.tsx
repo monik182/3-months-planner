@@ -24,6 +24,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
   const remove = indicatorActions.useDelete()
+  const loadingText = create.isPending ? 'Creating' : 'Saving'
   const loading = create.isPending || update.isPending || remove.isPending
   const canAdd = maxLimit ? indicators.length < maxLimit : true
   const disableIndicator = !canAdd || !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
@@ -96,7 +97,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
         />
       )}
       <Flex gap="10px" alignItems="center">
-        {indicators.map((indicator) => (
+        {indicators?.map((indicator) => (
           <Tag.Root key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" cursor="pointer">
             <Tag.StartElement>
               <GoGraph />
@@ -110,7 +111,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
         <Button size="xs" variant="outline" className="mt-5" onClick={handleCreate} disabled={disableIndicator}>
           <SlPlus /> Add Indicator
         </Button>
-        <SavingSpinner loading={loading} />
+        <SavingSpinner loading={loading} text={loadingText} />
       </Flex>
       {!canAdd && (
         <Alert.Root status="info" size="sm" variant="outline">

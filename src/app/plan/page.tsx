@@ -88,11 +88,15 @@ function PlanPage() {
   if (!plan) return null
 
   return (
-    <StepsRoot linear variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={handleStepChange}>
+    <StepsRoot 
+      linear 
+      size={{ base: "xs", lg: "lg" }}
+      orientation={{ base: "vertical", lg: "horizontal" }} 
+      variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={handleStepChange}>
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
         <GridItem>
-          <StepsList>
-            {steps.map((step, index) => (
+          <StepsList hideFrom="sm">
+            {steps.filter((_, index) => index === step).map((step, index) => (
               <StepsItem key={index} index={index} title={step.title} />
             ))}
           </StepsList>

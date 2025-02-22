@@ -59,8 +59,8 @@ function EarlyAccess(props: WithTokenPageProps) {
   return (
     <Flex maxW="container.lg" alignItems="center" justifyContent="center" height="calc(100% - 5rem)">
       <VStack gap={6} textAlign="center">
-        <Heading size="4xl">Welcome to the Early Access!</Heading>
-        <Text fontSize="lg" color="gray.600">
+        <Heading size={{ lg: "4xl", base: "2xl" }}>Welcome to the Early Access!</Heading>
+        <Text fontSize={{ lg: "lg", base: "md" }} color="gray.600">
           Thank you for being an early user. Your feedback helps shape the future of <strong>The Planner</strong>.
         </Text>
         <Button

@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div className="container">
       <section className="page">
-        <Heading as="h1" size="7xl">The Planner</Heading>
+        <Heading as="h1" size={{ lg: "7xl", base: "4xl" }}>The Planner</Heading>
         <Flex flexDir="column" gap="1rem" alignItems="center">
           <Text>Stay Focused and Achieve More</Text>
           <Button size="xl" onClick={() => router.push('/#wait-list')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>

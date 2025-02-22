@@ -60,8 +60,8 @@ export function IndicatorForm({ indicator, loading, onChange, onRemove }: Indica
   }, [indicator])
 
   return (
-    <Flex w="full" gap="1rem" flex="1" margin="1rem 0" padding="1rem">
-      <Flex gap="1rem" alignItems="flex-start">
+    <Flex w="full" gap="1rem" flex="1" margin="1rem 0" padding="1rem" direction={{ base: "column", md: "row" }}>
+      <Flex gap="1rem" alignItems="flex-start" direction={{ base: "column", md: "row" }}>
         <Field label="What indicator are you tracking?" helperText="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'.">
           <Input size="xs" placeholder="Eg. Bodyweight, Savings Growth, Project Completion" value={value.content} onChange={(e) => handleEdit(e, 'content')} autoComplete="off" />
         </Field>
@@ -94,7 +94,7 @@ export function IndicatorForm({ indicator, loading, onChange, onRemove }: Indica
         </Field>
       </Flex>
       {error && <Alert status="error" title={error} />}
-      <Flex direction="column" justify="center" gap="5px">
+      <Flex justify="center" gap="5px" direction={{ base: "row", md: "colum" }}>
         <Button size="xs" variant="ghost" onClick={handleUpdate} colorPalette="green" title="Save" loading={loading}>
           <CiFloppyDisk />
         </Button>

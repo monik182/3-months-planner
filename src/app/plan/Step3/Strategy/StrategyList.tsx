@@ -24,6 +24,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
   const create = strategyActions.useCreate()
   const update = strategyActions.useUpdate()
   const remove = strategyActions.useDelete()
+  const loadingText = create.isPending ? 'Creating' : 'Saving'
   const loading = create.isPending || update.isPending || remove.isPending
   const canAdd = maxLimit ? strategies.length < maxLimit : true
 
@@ -77,7 +78,11 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
   }, [loading])
 
   useEffect(() => {
-    setStrategies(_strategies)
+    setStrategies(prev => {
+      if (!prev.length) return _strategies
+      if (prev.length !== _strategies.length) return _strategies
+      return prev
+    })
   }, [_strategies])
 
   return (
@@ -94,7 +99,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
       <Button size="xs" variant="ghost" className="mt-5" onClick={handleCreate} disabled={!canAdd}>
         <SlPlus /> Add Strategy
       </Button>
-      <SavingSpinner loading={loading} />
+      <SavingSpinner loading={loading} text={loadingText} />
       {!canAdd && (
         <Alert.Root status="info" size="sm" variant="outline">
           <Alert.Indicator />
