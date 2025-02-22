@@ -1,7 +1,15 @@
 import { userHandler } from '@/db/dexieHandler'
 import { Prisma, User } from '@prisma/client'
+import cuid from 'cuid'
+
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (user: Prisma.UserCreateInput): Promise<User> => {
+  if (!ENABLE_CLOUD_SYNC) {
+    const localUser = { ...user, id: cuid() }
+    await userHandler.create(localUser as User)
+    return localUser as User
+  }
   return fetch(`/api/user`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -23,6 +31,11 @@ const get = async (id: string): Promise<User | null> => {
     return user
   }
 
+
+  if (!ENABLE_CLOUD_SYNC) {
+    return null
+  }
+
   return fetch(`/api/user/${id}`).then(response => response.json())
 }
 
@@ -30,6 +43,10 @@ const getByEmail = async (email: string): Promise<User | null> => {
   const user = await userHandler.findOneByEmail(email)
   if (user) {
     return user
+  }
+
+  if (!ENABLE_CLOUD_SYNC) {
+    return null
   }
 
   const response = await fetch(`/api/user/email/${email}`)
@@ -51,6 +68,10 @@ const getByAuth0Id = async (id: string): Promise<User | null> => {
   const user = await userHandler.findOneByAuth0Id(id)
   if (user) {
     return user
+  }
+
+  if (!ENABLE_CLOUD_SYNC) {
+    return null
   }
 
   return fetch(`/api/user/auth0/${id}`).then(response => response.json())

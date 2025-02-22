@@ -5,7 +5,7 @@ import { IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicat
 import { StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
 import { Goal, GoalHistory, IndicatorHistory, StrategyHistory } from '@prisma/client'
 
-const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (planId: string) => {
   const data = await parseData(planId)

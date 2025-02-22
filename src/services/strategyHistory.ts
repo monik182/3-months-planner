@@ -3,7 +3,7 @@ import { StrategyHistoryExtended } from '@/app/types/types'
 import { Prisma, StrategyHistory } from '@prisma/client'
 import { PartialStrategyHistorySchema, StrategyHistorySchema } from '@/lib/validators/strategyHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (strategy: Prisma.StrategyHistoryCreateInput): Promise<StrategyHistory> => {
   const parsedData = StrategyHistorySchema.parse(strategy)

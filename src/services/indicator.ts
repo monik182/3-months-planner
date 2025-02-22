@@ -2,7 +2,7 @@ import { indicatorHandler } from '@/db/dexieHandler'
 import { PartialIndicatorSchema } from '@/lib/validators/indicator'
 import { Indicator, Prisma } from '@prisma/client'
 
-const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (indicator: Indicator): Promise<Indicator> => {
   if (!ENABLE_CLOUD_SYNC) {

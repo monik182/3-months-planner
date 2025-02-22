@@ -1,6 +1,6 @@
 import { DixiePlan, ParentProps } from '@/app/types/types'
 import { db } from '@/db/dexie'
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
 
 export const planHandler = {
   create: async (data: DixiePlan) => db.plans.add(data),
@@ -217,4 +217,14 @@ export const userHandler = {
   findOneByAuth0Id: async (auth0Id: string) => db.users.where('auth0Id').equals(auth0Id).first(),
   update: async (id: string, data: Partial<User>) => db.users.update(id, data),
   delete: async (id: string) => db.users.delete(id),
+}
+
+export const waitlistHandler = {
+  create: async (data: Waitlist) => db.waitlist.add(data),
+  findOne: async (id: string) => db.waitlist.get(id),
+  getAll: async () => db.waitlist.toArray(),
+  findFirst: async () => db.waitlist.where('id').notEqual('null').first(),
+  findOneByToken: async (token: string) => db.waitlist.where('inviteToken').equals(token).first(),
+  update: async (id: string, data: Partial<User>) => db.waitlist.update(id, data),
+  delete: async (id: string) => db.waitlist.delete(id),
 }

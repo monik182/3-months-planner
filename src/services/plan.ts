@@ -3,7 +3,7 @@ import { planHandler } from '@/db/dexieHandler'
 import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { Plan, Prisma } from '@prisma/client'
 
-const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const getByUserId = async (userId: string): Promise<Plan | null> => {
   const planLocal = await planHandler.findInProgress(userId)

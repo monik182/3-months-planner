@@ -3,7 +3,7 @@ import { GoalHistoryExtended } from '@/app/types/types'
 import { Prisma, GoalHistory } from '@prisma/client'
 import { GoalHistorySchema, PartialGoalHistorySchema } from '@/lib/validators/goalHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (goal: Prisma.GoalHistoryCreateInput): Promise<GoalHistory> => {
   const parsedData = GoalHistorySchema.parse(goal)

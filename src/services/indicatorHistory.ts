@@ -3,7 +3,7 @@ import { IndicatorHistoryExtended } from '@/app/types/types'
 import { IndicatorHistory, Prisma } from '@prisma/client'
 import { IndicatorHistorySchema, PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
 
-const ENABLE_CLOUD_SYNC = process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (indicator: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
   const parsedData = IndicatorHistorySchema.parse(indicator)

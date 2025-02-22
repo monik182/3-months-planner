@@ -12,11 +12,17 @@ import {
 import { toaster } from '@/components/ui/toaster'
 import { Button } from '@/components/ui/button'
 import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
+import { useRouter } from 'next/navigation'
+import cuid from 'cuid'
+
+const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 export function WaitListSection() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const { useCreate } = useWaitlistActions()
   const create = useCreate()
+  const inviteToken = !ENABLE_CLOUD_SYNC ? cuid() : undefined
 
   const handleSubmit = async () => {
     if (!email.includes('@')) {
@@ -29,8 +35,9 @@ export function WaitListSection() {
       return
     }
 
-    create.mutate({ email }, {
+    create.mutate({ email, invited: !ENABLE_CLOUD_SYNC, inviteToken  }, {
       onSuccess: (response: any) => {
+        console.log('response>>>>', response)
         if (!response.ok) {
           throw new Error(response.message)
         }
@@ -43,6 +50,12 @@ export function WaitListSection() {
         })
 
         setEmail('')
+        if (!ENABLE_CLOUD_SYNC) {
+          setTimeout(() => {
+            router.replace(`/early-access?token=${inviteToken}`)
+          }, 1000)
+        }
+
       },
       onError: (error) => {
         toaster.create({
