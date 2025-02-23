@@ -1,6 +1,6 @@
 import { IndicatorDetail } from '@/app/dashboard/Week/IndicatorDetail'
 import { StrategyDetail } from '@/app/dashboard/Week/StrategyDetail'
-import { usePlanContext } from '@/app/providers/usePlanContext'
+import { useDashboardContext } from '@/app/dashboard/dashboardContext'
 import { GoalHistoryExtended } from '@/app/types/types'
 import { calculateCompletionScore } from '@/app/util'
 import { Card, Center, Spinner, Text } from '@chakra-ui/react'
@@ -11,7 +11,7 @@ interface GoalProps {
 }
 
 export function GoalDetail({ goal, seq }: GoalProps) {
-  const { strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
+  const { strategyHistoryActions, indicatorHistoryActions } = useDashboardContext()
   const { data: strategies = [], isLoading: isLoadingStrategies, isRefetching } = strategyHistoryActions.useGetByGoalId(goal.goalId, seq)
   const { data: indicators = [], isLoading: isLoadingIndicators } = indicatorHistoryActions.useGetByGoalId(goal.goalId, seq)
 
@@ -19,8 +19,8 @@ export function GoalDetail({ goal, seq }: GoalProps) {
   const updateIndicator = indicatorHistoryActions.useUpdate()
   const score = calculateCompletionScore(strategies.filter((strategy) => !!strategy.strategy.content))
 
-  const isLoading = isLoadingStrategies || isLoadingIndicators
-  const isLoadingUpdate = updateStrategy.isPending || isLoadingStrategies || isRefetching
+  const isLoading = isLoadingStrategies || isLoadingIndicators || isRefetching
+  const isLoadingUpdate = updateStrategy.isPending || isRefetching
 
   if (isLoading) {
     return (

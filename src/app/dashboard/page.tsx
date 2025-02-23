@@ -9,16 +9,15 @@ import { Week } from '@/app/dashboard/Week/Week'
 import { useRouter } from 'next/navigation'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
-import { useAccountContext } from '@/app/providers/useAccountContext'
 import withAuth from '@/app/hoc/withAuth'
 import { useMemo } from 'react'
-import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
+import { Overview } from '@/app/dashboard/Overview'
+import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
 
 function Dashboard() {
   const router = useRouter()
-  const { user } = useAccountContext()
-  const { planActions, goalHistoryActions, strategyHistoryActions } = usePlanContext()
-  const { data: plan, isLoading } = planActions.useGet(user?.id as string)
+  const { plan, isLoading } = usePlanContext()
+  const { goals = [], strategies = [], isLoading: isLoadingContext } = useDashboardContext()
   const today = dayjs().format('DD MMMM YYYY')
   const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
@@ -26,9 +25,7 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
   const week = hasNotStarted ? 1 : currentWeek
-  const { data: goals = [], isLoading: isLoadingGoals } = goalHistoryActions.useGetByPlanId(plan?.id as string)
-  const { data: strategies = [], isLoading: isLoadingStrategies } = strategyHistoryActions.useGetByPlanId(plan?.id as string)
-  const loading = isLoading || isLoadingGoals || isLoadingStrategies
+  const loading = isLoading || isLoadingContext
   const scores = useMemo(() => {
     return DEFAULT_WEEKS.map((week) => {
       const filteredGoals = goals.filter((g) => g.sequence.toString() === week)
@@ -79,14 +76,6 @@ function Dashboard() {
           <Text><b>End of year:</b> {endOfYPlan}</Text>
           <Text><b>Today:</b> {today}</Text>
         </Box>
-        <LineChart width={1000} height={300} data={chartData}
-          margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="label" interval={0} />
-          <YAxis domain={[0, 100]} ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]} />
-          <Tooltip />
-          <Line type="monotone" dataKey="score" stroke="#8884d8" />
-        </LineChart>
       </Grid>
 
       {hasNotStarted ?
@@ -109,11 +98,15 @@ function Dashboard() {
               scrollBehavior="smooth"
               gap="1rem"
             >
+              <Tabs.Trigger key="overview" value="overview">W-0</Tabs.Trigger>
               {DEFAULT_WEEKS.map((week) => (
                 <Tabs.Trigger key={`week-${week}`} value={`tab-${week}`}>W-{week}</Tabs.Trigger>
               ))}
               <Tabs.Indicator rounded="l2" />
             </Tabs.List>
+            <Tabs.Content key="overview" value="overview">
+              <Overview chartData={chartData} />
+            </Tabs.Content>
             {DEFAULT_WEEKS.map((week, index) => (
               <Tabs.Content key={week} value={`tab-${week}`}>
                 <Week seq={Number(week)} plan={plan!} score={scores[index]} />
@@ -127,4 +120,12 @@ function Dashboard() {
   )
 }
 
-export default withAuth(Dashboard)
+function DashboardWithContext() {
+  return (
+    <DashboardProvider>
+      <Dashboard />
+    </DashboardProvider>
+  )
+}
+
+export default withAuth(DashboardWithContext)

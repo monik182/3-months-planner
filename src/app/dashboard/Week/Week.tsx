@@ -1,5 +1,5 @@
 import { GoalDetail } from '@/app/dashboard/Week/GoalDetail'
-import { usePlanContext } from '@/app/providers/usePlanContext'
+import { useDashboardContext } from '@/app/dashboard/dashboardContext'
 import { calculateWeekEndDate, calculateWeekStartDate, formatDate } from '@/app/util'
 import { Box, Center, Flex, Grid, Heading, Spinner, Text } from '@chakra-ui/react'
 import { Plan } from '@prisma/client'
@@ -11,7 +11,7 @@ interface WeekProps {
 }
 
 export function Week({ score, seq, plan }: WeekProps) {  
-  const { goalHistoryActions } = usePlanContext()
+  const { goalHistoryActions } = useDashboardContext()
   const { data: goals = [], isLoading } = goalHistoryActions.useGetByPlanId(plan?.id as string, seq)
   const startDate = calculateWeekStartDate(plan.startDate, seq)
   const endDate = calculateWeekEndDate(startDate)
