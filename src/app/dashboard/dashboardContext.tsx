@@ -19,14 +19,14 @@ type DashboardContextType = {
   goals: GoalHistoryExtended[] | undefined,
   strategies: StrategyHistoryExtended[] | undefined,
   indicators: IndicatorHistoryExtended[] | undefined,
-  goalHistoryActions: UseGoalHistoryActions
-  strategyHistoryActions: UseStrategyHistoryActions
-  indicatorHistoryActions: UseIndicatorHistoryActions
+  goalHistoryActions: UseGoalHistoryActions,
+  strategyHistoryActions: UseStrategyHistoryActions,
+  indicatorHistoryActions: UseIndicatorHistoryActions,
+  getStrategiesByGoalId: (goalId: string, seq?: string) => StrategyHistoryExtended[],
+  getIndicatorsByGoalId: (goalId: string, seq?: string) => IndicatorHistoryExtended[],
 }
 
-const DashboardContext = createContext<DashboardContextType | undefined>(
-  undefined
-)
+const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 
 interface DashboardTrackingProviderProps {
   children: React.ReactNode
@@ -42,9 +42,27 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
   const indicators = indicatorHistoryActions.useGetByPlanId(plan?.id as string)
   const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading || goals.isRefetching || strategies.isRefetching || indicators.isRefetching
 
-  const { weeklyScores, overallGoalScores, overallStrategyScores } = useMemo(() => {
+  const { strategiesByGoal, indicatorsByGoal, weeklyScores, overallGoalScores, overallStrategyScores } = useMemo(() => {
+    const strategiesByGoal = new Map<string, StrategyHistoryExtended[]>()
+    const indicatorsByGoal = new Map<string, IndicatorHistoryExtended[]>()
     const goalScores = new Map()
-    const strategyScores = new Map()
+    const strategyScores = new Map();
+
+      (strategies.data || []).forEach(strategy => {
+        const goalId = strategy.strategy.goalId
+        if (!strategiesByGoal.has(goalId)) {
+          strategiesByGoal.set(goalId, [])
+        }
+        strategiesByGoal.get(goalId)!.push(strategy)
+      });
+
+      (indicators.data || []).forEach(indicator => {
+        const goalId = indicator.indicator.goalId
+        if (!indicatorsByGoal.has(goalId)) {
+          indicatorsByGoal.set(goalId, [])
+        }
+        indicatorsByGoal.get(goalId)!.push(indicator)
+      })
 
     const weeklyScores = DEFAULT_WEEKS.map((week) => {
       const filteredGoals = (goals.data || []).filter((g) => g.sequence.toString() === week)
@@ -73,11 +91,23 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
     })
 
     return {
+      strategiesByGoal,
+      indicatorsByGoal,
       weeklyScores,
       overallGoalScores: goalScores,
       overallStrategyScores: strategyScores,
     }
-  }, [strategies, goals])
+  }, [goals.data, strategies.data, indicators.data])
+
+  const getStrategiesByGoalId = (goalId: string, seq?: string) => {
+    const strategies = strategiesByGoal.get(goalId) || []
+    return seq ? strategies.filter(s => s.sequence.toString() === seq) : strategies
+  }
+
+  const getIndicatorsByGoalId = (goalId: string, seq?: string) => {
+    const indicators = indicatorsByGoal.get(goalId) || []
+    return seq ? indicators.filter(i => i.sequence.toString() === seq) : indicators
+  }
 
   return (
     <DashboardContext.Provider
@@ -85,8 +115,8 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
         goals: goals.data,
         strategies: strategies.data,
         indicators: indicators.data,
-        weeklyScores, 
-        overallGoalScores, 
+        weeklyScores,
+        overallGoalScores,
         overallStrategyScores,
         isLoading,
         isLoadingGoals: goals.isLoading || goals.isRefetching,
@@ -95,6 +125,8 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
         goalHistoryActions,
         strategyHistoryActions,
         indicatorHistoryActions,
+        getStrategiesByGoalId,
+        getIndicatorsByGoalId,
       }}
     >
       {children}
@@ -105,9 +137,7 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
 export const useDashboardContext = (): DashboardContextType => {
   const context = useContext(DashboardContext)
   if (!context) {
-    throw new Error(
-      'useDashboard must be used within a DashboardProvider'
-    )
+    throw new Error('useDashboard must be used within a DashboardProvider')
   }
   return context
 }

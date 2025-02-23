@@ -161,6 +161,7 @@ export const indicatorHistoryHandler = {
               initialValue: indicator.initialValue,
               goalValue: indicator.goalValue,
               metric: indicator.metric,
+              goalId: indicator.goalId,
             },
           }
         }
@@ -185,6 +186,7 @@ export const indicatorHistoryHandler = {
               initialValue: indicator.initialValue,
               goalValue: indicator.goalValue,
               metric: indicator.metric,
+              goalId: indicator.goalId,
             },
           }
         }

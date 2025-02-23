@@ -11,16 +11,14 @@ interface GoalProps {
 }
 
 export function GoalDetail({ goal, seq }: GoalProps) {
-  const { strategyHistoryActions, indicatorHistoryActions } = useDashboardContext()
-  const { data: strategies = [], isLoading: isLoadingStrategies, isRefetching } = strategyHistoryActions.useGetByGoalId(goal.goalId, seq)
-  const { data: indicators = [], isLoading: isLoadingIndicators } = indicatorHistoryActions.useGetByGoalId(goal.goalId, seq)
+  const { isLoading, strategyHistoryActions, indicatorHistoryActions, getStrategiesByGoalId, getIndicatorsByGoalId } = useDashboardContext()
+  const strategies = getStrategiesByGoalId(goal.goalId, seq.toString())
+  const indicators = getIndicatorsByGoalId(goal.goalId, seq.toString())
 
   const updateStrategy = strategyHistoryActions.useUpdate()
   const updateIndicator = indicatorHistoryActions.useUpdate()
   const score = calculateCompletionScore(strategies.filter((strategy) => !!strategy.strategy.content))
-
-  const isLoading = isLoadingStrategies || isLoadingIndicators || isRefetching
-  const isLoadingUpdate = updateStrategy.isPending || isRefetching
+  const isLoadingUpdate = updateStrategy.isPending
 
   if (isLoading) {
     return (

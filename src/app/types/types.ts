@@ -32,7 +32,7 @@ export interface StrategyHistoryExtended extends StrategyHistory {
 }
 
 export interface IndicatorHistoryExtended extends IndicatorHistory {
-  indicator: Pick<Indicator, 'content' | 'metric' | 'initialValue' | 'goalValue'>
+  indicator: Pick<Indicator, 'content' | 'metric' | 'initialValue' | 'goalValue' | 'goalId'>
 }
 
 export enum EntityType {
