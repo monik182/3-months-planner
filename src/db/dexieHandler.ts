@@ -94,6 +94,8 @@ export const strategyHistoryHandler = {
             strategy: {
               content: strategy.content,
               weeks: strategy.weeks,
+              goalId: strategy.goalId,
+              frequency: strategy.frequency,
             },
           }
         }
