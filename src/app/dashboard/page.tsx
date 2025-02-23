@@ -1,6 +1,6 @@
 'use client'
 import { Box, Button, Center, Flex, Grid, HStack, Heading, Spinner, Tabs, Text } from '@chakra-ui/react'
-import { calculateCompletionScore, getCurrentWeekFromStartDate } from '@/app/util'
+import { getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
 import { usePlanContext } from '@/app/providers/usePlanContext'
@@ -10,14 +10,13 @@ import { useRouter } from 'next/navigation'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
 import withAuth from '@/app/hoc/withAuth'
-import { useMemo } from 'react'
 import { Overview } from '@/app/dashboard/Overview'
 import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
 
 function Dashboard() {
   const router = useRouter()
   const { plan, isLoading } = usePlanContext()
-  const { goals = [], strategies = [], isLoading: isLoadingContext } = useDashboardContext()
+  const { weeklyScores } = useDashboardContext()
   const today = dayjs().format('DD MMMM YYYY')
   const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
@@ -25,28 +24,8 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
   const week = hasNotStarted ? 1 : currentWeek
-  const loading = isLoading || isLoadingContext
-  const scores = useMemo(() => {
-    return DEFAULT_WEEKS.map((week) => {
-      const filteredGoals = goals.filter((g) => g.sequence.toString() === week)
-      const goalsScore = filteredGoals.map((goal) => {
-        const filteredStrategies = strategies.filter((s) => s.sequence.toString() === week && s.strategy.goalId === goal.goalId)
-        const strategiesScore = calculateCompletionScore(filteredStrategies)
-        return strategiesScore
-      })
-      const weekScores = Math.floor(goalsScore.reduce((acc, score) => acc + score, 0) / (filteredGoals.length || 1))
-      return weekScores
-    })
-  }, [strategies, goals])
 
-  const chartData = scores.map((score, index) => {
-    return {
-      label: `Week ${index + 1}`,
-      score,
-    }
-  })
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Center height="100vh">
         <Spinner size="xl" />
@@ -105,11 +84,11 @@ function Dashboard() {
               <Tabs.Indicator rounded="l2" />
             </Tabs.List>
             <Tabs.Content key="overview" value="overview">
-              <Overview chartData={chartData} />
+              <Overview />
             </Tabs.Content>
             {DEFAULT_WEEKS.map((week, index) => (
               <Tabs.Content key={week} value={`tab-${week}`}>
-                <Week seq={Number(week)} plan={plan!} score={scores[index]} />
+                <Week seq={Number(week)} plan={plan!} score={weeklyScores[index]} />
               </Tabs.Content>
             ))}
           </Tabs.Root>

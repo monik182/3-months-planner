@@ -1,11 +1,35 @@
-import { Flex, Heading } from '@chakra-ui/react'
+import { useDashboardContext } from '@/app/dashboard/dashboardContext'
+import { Box, Flex, FormatNumber, Heading, Stat } from '@chakra-ui/react'
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 
 interface OverviewProps {
-  chartData: { label: string, score: number }[]
 }
 
-export function Overview({ chartData }: OverviewProps) {
+export function Overview({  }: OverviewProps) {
+  const { goals, strategies, weeklyScores, overallGoalScores, overallStrategyScores } = useDashboardContext()
+  const chartData = weeklyScores.map((score, index) => {
+    return {
+      label: `Week ${index + 1}`,
+      score,
+    }
+  })
+
+  console.log(overallGoalScores)
+
+  const yearScore = Math.floor(weeklyScores.reduce((acc, score) => acc + score, 0) / 12) / 100
+
+  const goalScores = [...overallGoalScores].map(([id, score]) => {
+    const goal = goals?.find((g) => g.goalId === id)
+    const percentScore = Math.floor(score / 12)
+    return <p key={id}>{goal?.goal.content} {percentScore}%</p>
+  })
+
+  const strategyScores = [...overallStrategyScores].map(([id, score]) => {
+    const strategy = strategies?.find((g) => g.strategyId === id)
+    const percentScore = Math.floor(score / 12)
+    return <p key={id}>{strategy?.strategy.content} {percentScore}%</p>
+  })
+
   return (
     <Flex direction="column">
       <Heading>Current Plan Progress</Heading>
@@ -18,6 +42,22 @@ export function Overview({ chartData }: OverviewProps) {
           <Line type="monotone" dataKey="score" stroke="#8884d8" />
         </LineChart>
       </ResponsiveContainer>
+      <Box>
+        <Stat.Root>
+          <Stat.Label>Year Score</Stat.Label>
+          <Stat.ValueText>
+            <FormatNumber value={yearScore} style="percent" />
+          </Stat.ValueText>
+        </Stat.Root>
+      </Box>
+      <Box>
+        <Heading>Score By Goal</Heading>
+        {goalScores}
+      </Box>
+      <Box>
+        <Heading>Score By Strategy</Heading>
+        {strategyScores}
+      </Box>
     </Flex>
   )
 }
