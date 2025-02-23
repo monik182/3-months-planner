@@ -1,6 +1,6 @@
 'use client'
 import { Box, Button, Center, Flex, Grid, HStack, Heading, Spinner, Tabs, Text } from '@chakra-ui/react'
-import { getCurrentWeekFromStartDate } from '@/app/util'
+import { calculateCompletionScore, getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
 import { usePlanContext } from '@/app/providers/usePlanContext'
@@ -11,11 +11,13 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import withAuth from '@/app/hoc/withAuth'
+import { useMemo } from 'react'
+import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts'
 
 function Dashboard() {
   const router = useRouter()
   const { user } = useAccountContext()
-  const { planActions } = usePlanContext()
+  const { planActions, goalHistoryActions, strategyHistoryActions } = usePlanContext()
   const { data: plan, isLoading } = planActions.useGet(user?.id as string)
   const today = dayjs().format('DD MMMM YYYY')
   const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
@@ -24,8 +26,30 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
   const week = hasNotStarted ? 1 : currentWeek
+  const { data: goals = [], isLoading: isLoadingGoals } = goalHistoryActions.useGetByPlanId(plan?.id as string)
+  const { data: strategies = [], isLoading: isLoadingStrategies } = strategyHistoryActions.useGetByPlanId(plan?.id as string)
+  const loading = isLoading || isLoadingGoals || isLoadingStrategies
+  const scores = useMemo(() => {
+    return DEFAULT_WEEKS.map((week) => {
+      const filteredGoals = goals.filter((g) => g.sequence.toString() === week)
+      const goalsScore = filteredGoals.map((goal) => {
+        const filteredStrategies = strategies.filter((s) => s.sequence.toString() === week && s.strategy.goalId === goal.goalId)
+        const strategiesScore = calculateCompletionScore(filteredStrategies)
+        return strategiesScore
+      })
+      const weekScores = Math.floor(goalsScore.reduce((acc, score) => acc + score, 0) / (filteredGoals.length || 1))
+      return weekScores
+    })
+  }, [strategies, goals])
 
-  if (isLoading) {
+  const chartData = scores.map((score, index) => {
+    return {
+      label: `Week ${index + 1}`,
+      score,
+    }
+  })
+
+  if (loading) {
     return (
       <Center height="100vh">
         <Spinner size="xl" />
@@ -55,15 +79,14 @@ function Dashboard() {
           <Text><b>End of year:</b> {endOfYPlan}</Text>
           <Text><b>Today:</b> {today}</Text>
         </Box>
-        {/* <LineChart width={1000} height={300} data={data}
+        <LineChart width={1000} height={300} data={chartData}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="label" interval={0} />
           <YAxis domain={[0, 100]} ticks={[0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]} />
           <Tooltip />
-          <Legend formatter={(value) => value.toUpperCase()} />
           <Line type="monotone" dataKey="score" stroke="#8884d8" />
-        </LineChart> */}
+        </LineChart>
       </Grid>
 
       {hasNotStarted ?
@@ -91,9 +114,9 @@ function Dashboard() {
               ))}
               <Tabs.Indicator rounded="l2" />
             </Tabs.List>
-            {DEFAULT_WEEKS.map((week) => (
+            {DEFAULT_WEEKS.map((week, index) => (
               <Tabs.Content key={week} value={`tab-${week}`}>
-                <Week seq={Number(week)} plan={plan!} />
+                <Week seq={Number(week)} plan={plan!} score={scores[index]} />
               </Tabs.Content>
             ))}
           </Tabs.Root>

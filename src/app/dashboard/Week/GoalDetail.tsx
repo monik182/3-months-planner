@@ -4,15 +4,13 @@ import { usePlanContext } from '@/app/providers/usePlanContext'
 import { GoalHistoryExtended } from '@/app/types/types'
 import { calculateCompletionScore } from '@/app/util'
 import { Card, Center, Spinner, Text } from '@chakra-ui/react'
-import { useEffect } from 'react'
 
 interface GoalProps {
   goal: GoalHistoryExtended
   seq: number
-  onScoreCalculated: (score: number) => void
 }
 
-export function GoalDetail({ goal, seq, onScoreCalculated }: GoalProps) {
+export function GoalDetail({ goal, seq }: GoalProps) {
   const { strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
   const { data: strategies = [], isLoading: isLoadingStrategies, isRefetching } = strategyHistoryActions.useGetByGoalId(goal.goalId, seq)
   const { data: indicators = [], isLoading: isLoadingIndicators } = indicatorHistoryActions.useGetByGoalId(goal.goalId, seq)
@@ -23,10 +21,6 @@ export function GoalDetail({ goal, seq, onScoreCalculated }: GoalProps) {
 
   const isLoading = isLoadingStrategies || isLoadingIndicators
   const isLoadingUpdate = updateStrategy.isPending || isLoadingStrategies || isRefetching
-
-  useEffect(() => {
-    onScoreCalculated(score)
-  }, [score])
 
   if (isLoading) {
     return (

@@ -28,7 +28,7 @@ export interface GoalHistoryExtended extends GoalHistory {
 }
 
 export interface StrategyHistoryExtended extends StrategyHistory {
-  strategy: Pick<Strategy, 'content' | 'weeks' | 'frequency'>
+  strategy: Pick<Strategy, 'content' | 'weeks' | 'frequency' | 'goalId'>
 }
 
 export interface IndicatorHistoryExtended extends IndicatorHistory {
