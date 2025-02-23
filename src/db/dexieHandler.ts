@@ -1,6 +1,7 @@
 import { DixiePlan, ParentProps } from '@/app/types/types'
 import { db } from '@/db/dexie'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
+import { Collection, Table } from 'dexie'
 
 export const planHandler = {
   create: async (data: DixiePlan) => db.plans.add(data),
@@ -40,8 +41,8 @@ export const goalHandler = {
 export const goalHistoryHandler = {
   create: async (data: GoalHistory) => db.goalHistory.add(data),
   createMany: async (data: GoalHistory[]) => db.goalHistory.bulkAdd(data),
-  findMany: async ({ status, planId }: ParentProps, where?: Partial<GoalHistory>) => {
-    const goalHistories = await db.goalHistory.where(where ?? {}).toArray()
+  findMany: async ({ status, planId }: ParentProps, where: Partial<GoalHistory> = {}) => {
+    const goalHistories = await getList<GoalHistory>(db.goalHistory, where).toArray()
 
     const result = await Promise.all(
       goalHistories.map(async (goalHistory) => {
@@ -80,14 +81,12 @@ export const strategyHandler = {
 export const strategyHistoryHandler = {
   create: async (data: StrategyHistory) => db.strategyHistory.add(data),
   createMany: async (data: StrategyHistory[]) => db.strategyHistory.bulkAdd(data),
-  findMany: async ({ planId, goalId, status }: ParentProps, where?: Partial<StrategyHistory>, seq?: string) => {
-    const strategyHistories = await db.strategyHistory.where(where ?? {}).toArray()
+  findMany: async ({ planId, goalId, status }: ParentProps, where: Partial<StrategyHistory> = {}, seq?: string) => {
+    const strategyHistories = await getList<StrategyHistory>(db.strategyHistory, where).toArray()
 
     const result = await Promise.all(
       strategyHistories.map(async (strategyHistory) => {
-        const strategy = await db.strategies
-          .where({ id: strategyHistory.strategyId, status, planId, goalId })
-          .first()
+        const strategy = await getList<Strategy>(db.strategies, { id: strategyHistory.strategyId, status, planId, goalId }).first()
 
         if (strategy && (!seq || strategy.weeks.includes(seq))) {
           return {
@@ -104,14 +103,12 @@ export const strategyHistoryHandler = {
 
     return result.filter((item) => item !== null)
   },
-  findManyByGoalId: async ({ goalId, status }: ParentProps, where?: Partial<StrategyHistory>, seq?: string) => {
-    const strategyHistories = await db.strategyHistory.where(where ?? {}).toArray()
+  findManyByGoalId: async ({ goalId, status }: ParentProps, where: Partial<StrategyHistory> = {}, seq?: string) => {
+    const strategyHistories = await getList<StrategyHistory>(db.strategyHistory, where).toArray()
 
     const result = await Promise.all(
       strategyHistories.map(async (strategyHistory) => {
-        const strategy = await db.strategies
-          .where({ id: strategyHistory.strategyId, goalId, status })
-          .first()
+        const strategy = await getList<Strategy>(db.strategies, { id: strategyHistory.strategyId, status, goalId }).first()
 
         if (strategy && (!seq || strategy.weeks.includes(seq))) {
           return {
@@ -120,6 +117,7 @@ export const strategyHistoryHandler = {
               content: strategy.content,
               weeks: strategy.weeks,
               frequency: strategy.frequency,
+              goalId: strategy.goalId,
             },
           }
         }
@@ -146,12 +144,12 @@ export const indicatorHandler = {
 export const indicatorHistoryHandler = {
   create: async (data: IndicatorHistory) => db.indicatorHistory.add(data),
   createMany: async (data: IndicatorHistory[]) => db.indicatorHistory.bulkAdd(data),
-  findMany: async ({ planId, goalId, status }: ParentProps, where?: Partial<IndicatorHistory>) => {
-    const indicatorHistories = await db.indicatorHistory.where(where ?? {}).toArray()
+  findMany: async ({ planId, goalId, status }: ParentProps, where: Partial<IndicatorHistory> = {}) => {
+    const indicatorHistories = await getList<IndicatorHistory>(db.indicatorHistory, where).toArray()
 
     const result = await Promise.all(
       indicatorHistories.map(async (indicatorHistory) => {
-        const indicator = await db.indicators.where({ id: indicatorHistory.indicatorId, goalId, planId, status }).first()
+        const indicator = await getList<Indicator>(db.indicators, { id: indicatorHistory.indicatorId, goalId, planId, status }).first()
 
         if (indicator) {
           return {
@@ -170,14 +168,12 @@ export const indicatorHistoryHandler = {
 
     return result.filter((item) => item !== null)
   },
-  findManyByGoalId: async ({ goalId, status }: ParentProps, where?: Partial<IndicatorHistory>) => {
-    const indicatorHistories = await db.indicatorHistory.where(where ?? {}).toArray()
+  findManyByGoalId: async ({ goalId, status }: ParentProps, where: Partial<IndicatorHistory> = {}) => {
+    const indicatorHistories = await getList<IndicatorHistory>(db.indicatorHistory, where).toArray()
 
     const result = await Promise.all(
       indicatorHistories.map(async (indicatorHistory) => {
-        const indicator = await db.indicators
-          .where({ id: indicatorHistory.indicatorId, goalId, status })
-          .first()
+        const indicator = await getList<Indicator>(db.indicators, { id: indicatorHistory.indicatorId, goalId, status }).first()
 
         if (indicator) {
           return {
@@ -227,4 +223,19 @@ export const waitlistHandler = {
   findOneByToken: async (token: string) => db.waitlist.where('inviteToken').equals(token).first(),
   update: async (id: string, data: Partial<User>) => db.waitlist.update(id, data),
   delete: async (id: string) => db.waitlist.delete(id),
+}
+
+function getList<T>(table: Table<T>): Table<T>;
+function getList<T>(table: Table<T>, where: Partial<T>): Collection<T>;
+function getList<T>(table: Table<T>, where: Partial<T> = {}): Table<T> | Collection<T> {
+  let keys = Object.keys(where);
+  for (const key of keys) {
+    if (where[key as keyof T] == null) delete where[key as keyof T];
+  }
+  keys = Object.keys(where);
+
+  if (keys.length) {
+    return table.where(where);
+  }
+  return table;
 }
