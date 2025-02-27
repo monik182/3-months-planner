@@ -1,3 +1,4 @@
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { toaster } from '@/components/ui/toaster'
 import { IndicatorService } from '@/services/indicator'
 import { Indicator, Prisma } from '@prisma/client'
@@ -7,12 +8,14 @@ const QUERY_KEY = 'indicators'
 
 export function useIndicatorActions() {
   const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (indicator: Indicator) => IndicatorService.create(indicator),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_indicator')
       },
       onError: (error) => {
         toaster.create({
@@ -27,6 +30,9 @@ export function useIndicatorActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorUpdateInput }) => IndicatorService.update(indicatorId, updates),
+      onSuccess: (data) => {
+        track('update_indicator', { updated: Object.keys(data) })
+      }
     })
   }
 

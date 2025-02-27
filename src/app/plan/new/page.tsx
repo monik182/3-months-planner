@@ -57,7 +57,7 @@ function NewPlan() {
       >
         <Flex gap="1rem" direction="column">
           <DateSelector onChange={setStartDate} date={startDate} />
-          <Button onClick={handleCreateNewPlan} disabled={!startDate} loading={createPlan.isPending}>Create plan</Button>
+          <Button onClick={handleCreateNewPlan} disabled={!startDate} loading={createPlan.isPending}>Create Plan</Button>
         </Flex>
       </EmptyState>
     </Center>

@@ -1,3 +1,4 @@
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { UserService } from '@/services/user'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -5,12 +6,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 const QUERY_KEY = 'users'
 export function useUserActions() {
   const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (user: Prisma.UserCreateInput) => UserService.create(user),
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_user', data)
       }
     })
   }

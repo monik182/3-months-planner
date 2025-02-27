@@ -1,3 +1,4 @@
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { Status } from '@/app/types/types'
 import { toaster } from '@/components/ui/toaster'
 import { GoalService } from '@/services/goal'
@@ -8,12 +9,14 @@ const QUERY_KEY = 'goals'
 
 export function useGoalActions() {
   const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (goal: Prisma.GoalCreateInput) => GoalService.create(goal),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_goal')
       },
       onError: (error) => {
         toaster.create({
@@ -34,8 +37,9 @@ export function useGoalActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ goalId, updates }: { goalId: string, updates: Prisma.GoalUpdateInput }) => GoalService.update(goalId, updates),
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('update_goal', { updated: Object.keys(data) })
       },
     })
   }

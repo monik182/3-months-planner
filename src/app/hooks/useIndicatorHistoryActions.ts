@@ -1,3 +1,4 @@
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { IndicatorHistoryService } from '@/services/indicatorHistory'
 import { Prisma } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -6,6 +7,7 @@ const QUERY_KEY = 'indicator-history'
 
 export function useIndicatorHistoryActions() {
   const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
@@ -16,8 +18,9 @@ export function useIndicatorHistoryActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorHistoryUpdateInput }) => IndicatorHistoryService.update(indicatorId, updates),
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('update_indicator_history', { updated: Object.keys(data) })
       }
     })
   }

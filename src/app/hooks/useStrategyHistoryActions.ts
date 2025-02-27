@@ -1,3 +1,4 @@
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { Status } from '@/app/types/types'
 import { StrategyHistoryService } from '@/services/strategyHistory'
 import { Prisma } from '@prisma/client'
@@ -7,6 +8,7 @@ const QUERY_KEY = 'strategy-history'
 
 export function useStrategyHistoryActions() {
   const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
@@ -17,8 +19,9 @@ export function useStrategyHistoryActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyHistoryUpdateInput }) => StrategyHistoryService.update(strategyId, updates),
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('update_strategy_history', { updated: Object.keys(data) })
       }
     })
   }

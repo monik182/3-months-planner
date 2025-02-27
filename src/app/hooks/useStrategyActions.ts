@@ -2,17 +2,20 @@ import { toaster } from '@/components/ui/toaster'
 import { StrategyService } from '@/services/strategy'
 import { Prisma, Strategy } from '@prisma/client'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 
 const QUERY_KEY = 'strategies'
 
 export function useStrategyActions() {
   const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (strategy: Strategy) => StrategyService.create(strategy),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_strategy')
       },
       onError: (error) => {
         toaster.create({
@@ -27,8 +30,9 @@ export function useStrategyActions() {
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyUpdateInput }) => StrategyService.update(strategyId, updates),
-      onSuccess: () => {
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('update_strategy', { updated: Object.keys(data) })
       },
     })
   }

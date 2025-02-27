@@ -11,11 +11,12 @@ import { Extra } from '@/components/Extra'
 import { AccountProvider } from '@/app/providers/useAccountContext'
 import { Toaster } from '@/components/ui/toaster'
 import PlanLayout from '@/app/layout/PlanLayout'
+import { MixpanelProvider } from '@/app/providers/MixpanelProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
-  display: 'swap', 
+  display: 'swap',
   adjustFontFallback: false,
 })
 
@@ -42,26 +43,28 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserProvider>
-          <ReactQueryProvider>
-            <Provider>
-              <AccountProvider>
-                <PlanProvider>
-                  <PlanLayout>
-                    <Box margin="0 2rem">
-                      <Grid templateRows="10% auto" height="100vh">
-                        <GridItem><Header /></GridItem>
-                        <GridItem overflow="auto">{children}</GridItem>
-                      </Grid>
-                    </Box>
-                  </PlanLayout>
-                </PlanProvider>
-                <Extra />
-              </AccountProvider>
-              <Toaster />
-            </Provider>
-          </ReactQueryProvider>
-        </UserProvider>
+        <MixpanelProvider>
+          <UserProvider>
+            <ReactQueryProvider>
+              <Provider>
+                <AccountProvider>
+                  <PlanProvider>
+                    <PlanLayout>
+                      <Box margin="0 2rem">
+                        <Grid templateRows="10% auto" height="100vh">
+                          <GridItem><Header /></GridItem>
+                          <GridItem overflow="auto">{children}</GridItem>
+                        </Grid>
+                      </Box>
+                    </PlanLayout>
+                  </PlanProvider>
+                  <Extra />
+                </AccountProvider>
+                <Toaster />
+              </Provider>
+            </ReactQueryProvider>
+          </UserProvider>
+        </MixpanelProvider>
       </body>
     </html>
   )
