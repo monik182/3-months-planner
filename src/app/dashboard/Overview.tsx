@@ -1,6 +1,6 @@
 import { useDashboardContext } from '@/app/dashboard/dashboardContext'
-import { Box, Heading, Stat, StatLabel, VStack, Separator, SimpleGrid } from '@chakra-ui/react'
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
+import { Box, Heading, Stat, StatLabel, VStack, Separator } from '@chakra-ui/react'
+import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { FormatNumber } from '@chakra-ui/react'
 
 interface OverviewProps { }
@@ -23,16 +23,20 @@ export function Overview({ }: OverviewProps) {
 
   const yearScore = Math.floor(weeklyScores.reduce((acc, score) => acc + score, 0) / 12) / 100
 
-  const goalScores = [...overallGoalScores].map(([id, score]) => {
-    const goal = goals?.find((g) => g.goalId === id)
-    const percentScore = Math.floor(score / 12)
-    return <Stat.Root key={id}><StatLabel>{goal?.goal.content}</StatLabel><Stat.ValueText>{percentScore}%</Stat.ValueText></Stat.Root>
+  const goalScoresData = [...overallGoalScores].map(([id, score]) => {
+    const goal = goals?.find((g) => g.goalId === id);
+    return {
+      name: goal?.goal.content || 'Unknown',
+      score: Math.floor(score / 12),
+    }
   })
 
-  const strategyScores = [...overallStrategyScores].map(([id, score]) => {
-    const strategy = strategies?.find((s) => s.strategyId === id)
-    const percentScore = Math.floor(score / 12)
-    return <Stat.Root key={id}><StatLabel>{strategy?.strategy.content}</StatLabel><Stat.ValueText>{percentScore}%</Stat.ValueText></Stat.Root>
+  const strategyScoresData = [...overallStrategyScores].map(([id, score]) => {
+    const strategy = strategies?.find((g) => g.strategyId === id);
+    return {
+      name: strategy?.strategy.content || 'Unknown',
+      score: Math.floor(score / 12),
+    }
   })
 
   const indicatorsCharts = Object.keys(indicatorsChartData).map((id) => {
@@ -78,18 +82,40 @@ export function Overview({ }: OverviewProps) {
 
       <Box>
         <Heading size="md" mb={2}>Score By Goal</Heading>
-        <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} gap={4}>
-          {goalScores}
-        </SimpleGrid>
+        <ResponsiveContainer width="100%" height={goalScoresData.length * 80}>
+          <BarChart
+            layout="vertical"
+            data={goalScoresData}
+            margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+            barCategoryGap={5}
+            barGap={2}
+          >
+            <YAxis dataKey="name" type="category" width={150} />
+            <XAxis type="number" domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
+            <Tooltip formatter={(value) => `${value}%`} />
+            <Bar dataKey="score" fill="#8884d8" barSize={10} />
+          </BarChart>
+        </ResponsiveContainer>
       </Box>
 
       <Separator />
 
       <Box>
         <Heading size="md" mb={2}>Score By Strategy</Heading>
-        <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} gap={4}>
-          {strategyScores}
-        </SimpleGrid>
+        <ResponsiveContainer width="100%" height={strategyScoresData.length * 80}>
+          <BarChart
+            layout="vertical"
+            data={strategyScoresData}
+            margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+            barCategoryGap={5}
+            barGap={2}
+          >
+            <YAxis dataKey="name" type="category" width={150} />
+            <XAxis type="number" domain={[0, 100]} tickFormatter={(tick) => `${tick}%`} />
+            <Tooltip formatter={(value) => `${value}%`} />
+            <Bar dataKey="score" fill="#8884d8" barSize={10} />
+          </BarChart>
+        </ResponsiveContainer>
       </Box>
 
       <Separator />

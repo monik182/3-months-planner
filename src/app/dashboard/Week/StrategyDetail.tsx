@@ -37,6 +37,9 @@ export function StrategyDetail({ strategy, onChange }: StrategyDetailProps) {
             defaultChecked={value}
             variant="subtle"
             onCheckedChange={(e) => handleOnCheckedChange(e, index)}
+            padding="4px"
+            borderRadius="50%"
+            cursor="pointer"
           />
         ))}
       </Flex>
