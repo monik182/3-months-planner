@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
   try {
 
     const today = new Date().toISOString().split('T')[0]
-    const cacheKey = `api_limit:${data.userId}:${today}`
+    const cacheKey = `api_limit:${process.env.NODE_ENV}:${data.userId}:${today}`
 
     const requestCount = await redis.get(cacheKey)
     const count = requestCount ? parseInt(requestCount) : 0
