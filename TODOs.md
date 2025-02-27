@@ -1,4 +1,6 @@
 # Post Release
+- limit db writes
+- create reddit post
 - recognize guest user in other devices
 - Enable edit plan
 - Improve HOME page with steps and everything
