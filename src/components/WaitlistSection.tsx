@@ -67,6 +67,12 @@ export function WaitListSection() {
     })
   }
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === 'Enter' || event.key === 'Enter') {
+      handleSubmit()
+    }
+  }
+
   return (
     <Box
       textAlign="center"
@@ -95,6 +101,7 @@ export function WaitListSection() {
           border="1px solid"
           borderColor="gray.300"
           _focus={{ borderColor: "black" }}
+          onKeyDown={handleKeyDown}
         />
         <Button
           bg="black"
