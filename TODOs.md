@@ -1,5 +1,4 @@
 # Post Release
-- limit db writes
 - create reddit post
 - recognize guest user in other devices
 - Enable edit plan
@@ -13,6 +12,7 @@
 - Test app theme dark
 - Pricing page ❓ (self deployed)
 - Stripe integration ❓
+- limit db writes ✅
 - Create test DB replica ✅
 - Make indicator creation a 1 liner + change the icon and button color ✅
 

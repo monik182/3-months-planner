@@ -1,15 +1,9 @@
 import { waitlistHandler } from '@/db/dexieHandler'
 import { Prisma, Waitlist } from '@prisma/client'
-import cuid from 'cuid'
 
 const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> => {
-  if (!ENABLE_CLOUD_SYNC) {
-    const items = await waitlistHandler.getAll()
-    await waitlistHandler.create({ ...waitlist, id: cuid(), position: items.length + 1 } as Waitlist)
-    return { ...waitlist, ok: true } as Waitlist
-  }
 
   return fetch(`/api/waitlist`, {
     method: 'POST',
@@ -40,10 +34,6 @@ const getByToken = async (token: string): Promise<Waitlist | null> => {
 }
 
 const update = async (id: string, waitlist: Prisma.WaitlistUpdateInput): Promise<Partial<Waitlist>> => {
-  if (!ENABLE_CLOUD_SYNC) {
-    await waitlistHandler.update(id, waitlist as Waitlist)
-    return waitlist as Waitlist
-  }
 
   return fetch(`/api/waitlist/${id}`, {
     method: 'PUT',
