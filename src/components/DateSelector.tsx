@@ -54,7 +54,7 @@ export function DateSelector({ onChange, date }: DateSelectorProps) {
         <SelectTrigger>
           <SelectValueText placeholder="Select start date" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent height="35vh">
           {optionsCollection.items.map((date) => (
             <SelectItem item={date} key={date.label}>
               {date.label}
