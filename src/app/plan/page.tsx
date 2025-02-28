@@ -92,7 +92,7 @@ function PlanPage() {
       linear 
       size={{ base: "xs", lg: "lg" }}
       orientation={{ base: "vertical", lg: "horizontal" }} 
-      variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" onStepChange={handleStepChange}>
+      variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" overflowY="auto" onStepChange={handleStepChange}>
       <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
         <GridItem>
           <StepsList hideFrom="sm">
