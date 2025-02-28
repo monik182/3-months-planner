@@ -1,5 +1,4 @@
 # Post Release
-- create reddit post
 - recognize guest user in other devices
 - Enable edit plan
 - Improve HOME page with steps and everything
@@ -12,6 +11,7 @@
 - Test app theme dark
 - Pricing page ❓ (self deployed)
 - Stripe integration ❓
+- create reddit post  ✅
 - limit db writes ✅
 - Create test DB replica ✅
 - Make indicator creation a 1 liner + change the icon and button color ✅

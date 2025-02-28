@@ -6,7 +6,7 @@ import { Step2 } from './Step2'
 import { Step3 } from './Step3/Step3'
 import { Step4 } from './Step4/Step4'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 import { useHistoryActions } from '@/app/hooks/useHistoryActions'
@@ -85,6 +85,10 @@ function PlanPage() {
     setStep(step)
   }
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [step])
+
   if (!plan) return null
 
   return (
@@ -92,10 +96,10 @@ function PlanPage() {
       linear 
       size={{ base: "xs", lg: "lg" }}
       orientation={{ base: "vertical", lg: "horizontal" }} 
-      variant="subtle" step={step} count={steps.length} height="calc(80vh - 2rem)" padding="1rem 2rem" overflowY="auto" onStepChange={handleStepChange}>
-      <Grid gridTemplateRows="10% 90% 10%" height="100%" gap="1rem">
+      variant="subtle" step={step} count={steps.length} height="80vh" padding={{ base: "1rem 0", lg: "1rem 2rem" }} onStepChange={handleStepChange}>
+      <Grid gridTemplateRows={{ base: "5% 80% 15%", lg:"10% 80% 10%" }} height="100%" gap="1rem">
         <GridItem>
-          <StepsList hideFrom="sm">
+          <StepsList>
             {steps.filter((_, index) => index === step).map((step, index) => (
               <StepsItem key={index} index={index} title={step.title} />
             ))}

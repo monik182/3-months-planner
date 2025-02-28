@@ -50,7 +50,7 @@ export default function RootLayout({
                 <AccountProvider>
                   <PlanProvider>
                     <PlanLayout>
-                      <Box margin="0 2rem">
+                      <Box margin="0 2rem 5rem">
                         <Grid templateRows="10% auto" height="100vh">
                           <GridItem><Header /></GridItem>
                           <GridItem overflow="auto">{children}</GridItem>
