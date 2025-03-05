@@ -27,3 +27,5 @@ export const TABLES = {
   WEEKS: 'weeks',
   INDICATORS: 'indicators',
 }
+
+export const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC_FOR_SUPERADMIN || '') || JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')

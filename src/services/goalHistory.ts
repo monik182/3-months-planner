@@ -2,8 +2,7 @@ import { goalHistoryHandler } from '@/db/dexieHandler'
 import { GoalHistoryExtended } from '@/app/types/types'
 import { Prisma, GoalHistory } from '@prisma/client'
 import { GoalHistorySchema, PartialGoalHistorySchema } from '@/lib/validators/goalHistory'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 
 const create = async (goal: Prisma.GoalHistoryCreateInput): Promise<GoalHistory> => {
   const parsedData = GoalHistorySchema.parse(goal)

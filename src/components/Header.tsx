@@ -1,9 +1,8 @@
 'use client'
-import { Flex, HStack, Heading, Separator } from '@chakra-ui/react'
-import { SlNotebook } from 'react-icons/sl'
+import { Flex, HStack, Heading, Separator, Text } from '@chakra-ui/react'
+import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { usePathname, useRouter } from 'next/navigation'
 import { Avatar } from './ui/avatar'
-// import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { LuNotebookPen } from 'react-icons/lu'
 import { usePlanContext } from '@/app/providers/usePlanContext'
@@ -11,6 +10,8 @@ import { useEffect, useState } from 'react'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
+import Link from 'next/link'
 
 export function Header() {
   const { user, isGuest } = useAccountContext()
@@ -19,6 +20,7 @@ export function Header() {
   const pathname = usePathname()
   const [value, setValue] = useState('plan')
   const showCreatePlanButton = !!user && !isGuest && !hasStartedPlan && pathname !== '/plan'
+  const enableAuth = !isGuest && ENABLE_CLOUD_SYNC
 
   const goToHome = () => {
     router.push('/')
@@ -54,29 +56,26 @@ export function Header() {
           )}
         </Flex>
         <Flex gap="5px" alignItems="center">
-          {/* {user ? ( */}
-            <Flex gap="1rem" alignItems="center">
-              {showCreatePlanButton && (
-                <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>
-                  <LuNotebookPen />
-                  Create Plan
-                </Button>
-              )}
-              <Avatar
-                name="User"
-                shape="full"
-                src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
-                size="md"
-              />
-              {/* {!isGuest && (
-                <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
-              )} */}
-            </Flex>
-          {/* ) : (
-            !isGuest && (
-              <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
-            )
-          )} */}
+          <Flex gap="1rem" alignItems="center">
+            {showCreatePlanButton && (
+              <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>
+                <LuNotebookPen />
+                Create Plan
+              </Button>
+            )}
+            <Avatar
+              name="User"
+              shape="full"
+              src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
+              size="md"
+            />
+            {!!user && enableAuth && (
+              <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
+            )}
+          </Flex>
+          {!user && enableAuth && (
+            <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
+          )}
         </Flex>
       </Flex>
       <Separator margin="1rem 0" />

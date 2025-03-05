@@ -1,8 +1,7 @@
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { userHandler } from '@/db/dexieHandler'
 import { Prisma, User } from '@prisma/client'
 import cuid from 'cuid'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (user: Prisma.UserCreateInput): Promise<User> => {
   if (!ENABLE_CLOUD_SYNC) {

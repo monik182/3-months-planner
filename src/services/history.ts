@@ -1,11 +1,10 @@
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList } from '@/app/util'
 import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, strategyHandler, strategyHistoryHandler } from '@/db/dexieHandler'
 import { GoalHistoryNoGoalArraySchema } from '@/lib/validators/goalHistory'
 import { IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
 import { Goal, GoalHistory, IndicatorHistory, StrategyHistory } from '@prisma/client'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (planId: string) => {
   const data = await parseData(planId)

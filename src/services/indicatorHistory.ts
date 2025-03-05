@@ -2,8 +2,7 @@ import { indicatorHistoryHandler } from '@/db/dexieHandler'
 import { IndicatorHistoryExtended } from '@/app/types/types'
 import { IndicatorHistory, Prisma } from '@prisma/client'
 import { IndicatorHistorySchema, PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 
 const create = async (indicator: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
   const parsedData = IndicatorHistorySchema.parse(indicator)

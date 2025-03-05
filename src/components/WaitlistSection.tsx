@@ -14,8 +14,7 @@ import { Button } from '@/components/ui/button'
 import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 import { useRouter } from 'next/navigation'
 import cuid from 'cuid'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 
 export function WaitListSection() {
   const router = useRouter()

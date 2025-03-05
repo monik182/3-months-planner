@@ -1,7 +1,6 @@
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { waitlistHandler } from '@/db/dexieHandler'
 import { Prisma, Waitlist } from '@prisma/client'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> => {
 

@@ -1,8 +1,7 @@
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { strategyHandler } from '@/db/dexieHandler'
 import { PartialStrategySchema } from '@/lib/validators/strategy'
 import { Prisma, Strategy } from '@prisma/client'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (strategy: Strategy): Promise<Strategy> => {
 

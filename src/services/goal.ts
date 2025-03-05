@@ -1,9 +1,8 @@
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { Status } from '@/app/types/types'
 import { goalHandler } from '@/db/dexieHandler'
 import { GoalArraySchema, GoalSchema, PartialGoalSchema } from '@/lib/validators/goal'
 import { Goal, Prisma } from '@prisma/client'
-
-const ENABLE_CLOUD_SYNC = JSON.parse(process.env.NEXT_PUBLIC_ENABLE_CLOUD_SYNC || '')
 
 const create = async (goal: Prisma.GoalCreateInput) => {
   const parsedData = { ...GoalSchema.parse(goal), planId: goal.plan.connect!.id! }
