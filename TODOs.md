@@ -1,10 +1,12 @@
 # Post Release
-- recognize guest user in other devices
+- Sync guest user data to cloud [WIP]
+- Save user data to DB on signup
 - Enable edit plan
+- Create VIP role
 - Improve HOME page with steps and everything
 - FF for enable/disable remote sync
 - Improve the goals/strategies/indicator creation forms
-- Delayed sync
+- Delayed sync [WIP]
 - Improve the plan view and colors and reuse component in step4
 - Upload screenshots for feedback
 - plan overview is unreadable in dark mode (related to next item)
@@ -25,7 +27,6 @@
   - Refactor api/plan/create ✅
   - only save on click ❓
 - FE Improvements
-  - Save user data to DB on signup
   - Create overview progress page
   - Create plan history page
   - Create route guard ✅
