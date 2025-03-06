@@ -1,15 +1,15 @@
-import { DixiePlan, ParentProps } from '@/app/types/types'
+import { DexiePlan, ParentProps } from '@/app/types/types'
 import { db } from '@/db/dexie'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
 import { Collection, Table } from 'dexie'
 
 export const planHandler = {
-  create: async (data: DixiePlan) => db.plans.add(data),
-  findMany: async (where?: Partial<DixiePlan>) => db.plans.where(where ?? {}).toArray(),
+  create: async (data: DexiePlan) => db.plans.add(data),
+  findMany: async (where?: Partial<DexiePlan>) => db.plans.where(where ?? {}).toArray(),
   findOne: async (id: string) => db.plans.get(id),
   findInProgress: async (userId: string) => db.plans.where({ userId, completed: 0 }).first(),
   findStarted: async (userId: string) => db.plans.where({ userId, completed: 0, started: 1 }).first(),
-  update: async (id: string, data: Partial<DixiePlan>) => db.plans.update(id, data),
+  update: async (id: string, data: Partial<DexiePlan>) => db.plans.update(id, data),
   delete: async (id: string) => db.plans.delete(id),
 }
 

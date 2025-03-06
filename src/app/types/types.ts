@@ -41,7 +41,7 @@ export enum EntityType {
   Indicator = 'Indicator'
 }
 
-export interface DixiePlan extends Omit<Plan, 'completed' | 'started'> {
+export interface DexiePlan extends Omit<Plan, 'completed' | 'started'> {
   completed: number
   started: number
 }
@@ -53,3 +53,21 @@ export interface ParentProps {
 }
 
 export type UserExtended = User & Pick<UserProfile, 'sub' | 'picture'>
+
+export interface SyncQueueItem {
+  id?: number
+  entityType: string
+  entityId: string
+  operation: 'create' | 'update' | 'delete'
+  payload: any
+  status: 'pending' | 'processing' | 'failed' | 'completed'
+  attempts: number
+  timestamp: number
+  error?: string
+}
+
+export interface UserPreferences {
+  userId: string
+  hasSynced: boolean
+  lastSyncTime?: number
+}

@@ -10,8 +10,8 @@ export const PlanSchema = z.object({
   started: z.boolean().default(false),
   startDate: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date({ required_error: 'Start date is required' })),
   endDate: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date({ required_error: 'End date is required' })),
-  created: z.date().default(new Date()),
-  lastUpdate: z.date().default(new Date()),
+  created: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date()),
+  lastUpdate: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date()),
 })
 
 export const PartialPlanSchema = PlanSchema.partial()

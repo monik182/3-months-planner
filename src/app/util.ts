@@ -1,6 +1,6 @@
 import { DEFAULT_WEEKS } from '@/app/constants'
-import { StrategyHistoryExtended } from '@/app/types/types'
-import { Goal, Indicator, Prisma, Strategy } from '@prisma/client'
+import { DexiePlan, StrategyHistoryExtended } from '@/app/types/types'
+import { Goal, Indicator, Plan, Prisma, Strategy } from '@prisma/client'
 import dayjs from 'dayjs'
 
 export function getDate(date?: Date) {
@@ -117,4 +117,21 @@ export function calculateCompletionScore(strategies: StrategyHistoryExtended[]):
 
   const total = totalScore / strategies.length
   return Math.floor(total * 100)
+}
+
+export function dexieToPlan(plan: DexiePlan): Plan {
+  return {
+    ...plan,
+    completed: Boolean(plan.completed),
+    started: Boolean(plan.started)
+  }
+}
+
+
+export function planToDexie(plan: Plan): DexiePlan {
+  return {
+    ...plan,
+    completed: Number(Boolean(plan.completed)),
+    started: Number(Boolean(plan.started))
+  }
 }
