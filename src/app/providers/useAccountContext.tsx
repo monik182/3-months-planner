@@ -6,7 +6,7 @@ import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
 import { UserExtended } from '@/app/types/types'
 import { Role } from '@prisma/client'
 import { SyncService } from '@/services/sync'
-import { db } from '@/db/dexie'
+import { userPreferencesHandler } from '@/db/dexieHandler'
 
 type AccountContextType = {
   user?: UserExtended | null
@@ -64,7 +64,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     const performInitialSync = async () => {
       try {
 
-        const preferences = await db.table('userPreferences').get(user.id)
+        const preferences = await userPreferencesHandler.findOne(user.id)
 
         if (!preferences?.hasSynced) {
           console.log(`Initiating first-time sync for user ${user.id}`)

@@ -1,27 +1,21 @@
-// Create src/services/sync.ts
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { SyncQueueItem } from '@/app/types/types'
 import { dexieToPlan } from '@/app/util'
-import { db } from '@/db/dexie'
+import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, planHandler, strategyHandler, strategyHistoryHandler, syncQueueHandler, userPreferencesHandler } from '@/db/dexieHandler'
 import { UserService } from '@/services/user'
 
-// Read the feature flag directly
-
-// TODO: create dexie hadnler for sync table
-
-// Add an item to the sync queue
 const queueForSync = async (
   entityType: string,
   entityId: string,
   operation: SyncQueueItem['operation'],
   payload: any
 ): Promise<number | undefined> => {
-  // Only queue if cloud sync is enabled
+
   if (!SyncService.isEnabled) {
     return undefined
   }
 
-  return db.syncQueue.add({
+  return syncQueueHandler.create({
     entityType,
     entityId,
     operation,
@@ -32,46 +26,37 @@ const queueForSync = async (
   })
 }
 
-// Get the sync queue status
 const getSyncQueueStatus = async (): Promise<{
   pending: number,
   processing: number,
   failed: number,
   total: number
 }> => {
-  const pending = await db.syncQueue.where('status').equals('pending').count()
-  const processing = await db.syncQueue.where('status').equals('processing').count()
-  const failed = await db.syncQueue.where('status').equals('failed').count()
-  const total = await db.syncQueue.count()
+  const pending = await syncQueueHandler.countByStatus('pending')
+  const processing = await syncQueueHandler.countByStatus('processing')
+  const failed = await syncQueueHandler.countByStatus('failed')
+  const total = await syncQueueHandler.table.count()
 
   return { pending, processing, failed, total }
 }
 
-// Process the sync queue
-// Enhance processSyncQueue in src/services/sync.ts
 const processSyncQueue = async () => {
   if (!SyncService.isEnabled) return { success: true, processed: 0, failed: 0 }
 
   try {
-    // First, reset any items that got stuck in "processing" state
-    // (This can happen if the browser closed during processing)
-    const stuckItems = await db.syncQueue
-      .where('status')
-      .equals('processing')
-      .toArray()
+    const stuckItems = await syncQueueHandler.findByStatus('processing')
 
     if (stuckItems.length > 0) {
       console.log(`Found ${stuckItems.length} items stuck in processing state, resetting...`)
       await Promise.all(stuckItems.map(item =>
-        db.syncQueue.update(item.id!, {
+        syncQueueHandler.update(item.id!.toString(), {
           status: 'pending',
           error: 'Item was stuck in processing state and was reset'
         })
       ))
     }
 
-    // Get items to process
-    const items = await db.syncQueue
+    const items = await syncQueueHandler.table
       .where('status')
       .anyOf('pending', 'failed')
       .and(item => item.attempts < 5)
@@ -112,7 +97,7 @@ const processSyncQueue = async () => {
       try {
         console.log(`Processing ${item.operation} for ${item.entityType} ${item.entityId}`)
         // Update item status to processing
-        await db.syncQueue.update(item.id!, {
+        await syncQueueHandler.update(item.id!, {
           status: 'processing',
           attempts: item.attempts + 1
         })
@@ -139,7 +124,7 @@ const processSyncQueue = async () => {
             if (!planResponse.ok) {
               console.log(`Plan ${planId} not yet synced - deferring ${item.entityType} ${item.entityId}`)
               // We'll retry this item later when the plan is synced
-              await db.syncQueue.update(item.id!, {
+              await syncQueueHandler.update(item.id!, {
                 status: 'pending',
                 error: `Waiting for plan ${planId} to be synced first`
               })
@@ -147,7 +132,7 @@ const processSyncQueue = async () => {
             }
           } catch (error) {
             // Network error, possibly offline - we'll try again later
-            await db.syncQueue.update(item.id!, {
+            await syncQueueHandler.update(item.id!, {
               status: 'pending',
               error: `Network error checking plan: ${error instanceof Error ? error.message : 'Unknown error'}`
             })
@@ -156,7 +141,7 @@ const processSyncQueue = async () => {
         }
 
         if (!canProceed) {
-          await db.syncQueue.update(item.id!, {
+          await syncQueueHandler.update(item.id!, {
             status: 'failed',
             error: 'Cannot proceed due to missing dependencies'
           })
@@ -202,7 +187,7 @@ const processSyncQueue = async () => {
         } catch (error) {
           if (error instanceof TypeError && error.message.includes('fetch')) {
             // Network error, possibly offline
-            await db.syncQueue.update(item.id!, {
+            await syncQueueHandler.update(item.id!, {
               status: 'pending',
               error: `Network error: ${error.message}`
             })
@@ -212,7 +197,7 @@ const processSyncQueue = async () => {
         }
 
         // Mark item as completed
-        await db.syncQueue.update(item.id!, { status: 'completed' })
+        await syncQueueHandler.update(item.id!, { status: 'completed' })
         processed++
 
         console.log(`Successfully processed ${item.entityType} ${item.entityId}`)
@@ -220,7 +205,7 @@ const processSyncQueue = async () => {
         console.error(`Error processing ${item.entityType} ${item.entityId}:`, error)
 
         // Update item status to failed
-        await db.syncQueue.update(item.id!, {
+        await syncQueueHandler.update(item.id!, {
           status: 'failed',
           error: error instanceof Error ? error.message : 'Unknown error'
         })
@@ -241,7 +226,6 @@ const getApiUrlForEntity = (entityType: string, entityId: string, operation: str
     case 'user':
       return operation === 'create' ? '/api/user' : `/api/user/${entityId}`
     case 'plan':
-      // Use a custom sync endpoint for plans to handle the Dixie conversion
       return `/api/plan/sync/${entityId}`
     case 'goal':
       return operation === 'create' ? '/api/goal' : `/api/goal/${entityId}`
@@ -254,13 +238,8 @@ const getApiUrlForEntity = (entityType: string, entityId: string, operation: str
   }
 }
 
-// Helper function to get HTTP method for an operation
 const getMethodForOperation = (operation: string): string => {
   switch (operation) {
-    // case 'create':
-    //   return 'POST'
-    // case 'update':
-    //   return 'PUT'
     case 'delete':
       return 'DELETE'
     default:
@@ -268,7 +247,6 @@ const getMethodForOperation = (operation: string): string => {
   }
 }
 
-// Helper function to prepare payload for sync
 const preparePayloadForSync = (entityType: string, payload: any): any => {
   switch (entityType) {
     case 'plan':
@@ -281,16 +259,15 @@ const preparePayloadForSync = (entityType: string, payload: any): any => {
 const markUserAsSynced = async (userId: string) => {
   const timestamp = Date.now()
 
-  // Check if record exists
-  const existing = await db.userPreferences.get(userId)
+  const existing = await userPreferencesHandler.findOne(userId)
 
   if (existing) {
-    await db.userPreferences.update(userId, {
+    await userPreferencesHandler.update(userId, {
       hasSynced: true,
       lastSyncTime: timestamp
     })
   } else {
-    await db.userPreferences.add({
+    await userPreferencesHandler.create({
       userId,
       hasSynced: true,
       lastSyncTime: timestamp
@@ -358,29 +335,39 @@ const syncAllData = async (userId: string): Promise<{
       }
     }
 
-    // Get plans for this user from Dexie
-    const plans = await db.plans.where('userId').equals(userId).toArray()
+    const plans = await planHandler.findOneByUserId(userId)
 
-    // Queue plans for sync
     for (const plan of plans) {
       await queueForSync('plan', plan.id, 'update', plan)
 
-      // Queue goals for this plan
-      const goals = await db.goals.where('planId').equals(plan.id).toArray()
+      const goals = await goalHandler.findMany({ planId: plan.id })
       for (const goal of goals) {
         await queueForSync('goal', goal.id, 'update', goal)
       }
 
-      // Queue strategies for this plan
-      const strategies = await db.strategies.where('planId').equals(plan.id).toArray()
+      const strategies = await strategyHandler.findMany({ planId: plan.id })
       for (const strategy of strategies) {
         await queueForSync('strategy', strategy.id, 'update', strategy)
       }
 
-      // Queue indicators for this plan
-      const indicators = await db.indicators.where('planId').equals(plan.id).toArray()
+      const indicators = await indicatorHandler.findMany({ planId: plan.id })
       for (const indicator of indicators) {
         await queueForSync('indicator', indicator.id, 'update', indicator)
+      }
+
+      const goalHistory = await goalHistoryHandler.findMany({ planId: plan.id })
+      for (const goal of goalHistory) {
+        await queueForSync('goalHistory', goal!.id, 'update', goal)
+      }
+
+      const strategyHistory = await strategyHistoryHandler.findMany({ planId: plan.id })
+      for (const strategy of strategyHistory) {
+        await queueForSync('strategyHistory', strategy!.id, 'update', strategy)
+      }
+
+      const indicatorHistory = await indicatorHistoryHandler.findMany({ planId: plan.id })
+      for (const indicator of indicatorHistory) {
+        await queueForSync('indicatorHistory', indicator!.id, 'update', indicator)
       }
     }
 
@@ -417,8 +404,7 @@ const performFirstTimeSync = async (userId: string): Promise<{ success: boolean,
 
     console.log(`User ${userId} exists in database`)
 
-    // 2. Sync all plans
-    const plans = await db.plans.where('userId').equals(userId).toArray()
+    const plans = await planHandler.findOneByUserId(userId)
     console.log(`Found ${plans.length} plans to sync`)
 
     for (const plan of plans) {
@@ -515,7 +501,7 @@ const performFirstTimeSync = async (userId: string): Promise<{ success: boolean,
 const cleanupSyncQueue = async (): Promise<number> => {
   // Delete completed items older than 24 hours
   const cutoff = Date.now() - (24 * 60 * 60 * 1000)
-  return db.syncQueue
+  return syncQueueHandler.table
     .where('status')
     .equals('completed')
     .and(item => item.timestamp < cutoff)
