@@ -1,14 +1,15 @@
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
-import { DixiePlan } from '@/app/types/types'
 import { planHandler } from '@/db/dexieHandler'
 import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { Plan, Prisma } from '@prisma/client'
+import { SyncService } from '@/services/sync'
+import { dexieToPlan, planToDexie } from '@/app/util'
 
 const getByUserId = async (userId: string): Promise<Plan | null> => {
   const planLocal = await planHandler.findInProgress(userId)
 
   if (planLocal) {
-    return dixieToPlan(planLocal)
+    return dexieToPlan(planLocal)
   }
 
   if (!ENABLE_CLOUD_SYNC) {
@@ -24,32 +25,34 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
 
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
   const parsedData = PlanSchema.parse(data)
-  await planHandler.create(planToDixie(parsedData))
 
-  if (!ENABLE_CLOUD_SYNC) {
-    return parsedData
+  // If cloud sync is enabled, queue for sync
+  if (!SyncService.isEnabled) {
+    await planHandler.create(planToDexie(parsedData))
+    await SyncService.queueForSync('plan', parsedData.id, 'create', parsedData)
+    // Process the queue in the background
+    SyncService.processSyncQueue().catch(console.error)
+  } else {
+    // Direct API call if not using queue but sync is enabled
+    try {
+      await fetch('/api/plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsedData),
+      })
+      await planHandler.create(planToDexie(parsedData))
+    } catch (error) {
+      console.error('Error syncing to cloud:', error)
+    }
   }
 
-  const body = JSON.stringify({ ...data, id: parsedData.id })
-
-  const response = await fetch(`/api/plan`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body,
-  })
-
-  if (!response.ok) {
-    const errorData = await response.json()
-    throw new Error(errorData.message || 'Something went wrong')
-  }
-
-  return response.json()
+  return parsedData
 }
 
 const get = async (id: string): Promise<Plan | null> => {
   const plan = await planHandler.findOne(id)
   if (plan) {
-    return dixieToPlan(plan)
+    return dexieToPlan(plan)
   }
 
   if (!ENABLE_CLOUD_SYNC) {
@@ -62,7 +65,7 @@ const get = async (id: string): Promise<Plan | null> => {
 const getAll = async (userId: string): Promise<Plan[]> => {
   const plans = await planHandler.findMany({ userId })
   if (plans?.length > 0) {
-    return plans.map(dixieToPlan)
+    return plans.map(dexieToPlan)
   }
 
   if (!ENABLE_CLOUD_SYNC) {
@@ -76,18 +79,31 @@ const getAll = async (userId: string): Promise<Plan[]> => {
   return plan
 }
 
+// Update the update method
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
-  await planHandler.update(id, planToDixie(plan as Plan))
+  const parsedData = PartialPlanSchema.parse(plan)
 
-  if (!ENABLE_CLOUD_SYNC) {
-    return PartialPlanSchema.parse({ ...plan, id })
+
+  // If cloud sync is enabled, queue for sync
+  if (!SyncService.isEnabled) {
+    await SyncService.queueForSync('plan', id, 'update', { ...parsedData, id })
+    // Process the queue in the background
+    SyncService.processSyncQueue().catch(console.error)
+  } else {
+    // Direct API call if not using queue but sync is enabled
+    try {
+      await fetch(`/api/plan/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsedData),
+      })
+      await planHandler.update(id, planToDexie(parsedData as Plan))
+    } catch (error) {
+      console.error('Error syncing to cloud:', error)
+    }
   }
 
-  return fetch(`/api/plan/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(plan),
-  }).then(response => response.json())
+  return { ...parsedData, id }
 }
 
 export const PlanService = {
@@ -96,22 +112,4 @@ export const PlanService = {
   getByUserId,
   getAll,
   update,
-}
-
-
-function dixieToPlan(plan: DixiePlan): Plan {
-  return {
-    ...plan,
-    completed: Boolean(plan.completed),
-    started: Boolean(plan.started)
-  }
-}
-
-
-function planToDixie(plan: Plan): DixiePlan {
-  return {
-    ...plan,
-    completed: Number(Boolean(plan.completed)),
-    started: Number(Boolean(plan.started))
-  }
 }
