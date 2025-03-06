@@ -1,4 +1,4 @@
-import { DexiePlan, ParentProps } from '@/app/types/types'
+import { DexiePlan, ParentProps, SyncQueueItem, UserPreferences } from '@/app/types/types'
 import { db } from '@/db/dexie'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
 import { Collection, Table } from 'dexie'
@@ -7,6 +7,7 @@ export const planHandler = {
   create: async (data: DexiePlan) => db.plans.add(data),
   findMany: async (where?: Partial<DexiePlan>) => db.plans.where(where ?? {}).toArray(),
   findOne: async (id: string) => db.plans.get(id),
+  findOneByUserId: async (userId: string) => db.plans.where('userId').equals(userId).toArray(),
   findInProgress: async (userId: string) => db.plans.where({ userId, completed: 0 }).first(),
   findStarted: async (userId: string) => db.plans.where({ userId, completed: 0, started: 1 }).first(),
   update: async (id: string, data: Partial<DexiePlan>) => db.plans.update(id, data),
@@ -16,12 +17,12 @@ export const planHandler = {
 export const goalHandler = {
   create: async (data: Goal) => db.goals.add(data),
   createMany: async (data: Goal[]) => db.goals.bulkAdd(data),
-  findMany: async (where?: Partial<Goal>, select?: Partial<Goal>) => {
-    const goals = await db.goals.where(where ?? {}).toArray()
+  findMany: async (where: Partial<Goal> = {}, select?: Partial<Goal>) => {
+    const goals = await getList<Goal>(db.goals, where).toArray()
 
     if (select) {
       return goals.map(goal => {
-        const selectedGoal: Partial<Goal> = {}
+        const selectedGoal = {} as Goal
         for (const key in select) {
           if (select[key as keyof Goal] && goal[key as keyof Goal] !== undefined) {
             selectedGoal[key as keyof Goal] = goal[key as keyof Goal]
@@ -46,9 +47,7 @@ export const goalHistoryHandler = {
 
     const result = await Promise.all(
       goalHistories.map(async (goalHistory) => {
-        const goal = await db.goals
-          .where({ id: goalHistory.goalId, status, planId })
-          .first()
+        const goal = await getList<Goal>(db.goals, { id: goalHistory.goalId, status, planId }).first()
 
         if (goal) {
           return {
@@ -72,7 +71,23 @@ export const goalHistoryHandler = {
 export const strategyHandler = {
   create: async (data: Strategy) => db.strategies.add(data),
   createMany: async (data: Strategy[]) => db.strategies.bulkAdd(data),
-  findMany: async (where?: Partial<Strategy>) => db.strategies.where(where ?? {}).toArray(),
+  findMany: async (where: Partial<Strategy> = {}, select?: Partial<Strategy>) => {
+    const strategies = await getList<Strategy>(db.strategies, where).toArray()
+
+    if (select) {
+      return strategies.map(strategy => {
+        const selectedStrategy = {} as Strategy
+        for (const key in select) {
+          if (select[key as keyof Strategy] && strategy[key as keyof Strategy] !== undefined) {
+            (selectedStrategy as any)[key as keyof Strategy] = strategy[key as keyof Strategy]
+          }
+        }
+        return selectedStrategy
+      })
+    }
+
+    return strategies
+  },
   findOne: async (id: string) => db.strategies.get(id),
   update: async (id: string, data: Partial<Strategy>) => db.strategies.update(id, data),
   delete: async (id: string) => db.strategies.delete(id),
@@ -137,7 +152,23 @@ export const strategyHistoryHandler = {
 export const indicatorHandler = {
   create: async (data: Indicator) => db.indicators.add(data),
   createMany: async (data: Indicator[]) => db.indicators.bulkAdd(data),
-  findMany: async (where?: Partial<Indicator>) => db.indicators.where(where ?? {}).toArray(),
+  findMany: async (where: Partial<Indicator> = {}, select?: Partial<Indicator>) => {
+    const indicators = await getList<Indicator>(db.indicators, where).toArray()
+
+    if (select) {
+      return indicators.map(indicator => {
+        const selectedIndicator = {} as Indicator
+        for (const key in select) {
+          if (select[key as keyof Indicator] && indicator[key as keyof Indicator] !== undefined) {
+            (selectedIndicator as any)[key as keyof Indicator] = indicator[key as keyof Indicator]
+          }
+        }
+        return selectedIndicator
+      })
+    }
+
+    return indicators
+  },
   findOne: async (id: string) => db.indicators.get(id),
   update: async (id: string, data: Partial<Indicator>) => db.indicators.update(id, data),
   delete: async (id: string) => db.indicators.delete(id),
@@ -229,17 +260,38 @@ export const waitlistHandler = {
   delete: async (id: string) => db.waitlist.delete(id),
 }
 
-function getList<T>(table: Table<T>): Table<T>;
-function getList<T>(table: Table<T>, where: Partial<T>): Collection<T>;
+export const syncQueueHandler = {
+  table: db.syncQueue,
+  create: async (data: SyncQueueItem) => db.syncQueue.add(data),
+  findOne: async (id: string) => db.syncQueue.get(id),
+  getAll: async () => db.syncQueue.toArray(),
+  findFirst: async () => db.syncQueue.where('id').notEqual('null').first(),
+  findByStatus: async (status: string) => db.syncQueue.where('status').equals(status).toArray(),
+  countByStatus: async (status: string) => db.syncQueue.where('status').equals(status).count(),
+  update: async (id: string, data: Partial<SyncQueueItem>) => db.syncQueue.update(id, data),
+  delete: async (id: string) => db.syncQueue.delete(id),
+}
+
+export const userPreferencesHandler = {
+  create: async (data: UserPreferences) => db.userPreferences.add(data),
+  findOne: async (id: string) => db.userPreferences.get(id),
+  getAll: async () => db.userPreferences.toArray(),
+  findFirst: async () => db.userPreferences.where('id').notEqual('null').first(),
+  update: async (id: string, data: Partial<UserPreferences>) => db.userPreferences.update(id, data),
+  delete: async (id: string) => db.userPreferences.delete(id),
+}
+
+function getList<T>(table: Table<T>): Table<T>
+function getList<T>(table: Table<T>, where: Partial<T>): Collection<T>
 function getList<T>(table: Table<T>, where: Partial<T> = {}): Table<T> | Collection<T> {
-  let keys = Object.keys(where);
+  let keys = Object.keys(where)
   for (const key of keys) {
-    if (where[key as keyof T] == null) delete where[key as keyof T];
+    if (where[key as keyof T] == null) delete where[key as keyof T]
   }
-  keys = Object.keys(where);
+  keys = Object.keys(where)
 
   if (keys.length) {
-    return table.where(where);
+    return table.where(where)
   }
-  return table;
+  return table
 }
