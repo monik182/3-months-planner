@@ -19,7 +19,10 @@ const create = async (user: Prisma.UserCreateInput): Promise<User> => {
         throw new Error('Failed to create user')
       }
       const user = await response.json()
-      await userHandler.create(user)
+      const exists = userHandler.findOne(user.id)
+      if (!exists) {
+        await userHandler.create(user)
+      }
       return user
     })
 }
@@ -63,6 +66,10 @@ const getLocal = async (): Promise<User | null> => {
   return user as User || null
 }
 
+const getRemoteById = async (id: string): Promise<User | null> => {
+  return fetch(`/api/user/${id}`).then(response => response.json())
+}
+
 const getByAuth0Id = async (id: string): Promise<User | null> => {
   const user = await userHandler.findOneByAuth0Id(id)
   if (user) {
@@ -82,4 +89,5 @@ export const UserService = {
   getByEmail,
   getLocal,
   getByAuth0Id,
+  getRemoteById,
 }
