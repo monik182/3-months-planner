@@ -12,6 +12,7 @@ import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import Link from 'next/link'
+import { SyncIndicator } from '@/components/SyncIndicator'
 
 export function Header() {
   const { user, isGuest } = useAccountContext()
@@ -56,6 +57,7 @@ export function Header() {
           )}
         </Flex>
         <Flex gap="5px" alignItems="center">
+          <SyncIndicator />
           <Flex gap="1rem" alignItems="center">
             {showCreatePlanButton && (
               <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>
