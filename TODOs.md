@@ -1,16 +1,18 @@
 # Post Release
 - Sync guest user data to cloud [WIP]
+- Delayed sync [WIP]
 - Save user data to DB on signup
 - Enable edit plan
 - Create VIP role
+
+
 - Improve HOME page with steps and everything
-- FF for enable/disable remote sync
 - Improve the goals/strategies/indicator creation forms
-- Delayed sync [WIP]
 - Improve the plan view and colors and reuse component in step4
 - Upload screenshots for feedback
 - plan overview is unreadable in dark mode (related to next item)
 - Test app theme dark
+- FF for enable/disable remote sync
 - Pricing page ❓ (self deployed)
 - Stripe integration ❓
 - create reddit post  ✅
@@ -27,8 +29,8 @@
   - Refactor api/plan/create ✅
   - only save on click ❓
 - FE Improvements
-  - Create overview progress page
   - Create plan history page
+  - Create overview progress page ✅ - Can be improved
   - Create route guard ✅
   - Create plan read only view ✅
 - Auth Refactor
@@ -36,7 +38,7 @@
 
 
 # Extra 
-AI:
+AI: 🔥
 - 3-year milestone summary generator
 - Goals from vision generator
 - Strategies from vision goal
@@ -71,7 +73,7 @@ Time blocking:
 - Breakout blocks: once a month, 3 hours
 - Week 13: Celebrate last year achievements/last opportunity to close last year's goals/**Plan next year**
 
-Print:
+Print: 🔥
 - Create printable templates for the weekly score tracking
 
 
