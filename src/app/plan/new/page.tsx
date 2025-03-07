@@ -23,11 +23,14 @@ function NewPlan() {
 
   const handleCreateNewPlan = () => {
     const date = dayjs(startDate).toDate()
+    const now = dayjs().toDate()
     
     const plan: Prisma.PlanCreateInput = {
       startDate: date,
       userId: user!.id as string,
-      endDate: calculatePlanEndDate(date)
+      endDate: calculatePlanEndDate(date),
+      created: now,
+      lastUpdate: now,
     }
     createPlan.mutate(plan, {
       onSuccess() {

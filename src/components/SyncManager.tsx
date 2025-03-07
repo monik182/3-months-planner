@@ -10,9 +10,9 @@ export function SyncManager() {
     if (!user || !SyncService.isEnabled || !syncInitialized) return
 
     const syncInterval = setInterval(() => {
-      console.log('Setting up periodic. Sync 1 hour interval')
+      console.log('**** Setting up periodic sync - 10 minutes interval ****')
       SyncService.processSyncQueue().catch(console.error)
-    }, 1 * 60 * 60 * 1000)
+    }, 10 * 60 * 1000)
 
     return () => clearInterval(syncInterval)
   }, [user, syncInitialized])

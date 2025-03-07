@@ -1,4 +1,3 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { planHandler } from '@/db/dexieHandler'
 import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { Plan, Prisma } from '@prisma/client'
@@ -13,7 +12,7 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
     return dexieToPlan(planLocal)
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return null
   }
 
@@ -26,24 +25,8 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
 
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
   const parsedData = PlanSchema.parse(data)
-
-  if (!SyncService.isEnabled) {
-    await planHandler.create(planToDexie(parsedData))
-    await SyncService.queueForSync(QueueEntityType.PLAN, parsedData.id, QueueOperation.CREATE, parsedData)
-    SyncService.processSyncQueue().catch(console.error)
-  } else {
-    try {
-      await fetch('/api/plan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsedData),
-      })
-      await planHandler.create(planToDexie(parsedData))
-    } catch (error) {
-      console.error('Error syncing to cloud:', error)
-    }
-  }
-
+  await planHandler.create(planToDexie(parsedData))
+  await SyncService.queueForSync(QueueEntityType.PLAN, parsedData.id, QueueOperation.CREATE, parsedData)
   return parsedData
 }
 
@@ -53,7 +36,7 @@ const get = async (id: string): Promise<Plan | null> => {
     return dexieToPlan(plan)
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return null
   }
 
@@ -66,7 +49,7 @@ const getAll = async (userId: string): Promise<Plan[]> => {
     return plans.map(dexieToPlan)
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
@@ -79,24 +62,8 @@ const getAll = async (userId: string): Promise<Plan[]> => {
 
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
   const parsedData = PartialPlanSchema.parse(plan)
-
-  if (!SyncService.isEnabled) {
-    await planHandler.update(id, planToDexie(parsedData as Plan))
-    await SyncService.queueForSync(QueueEntityType.PLAN, id, QueueOperation.UPDATE, { ...parsedData, id })
-    SyncService.processSyncQueue().catch(console.error)
-  } else {
-    try {
-      await fetch(`/api/plan/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(parsedData),
-      })
-      await planHandler.update(id, planToDexie(parsedData as Plan))
-    } catch (error) {
-      console.error('Error syncing to cloud:', error)
-    }
-  }
-
+  await planHandler.update(id, planToDexie(parsedData as Plan))
+  await SyncService.queueForSync(QueueEntityType.PLAN, id, QueueOperation.UPDATE, { ...parsedData, id })
   return { ...parsedData, id }
 }
 
