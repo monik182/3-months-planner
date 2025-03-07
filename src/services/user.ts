@@ -19,7 +19,7 @@ const create = async (user: Prisma.UserCreateInput): Promise<User> => {
         throw new Error('Failed to create user')
       }
       const user = await response.json()
-      const exists = userHandler.findOne(user.id)
+      const exists = await userHandler.findOne(user.id)
       if (!exists) {
         await userHandler.create(user)
       }

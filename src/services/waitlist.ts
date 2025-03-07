@@ -20,16 +20,16 @@ const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> =
 }
 
 const getByToken = async (token: string): Promise<Waitlist | null> => {
+  if (ENABLE_CLOUD_SYNC) {
+    return fetch(`/api/waitlist/token/${token}`).then(response => response.json())
+  }
+
   const response = await waitlistHandler.findOneByToken(token)
   if (response) {
     return response
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
-    return null
-  }
-
-  return fetch(`/api/waitlist/token/${token}`).then(response => response.json())
+  return null
 }
 
 const update = async (id: string, waitlist: Prisma.WaitlistUpdateInput): Promise<Partial<Waitlist>> => {
