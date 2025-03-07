@@ -1,6 +1,6 @@
 import { indicatorHistoryHandler } from '@/db/prismaHandler'
 
-import { IndicatorHistoryArraySchema } from '@/lib/validators/indicatorHistory'
+import { IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const parsedData = IndicatorHistoryArraySchema.parse(data)
+    const parsedData = IndicatorHistoryNoIndicatorArraySchema.parse(data)
     const response = await indicatorHistoryHandler.createMany(parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
