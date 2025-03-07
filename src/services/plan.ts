@@ -26,14 +26,11 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
   const parsedData = PlanSchema.parse(data)
 
-  // If cloud sync is enabled, queue for sync
   if (!SyncService.isEnabled) {
     await planHandler.create(planToDexie(parsedData))
     await SyncService.queueForSync('plan', parsedData.id, 'create', parsedData)
-    // Process the queue in the background
     SyncService.processSyncQueue().catch(console.error)
   } else {
-    // Direct API call if not using queue but sync is enabled
     try {
       await fetch('/api/plan', {
         method: 'POST',
@@ -79,18 +76,14 @@ const getAll = async (userId: string): Promise<Plan[]> => {
   return plan
 }
 
-// Update the update method
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
   const parsedData = PartialPlanSchema.parse(plan)
 
-
-  // If cloud sync is enabled, queue for sync
   if (!SyncService.isEnabled) {
+    await planHandler.update(id, planToDexie(parsedData as Plan))
     await SyncService.queueForSync('plan', id, 'update', { ...parsedData, id })
-    // Process the queue in the background
     SyncService.processSyncQueue().catch(console.error)
   } else {
-    // Direct API call if not using queue but sync is enabled
     try {
       await fetch(`/api/plan/${id}`, {
         method: 'PUT',

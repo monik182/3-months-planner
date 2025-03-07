@@ -14,9 +14,9 @@ export function SyncIndicator() {
     <Tooltip content={`Syncing: ${syncStatus.pending + syncStatus.processing} items pending`}>
       <Flex align="center" ml={2}>
         {syncStatus.processing > 0 ? (
-          <Spinner size="xs" />
+          <Spinner size="sm" />
         ) : (
-          <FiCloud size="14px" />
+          <FiCloud size="20px" />
         )}
       </Flex>
     </Tooltip>
