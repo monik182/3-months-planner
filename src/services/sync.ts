@@ -8,7 +8,7 @@ const queueForSync = async (
   entityType: string,
   entityId: string,
   operation: SyncQueueItem['operation'],
-  payload: any
+  payload: any,
 ): Promise<number | undefined> => {
 
   if (!SyncService.isEnabled) {
@@ -30,7 +30,7 @@ const getSyncQueueStatus = async (): Promise<{
   pending: number,
   processing: number,
   failed: number,
-  total: number
+  total: number,
 }> => {
   const pending = await syncQueueHandler.countByStatus('pending')
   const processing = await syncQueueHandler.countByStatus('processing')
@@ -115,10 +115,10 @@ const processSyncQueue = async () => {
             console.error(`User ${userId} does not exist - cannot process plan ${item.entityId}`)
             canProceed = false
           }
-        } else if ((item.entityType === 'goal' || item.entityType === 'strategy' || item.entityType === 'indicator') &&
+        } else if ((item.entityType !== 'plan') &&
           (item.operation === 'create' || item.operation === 'update')) {
           // Ensure plan exists
-          const planId = item.payload.planId
+          const planId = item.entityId === 'bulk' || !item.entityId ? item.payload[0].planId : item.payload.planId
           try {
             const planResponse = await fetch(`/api/plan/${planId}`)
             if (!planResponse.ok) {
@@ -220,19 +220,36 @@ const processSyncQueue = async () => {
   }
 }
 
-// Helper function to get API URL for an entity
 const getApiUrlForEntity = (entityType: string, entityId: string, operation: string): string | null => {
   switch (entityType) {
     case 'user':
       return operation === 'create' ? '/api/user' : `/api/user/${entityId}`
     case 'plan':
-      return `/api/plan/sync/${entityId}`
+      return operation === 'create' ? '/api/plan/' : `/api/plan/${entityId}`
     case 'goal':
       return operation === 'create' ? '/api/goal' : `/api/goal/${entityId}`
+    case 'goalBulk':
+      return operation === 'create' ? '/api/goal/bulk' : null
     case 'strategy':
       return operation === 'create' ? '/api/strategy' : `/api/strategy/${entityId}`
+    case 'strategyBulk':
+      return operation === 'create' ? '/api/strategy/bulk' : null
     case 'indicator':
       return operation === 'create' ? '/api/indicator' : `/api/indicator/${entityId}`
+    case 'indicatorBulk':
+      return operation === 'create' ? '/api/indicator/bulk' : null
+    case 'goalHistory':
+      return operation === 'create' ? '/api/goal/history' : `/api/goal/history/${entityId}`
+    case 'goalHistoryBulk':
+      return operation === 'create' ? '/api/goal/history/bulk' : null
+    case 'strategyHistory':
+      return operation === 'create' ? '/api/strategy/history' : `/api/strategy/history/${entityId}`
+    case 'strategyHistoryBulk':
+      return operation === 'create' ? '/api/strategy/history/bulk' : null
+    case 'indicatorHistory':
+      return operation === 'create' ? '/api/indicator/history' : `/api/indicator/history/${entityId}`
+    case 'indicatorHistoryBulk':
+      return operation === 'create' ? '/api/indicator/history/bulk' : null
     default:
       return null
   }
@@ -281,33 +298,25 @@ const ensureUserExists = async (userId: string): Promise<boolean> => {
   if (!SyncService.isEnabled) return true
 
   try {
-    // Try to fetch the user from the server
     const response = await UserService.getRemoteById(userId)
 
-    console.log('********ensureUserExists remote???', response)
-
     if (response) {
-      // User already exists in the database
       return true
     }
 
-    // User doesn't exist in the database, get from local
     const localUser = await UserService.getLocal()
     if (!localUser) {
       console.error(`User with ID ${userId} not found locally`)
       return false
     }
-    console.log('>>>>>>>LOCAL USER>>>>', localUser)
-    // Create the user in the database
+
     try {
-      const user = await UserService.create(localUser)
-      console.log('CRETED USER>>>>>>>>>>>>>', user)
+      await UserService.create(localUser)
     } catch (error) {
       console.error('Failed to create user in database:', error)
       return false
     }
 
-    console.log(`Created user ${userId} in database`)
     return true
   } catch (error) {
     console.error('Error ensuring user exists:', error)
@@ -315,12 +324,10 @@ const ensureUserExists = async (userId: string): Promise<boolean> => {
   }
 }
 
-// Sync all data for a user
-const syncAllData = async (userId: string): Promise<{
+const syncAllData = async (userId: string, operation: SyncQueueItem['operation'] = 'update'): Promise<{
   success: boolean,
   error?: string
 }> => {
-  // If cloud sync is disabled, don't sync
   if (!SyncService.isEnabled) {
     return { success: true }
   }
@@ -338,40 +345,27 @@ const syncAllData = async (userId: string): Promise<{
     const plans = await planHandler.findOneByUserId(userId)
 
     for (const plan of plans) {
-      await queueForSync('plan', plan.id, 'update', plan)
+      await queueForSync('plan', plan.id, operation, plan)
 
       const goals = await goalHandler.findMany({ planId: plan.id })
-      for (const goal of goals) {
-        await queueForSync('goal', goal.id, 'update', goal)
-      }
+      await queueForSync('goalBulk', 'bulk', operation, goals)
 
       const strategies = await strategyHandler.findMany({ planId: plan.id })
-      for (const strategy of strategies) {
-        await queueForSync('strategy', strategy.id, 'update', strategy)
-      }
+      await queueForSync('strategyBulk', 'bulk', operation, strategies)
 
       const indicators = await indicatorHandler.findMany({ planId: plan.id })
-      for (const indicator of indicators) {
-        await queueForSync('indicator', indicator.id, 'update', indicator)
-      }
+      await queueForSync('indicatorBulk', 'bulk', operation, indicators)
 
       const goalHistory = await goalHistoryHandler.findMany({ planId: plan.id })
-      for (const goal of goalHistory) {
-        await queueForSync('goalHistory', goal!.id, 'update', goal)
-      }
+      await queueForSync('goalHistoryBulk', 'bulk', operation, goalHistory)
 
       const strategyHistory = await strategyHistoryHandler.findMany({ planId: plan.id })
-      for (const strategy of strategyHistory) {
-        await queueForSync('strategyHistory', strategy!.id, 'update', strategy)
-      }
+      await queueForSync('strategyHistoryBulk', 'bulk', operation, strategyHistory)
 
       const indicatorHistory = await indicatorHistoryHandler.findMany({ planId: plan.id })
-      for (const indicator of indicatorHistory) {
-        await queueForSync('indicatorHistory', indicator!.id, 'update', indicator)
-      }
+      await queueForSync('indicatorHistoryBulk', 'bulk', operation, indicatorHistory)
     }
 
-    // Process the queue
     await processSyncQueue()
 
     await markUserAsSynced(userId)
@@ -385,105 +379,11 @@ const syncAllData = async (userId: string): Promise<{
   }
 }
 
-// Add to src/services/sync.ts
 const performFirstTimeSync = async (userId: string): Promise<{ success: boolean, error?: string }> => {
   if (!SyncService.isEnabled) return { success: true }
 
   try {
-    console.log(`Starting first-time sync for user ${userId}`)
-
-    // 1. First, ensure the user exists in the database
-    const userExists = await ensureUserExists(userId)
-
-    if (!userExists) {
-      return {
-        success: false,
-        error: `User with ID ${userId} could not be created in the database`
-      }
-    }
-
-    console.log(`User ${userId} exists in database`)
-
-    const plans = await planHandler.findOneByUserId(userId)
-    console.log(`Found ${plans.length} plans to sync`)
-
-    for (const plan of plans) {
-      // Directly create/update the plan in the database
-      const planResponse = await fetch(`/api/plan/sync/${plan.id}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dexieToPlan(plan)),
-      })
-
-      console.log('>>>>PLAND SYNC RESPONSE>>>>', planResponse)
-
-      if (!planResponse.ok) {
-        console.log(`Creating??? plan ${plan.id}`)
-        // await fetch('/api/plan', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(plan),
-        // })
-      }
-
-      // // 3. Sync all goals for this plan
-      // const goals = await db.goals.where('planId').equals(plan.id).toArray()
-      // console.log(`Found ${goals.length} goals for plan ${plan.id}`)
-
-      // for (const goal of goals) {
-      //   await fetch(`/api/goal/${goal.id}`, {
-      //     method: 'PUT',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(goal),
-      //   }).catch(() =>
-      //     fetch('/api/goal', {
-      //       method: 'POST',
-      //       headers: { 'Content-Type': 'application/json' },
-      //       body: JSON.stringify(goal),
-      //     })
-      //   )
-      // }
-
-      // // 4. Sync all strategies for this plan
-      // const strategies = await db.strategies.where('planId').equals(plan.id).toArray()
-      // console.log(`Found ${strategies.length} strategies for plan ${plan.id}`)
-
-      // for (const strategy of strategies) {
-      //   await fetch(`/api/strategy/${strategy.id}`, {
-      //     method: 'PUT',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(strategy),
-      //   }).catch(() =>
-      //     fetch('/api/strategy', {
-      //       method: 'POST',
-      //       headers: { 'Content-Type': 'application/json' },
-      //       body: JSON.stringify(strategy),
-      //     })
-      //   )
-      // }
-
-      // // 5. Sync all indicators for this plan
-      // const indicators = await db.indicators.where('planId').equals(plan.id).toArray()
-      // console.log(`Found ${indicators.length} indicators for plan ${plan.id}`)
-
-      // for (const indicator of indicators) {
-      //   await fetch(`/api/indicator/${indicator.id}`, {
-      //     method: 'PUT',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(indicator),
-      //   }).catch(() =>
-      //     fetch('/api/indicator', {
-      //       method: 'POST',
-      //       headers: { 'Content-Type': 'application/json' },
-      //       body: JSON.stringify(indicator),
-      //     })
-      //   )
-      // }
-    }
-
-    console.log(`First-time sync completed for user ${userId}`)
-
-    // Mark user as synced
+    await syncAllData(userId, "create")
     await markUserAsSynced(userId)
 
     return { success: true }
@@ -496,10 +396,7 @@ const performFirstTimeSync = async (userId: string): Promise<{ success: boolean,
   }
 }
 
-
-// Clean up completed sync items (to prevent the queue from growing too large)
 const cleanupSyncQueue = async (): Promise<number> => {
-  // Delete completed items older than 24 hours
   const cutoff = Date.now() - (24 * 60 * 60 * 1000)
   return syncQueueHandler.table
     .where('status')
