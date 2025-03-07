@@ -4,6 +4,7 @@ import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { Plan, Prisma } from '@prisma/client'
 import { SyncService } from '@/services/sync'
 import { dexieToPlan, planToDexie } from '@/app/util'
+import { QueueEntityType, QueueOperation } from '@/app/types/types'
 
 const getByUserId = async (userId: string): Promise<Plan | null> => {
   const planLocal = await planHandler.findInProgress(userId)
@@ -28,7 +29,7 @@ const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
 
   if (!SyncService.isEnabled) {
     await planHandler.create(planToDexie(parsedData))
-    await SyncService.queueForSync('plan', parsedData.id, 'create', parsedData)
+    await SyncService.queueForSync(QueueEntityType.PLAN, parsedData.id, QueueOperation.CREATE, parsedData)
     SyncService.processSyncQueue().catch(console.error)
   } else {
     try {
@@ -81,7 +82,7 @@ const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial
 
   if (!SyncService.isEnabled) {
     await planHandler.update(id, planToDexie(parsedData as Plan))
-    await SyncService.queueForSync('plan', id, 'update', { ...parsedData, id })
+    await SyncService.queueForSync(QueueEntityType.PLAN, id, QueueOperation.UPDATE, { ...parsedData, id })
     SyncService.processSyncQueue().catch(console.error)
   } else {
     try {

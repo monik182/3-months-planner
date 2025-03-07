@@ -54,16 +54,53 @@ export interface ParentProps {
 
 export type UserExtended = User & Pick<UserProfile, 'sub' | 'picture'>
 
+export enum QueueOperation {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+}
+
+export enum QueueStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  FAILED = 'failed',
+  COMPLETED = 'completed',
+}
+
+export enum QueueEntityType {
+  USER = 'user',
+  PLAN = 'plan',
+  GOAL = 'goal',
+  GOAL_BULK = 'goalBulk',
+  GOAL_HISTORY = 'goalHistory',
+  GOAL_HISTORY_BULK = 'goalHistoryBulk',
+  STRATEGY = 'strategy',
+  STRATEGY_BULK = 'strategyBulk',
+  STRATEGY_HISTORY = 'strategyHistory',
+  STRATEGY_HISTORY_BULK = 'strategyHistoryBulk',
+  INDICATOR = 'indicator',
+  INDICATOR_BULK = 'indicatorBulk',
+  INDICATOR_HISTORY = 'indicatorHistory',
+  INDICATOR_HISTORY_BULK = 'indicatorHistoryBulk',
+}
+
 export interface SyncQueueItem {
   id?: number
-  entityType: string
+  entityType: QueueEntityType
   entityId: string
-  operation: 'create' | 'update' | 'delete'
+  operation: QueueOperation
   payload: any
-  status: 'pending' | 'processing' | 'failed' | 'completed'
+  status: QueueStatus
   attempts: number
   timestamp: number
   error?: string
+}
+
+export interface SyncStatus {
+  pending: number
+  processing: number
+  failed: number
+  total: number
 }
 
 export interface UserPreferences {

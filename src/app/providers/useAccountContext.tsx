@@ -3,7 +3,7 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { useUser } from '@auth0/nextjs-auth0/client'
 import { Center, Spinner } from '@chakra-ui/react'
 import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
-import { UserExtended } from '@/app/types/types'
+import { SyncStatus, UserExtended } from '@/app/types/types'
 import { Role } from '@prisma/client'
 import { SyncService } from '@/services/sync'
 import { userPreferencesHandler } from '@/db/dexieHandler'
@@ -14,7 +14,7 @@ type AccountContextType = {
   isLoading: boolean
   syncEnabled: boolean
   syncInitialized: boolean
-  syncStatus: { pending: number; processing: number; failed: number; total: number }
+  syncStatus: SyncStatus
   userActions: UseUserActions
   triggerSync: () => Promise<void>
 }
@@ -82,7 +82,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
         updateSyncStatus()
       } catch (error) {
         console.error('Error during initial sync:', error)
-        setSyncInitialized(true)
+        setSyncInitialized(false)
       }
     }
 
