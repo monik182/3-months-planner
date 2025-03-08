@@ -1,51 +1,49 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList } from '@/app/util'
 import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, strategyHandler, strategyHistoryHandler } from '@/db/dexieHandler'
 import { GoalHistoryNoGoalArraySchema } from '@/lib/validators/goalHistory'
 import { IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
 import { Goal, GoalHistory, IndicatorHistory, StrategyHistory } from '@prisma/client'
+import { SyncService } from '@/services/sync'
+import { QueueEntityType, QueueOperation } from '@/app/types/types'
 
-const create = async (planId: string) => {
-  const data = await parseData(planId)
-  const { goalHistory, strategiesHistory, indicatorsHistory } = data
+interface HistoryData {
+  goalHistory: GoalHistory[]
+  strategiesHistory: StrategyHistory[]
+  indicatorsHistory: IndicatorHistory[]
+}
 
-  if (!ENABLE_CLOUD_SYNC) {
+const create = async (planId: string): Promise<HistoryData> => {
+  try {
+    const data = await parseData(planId)
+    const { goalHistory, strategiesHistory, indicatorsHistory } = data
+
     await Promise.all([
       goalHistoryHandler.createMany(goalHistory),
       strategyHistoryHandler.createMany(strategiesHistory),
       indicatorHistoryHandler.createMany(indicatorsHistory),
     ])
+
+    const queuePromises = [
+      SyncService.queueForSync(QueueEntityType.GOAL_HISTORY_BULK, 'bulk', QueueOperation.CREATE, goalHistory),
+      SyncService.queueForSync(QueueEntityType.STRATEGY_HISTORY_BULK, 'bulk', QueueOperation.CREATE, strategiesHistory),
+      SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY_BULK, 'bulk', QueueOperation.CREATE, indicatorsHistory),
+    ]
+
+    await Promise.all(queuePromises)
+
     return data
+  } catch (error) {
+    console.error('Error creating history snapshot:', error)
+    throw error
   }
-
-  const body = JSON.stringify(data)
-  return fetch(`/api/history`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body,
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        const res = await response.json()
-        throw new Error(JSON.stringify(res.error) || 'Failed to create indicator')
-      }
-      await Promise.all([
-        goalHistoryHandler.createMany(goalHistory),
-        strategyHistoryHandler.createMany(strategiesHistory),
-        indicatorHistoryHandler.createMany(indicatorsHistory),
-      ])
-      return data
-    })
 }
-
 
 export const HistoryService = {
   create,
 }
 
-
-async function parseData(planId: string): Promise<{ goalHistory: GoalHistory[], strategiesHistory: StrategyHistory[], indicatorsHistory: IndicatorHistory[] }> {
+async function parseData(planId: string): Promise<HistoryData> {
   const goals = (await goalHandler.findMany({ planId })) || []
   const strategies = (await strategyHandler.findMany({ planId })) || []
   const indicators = (await indicatorHandler.findMany({ planId })) || []

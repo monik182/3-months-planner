@@ -1,84 +1,121 @@
 import { indicatorHistoryHandler } from '@/db/dexieHandler'
-import { IndicatorHistoryExtended } from '@/app/types/types'
+import { IndicatorHistoryExtended, QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 import { IndicatorHistory, Prisma } from '@prisma/client'
-import { IndicatorHistorySchema, PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
+import { IndicatorHistorySchema, IndicatorHistoryArraySchema, PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
+import { SyncService } from '@/services/sync'
 
-const create = async (indicator: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
-  const parsedData = IndicatorHistorySchema.parse(indicator)
+const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
+  const parsedData = IndicatorHistorySchema.parse(data)
   await indicatorHistoryHandler.create(parsedData)
+  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY, parsedData.id, QueueOperation.CREATE, parsedData)
+  return parsedData
+}
 
-  if (!ENABLE_CLOUD_SYNC) {
-    return parsedData
-  }
-
-  return fetch(`/api/indicator/history`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(parsedData),
-  })
-    .then(response => response.json())
+const createBulk = async (histories: Prisma.IndicatorHistoryCreateManyInput[]): Promise<IndicatorHistory[]> => {
+  const parsedData = IndicatorHistoryArraySchema.parse(histories)
+  await indicatorHistoryHandler.createMany(parsedData)
+  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY_BULK, 'bulk', QueueOperation.CREATE, histories)
+  return parsedData
 }
 
 const get = async (id: string): Promise<IndicatorHistory | null> => {
-  const history = await indicatorHistoryHandler.findOne(id)
-  if (history) {
-    return history
-  }
+  try {
+    const history = await indicatorHistoryHandler.findOne(id)
+    if (history) {
+      return history
+    }
 
-  if (!ENABLE_CLOUD_SYNC) {
+    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
+      QueueEntityType.INDICATOR_HISTORY,
+      id,
+      QueueOperation.DELETE
+    )
+
+    if (isQueuedForDeletion) {
+      return null
+    }
+
+    if (!SyncService.isEnabled) {
+      return null
+    }
+
+    const response = await fetch(`/api/indicator/history/${id}`)
+    if (!response.ok) {
+      console.error(`Failed to fetch indicator history ${id} from remote:`, response.status)
+      return null
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error(`Error fetching indicator history ${id}:`, error)
     return null
   }
-
-  return fetch(`/api/indicator/history/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string, sequence?: number): Promise<IndicatorHistoryExtended[]> => {
-  const history = await indicatorHistoryHandler.findMany({ planId }, { sequence })
-  if (history?.length) {
-    return history as IndicatorHistoryExtended[]
+const getByPlanId = async (planId: string, sequence?: number, status = Status.ACTIVE): Promise<IndicatorHistoryExtended[]> => {
+  const histories = await indicatorHistoryHandler.findMany({ planId, status }, { sequence })
+
+  if (histories?.length > 0) {
+    return histories as IndicatorHistoryExtended[]
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
-  return fetch(`/api/indicator/history?planId=${planId}&sequence=${sequence}`).then(response => response.json())
-}
+  const url = new URL('/api/indicator/history', window.location.origin)
+  url.searchParams.append('planId', planId)
+  if (sequence !== undefined) url.searchParams.append('sequence', sequence.toString())
+  url.searchParams.append('status', status)
 
-const getByGoalId = async (goalId: string, sequence?: number): Promise<IndicatorHistoryExtended[]> => {
-  const history = await indicatorHistoryHandler.findManyByGoalId({ goalId }, { sequence })
-  if (history?.length) {
-    return history as IndicatorHistoryExtended[]
-  }
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return []
-  }
-
-  return fetch(`/api/indicator/history?goalId=${goalId}&sequence=${sequence}`).then(response => response.json())
-}
-
-const update = async (id: string, indicator: Prisma.IndicatorHistoryUpdateInput): Promise<IndicatorHistory> => {
-  const parsedData = PartialIndicatorHistorySchema.parse(indicator)
-  await indicatorHistoryHandler.update(id, parsedData)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return indicator as IndicatorHistory
-  }
-
-  return fetch(`/api/indicator/history/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(indicator),
-  })
+  const remoteHistories = await fetch(url.toString())
     .then(response => response.json())
+
+  const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.INDICATOR_HISTORY)
+  return filteredHistories
+}
+
+const getByGoalId = async (goalId: string, sequence?: number, status = Status.ACTIVE): Promise<IndicatorHistoryExtended[]> => {
+  const histories = await indicatorHistoryHandler.findManyByGoalId({ goalId, status }, { sequence })
+
+  if (histories?.length > 0) {
+    return histories as IndicatorHistoryExtended[]
+  }
+
+  if (!SyncService.isEnabled) {
+    return []
+  }
+
+  const url = new URL('/api/indicator/history', window.location.origin)
+  url.searchParams.append('goalId', goalId)
+  if (sequence !== undefined) url.searchParams.append('sequence', sequence.toString())
+  url.searchParams.append('status', status)
+
+  const remoteHistories = await fetch(url.toString())
+    .then(response => response.json())
+
+  const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.INDICATOR_HISTORY)
+  return filteredHistories
+}
+
+const update = async (id: string, history: Prisma.IndicatorHistoryUpdateInput): Promise<Partial<IndicatorHistory>> => {
+  const parsedData = PartialIndicatorHistorySchema.parse(history)
+  await indicatorHistoryHandler.update(id, parsedData as IndicatorHistory)
+  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY, id, QueueOperation.UPDATE, { ...parsedData, id })
+  return { ...parsedData, id }
+}
+
+const deleteItem = async (id: string): Promise<void> => {
+  await indicatorHistoryHandler.delete(id)
+  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY, id, QueueOperation.DELETE, id)
 }
 
 export const IndicatorHistoryService = {
   create,
+  createBulk,
   get,
   getByPlanId,
   getByGoalId,
   update,
+  deleteItem,
 }
