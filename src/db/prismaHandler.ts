@@ -20,7 +20,6 @@ export const goalHandler = {
   }),
   findOne: async (id: string) => prisma.goal.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.GoalUpdateInput) => prisma.goal.update({ where: { id }, data }),
-  updateMany: async (data: Prisma.GoalUpdateManyMutationInput[]) => prisma.goal.updateMany({ data }),
   delete: async (id: string) => prisma.goal.delete({ where: { id } }),
   deleteMany: async (id: string[]) => prisma.goal.deleteMany({ where: { id: { in: id } } }),
 }
