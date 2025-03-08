@@ -19,13 +19,13 @@ interface StrategyListProps {
 
 export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
-  const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
+  const { data: _strategies = [], isLoading, isRefetching } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
   const create = strategyActions.useCreate()
   const update = strategyActions.useUpdate()
   const remove = strategyActions.useDelete()
   const loadingText = create.isPending ? 'Creating' : 'Saving'
-  const loading = create.isPending || update.isPending || remove.isPending
+  const loading = create.isPending || update.isPending || remove.isPending || isRefetching || isLoading
   const canAdd = maxLimit ? strategies.length < maxLimit : true
 
   const handleUpdate = (id: string, strategy: Partial<Strategy>) => {
@@ -83,7 +83,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
       if (prev.length !== _strategies.length) return _strategies
       return prev
     })
-  }, [_strategies])
+  }, [_strategies.length])
 
   return (
     <Flex gap="10px" direction="column">

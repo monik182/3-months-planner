@@ -19,13 +19,13 @@ interface IndicatorListProps {
 
 export function IndicatorList({ goalId, planId, maxLimit, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
-  const { data: indicators = [] } = indicatorActions.useGetByGoalId(goalId)
+  const { data: indicators = [], isLoading, isRefetching } = indicatorActions.useGetByGoalId(goalId)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
   const remove = indicatorActions.useDelete()
   const loadingText = create.isPending ? 'Creating' : 'Saving'
-  const loading = create.isPending || update.isPending || remove.isPending
+  const loading = create.isPending || update.isPending || remove.isPending || isLoading || isRefetching
   const canAdd = maxLimit ? indicators.length < maxLimit : true
   const disableIndicator = !canAdd || !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
 

@@ -16,13 +16,13 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 const maxLimit = 4
 export function Step3({ onLoading }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
-  const { data: _goals = [] } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
+  const { data: _goals = [], isRefetching, isLoading } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
   const create = goalActions.useCreate()
   const update = goalActions.useUpdate()
   const remove = goalActions.useDelete()
   const loadingText = create.isPending ? 'Creating' : 'Saving'
-  const loading = create.isPending || update.isPending || remove.isPending
+  const loading = create.isPending || update.isPending || remove.isPending || isRefetching || isLoading
   const canAdd = maxLimit ? goals.length < maxLimit : true
 
   const createGoal = () => {
@@ -77,7 +77,7 @@ export function Step3({ onLoading }: Step<Goal[]>) {
         return prev
       })
     }
-  }, [_goals, loading])
+  }, [_goals.length, loading])
 
   return (
     <StepLayout
