@@ -1,102 +1,110 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { indicatorHandler } from '@/db/dexieHandler'
-import { PartialIndicatorSchema } from '@/lib/validators/indicator'
+import { PartialIndicatorSchema, IndicatorNoGoalSchema, IndicatorNoGoalArraySchema } from '@/lib/validators/indicator'
 import { Indicator, Prisma } from '@prisma/client'
+import { SyncService } from '@/services/sync'
+import { QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 
-const create = async (indicator: Indicator): Promise<Indicator> => {
-  if (!ENABLE_CLOUD_SYNC) {
-    await indicatorHandler.create(indicator)
-    return indicator
+const create = async (data: Prisma.IndicatorCreateInput): Promise<Indicator> => {
+  const parsedData = IndicatorNoGoalSchema.parse(data)
+  await indicatorHandler.create(parsedData)
+  await SyncService.queueForSync(QueueEntityType.INDICATOR, parsedData.id, QueueOperation.CREATE, parsedData)
+  return parsedData
+}
+
+const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promise<Indicator[]> => {
+  const parsedData = IndicatorNoGoalArraySchema.parse(indicators)
+  await indicatorHandler.createMany(parsedData)
+  for (const indicator of parsedData) {
+    await SyncService.queueForSync(QueueEntityType.INDICATOR_BULK, indicator.id, QueueOperation.CREATE, indicator)
   }
-
-  return fetch(`/api/indicator`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(indicator),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        const res = await response.json()
-        throw new Error(JSON.stringify(res.error) || 'Failed to create indicator')
-      }
-      await indicatorHandler.create(indicator)
-      return indicator
-    })
+  return parsedData
 }
 
 const get = async (id: string): Promise<Indicator | null> => {
-  const indicator = await indicatorHandler.findOne(id)
+  try {
+    const indicator = await indicatorHandler.findOne(id)
+    if (indicator) {
+      return indicator
+    }
 
-  if (indicator) {
-    return indicator
-  }
+    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
+      QueueEntityType.INDICATOR,
+      id,
+      QueueOperation.DELETE
+    )
 
-  if (!ENABLE_CLOUD_SYNC) {
+    if (isQueuedForDeletion) {
+      return null
+    }
+
+    if (!SyncService.isEnabled) {
+      return null
+    }
+
+    const response = await fetch(`/api/indicator/${id}`)
+    if (!response.ok) {
+      console.error(`Failed to fetch indicator ${id} from remote:`, response.status)
+      return null
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error(`Error fetching indicator ${id}:`, error)
     return null
   }
-
-  return fetch(`/api/indicator/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string): Promise<Indicator[]> => {
-  const indicators = await indicatorHandler.findMany({ planId })
+const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Indicator[]> => {
+  const indicators = await indicatorHandler.findMany({ planId, status })
 
-  if (indicators) {
+  if (indicators?.length > 0) {
     return indicators
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
-  return fetch(`/api/indicator?planId=${planId}`).then(response => response.json())
+  const remoteIndicators = await fetch(`/api/indicator?planId=${planId}&status=${status}`)
+    .then(response => response.json())
+
+  const filteredIndicators = await SyncService.filterQueuedForDeletion(remoteIndicators, QueueEntityType.INDICATOR)
+  return filteredIndicators
 }
 
-const getByGoalId = async (goalId: string): Promise<Indicator[]> => {
-  const indicators = await indicatorHandler.findMany({ goalId })
+const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Indicator[]> => {
+  const indicators = await indicatorHandler.findMany({ goalId, status })
 
-  if (indicators) {
+  if (indicators?.length > 0) {
     return indicators
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
-  return fetch(`/api/indicator?goalId=${goalId}`).then(response => response.json())
+  const remoteIndicators = await fetch(`/api/indicator?goalId=${goalId}&status=${status}`)
+    .then(response => response.json())
+
+  const filteredIndicators = await SyncService.filterQueuedForDeletion(remoteIndicators, QueueEntityType.INDICATOR)
+  return filteredIndicators
 }
 
-const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Indicator> => {
+const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Partial<Indicator>> => {
   const parsedData = PartialIndicatorSchema.parse(indicator)
-  await indicatorHandler.update(id, parsedData)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return parsedData as Indicator
-  }
-
-  return fetch(`/api/indicator/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(indicator),
-  })
-    .then(response => response.json())
+  await indicatorHandler.update(id, parsedData as Indicator)
+  await SyncService.queueForSync(QueueEntityType.INDICATOR, id, QueueOperation.UPDATE, { ...parsedData, id })
+  return { ...parsedData, id }
 }
 
-const deleteItem = async (id: string): Promise<Indicator> => {
+const deleteItem = async (id: string): Promise<void> => {
   await indicatorHandler.delete(id)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return { id } as Indicator
-  }
-
-  return fetch(`/api/indicator/${id}`, {
-    method: 'DELETE',
-  })
-    .then(response => response.json())
+  await SyncService.queueForSync(QueueEntityType.INDICATOR, id, QueueOperation.DELETE, id)
 }
 
 export const IndicatorService = {
   create,
+  createBulk,
   get,
   getByPlanId,
   getByGoalId,
