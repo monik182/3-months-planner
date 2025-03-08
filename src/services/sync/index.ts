@@ -1,8 +1,9 @@
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { QueueOperation, QueueStatus, } from '@/app/types/types'
 import { syncQueueHandler } from '@/db/dexieHandler'
+import { isItemQueuedForOperation } from '@/services/sync/itemQueuedForOperation'
 import { processSyncQueue } from '@/services/sync/processSyncQueue'
-import { markUserAsSynced, queueForSync } from '@/services/sync/shared'
+import { filterQueuedForDeletion, markUserAsSynced, queueForSync } from '@/services/sync/shared'
 import { syncAllData } from '@/services/sync/syncAllData'
 
 const getSyncQueueStatus = async (): Promise<{
@@ -53,4 +54,6 @@ export const SyncService = {
   syncAllData,
   cleanupSyncQueue,
   performFirstTimeSync,
+  isItemQueuedForOperation,
+  filterQueuedForDeletion,
 }

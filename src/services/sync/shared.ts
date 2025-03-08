@@ -1,4 +1,4 @@
-import { QueueEntityType, QueueStatus, SyncQueueItem } from '@/app/types/types'
+import { QueueEntityType, QueueOperation, QueueStatus, SyncQueueItem } from '@/app/types/types'
 import { syncQueueHandler, userPreferencesHandler } from '@/db/dexieHandler'
 import { SyncService } from '@/services/sync'
 import { UserService } from '@/services/user'
@@ -74,4 +74,22 @@ export const queueForSync = async (
     attempts: 0,
     timestamp: Date.now()
   })
+}
+
+export const filterQueuedForDeletion = async (items: any[], entityType: QueueEntityType): Promise<any[]> => {
+  const result: any[] = []
+
+  for (const item of items) {
+    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
+      entityType,
+      item.id,
+      QueueOperation.DELETE,
+    )
+
+    if (!isQueuedForDeletion) {
+      result.push(item)
+    }
+  }
+
+  return result
 }
