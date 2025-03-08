@@ -14,9 +14,7 @@ const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
 const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> => {
   const parsedData = GoalArraySchema.parse(goals)
   await goalHandler.createMany(parsedData)
-  for (const goal of parsedData) {
-    await SyncService.queueForSync(QueueEntityType.GOAL_BULK, goal.id, QueueOperation.CREATE, goal)
-  }
+  await SyncService.queueForSync(QueueEntityType.GOAL_BULK, 'bulk', QueueOperation.CREATE, goals)
   return parsedData
 }
 

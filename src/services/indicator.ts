@@ -14,9 +14,7 @@ const create = async (data: Prisma.IndicatorCreateInput): Promise<Indicator> => 
 const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promise<Indicator[]> => {
   const parsedData = IndicatorNoGoalArraySchema.parse(indicators)
   await indicatorHandler.createMany(parsedData)
-  for (const indicator of parsedData) {
-    await SyncService.queueForSync(QueueEntityType.INDICATOR_BULK, indicator.id, QueueOperation.CREATE, indicator)
-  }
+  await SyncService.queueForSync(QueueEntityType.INDICATOR_BULK, 'bulk', QueueOperation.CREATE, indicators)
   return parsedData
 }
 

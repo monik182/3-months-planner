@@ -14,9 +14,7 @@ const create = async (data: Strategy): Promise<Strategy> => {
 const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
   const parsedData = StrategyArraySchema.parse(strategies)
   await strategyHandler.createMany(parsedData)
-  for (const strategy of parsedData) {
-    await SyncService.queueForSync(QueueEntityType.STRATEGY_BULK, strategy.id, QueueOperation.CREATE, strategy)
-  }
+  await SyncService.queueForSync(QueueEntityType.STRATEGY_BULK, 'bulk', QueueOperation.CREATE, strategies)
   return parsedData
 }
 
