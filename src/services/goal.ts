@@ -1,97 +1,88 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
-import { Status } from '@/app/types/types'
 import { goalHandler } from '@/db/dexieHandler'
 import { GoalArraySchema, GoalSchema, PartialGoalSchema } from '@/lib/validators/goal'
 import { Goal, Prisma } from '@prisma/client'
+import { SyncService } from '@/services/sync'
+import { QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 
-const create = async (goal: Prisma.GoalCreateInput) => {
-  const parsedData = { ...GoalSchema.parse(goal), planId: goal.plan.connect!.id! }
+const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
+  const parsedData = { ...GoalSchema.parse(data), planId: data.plan.connect!.id! }
   await goalHandler.create(parsedData)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return parsedData
-  }
-
-  return fetch(`/api/goal`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(parsedData),
-  })
-    .then(response => response.json())
+  await SyncService.queueForSync(QueueEntityType.GOAL, parsedData.id, QueueOperation.CREATE, parsedData)
+  return parsedData
 }
 
-const createBulk = async (goals: Prisma.GoalCreateManyInput[]) => {
+const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> => {
   const parsedData = GoalArraySchema.parse(goals)
   await goalHandler.createMany(parsedData)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return parsedData
+  for (const goal of parsedData) {
+    await SyncService.queueForSync(QueueEntityType.GOAL_BULK, goal.id, QueueOperation.CREATE, goal)
   }
-
-  return fetch(`/api/goal/bulk`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(parsedData),
-  })
-    .then(response => response.json())
+  return parsedData
 }
 
 const get = async (id: string): Promise<Goal | null> => {
-  const goal = await goalHandler.findOne(id)
+  try {
+    const goal = await goalHandler.findOne(id)
+    if (goal) {
+      return goal
+    }
 
-  if (goal) {
-    return goal
-  }
+    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
+      QueueEntityType.GOAL,
+      id,
+      QueueOperation.DELETE
+    )
 
-  if (!ENABLE_CLOUD_SYNC) {
+    if (isQueuedForDeletion) {
+      return null
+    }
+
+    if (!SyncService.isEnabled) {
+      return null
+    }
+
+    const response = await fetch(`/api/goal/${id}`)
+    if (!response.ok) {
+      console.error(`Failed to fetch goal ${id} from remote:`, response.status)
+      return null
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error(`Error fetching goal ${id}:`, error)
     return null
   }
-
-  return fetch(`/api/goal/${id}`).then(response => response.json())
 }
 
 const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Goal[]> => {
   const goals = await goalHandler.findMany({ planId, status })
 
-  if (goals) {
-    return goals as Goal[]
+  if (goals?.length > 0) {
+    return goals
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
-  return fetch(`/api/goal?planId=${planId}&status=${status}`).then(response => response.json())
-}
-
-const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Goal> => {
-  const parsedData = PartialGoalSchema.parse(goal)
-  await goalHandler.update(id, parsedData)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return goal as Goal
-  }
-
-  return fetch(`/api/goal/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(goal),
-  })
+  const remoteGoals = await fetch(`/api/goal?planId=${planId}&status=${status}`)
     .then(response => response.json())
-    .then(async (response) => {
-      await goalHandler.update(id, parsedData)
-      return response
-    })
+
+  const filteredGoals = await SyncService.filterQueuedForDeletion(remoteGoals, QueueEntityType.GOAL)
+  return filteredGoals
 }
 
-const deleteItem = async (id: string) => {
+
+const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial<Goal>> => {
+  const parsedData = PartialGoalSchema.parse(goal)
+  await goalHandler.update(id, parsedData as Goal)
+  await SyncService.queueForSync(QueueEntityType.GOAL, id, QueueOperation.UPDATE, { ...parsedData, id })
+  return { ...parsedData, id }
+}
+
+const deleteItem = async (id: string): Promise<void> => {
   await goalHandler.delete(id)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return
-  }
-
-  return fetch(`/api/goal/${id}`, { method: 'DELETE' })
+  await SyncService.queueForSync(QueueEntityType.GOAL, id, QueueOperation.DELETE, id)
 }
 
 export const GoalService = {

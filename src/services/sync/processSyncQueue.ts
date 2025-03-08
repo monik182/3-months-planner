@@ -22,7 +22,7 @@ export const processSyncQueue = async () => {
     const items = await syncQueueHandler.table
       .where('status')
       .anyOf(QueueStatus.PENDING, QueueStatus.FAILED)
-      .and(item => item.attempts < 5)
+      .and(item => item.attempts < 3)
       .toArray()
 
     // Group items by entity type and ID to detect duplicates
