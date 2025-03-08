@@ -20,7 +20,9 @@ export const goalHandler = {
   }),
   findOne: async (id: string) => prisma.goal.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.GoalUpdateInput) => prisma.goal.update({ where: { id }, data }),
+  updateMany: async (data: Prisma.GoalUpdateManyMutationInput[]) => prisma.goal.updateMany({ data }),
   delete: async (id: string) => prisma.goal.delete({ where: { id } }),
+  deleteMany: async (id: string[]) => prisma.goal.deleteMany({ where: { id: { in: id } } }),
 }
 
 export const goalHistoryHandler = {
@@ -52,6 +54,7 @@ export const strategyHandler = {
   findOne: async (id: string) => prisma.strategy.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.StrategyUpdateInput) => prisma.strategy.update({ where: { id }, data }),
   delete: async (id: string) => prisma.strategy.delete({ where: { id } }),
+  deleteMany: async (id: string[]) => prisma.strategy.deleteMany({ where: { id: { in: id } } }),
 }
 
 export const strategyHistoryHandler = {
@@ -104,6 +107,7 @@ export const indicatorHandler = {
   findOne: async (id: string) => prisma.indicator.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.IndicatorUpdateInput) => prisma.indicator.update({ where: { id }, data }),
   delete: async (id: string) => prisma.indicator.delete({ where: { id } }),
+  deleteMany: async (id: string[]) => prisma.indicator.deleteMany({ where: { id: { in: id } } }),
 }
 
 export const indicatorHistoryHandler = {
