@@ -10,9 +10,9 @@ import { useEffect, useState } from 'react'
 import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import Link from 'next/link'
 import { SyncIndicator } from '@/components/SyncIndicator'
+import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 
 export function Header() {
   const { user, isGuest } = useAccountContext()
@@ -21,7 +21,6 @@ export function Header() {
   const pathname = usePathname()
   const [value, setValue] = useState('plan')
   const showCreatePlanButton = !!user && !isGuest && !hasStartedPlan && pathname !== '/plan'
-  const enableAuth = !isGuest && ENABLE_CLOUD_SYNC
 
   const goToHome = () => {
     router.push('/')
@@ -71,11 +70,11 @@ export function Header() {
               src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
               size="md"
             />
-            {!!user && enableAuth && (
+            {!!user?.auth0Id && ENABLE_CLOUD_SYNC && (
               <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
             )}
           </Flex>
-          {!user && enableAuth && (
+          {!user?.auth0Id && ENABLE_CLOUD_SYNC && (
             <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
           )}
         </Flex>

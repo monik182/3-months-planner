@@ -49,12 +49,23 @@ export function useUserActions() {
     })
   }
 
+  const useUpdate = () => {
+    return useMutation({
+      mutationFn: ({ userId, updates }: { userId: string, updates: Prisma.UserUpdateInput }) => UserService.update(userId, updates),
+      onSuccess: (data) => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('update_user', { updated: Object.keys(data) })
+      }
+    })
+  }
+
   return {
     useCreate,
     useGet,
     useGetByEmail,
     useGetLocal,
     useGetByAuth0Id,
+    useUpdate,
   }
 }
 

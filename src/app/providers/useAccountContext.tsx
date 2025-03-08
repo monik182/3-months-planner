@@ -30,10 +30,11 @@ interface AccountTrackingProviderProps {
 export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const { user: auth0User, isLoading: isLoadingAuth0User } = useUser()
   const userActions = useUserActions()
+  const update = userActions.useUpdate()
   const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
   const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0User?.sub as string, !userLocal)
   const isLoading = isLoadingAuth0User || isLoadingUserLocal || isLoadingUserData
-  const user = (!userData ? null : { ...userData, sub: auth0User?.sub } as UserExtended) || userLocal
+  const user = (!userData ? null : { ...userData, sub: auth0User?.sub, picture: auth0User?.picture } as UserExtended) || userLocal
   const isGuest = user?.role === Role.GUEST
   const [syncInitialized, setSyncInitialized] = useState(false)
   const [syncStatus, setSyncStatus] = useState({
@@ -44,6 +45,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   })
 
   const initialSyncAttempted = useRef(false)
+  const userUpdateAttempted = useRef(false)
 
   const updateSyncStatus = async () => {
     if (!SyncService.isEnabled) return
@@ -57,7 +59,31 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   }
 
   useEffect(() => {
-    if (!user || !SyncService.isEnabled || initialSyncAttempted.current) return
+    const updateUserWithAuth0Id = async () => {
+      if (!auth0User || !user || userUpdateAttempted.current || !auth0User.sub || user.auth0Id) {
+        return
+      }
+
+      userUpdateAttempted.current = true
+
+      try {
+        console.log(`Updating user ${user.id} with Auth0 ID ${auth0User.sub}`)
+        update.mutate({
+          userId: user.id, updates: {
+            auth0Id: auth0User.sub,
+          }
+        })
+      } catch (error) {
+        console.error('Error updating user with Auth0 ID:', error)
+        userUpdateAttempted.current = false
+      }
+    }
+
+    updateUserWithAuth0Id()
+  }, [auth0User, user, userActions])
+
+  useEffect(() => {
+    if (!user?.auth0Id || !SyncService.isEnabled || initialSyncAttempted.current) return
 
     initialSyncAttempted.current = true
 
@@ -124,7 +150,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
         isGuest,
         isLoading,
         userActions,
-        syncEnabled: SyncService.isEnabled,
+        syncEnabled: SyncService.isEnabled && !!user?.auth0Id,
         syncInitialized,
         syncStatus,
         triggerSync,

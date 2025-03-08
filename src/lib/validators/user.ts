@@ -8,7 +8,7 @@ export const UserSchema = z.object({
   email: z.string().email(),
   role: z.nativeEnum(Role).default(Role.USER),
   waitlistId: z.string().optional().nullable(),
-  createdAt: z.date().default(() => new Date()),
+  createdAt: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date()),
 })
 
 export const PartialUserSchema = UserSchema.partial()

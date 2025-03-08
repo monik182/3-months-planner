@@ -1,5 +1,8 @@
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
+import { QueueEntityType, QueueOperation } from '@/app/types/types'
 import { userHandler } from '@/db/dexieHandler'
+import { PartialUserSchema } from '@/lib/validators/user'
+import { SyncService } from '@/services/sync'
 import { Prisma, User } from '@prisma/client'
 import cuid from 'cuid'
 
@@ -83,6 +86,13 @@ const getByAuth0Id = async (id: string): Promise<User | null> => {
   return fetch(`/api/user/auth0/${id}`).then(response => response.json())
 }
 
+const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial<User>> => {
+  const parsedData = PartialUserSchema.parse(user)
+  await userHandler.update(id, parsedData)
+  await SyncService.queueForSync(QueueEntityType.USER, id, QueueOperation.UPDATE, { ...parsedData, id })
+  return { ...parsedData, id }
+}
+
 export const UserService = {
   get,
   create,
@@ -90,4 +100,5 @@ export const UserService = {
   getLocal,
   getByAuth0Id,
   getRemoteById,
+  update,
 }
