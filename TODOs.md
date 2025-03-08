@@ -1,9 +1,10 @@
 # Post Release
-- Sync guest user data to cloud [WIP]
-- Delayed sync [WIP]
 - Save user data to DB on signup
 - Enable edit plan
 - Create VIP role
+- Merge queued syncs  ✅
+- Sync guest user data to cloud ✅
+- Delayed sync ✅
 
 
 - Improve HOME page with steps and everything
@@ -30,6 +31,8 @@
   - only save on click ❓
 - FE Improvements
   - Create plan history page
+  - Unify services - structure is repeated
+  - Unify actions - structure is repeated
   - Create overview progress page ✅ - Can be improved
   - Create route guard ✅
   - Create plan read only view ✅

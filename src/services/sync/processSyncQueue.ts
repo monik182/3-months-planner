@@ -25,29 +25,177 @@ export const processSyncQueue = async () => {
       .and(item => item.attempts < 3)
       .toArray()
 
-    // Group items by entity type and ID to detect duplicates
     const uniqueItems = new Map()
-    for (const item of items) {
-      const key = `${item.entityType}:${item.entityId}:${item.operation}`
 
-      // Keep only the most recent item for each entity
-      if (!uniqueItems.has(key) || uniqueItems.get(key).timestamp < item.timestamp) {
+    const createOperationsByType = new Map()
+
+    for (const item of items) {
+      if (item.operation === QueueOperation.CREATE) {
+        const entityType = item.entityType
+
+        if (!createOperationsByType.has(entityType)) {
+          createOperationsByType.set(entityType, [])
+        }
+
+        createOperationsByType.get(entityType).push(item)
+      }
+    }
+
+    for (const [entityType, createItems] of createOperationsByType.entries()) {
+      if (createItems.length > 1) {
+        const bulkEntityType = getBulkEntityType(entityType)
+
+        if (bulkEntityType) {
+          const mostRecentCreate = createItems.reduce(
+            (prev: any, current: any) => (prev.timestamp > current.timestamp) ? prev : current
+          )
+
+          // Create a bulk operation
+          const bulkPayload = createItems.map((item: any) => item.payload)
+          const bulkItem = {
+            ...mostRecentCreate,
+            id: mostRecentCreate.id,
+            entityType: bulkEntityType,
+            entityId: 'bulk',
+            payload: bulkPayload,
+            operation: QueueOperation.CREATE
+          }
+
+          // Add the bulk item to uniqueItems
+          const bulkKey = `${bulkItem.entityType}:${bulkItem.entityId}:${bulkItem.operation}`
+          uniqueItems.set(bulkKey, bulkItem)
+
+          // Keep track of which individual items are now part of bulk
+          for (const item of createItems) {
+            // Mark this item as processed by adding to a set or map
+            const key = `${item.entityType}:${item.entityId}:${item.operation}`
+            await syncQueueHandler.update(item.id!, { status: QueueStatus.COMPLETED })
+            console.log(`Item ${key} included in bulk operation`)
+          }
+        } else {
+          // If bulk not supported, add each CREATE individually
+          for (const item of createItems) {
+            const key = `${item.entityType}:${item.entityId}:${item.operation}`
+            uniqueItems.set(key, item)
+          }
+        }
+      } else if (createItems.length === 1) {
+        // Only one CREATE, add it directly
+        const item = createItems[0]
+        const key = `${item.entityType}:${item.entityId}:${item.operation}`
         uniqueItems.set(key, item)
       }
     }
 
-    // Sort items to ensure correct dependency order
-    const sorted = Array.from(uniqueItems.values()).sort((a, b) => {
-      const order = { user: 0, plan: 1, goal: 2, strategy: 3, indicator: 3 }
-      const aOrder = order[a.entityType as keyof typeof order] || 99
-      const bOrder = order[b.entityType as keyof typeof order] || 99
+    // Process UPDATE operations - merge updates for the same entity
+    const updatesByEntityId = new Map()
 
-      // If same entity type, process oldest first
-      if (aOrder === bOrder) {
-        return a.timestamp - b.timestamp
+    for (const item of items) {
+      if (item.operation === QueueOperation.UPDATE) {
+        const key = `${item.entityType}:${item.entityId}`
+
+        if (!updatesByEntityId.has(key)) {
+          updatesByEntityId.set(key, [])
+        }
+
+        updatesByEntityId.get(key).push(item)
+      }
+    }
+
+    // Merge updates for each entity
+    for (const [, updates] of updatesByEntityId.entries()) {
+      if (updates.length > 0) {
+        // Sort updates by timestamp, oldest first
+        updates.sort((a: any, b: any) => a.timestamp - b.timestamp)
+
+        // Start with the oldest payload and merge the newer ones
+        let mergedPayload = { ...updates[0].payload }
+        for (let i = 1; i < updates.length; i++) {
+          mergedPayload = { ...mergedPayload, ...updates[i].payload }
+        }
+
+        // Create a merged update item based on the newest item
+        const newestUpdate = updates[updates.length - 1]
+        const mergedItem = {
+          ...newestUpdate,
+          payload: mergedPayload
+        }
+
+        // Add to uniqueItems
+        const updateKey = `${newestUpdate.entityType}:${newestUpdate.entityId}:${newestUpdate.operation}`
+        uniqueItems.set(updateKey, mergedItem)
+      }
+    }
+
+    // Process DELETE operations - keep only the most recent delete for each entity
+    const deletesByEntityId = new Map()
+
+    for (const item of items) {
+      if (item.operation === QueueOperation.DELETE) {
+        const key = `${item.entityType}:${item.entityId}`
+
+        if (!deletesByEntityId.has(key) ||
+          deletesByEntityId.get(key).timestamp < item.timestamp) {
+          deletesByEntityId.set(key, item)
+        }
+      }
+    }
+
+    // Add all delete operations to uniqueItems
+    for (const deleteItem of deletesByEntityId.values()) {
+      const deleteKey = `${deleteItem.entityType}:${deleteItem.entityId}:${deleteItem.operation}`
+      uniqueItems.set(deleteKey, deleteItem)
+    }
+
+    // Create an entity dependency map to track entities by ID
+    const entitiesByIdMap = new Map()
+    for (const item of Array.from(uniqueItems.values())) {
+      const baseEntityType = item.entityType.replace(/_bulk|_history|_history_bulk/g, '')
+
+      // Handle both single items and bulk operations
+      if (item.entityType.includes('_bulk') && Array.isArray(item.payload)) {
+        // For bulk operations, track each entity within the bulk
+        for (const entity of item.payload) {
+          if (entity.id) {
+            entitiesByIdMap.set(`${baseEntityType}:${entity.id}`, item)
+          }
+        }
+      } else {
+        // For single entity operations
+        if (item.entityId && item.entityId !== 'bulk') {
+          entitiesByIdMap.set(`${baseEntityType}:${item.entityId}`, item)
+        }
+      }
+    }
+
+    // Sort items to ensure correct dependency and operation order
+    const sorted = Array.from(uniqueItems.values()).sort((a, b) => {
+      // First sort by entity type hierarchy
+      const typeOrder = { user: 0, plan: 1 }
+      const aType = a.entityType.replace(/_bulk|_history|_history_bulk/g, '') as keyof typeof typeOrder
+      const bType = b.entityType.replace(/_bulk|_history|_history_bulk/g, '') as keyof typeof typeOrder
+      const aTypeOrder = typeOrder[aType] || 99
+      const bTypeOrder = typeOrder[bType] || 99
+
+      if (aTypeOrder !== bTypeOrder) {
+        return aTypeOrder - bTypeOrder
       }
 
-      return aOrder - bOrder
+      // Then sort by operation: CREATE first, then UPDATE, then DELETE
+      const opOrder = {
+        [QueueOperation.CREATE]: 1,
+        [QueueOperation.UPDATE]: 2,
+        [QueueOperation.DELETE]: 3
+      }
+      const aOpOrder = opOrder[a.operation as keyof typeof opOrder] || 0
+      const bOpOrder = opOrder[b.operation as keyof typeof opOrder] || 0
+
+      if (aOpOrder !== bOpOrder) {
+        return aOpOrder - bOpOrder
+      }
+
+      // If same entity type and operation, process oldest first
+      return a.timestamp - b.timestamp
     })
 
     let processed = 0
@@ -61,12 +209,11 @@ export const processSyncQueue = async () => {
           attempts: item.attempts + 1
         })
 
-        // Handle entity dependencies
         let canProceed = true
 
         if (item.entityType === QueueEntityType.PLAN &&
           (item.operation === QueueOperation.CREATE || item.operation === QueueOperation.UPDATE)) {
-          // Ensure user exists
+
           const userId = item.payload.userId
           const userExists = await validateUserExists(userId)
 
@@ -75,9 +222,12 @@ export const processSyncQueue = async () => {
             canProceed = false
           }
         } else if ((item.entityType !== QueueEntityType.PLAN) &&
-          (item.operation === QueueOperation.CREATE || item.operation === 'update')) {
+          (item.operation === QueueOperation.CREATE || item.operation === QueueOperation.UPDATE)) {
           // Ensure plan exists
-          const planId = item.entityId === 'bulk' || !item.entityId ? item.payload[0].planId : item.payload.planId
+          const planId = item.entityId === 'bulk' || !item.entityId ?
+            (Array.isArray(item.payload) ? item.payload[0].planId : item.payload.planId) :
+            item.payload.planId
+
           try {
             const planResponse = await fetch(`/api/plan/${planId}`)
             if (!planResponse.ok) {
@@ -86,7 +236,7 @@ export const processSyncQueue = async () => {
                 status: QueueStatus.PENDING,
                 error: `Waiting for plan ${planId} to be synced first`
               })
-              continue // Skip to next item
+              continue
             }
           } catch (error) {
             // Network error, possibly offline - we'll try again later
@@ -94,7 +244,7 @@ export const processSyncQueue = async () => {
               status: QueueStatus.PENDING,
               error: `Network error checking plan: ${error instanceof Error ? error.message : 'Unknown error'}`
             })
-            continue // Skip to next item
+            continue
           }
         }
 
@@ -147,18 +297,16 @@ export const processSyncQueue = async () => {
               status: QueueStatus.PENDING,
               error: `Network error: ${error.message}`
             })
-            continue // Skip to next item
+            continue
           }
-          throw error // Re-throw other errors to be caught by the outer try/catch
+          throw error
         }
 
-        // Mark item as completed
         await syncQueueHandler.update(item.id!, { status: QueueStatus.COMPLETED })
         processed++
       } catch (error) {
         console.error(`Error processing ${item.entityType} ${item.entityId}:`, error)
 
-        // Update item status to failed
         await syncQueueHandler.update(item.id!, {
           status: QueueStatus.FAILED,
           error: error instanceof Error ? error.message : 'Unknown error'
@@ -174,6 +322,24 @@ export const processSyncQueue = async () => {
   }
 }
 
+const getBulkEntityType = (entityType: string): string | null => {
+  switch (entityType) {
+    case QueueEntityType.GOAL:
+      return QueueEntityType.GOAL_BULK
+    case QueueEntityType.STRATEGY:
+      return QueueEntityType.STRATEGY_BULK
+    case QueueEntityType.INDICATOR:
+      return QueueEntityType.INDICATOR_BULK
+    case QueueEntityType.GOAL_HISTORY:
+      return QueueEntityType.GOAL_HISTORY_BULK
+    case QueueEntityType.STRATEGY_HISTORY:
+      return QueueEntityType.STRATEGY_HISTORY_BULK
+    case QueueEntityType.INDICATOR_HISTORY:
+      return QueueEntityType.INDICATOR_HISTORY_BULK
+    default:
+      return null
+  }
+}
 
 const getApiUrlForEntity = (entityType: QueueEntityType, entityId: string, operation: QueueOperation): string | null => {
   switch (entityType) {
