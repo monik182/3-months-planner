@@ -1,102 +1,110 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { strategyHandler } from '@/db/dexieHandler'
-import { PartialStrategySchema } from '@/lib/validators/strategy'
-import { Prisma, Strategy } from '@prisma/client'
+import { StrategyArraySchema, PartialStrategySchema, StrategyNoGoalSchema } from '@/lib/validators/strategy'
+import { Strategy, Prisma } from '@prisma/client'
+import { SyncService } from '@/services/sync'
+import { QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 
-const create = async (strategy: Strategy): Promise<Strategy> => {
+const create = async (data: Strategy): Promise<Strategy> => {
+  const parsedData = StrategyNoGoalSchema.parse(data)
+  await strategyHandler.create(parsedData)
+  await SyncService.queueForSync(QueueEntityType.STRATEGY, parsedData.id, QueueOperation.CREATE, parsedData)
+  return parsedData
+}
 
-  if (!ENABLE_CLOUD_SYNC) {
-    await strategyHandler.create(strategy)
-    return strategy
+const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
+  const parsedData = StrategyArraySchema.parse(strategies)
+  await strategyHandler.createMany(parsedData)
+  for (const strategy of parsedData) {
+    await SyncService.queueForSync(QueueEntityType.STRATEGY_BULK, strategy.id, QueueOperation.CREATE, strategy)
   }
-  return fetch(`/api/strategy`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(strategy),
-  })
-    .then(async (response) => {
-      if (!response.ok) {
-        const res = await response.json()
-        throw new Error(JSON.stringify(res.error) || 'Failed to create strategy')
-      }
-      await strategyHandler.create(strategy)
-      return strategy
-    })
+  return parsedData
 }
 
 const get = async (id: string): Promise<Strategy | null> => {
-  const strategy = await strategyHandler.findOne(id)
+  try {
+    const strategy = await strategyHandler.findOne(id)
+    if (strategy) {
+      return strategy
+    }
 
-  if (strategy) {
-    return strategy
-  }
+    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
+      QueueEntityType.STRATEGY,
+      id,
+      QueueOperation.DELETE
+    )
 
-  if (!ENABLE_CLOUD_SYNC) {
+    if (isQueuedForDeletion) {
+      return null
+    }
+
+    if (!SyncService.isEnabled) {
+      return null
+    }
+
+    const response = await fetch(`/api/strategy/${id}`)
+    if (!response.ok) {
+      console.error(`Failed to fetch strategy ${id} from remote:`, response.status)
+      return null
+    }
+
+    return response.json()
+  } catch (error) {
+    console.error(`Error fetching strategy ${id}:`, error)
     return null
   }
-
-  return fetch(`/api/strategy/${id}`).then(response => response.json())
 }
 
-const getByPlanId = async (planId: string): Promise<Strategy[]> => {
-  const strategies = await strategyHandler.findMany({ planId })
+const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Strategy[]> => {
+  const strategies = await strategyHandler.findMany({ planId, status })
 
-  if (strategies) {
+  if (strategies?.length > 0) {
     return strategies
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
-  return fetch(`/api/strategy?planId=${planId}`).then(response => response.json())
+  const remoteStrategies = await fetch(`/api/strategy?planId=${planId}&status=${status}`)
+    .then(response => response.json())
+
+  const filteredStrategies = await SyncService.filterQueuedForDeletion(remoteStrategies, QueueEntityType.STRATEGY)
+  return filteredStrategies
 }
 
-const getByGoalId = async (goalId: string): Promise<Strategy[]> => {
-  const strategies = await strategyHandler.findMany({ goalId })
+const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Strategy[]> => {
+  const strategies = await strategyHandler.findMany({ goalId, status })
 
-  if (strategies) {
+  if (strategies?.length > 0) {
     return strategies
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return []
   }
 
-  return fetch(`/api/strategy?goalId=${goalId}`).then(response => response.json())
+  const remoteStrategies = await fetch(`/api/strategy?goalId=${goalId}&status=${status}`)
+    .then(response => response.json())
+
+  const filteredStrategies = await SyncService.filterQueuedForDeletion(remoteStrategies, QueueEntityType.STRATEGY)
+  return filteredStrategies
 }
 
-const update = async (id: string, strategy: Prisma.IndicatorUpdateInput): Promise<Strategy> => {
+const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise<Partial<Strategy>> => {
   const parsedData = PartialStrategySchema.parse(strategy)
-  await strategyHandler.update(id, parsedData)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return parsedData as Strategy
-  }
-
-  return fetch(`/api/strategy/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(parsedData),
-  })
-    .then(response => response.json())
+  await strategyHandler.update(id, parsedData as Strategy)
+  await SyncService.queueForSync(QueueEntityType.STRATEGY, id, QueueOperation.UPDATE, { ...parsedData, id })
+  return { ...parsedData, id }
 }
 
-const deleteItem = async (id: string): Promise<Strategy> => {
+const deleteItem = async (id: string): Promise<void> => {
   await strategyHandler.delete(id)
-
-  if (!ENABLE_CLOUD_SYNC) {
-    return { id } as Strategy
-  }
-
-  return fetch(`/api/strategy/${id}`, {
-    method: 'DELETE',
-  })
-    .then(response => response.json())
+  await SyncService.queueForSync(QueueEntityType.STRATEGY, id, QueueOperation.DELETE, id)
 }
 
 export const StrategyService = {
   create,
+  createBulk,
   get,
   getByPlanId,
   getByGoalId,
