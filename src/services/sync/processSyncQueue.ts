@@ -28,6 +28,7 @@ export const processSyncQueue = async () => {
     const uniqueItems = new Map()
 
     const createOperationsByType = new Map()
+    const deleteOperationsByType = new Map()
 
     for (const item of items) {
       if (item.operation === QueueOperation.CREATE) {
@@ -38,9 +39,18 @@ export const processSyncQueue = async () => {
         }
 
         createOperationsByType.get(entityType).push(item)
+      } else if (item.operation === QueueOperation.DELETE) {
+        const entityType = item.entityType
+
+        if (!deleteOperationsByType.has(entityType)) {
+          deleteOperationsByType.set(entityType, [])
+        }
+
+        deleteOperationsByType.get(entityType).push(item)
       }
     }
 
+    // Process CREATE operations - combine into bulk where possible
     for (const [entityType, createItems] of createOperationsByType.entries()) {
       if (createItems.length > 1) {
         const bulkEntityType = getBulkEntityType(entityType)
@@ -87,6 +97,87 @@ export const processSyncQueue = async () => {
       }
     }
 
+    // Process DELETE operations - combine into bulk where possible
+    for (const [entityType, deleteItems] of deleteOperationsByType.entries()) {
+      if (deleteItems.length > 1) {
+        const bulkEntityType = getBulkEntityType(entityType)
+
+        if (bulkEntityType) {
+          const mostRecentDelete = deleteItems.reduce(
+            (prev: any, current: any) => (prev.timestamp > current.timestamp) ? prev : current
+          )
+
+          // Group deletions by planId if available
+          const deletesByPlanId = new Map()
+
+          for (const item of deleteItems) {
+            // Try to get planId from payload or entityId
+            let planId = null
+
+            if (item.payload && item.payload.planId) {
+              planId = item.payload.planId
+            } else if (item.entityId && item.entityId !== 'bulk') {
+              // For some entities, we need to extract planId from related records
+              // This would require additional DB queries which might be complex
+              // For now, we'll use a simplified approach of grouping by entity type
+              planId = 'default'
+            }
+
+            if (planId) {
+              if (!deletesByPlanId.has(planId)) {
+                deletesByPlanId.set(planId, [])
+              }
+              deletesByPlanId.get(planId).push(item)
+            }
+          }
+
+          // Create bulk delete operations for each planId group
+          for (const [planId, itemsInPlan] of deletesByPlanId.entries()) {
+            if (itemsInPlan.length > 1) {
+              // Get all entity IDs to delete
+              const entityIds = itemsInPlan.map((item: any) => item.entityId)
+
+              // Create a bulk delete operation
+              const bulkDeleteItem = {
+                ...mostRecentDelete,
+                id: mostRecentDelete.id,
+                entityType: bulkEntityType,
+                entityId: 'bulk',
+                payload: entityIds,
+                operation: QueueOperation.DELETE
+              }
+
+              // Add to uniqueItems
+              const bulkKey = `${bulkDeleteItem.entityType}:${planId}:${bulkDeleteItem.operation}`
+              uniqueItems.set(bulkKey, bulkDeleteItem)
+
+              // Mark individual items as completed
+              for (const item of itemsInPlan) {
+                await syncQueueHandler.update(item.id!, { status: QueueStatus.COMPLETED })
+                console.log(`Delete item ${item.entityType}:${item.entityId} included in bulk delete operation`)
+              }
+            } else if (itemsInPlan.length === 1) {
+              // Only one DELETE for this plan, add it directly
+              const item = itemsInPlan[0]
+              const key = `${item.entityType}:${item.entityId}:${item.operation}`
+              uniqueItems.set(key, item)
+            }
+          }
+        } else {
+          // If bulk delete not supported, add each DELETE individually
+          for (const item of deleteItems) {
+            const key = `${item.entityType}:${item.entityId}:${item.operation}`
+            uniqueItems.set(key, item)
+          }
+        }
+      } else if (deleteItems.length === 1) {
+        // Only one DELETE, add it directly
+        const item = deleteItems[0]
+        const key = `${item.entityType}:${item.entityId}:${item.operation}`
+        uniqueItems.set(key, item)
+      }
+    }
+
     // Process UPDATE operations - merge updates for the same entity
     const updatesByEntityId = new Map()
 
@@ -127,33 +218,13 @@ export const processSyncQueue = async () => {
       }
     }
 
-    // Process DELETE operations - keep only the most recent delete for each entity
-    const deletesByEntityId = new Map()
-
-    for (const item of items) {
-      if (item.operation === QueueOperation.DELETE) {
-        const key = `${item.entityType}:${item.entityId}`
-
-        if (!deletesByEntityId.has(key) ||
-          deletesByEntityId.get(key).timestamp < item.timestamp) {
-          deletesByEntityId.set(key, item)
-        }
-      }
-    }
-
-    // Add all delete operations to uniqueItems
-    for (const deleteItem of deletesByEntityId.values()) {
-      const deleteKey = `${deleteItem.entityType}:${deleteItem.entityId}:${deleteItem.operation}`
-      uniqueItems.set(deleteKey, deleteItem)
-    }
-
     // Create an entity dependency map to track entities by ID
     const entitiesByIdMap = new Map()
     for (const item of Array.from(uniqueItems.values())) {
-      const baseEntityType = item.entityType.replace(/_bulk|_history|_history_bulk/g, '')
+      const baseEntityType = item.entityType.replace(/_BULK|_HISTORY|_HISTORY_BULK/g, '')
 
       // Handle both single items and bulk operations
-      if (item.entityType.includes('_bulk') && Array.isArray(item.payload)) {
+      if (item.entityType.includes('_BULK') && Array.isArray(item.payload)) {
         // For bulk operations, track each entity within the bulk
         for (const entity of item.payload) {
           if (entity.id) {
@@ -172,8 +243,8 @@ export const processSyncQueue = async () => {
     const sorted = Array.from(uniqueItems.values()).sort((a, b) => {
       // First sort by entity type hierarchy
       const typeOrder = { user: 0, plan: 1 }
-      const aType = a.entityType.replace(/_bulk|_history|_history_bulk/g, '') as keyof typeof typeOrder
-      const bType = b.entityType.replace(/_bulk|_history|_history_bulk/g, '') as keyof typeof typeOrder
+      const aType = a.entityType.replace(/_BULK|_HISTORY|_HISTORY_BULK/g, '') as keyof typeof typeOrder
+      const bType = b.entityType.replace(/_BULK|_HISTORY|_HISTORY_BULK/g, '') as keyof typeof typeOrder
       const aTypeOrder = typeOrder[aType] || 99
       const bTypeOrder = typeOrder[bType] || 99
 
@@ -268,11 +339,12 @@ export const processSyncQueue = async () => {
         try {
           const method = getMethodForOperation(item.operation)
           const payload = preparePayloadForSync(item.entityType, item.payload)
+          console.log(`Processing ${item.entityType} ${item.entityId} (${item.operation})`, method)
 
           response = await fetch(apiUrl, {
             method,
             headers: { 'Content-Type': 'application/json' },
-            body: method !== 'DELETE' ? JSON.stringify(payload) : undefined,
+            body: method !== 'DELETE' || item.entityId === 'bulk' ? JSON.stringify(payload) : undefined,
           })
 
           if (!response.ok) {
@@ -302,7 +374,10 @@ export const processSyncQueue = async () => {
           throw error
         }
 
-        await syncQueueHandler.update(item.id!, { status: QueueStatus.COMPLETED })
+        await syncQueueHandler.update(item.id!, {
+          status: QueueStatus.COMPLETED,
+          error: undefined
+        })
         processed++
       } catch (error) {
         console.error(`Error processing ${item.entityType} ${item.entityId}:`, error)
@@ -322,7 +397,7 @@ export const processSyncQueue = async () => {
   }
 }
 
-const getBulkEntityType = (entityType: string): string | null => {
+const getBulkEntityType = (entityType: QueueEntityType): QueueEntityType | null => {
   switch (entityType) {
     case QueueEntityType.GOAL:
       return QueueEntityType.GOAL_BULK
@@ -350,27 +425,27 @@ const getApiUrlForEntity = (entityType: QueueEntityType, entityId: string, opera
     case QueueEntityType.GOAL:
       return operation === QueueOperation.CREATE ? '/api/goal' : `/api/goal/${entityId}`
     case QueueEntityType.GOAL_BULK:
-      return operation === QueueOperation.CREATE ? '/api/goal/bulk' : null
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/goal/bulk' : null
     case QueueEntityType.GOAL_HISTORY:
       return operation === QueueOperation.CREATE ? '/api/goal/history' : `/api/goal/history/${entityId}`
     case QueueEntityType.GOAL_HISTORY_BULK:
-      return operation === QueueOperation.CREATE ? '/api/goal/history/bulk' : null
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/goal/history/bulk' : null
     case QueueEntityType.STRATEGY:
       return operation === QueueOperation.CREATE ? '/api/strategy' : `/api/strategy/${entityId}`
     case QueueEntityType.STRATEGY_BULK:
-      return operation === QueueOperation.CREATE ? '/api/strategy/bulk' : null
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/strategy/bulk' : null
     case QueueEntityType.STRATEGY_HISTORY:
       return operation === QueueOperation.CREATE ? '/api/strategy/history' : `/api/strategy/history/${entityId}`
     case QueueEntityType.STRATEGY_HISTORY_BULK:
-      return operation === QueueOperation.CREATE ? '/api/strategy/history/bulk' : null
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/strategy/history/bulk' : null
     case QueueEntityType.INDICATOR:
       return operation === QueueOperation.CREATE ? '/api/indicator' : `/api/indicator/${entityId}`
     case QueueEntityType.INDICATOR_BULK:
-      return operation === QueueOperation.CREATE ? '/api/indicator/bulk' : null
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/indicator/bulk' : null
     case QueueEntityType.INDICATOR_HISTORY:
       return operation === QueueOperation.CREATE ? '/api/indicator/history' : `/api/indicator/history/${entityId}`
     case QueueEntityType.INDICATOR_HISTORY_BULK:
-      return operation === QueueOperation.CREATE ? '/api/indicator/history/bulk' : null
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/indicator/history/bulk' : null
     default:
       return null
   }
