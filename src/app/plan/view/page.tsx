@@ -1,7 +1,6 @@
 'use client'
 import withAuth from '@/app/hoc/withAuth'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { useDebouncedCallback } from 'use-debounce'
 import { useState, useEffect } from 'react'
 import {
   Box,
@@ -28,7 +27,6 @@ import {
   LuCalendarDays,
   LuCalendarCheck,
   LuChevronRight,
-  LuPlus,
 } from 'react-icons/lu'
 import { useRouter } from 'next/navigation'
 import { Tooltip } from '@/components/ui/tooltip'
@@ -49,7 +47,7 @@ function PlanView() {
   const [milestone, setMilestone] = useState('')
   const loading = loadingPlan || loadingGoals || loadingStrategies || loadingIndicators || updatePlan.isPending
 
-  const debouncedUpdateVision = useDebouncedCallback((vision: string) => {
+  const handleVisionSubmit = (vision: string) => {
     if (plan) {
       updatePlan.mutate(
         { planId: plan.id, updates: { vision } },
@@ -72,9 +70,9 @@ function PlanView() {
         }
       )
     }
-  }, 1000)
+  }
 
-  const debouncedUpdateMilestone = useDebouncedCallback((milestone: string) => {
+  const handleMilestoneSubmit = (milestone: string) => {
     if (plan) {
       updatePlan.mutate(
         { planId: plan.id, updates: { milestone } },
@@ -97,7 +95,7 @@ function PlanView() {
         }
       )
     }
-  }, 1000)
+  }
 
   useEffect(() => {
     if (plan) {
@@ -115,22 +113,6 @@ function PlanView() {
   }
 
   if (!plan) return null
-
-  const handleVisionChange = (value: string) => {
-    setVision(value)
-  }
-
-  const handleMilestoneChange = (value: string) => {
-    setMilestone(value)
-  }
-
-  const handleVisionSubmit = () => {
-    debouncedUpdateVision(vision)
-  }
-
-  const handleMilestoneSubmit = () => {
-    debouncedUpdateMilestone(milestone)
-  }
 
   return (
     <Box maxW="8xl" mx="auto" p={{ base: 4, md: 8 }} overflowY="auto">
@@ -241,7 +223,7 @@ function PlanView() {
                 size="sm"
                 onClick={() => {
                   if (editingVision) {
-                    handleVisionSubmit()
+                    handleVisionSubmit(vision)
                   } else {
                     setEditingVision(true)
                   }
@@ -254,7 +236,7 @@ function PlanView() {
           {editingVision ? (
             <Editable.Root
               value={vision}
-              onValueChange={e => handleVisionChange(e.value)}
+              onValueChange={e => setVision(e.value)}
               fontSize="md"
               colorPalette="gray.700"
               placeholder="Define your long-term vision..."
@@ -307,7 +289,7 @@ function PlanView() {
           {editingMilestone ? (
             <Editable.Root
               value={milestone}
-              onValueChange={e => handleMilestoneChange(e.value)}
+              onValueChange={e => setMilestone(e.value)}
               fontSize="md"
               colorPalette="gray.700"
               placeholder="Define your 3-year milestone..."
@@ -445,34 +427,6 @@ function PlanView() {
                 </Card.Root>
               </GridItem>
             ))}
-
-            {/* Add Goal Button Card */}
-            {/* <GridItem>
-              <Card.Root
-                borderWidth="1px"
-                borderStyle="dashed"
-                borderRadius="xl"
-                p={5}
-                height="100%"
-                minHeight="200px"
-                bg="gray.50"
-                _hover={{ bg: "gray.100", cursor: "pointer" }}
-                boxShadow="none"
-                onClick={() => router.push('/plan')}
-              >
-                <Center height="100%">
-                  <VStack gap={3}>
-                    <Box bg="gray.200" p={3} borderRadius="full">
-                      <LuPlus size={24} />
-                    </Box>
-                    <Text fontWeight="medium">Add New Goal</Text>
-                    <Text fontSize="sm" colorPalette="gray.600" textAlign="center">
-                      Define additional goals to achieve your vision
-                    </Text>
-                  </VStack>
-                </Center>
-              </Card.Root>
-            </GridItem> */}
           </Grid>
         </Box>
       </VStack>
