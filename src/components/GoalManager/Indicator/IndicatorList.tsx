@@ -35,6 +35,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
     !indicator.metric ||
     !indicator.content
   )
+  const isEdit = !!indicators.find(i => i.id === indicatorToUpdate?.id)
 
   const handleCreate = () => {
     const newIndicator: Indicator = {
@@ -60,7 +61,10 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
   }
 
   const handleRemove = (id: string) => {
-    setIndicatorToUpdate(null)
+    if (isEdit) {
+      setIndicatorToUpdate(null)
+      return
+    }
     const indicatorExists = !!indicators.find(i => i.id === id)
     if (indicatorExists) {
       debouncedRemove(id)
@@ -127,6 +131,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
               <Tag.CloseTrigger
                 onClick={() => handleRemove(indicator.id)}
                 className="text-gray-400 hover:text-gray-600"
+                cursor="pointer"
               />
             </Tag.EndElement>
           </Tag.Root>

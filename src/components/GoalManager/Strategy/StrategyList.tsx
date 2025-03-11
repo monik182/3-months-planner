@@ -1,5 +1,5 @@
 import { DEFAULT_WEEKS } from '@/app/constants'
-import { StrategyForm } from '@/app/plan/Step3/Strategy/StrategyForm'
+import { StrategyForm } from '@/components/GoalManager/Strategy/StrategyForm'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { Status } from '@/app/types/types'
 import { SavingSpinner } from '@/components/SavingSpinner'
