@@ -26,7 +26,6 @@ function PlanPage() {
 
   const steps = [
     { title: 'Define Vision', content: <Step1 onLoading={setIsLoadingStep} /> },
-    { title: '3-Year Milestone', content: <Step2 onLoading={setIsLoadingStep} /> },
     { title: 'Set Goals, Actions & Metrics', content: <Step3 onLoading={setIsLoadingStep} /> },
     { title: 'Review', content: <Step4 /> },
   ]
@@ -43,18 +42,10 @@ function PlanPage() {
       return
     }
 
-    if (step === 2 && !plan.milestone) {
-      setStep(0)
-      toaster.create({
-        title: 'Create your 3-year milestone to move to the next step',
-        type: 'info',
-      })
-      return
-    }
 
-    if (step === 3) {
+    if (step === 2) {
       setNextText('Save')
-    } else if (step > 3) {
+    } else if (step > 2) {
       await createHistory.mutateAsync(plan.id, {
         onSuccess: () => {
           setNextText('Saved')
@@ -63,7 +54,7 @@ function PlanPage() {
               router.replace('/dashboard')
             },
             onError: () => {
-              setStep(3)
+              setStep(2)
               toaster.create({
                 title: 'There was an error saving the plan',
                 type: 'error'
@@ -72,7 +63,7 @@ function PlanPage() {
           })
         },
         onError: () => {
-          setStep(3)
+          setStep(2)
           toaster.create({
             title: 'There was an error saving the plan',
             type: 'error'
