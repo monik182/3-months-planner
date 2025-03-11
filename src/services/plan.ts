@@ -62,7 +62,8 @@ const getAll = async (userId: string): Promise<Plan[]> => {
 
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
   const parsedData = PartialPlanSchema.parse(plan)
-  await planHandler.update(id, planToDexie(parsedData as Plan))
+  const planLocal = await planHandler.findOne(id)
+  await planHandler.update(id, planToDexie({ ...planLocal, ...parsedData } as Plan))
   await SyncService.queueForSync(QueueEntityType.PLAN, id, QueueOperation.UPDATE, { ...parsedData, id })
   return { ...parsedData, id }
 }
