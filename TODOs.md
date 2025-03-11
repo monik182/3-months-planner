@@ -1,7 +1,9 @@
 # Post Release
-- Save user data to DB on signup
-- Enable edit plan
+- Solve enable sync/getByPlanId
+- Enable edit plan          
 - Create VIP role
+- Save user data to DB on signup - Create user put ✅
+- Merge authenticated user and stored user ✅
 - Merge queued syncs  ✅
 - Sync guest user data to cloud ✅
 - Delayed sync ✅

@@ -10,14 +10,8 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const existingUser = await userHandler.findOneByEmail(data.email)
-
-    if (!!existingUser) {
-      return new Response(JSON.stringify({ ...existingUser, ok: true }), { status: 200 })
-    }
-
     const parsedData = UserSchema.parse(data)
-    const response = await userHandler.create(parsedData)
+    const response = await userHandler.upsert(parsedData)
     return new Response(JSON.stringify({ ...response, ok: true }), { status: 201 })
   } catch (error) {
     return new Response(JSON.stringify({ error, ok: false }), { status: 500 })

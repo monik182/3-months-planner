@@ -9,9 +9,15 @@ import cuid from 'cuid'
 const create = async (user: Prisma.UserCreateInput): Promise<User> => {
   if (!ENABLE_CLOUD_SYNC) {
     const localUser = { ...user, id: cuid() }
-    await userHandler.create(localUser as User)
+    const exists = await userHandler.findOne(user.id || '')
+    if (exists) {
+      await userHandler.update(user.id as string, user as User)
+    } else {
+      await userHandler.create(localUser as User)
+    }
     return localUser as User
   }
+
   return fetch(`/api/user`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -24,7 +30,11 @@ const create = async (user: Prisma.UserCreateInput): Promise<User> => {
       const user = await response.json()
       const exists = await userHandler.findOne(user.id)
       if (!exists) {
+        console.log('^^^^^^^^^^^^^^^^^^ NOT exists and creating', exists)
         await userHandler.create(user)
+      } else {
+        console.log('^^^^^^^^^^^^^^^^^^ exists and editing', exists)
+        await userHandler.update(user.id, user)
       }
       return user
     })
@@ -75,7 +85,7 @@ const getRemoteById = async (id: string): Promise<User | null> => {
 
 const getByAuth0Id = async (id: string): Promise<User | null> => {
   const user = await userHandler.findOneByAuth0Id(id)
-  if (user) {
+  if (user?.auth0Id) {
     return user
   }
 

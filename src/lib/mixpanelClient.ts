@@ -8,6 +8,6 @@ export function initMixpanel() {
     return
   }
 
-  mixpanel.init(MIXPANEL_TOKEN, { debug: true, verbose: true, ignore_dnt: true, api_host: '/api/mixpanel', })
+  mixpanel.init(MIXPANEL_TOKEN, { ignore_dnt: true, api_host: '/api/mixpanel', })
   return mixpanel
 }

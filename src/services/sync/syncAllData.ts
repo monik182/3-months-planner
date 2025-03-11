@@ -22,7 +22,7 @@ export const syncAllData = async (userId: string, operation = QueueOperation.UPD
       }
     }
 
-    const plans = await planHandler.findOneByUserId(userId)
+    const plans = await planHandler.findAllByUserId(userId)
 
     for (const plan of plans) {
       await queueForSync(QueueEntityType.PLAN, plan.id, operation, plan)

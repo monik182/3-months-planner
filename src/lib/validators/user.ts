@@ -4,11 +4,11 @@ import { z } from 'zod'
 
 export const UserSchema = z.object({
   id: z.string().default(() => cuid()),
-  auth0Id: z.string().optional(),
+  auth0Id: z.string().optional().nullable().default(null),
   email: z.string().email(),
   role: z.nativeEnum(Role).default(Role.USER),
-  waitlistId: z.string().optional().nullable(),
-  createdAt: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date()),
+  waitlistId: z.string().optional().nullable().default(null),
+  createdAt: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date()).default(() => new Date()),
 })
 
 export const PartialUserSchema = UserSchema.partial()

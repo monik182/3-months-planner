@@ -30,11 +30,12 @@ interface AccountTrackingProviderProps {
 export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const { user: auth0User, isLoading: isLoadingAuth0User } = useUser()
   const userActions = useUserActions()
-  const update = userActions.useUpdate()
+  const create = userActions.useCreate()
   const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
-  const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0User?.sub as string, !userLocal)
+  const canFetchUserFromDB = !isLoadingAuth0User && !!auth0User && !userLocal?.auth0Id && SyncService.isEnabled
+  const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0User?.sub as string, canFetchUserFromDB)
   const isLoading = isLoadingAuth0User || isLoadingUserLocal || isLoadingUserData
-  const user = (!userData ? null : { ...userData, sub: auth0User?.sub, picture: auth0User?.picture } as UserExtended) || userLocal
+  const user = (!userData?.id ? null : { ...userData, sub: auth0User?.sub, picture: auth0User?.picture } as UserExtended) || userLocal
   const isGuest = user?.role === Role.GUEST
   const [syncInitialized, setSyncInitialized] = useState(false)
   const [syncStatus, setSyncStatus] = useState({
@@ -55,12 +56,34 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   }
 
   const triggerSync = async () => {
-    await SyncService.processSyncQueue()
+    if (!SyncService.isEnabled || !user?.auth0Id) return
+    try {
+      const preferences = await userPreferencesHandler.findOne(user.id)
+
+      if (!preferences?.hasSynced) {
+        console.log(`Initiating first-time sync for user ${user.id}`)
+        const result = await SyncService.performFirstTimeSync(user.id)
+        if (!result.success) {
+          console.error(`First-time sync failed: ${result.error}`)
+        } else {
+          console.log(`First-time sync completed successfully`)
+        }
+      } else {
+        console.log(`User ${user.id} has already been synced before`)
+        await SyncService.processSyncQueue()
+      }
+
+      setSyncInitialized(true)
+      updateSyncStatus()
+    } catch (error) {
+      console.error('Error during initial sync:', error)
+      setSyncInitialized(false)
+    }
   }
 
   useEffect(() => {
     const updateUserWithAuth0Id = async () => {
-      if (!auth0User || !user || userUpdateAttempted.current || !auth0User.sub || user.auth0Id) {
+      if (isLoading || !user || userUpdateAttempted.current || !auth0User?.sub || user?.auth0Id || userLocal?.auth0Id) {
         return
       }
 
@@ -68,10 +91,14 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
 
       try {
         console.log(`Updating user ${user.id} with Auth0 ID ${auth0User.sub}`)
-        update.mutate({
-          userId: user.id, updates: {
-            auth0Id: auth0User.sub,
-          }
+        create.mutate({
+          ...user,
+          auth0Id: auth0User.sub,
+        }, {
+          onSuccess() {
+            triggerSync()
+            userUpdateAttempted.current = false
+          },
         })
       } catch (error) {
         console.error('Error updating user with Auth0 ID:', error)
@@ -80,39 +107,14 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     }
 
     updateUserWithAuth0Id()
-  }, [auth0User, user, userActions])
+  }, [auth0User, user, userActions, userLocal, isLoading])
 
   useEffect(() => {
-    if (!user?.auth0Id || !SyncService.isEnabled || initialSyncAttempted.current) return
+    if (!user?.auth0Id || !SyncService.isEnabled || initialSyncAttempted.current || userUpdateAttempted.current) return
 
     initialSyncAttempted.current = true
+    triggerSync()
 
-    const performInitialSync = async () => {
-      try {
-
-        const preferences = await userPreferencesHandler.findOne(user.id)
-
-        if (!preferences?.hasSynced) {
-          console.log(`Initiating first-time sync for user ${user.id}`)
-          const result = await SyncService.performFirstTimeSync(user.id)
-          if (!result.success) {
-            console.error(`First-time sync failed: ${result.error}`)
-          } else {
-            console.log(`First-time sync completed successfully`)
-          }
-        } else {
-          console.log(`User ${user.id} has already been synced before`)
-        }
-
-        setSyncInitialized(true)
-        updateSyncStatus()
-      } catch (error) {
-        console.error('Error during initial sync:', error)
-        setSyncInitialized(false)
-      }
-    }
-
-    performInitialSync()
   }, [user])
 
   useEffect(() => {

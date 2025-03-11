@@ -182,4 +182,5 @@ export const userHandler = {
   findOneByAuth0Id: async (auth0Id: string) => prisma.user.findFirst({ where: { auth0Id } }),
   update: async (id: string, data: Prisma.UserUpdateInput) => prisma.user.update({ where: { id }, data }),
   delete: async (id: string) => prisma.user.delete({ where: { id } }),
+  upsert: async (data: Prisma.UserCreateInput) => prisma.user.upsert({ where: { id: data.id }, update: data, create: data }),
 }

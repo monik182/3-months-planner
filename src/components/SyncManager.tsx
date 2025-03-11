@@ -7,7 +7,7 @@ export function SyncManager() {
   const { user, syncInitialized } = useAccountContext()
 
   useEffect(() => {
-    if (!user || !SyncService.isEnabled || !syncInitialized) return
+    if (!user?.auth0Id || !SyncService.isEnabled || !syncInitialized) return
 
     const syncInterval = setInterval(() => {
       console.log('**** Setting up periodic sync - 10 minutes interval ****')

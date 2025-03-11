@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const exists = await waitlistHandler.findOne(data.email)
 
     if (!!exists) {
-      return new Response(JSON.stringify({ message: 'The user is already in the waitlist', ok: false }), { status: 400 })
+      return new Response(JSON.stringify({ message: 'This email is already in the waitlist', ok: false }), { status: 400 })
     }
     const response = await waitlistHandler.create(parsedData)
     return new Response(JSON.stringify({ ...response, ok: true }), { status: 200 })
