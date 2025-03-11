@@ -3,11 +3,11 @@ import { StrategyForm } from '@/app/plan/Step3/Strategy/StrategyForm'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { Status } from '@/app/types/types'
 import { SavingSpinner } from '@/components/SavingSpinner'
-import { Alert, Button, Flex } from '@chakra-ui/react'
+import { Alert, Button } from '@chakra-ui/react'
 import { Strategy } from '@prisma/client'
 import cuid from 'cuid'
 import { useEffect, useState } from 'react'
-import { SlPlus } from 'react-icons/sl'
+import { GoPlus } from 'react-icons/go'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface StrategyListProps {
@@ -19,13 +19,16 @@ interface StrategyListProps {
 
 export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
-  const { data: _strategies = [], isLoading, isRefetching } = strategyActions.useGetByGoalId(goalId)
+  const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
+  const [activeStrategy, setActiveStrategy] = useState<string | null>(null)
+
   const create = strategyActions.useCreate()
   const update = strategyActions.useUpdate()
   const remove = strategyActions.useDelete()
+
   const loadingText = create.isPending ? 'Creating' : 'Saving'
-  const loading = create.isPending || update.isPending || remove.isPending || isRefetching || isLoading
+  const loading = create.isPending || update.isPending || remove.isPending
   const canAdd = maxLimit ? strategies.length < maxLimit : true
 
   const handleUpdate = (id: string, strategy: Partial<Strategy>) => {
@@ -46,6 +49,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
       status: Status.ACTIVE,
     }
     debouncedSave(newStrategy)
+    setActiveStrategy(newStrategy.id)
   }
 
   const handleRemove = (id: string) => {
@@ -54,7 +58,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
   }
 
   const saveStrategy = (strategy: Strategy) => {
-      create.mutate(strategy, {
+    create.mutate(strategy, {
       onSuccess: () => {
         setStrategies(prev => [...prev, strategy])
       }
@@ -73,6 +77,10 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
   const debouncedUpdate = useDebouncedCallback((id: string, updates: Partial<Strategy>) => updateStrategy(id, updates), 500)
   const debouncedRemove = useDebouncedCallback((id: string) => removeStrategy(id), 0)
 
+  const toggleActive = (id: string) => {
+    setActiveStrategy(prev => prev === id ? null : id)
+  }
+
   useEffect(() => {
     onLoading?.(loading)
   }, [loading])
@@ -86,28 +94,54 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
   }, [_strategies.length])
 
   return (
-    <Flex gap="10px" direction="column">
-      {strategies.map((strategy) => (
-        <StrategyForm
-          key={strategy.id}
-          onAdd={handleCreate}
-          strategy={strategy}
-          onChange={(strategy) => handleUpdate(strategy.id, strategy)}
-          onRemove={() => handleRemove(strategy.id)}
-        />
-      ))}
-      <Button size="xs" variant="ghost" className="mt-5" onClick={handleCreate} disabled={!canAdd}>
-        <SlPlus /> Add Strategy
-      </Button>
-      <SavingSpinner loading={loading} text={loadingText} />
+    <div className="space-y-3">
+      <div className="space-y-2">
+        {strategies.map((strategy) => (
+          <div
+            key={strategy.id}
+            className={`border rounded-md transition-colors ${activeStrategy === strategy.id ? 'border-gray-400 bg-gray-50' : 'border-gray-200'}`}
+          >
+            <StrategyForm
+              strategy={strategy}
+              onChange={(strategy) => handleUpdate(strategy.id, strategy)}
+              onRemove={() => handleRemove(strategy.id)}
+              onAdd={handleCreate}
+              onClick={() => toggleActive(strategy.id)}
+              isActive={activeStrategy === strategy.id}
+            />
+          </div>
+        ))}
+      </div>
+
+      {strategies.length === 0 && (
+        <div className="text-sm text-gray-500 p-2">
+          No strategies added yet. Add a strategy to support your goal.
+        </div>
+      )}
+
+      <div className="flex items-center justify-between pt-2">
+        <Button
+          size="xs"
+          variant="outline"
+          onClick={handleCreate}
+          disabled={!canAdd}
+          className="text-xs"
+        >
+          <GoPlus size={14} className="mr-1" />
+          Add Strategy
+        </Button>
+
+        <SavingSpinner loading={loading} text={loadingText} />
+      </div>
+
       {!canAdd && (
-        <Alert.Root status="info" size="sm" variant="outline">
+        <Alert.Root status="info" size="sm" variant="outline" className="mt-2">
           <Alert.Indicator />
-          <Alert.Title>
-            You have reached the maximum number of strategies for this goal
+          <Alert.Title className="text-xs">
+            Maximum {maxLimit} strategies per goal
           </Alert.Title>
         </Alert.Root>
       )}
-    </Flex>
+    </div>
   )
 }

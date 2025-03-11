@@ -1,14 +1,14 @@
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorForm } from './IndicatorForm'
-import { Alert, Button, Flex, Tag } from '@chakra-ui/react'
+import { Button, Alert, Tag } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { SlPlus } from 'react-icons/sl'
 import { Indicator } from '@prisma/client'
 import cuid from 'cuid'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { useDebouncedCallback } from 'use-debounce'
-import { GoGraph } from 'react-icons/go'
 import { Status } from '@/app/types/types'
+import { AiOutlineBarChart } from 'react-icons/ai'
+import { GoPlus } from 'react-icons/go'
 
 interface IndicatorListProps {
   goalId: string
@@ -19,15 +19,22 @@ interface IndicatorListProps {
 
 export function IndicatorList({ goalId, planId, maxLimit, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
-  const { data: indicators = [], isLoading, isRefetching } = indicatorActions.useGetByGoalId(goalId)
+  const { data: indicators = [] } = indicatorActions.useGetByGoalId(goalId)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
+
   const create = indicatorActions.useCreate()
   const update = indicatorActions.useUpdate()
   const remove = indicatorActions.useDelete()
+
   const loadingText = create.isPending ? 'Creating' : 'Saving'
-  const loading = create.isPending || update.isPending || remove.isPending || isLoading || isRefetching
+  const loading = create.isPending || update.isPending || remove.isPending
   const canAdd = maxLimit ? indicators.length < maxLimit : true
-  const disableIndicator = !canAdd || !!indicators.some((indicator) => indicator.initialValue == null || indicator.goalValue == null || !indicator.metric || !indicator.content)
+  const disableIndicator = !canAdd || !!indicators.some((indicator) =>
+    indicator.initialValue == null ||
+    indicator.goalValue == null ||
+    !indicator.metric ||
+    !indicator.content
+  )
 
   const handleCreate = () => {
     const newIndicator: Indicator = {
@@ -87,40 +94,66 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
   }, [loading])
 
   return (
-    <Flex gap="10px" direction="column" wrap="wrap">
+    <div className="space-y-3">
       {!!indicatorToUpdate && (
-        <IndicatorForm
-          indicator={indicatorToUpdate}
-          onChange={(indicator) => handleChange(indicatorToUpdate.id, indicator)}
-          onRemove={() => handleRemove(indicatorToUpdate.id)}
-          loading={loading}
-        />
+        <div className="border border-gray-200 rounded-md bg-gray-50 mt-3">
+          <IndicatorForm
+            indicator={indicatorToUpdate}
+            onChange={(indicator) => handleChange(indicatorToUpdate.id, indicator)}
+            onRemove={() => handleRemove(indicatorToUpdate.id)}
+            loading={loading}
+          />
+        </div>
       )}
-      <Flex gap="10px" alignItems="center">
+
+      <div className="flex flex-wrap gap-2 items-center">
         {indicators?.map((indicator) => (
-          <Tag.Root key={indicator.id} variant="outline" colorPalette="yellow" className="mt-5" cursor="pointer">
+          <Tag.Root
+            key={indicator.id}
+            variant="outline"
+            colorPalette="gray"
+            className="cursor-pointer hover:bg-gray-50"
+          >
             <Tag.StartElement>
-              <GoGraph />
+              <AiOutlineBarChart size={14} />
             </Tag.StartElement>
-            <Tag.Label onClick={() => setIndicatorToUpdate(indicator)}>{indicator.content}</Tag.Label>
-            <Tag.EndElement cursor="pointer">
-              <Tag.CloseTrigger onClick={() => handleRemove(indicator.id)} />
+            <Tag.Label
+              onClick={() => setIndicatorToUpdate(indicator)}
+              className="text-xs"
+            >
+              {indicator.content}
+            </Tag.Label>
+            <Tag.EndElement>
+              <Tag.CloseTrigger
+                onClick={() => handleRemove(indicator.id)}
+                className="text-gray-400 hover:text-gray-600"
+              />
             </Tag.EndElement>
           </Tag.Root>
         ))}
-        <Button size="xs" variant="outline" className="mt-5" onClick={handleCreate} disabled={disableIndicator}>
-          <SlPlus /> Add Indicator
+
+        <Button
+          size="xs"
+          variant="outline"
+          onClick={handleCreate}
+          disabled={disableIndicator || loading}
+          className="text-xs"
+        >
+          <GoPlus size={14} className="mr-1" />
+          Add Indicator
         </Button>
+
         <SavingSpinner loading={loading} text={loadingText} />
-      </Flex>
+      </div>
+
       {!canAdd && (
         <Alert.Root status="info" size="sm" variant="outline">
           <Alert.Indicator />
-          <Alert.Title>
-            You have reached the maximum number of indicators for this goal
+          <Alert.Title className="text-xs">
+            Maximum {maxLimit} indicators per goal
           </Alert.Title>
         </Alert.Root>
       )}
-    </Flex>
+    </div>
   )
 }

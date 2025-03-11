@@ -19,25 +19,32 @@ export const FrequencySelector = ({ frequency = DEFAULT_FREQUENCY, setFrequency,
   }
 
   return (
-    <SelectRoot
-      open
-      collection={COLLECTION}
-      size="sm"
-      width="200px"
-      value={[frequency.toString()]}
-      onValueChange={handleOnValueChange}
-      onFocusOutside={onFocusOutside}
-    >
-      <SelectTrigger clearable>
-        <SelectValueText placeholder="Frequency" />
-      </SelectTrigger>
-      <SelectContent onMouseLeave={onFocusOutside}>
-        {COLLECTION.items.map((item) => (
-          <SelectItem item={item} key={item.value}>
-            {item.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </SelectRoot>
+    <div className="bg-white border border-gray-200 rounded-md shadow-sm">
+      <SelectRoot
+        open
+        collection={COLLECTION}
+        size="sm"
+        width="180px"
+        value={[frequency.toString()]}
+        onValueChange={handleOnValueChange}
+        onFocusOutside={onFocusOutside}
+        className="text-sm"
+      >
+        <SelectTrigger clearable>
+          <SelectValueText placeholder="Frequency" />
+        </SelectTrigger>
+        <SelectContent onMouseLeave={onFocusOutside} className="max-h-64">
+          {COLLECTION.items.map((item) => (
+            <SelectItem
+              item={item}
+              key={item.value}
+              className="hover:bg-gray-100 transition-colors"
+            >
+              {item.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </SelectRoot>
+    </div>
   )
 }

@@ -1,7 +1,8 @@
 # Post Release
-- Solve enable sync/getByPlanId
-- Enable edit plan          
+- Enable edit plan [WIP]
 - Create VIP role
+- Solve enable sync getByPlanId/undefined ❓
+- Solve delete item delay
 - Save user data to DB on signup - Create user put ✅
 - Merge authenticated user and stored user ✅
 - Merge queued syncs  ✅

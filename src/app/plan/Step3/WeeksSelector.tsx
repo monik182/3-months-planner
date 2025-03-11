@@ -26,27 +26,51 @@ export const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelector
   }
 
   return (
-    <SelectRoot
-      open
-      multiple
-      collection={WEEKS_COLLECTION}
-      size="sm"
-      width="200px"
-      value={weeks}
-      onValueChange={handleOnValueChange}
-      onFocusOutside={onFocusOutside}
-      onOpenChange={handleOnOpenChange}
-    >
-      <SelectTrigger clearable>
-        <SelectValueText placeholder="Weeks" />
-      </SelectTrigger>
-      <SelectContent onMouseLeave={onFocusOutside}>
-        {WEEKS_COLLECTION.items.map((week) => (
-          <SelectItem item={week} key={week.value}>
-            {week.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </SelectRoot>
+    <div className="bg-white border border-gray-200 rounded-md shadow-sm">
+      <SelectRoot
+        open
+        multiple
+        collection={WEEKS_COLLECTION}
+        size="sm"
+        width="180px"
+        value={weeks}
+        onValueChange={handleOnValueChange}
+        onFocusOutside={onFocusOutside}
+        onOpenChange={handleOnOpenChange}
+        className="text-sm"
+      >
+        <SelectTrigger clearable>
+          <SelectValueText placeholder="Weeks" />
+        </SelectTrigger>
+        <SelectContent
+          onMouseLeave={onFocusOutside}
+          className="max-h-64 overflow-auto"
+        >
+          <div className="p-1 border-b border-gray-100 mb-1">
+            <button
+              className="w-full text-xs py-1 px-2 text-left text-gray-600 hover:bg-gray-50 rounded"
+              onClick={() => setWeeks([...DEFAULT_WEEKS])}
+            >
+              Select All
+            </button>
+            <button
+              className="w-full text-xs py-1 px-2 text-left text-gray-600 hover:bg-gray-50 rounded"
+              onClick={() => setWeeks([])}
+            >
+              Clear All
+            </button>
+          </div>
+          {WEEKS_COLLECTION.items.map((week) => (
+            <SelectItem
+              item={week}
+              key={week.value}
+              className="hover:bg-gray-100 transition-colors"
+            >
+              {week.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </SelectRoot>
+    </div>
   )
 }

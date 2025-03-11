@@ -1,12 +1,12 @@
-import { Flex, Input } from '@chakra-ui/react'
+import { Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 import { Alert } from '@/components/ui/alert'
 import { Indicator } from '@prisma/client'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { ValueChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/number-input/namespace'
 import { Field } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'
+import { CiFloppyDisk, CiTrash } from 'react-icons/ci'
 
 interface IndicatorFormProps {
   indicator: Omit<Indicator, 'status'>
@@ -60,48 +60,99 @@ export function IndicatorForm({ indicator, loading, onChange, onRemove }: Indica
   }, [indicator])
 
   return (
-    <Flex w="full" gap="1rem" flex="1" margin="1rem 0" padding="1rem" direction={{ base: "column", md: "row" }}>
-      <Flex gap="1rem" alignItems="flex-start" direction={{ base: "column", md: "row" }}>
-        <Field label="What indicator are you tracking?" helperText="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' or 'Project Completion'.">
-          <Input size="xs" placeholder="Eg. Bodyweight, Savings Growth, Project Completion" value={value.content} onChange={(e) => handleEdit(e, 'content')} autoComplete="off" />
+    <div className="p-4 space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field
+          label="What indicator are you tracking?"
+          helperText="Specify what you're tracking, like 'Bodyweight,' 'Savings Growth,' etc."
+          className="w-full"
+        >
+          <Input
+            size="sm"
+            placeholder="E.g., Bodyweight, Savings Growth"
+            value={value.content}
+            onChange={(e) => handleEdit(e, 'content')}
+            autoComplete="off"
+            className="w-full text-sm"
+          />
         </Field>
 
-        <Field label="What is your current value?" helperText="Enter your current value, for example, 100.">
+        <Field
+          label="What is the unit of measurement?"
+          helperText="Indicate the unit, such as kg, $, miles, etc."
+          className="w-full"
+        >
+          <Input
+            size="sm"
+            placeholder="E.g., kg, $, miles"
+            value={value.metric}
+            onChange={(e) => handleEdit(e, 'metric')}
+            autoComplete="off"
+            className="w-full text-sm"
+          />
+        </Field>
+
+        <Field
+          label="Current value"
+          helperText="Where are you starting from?"
+          className="w-full"
+        >
           <NumberInputRoot
-            size="xs"
+            size="sm"
             step={1}
             min={0}
             value={value.initialValue?.toString() || ''}
             onValueChange={(e) => handleValueChange(e, 'initialValue')}
+            className="w-full"
           >
-            <NumberInputField />
+            <NumberInputField className="text-sm" />
           </NumberInputRoot>
         </Field>
 
-        <Field label="What is your goal value?" helperText="Enter your goal value, for example, 200.">
+        <Field
+          label="Goal value"
+          helperText="What target do you want to reach?"
+          className="w-full"
+        >
           <NumberInputRoot
-            size="xs"
+            size="sm"
             step={1}
             min={0}
             value={value.goalValue?.toString() || ''}
             onValueChange={(e) => handleValueChange(e, 'goalValue')}
+            className="w-full"
           >
-            <NumberInputField />
+            <NumberInputField className="text-sm" />
           </NumberInputRoot>
         </Field>
-        <Field label="What is the unit of measurement?" helperText="Indicate the unit, such as kilograms, euros, number of calls, or transactions.">
-          <Input size="xs" placeholder="Eg. kilograms, euros, number of calls, or transactions." value={value.metric} onChange={(e) => handleEdit(e, 'metric')} autoComplete="off" />
-        </Field>
-      </Flex>
-      {error && <Alert status="error" title={error} />}
-      <Flex justify="center" gap="5px" direction={{ base: "row", md: "colum" }}>
-        <Button size="xs" variant="ghost" onClick={handleUpdate} colorPalette="green" title="Save" loading={loading}>
-          <CiFloppyDisk />
+      </div>
+
+      {error && (
+        <Alert status="error" title={error} className="text-sm mt-3" />
+      )}
+
+      <div className="flex justify-end gap-2 pt-2">
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onRemove}
+          className="text-gray-600 hover:text-red-600"
+        >
+          <CiTrash size={16} className="mr-1" />
+          Cancel
         </Button>
-        <Button size="xs" variant="ghost" onClick={onRemove} colorPalette="red" title="Remove">
-          <CiTrash />
+
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleUpdate}
+          loading={loading}
+          className="text-gray-800"
+        >
+          <CiFloppyDisk size={16} className="mr-1" />
+          Save
         </Button>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   )
 }
