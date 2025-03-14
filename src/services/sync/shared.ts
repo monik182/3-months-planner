@@ -1,4 +1,5 @@
 import { QueueEntityType, QueueOperation, QueueStatus, SyncQueueItem } from '@/app/types/types'
+import { dexieToPlan } from '@/app/util'
 import { syncQueueHandler, userPreferencesHandler } from '@/db/dexieHandler'
 import { SyncService } from '@/services/sync'
 import { UserService } from '@/services/user'
@@ -92,4 +93,78 @@ export const filterQueuedForDeletion = async (items: any[], entityType: QueueEnt
   }
 
   return result
+}
+
+export const getBulkEntityType = (entityType: QueueEntityType): QueueEntityType | null => {
+  switch (entityType) {
+    case QueueEntityType.GOAL:
+      return QueueEntityType.GOAL_BULK
+    case QueueEntityType.STRATEGY:
+      return QueueEntityType.STRATEGY_BULK
+    case QueueEntityType.INDICATOR:
+      return QueueEntityType.INDICATOR_BULK
+    case QueueEntityType.GOAL_HISTORY:
+      return QueueEntityType.GOAL_HISTORY_BULK
+    case QueueEntityType.STRATEGY_HISTORY:
+      return QueueEntityType.STRATEGY_HISTORY_BULK
+    case QueueEntityType.INDICATOR_HISTORY:
+      return QueueEntityType.INDICATOR_HISTORY_BULK
+    default:
+      return null
+  }
+}
+
+export const getApiUrlForEntity = (entityType: QueueEntityType, entityId: string, operation: QueueOperation): string | null => {
+  switch (entityType) {
+    case QueueEntityType.USER:
+      return operation === QueueOperation.CREATE ? '/api/user' : `/api/user/${entityId}`
+    case QueueEntityType.PLAN:
+      return operation === QueueOperation.CREATE ? '/api/plan/' : `/api/plan/${entityId}`
+    case QueueEntityType.GOAL:
+      return operation === QueueOperation.CREATE ? '/api/goal' : `/api/goal/${entityId}`
+    case QueueEntityType.GOAL_BULK:
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/goal/bulk' : null
+    case QueueEntityType.GOAL_HISTORY:
+      return operation === QueueOperation.CREATE ? '/api/goal/history' : `/api/goal/history/${entityId}`
+    case QueueEntityType.GOAL_HISTORY_BULK:
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/goal/history/bulk' : null
+    case QueueEntityType.STRATEGY:
+      return operation === QueueOperation.CREATE ? '/api/strategy' : `/api/strategy/${entityId}`
+    case QueueEntityType.STRATEGY_BULK:
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/strategy/bulk' : null
+    case QueueEntityType.STRATEGY_HISTORY:
+      return operation === QueueOperation.CREATE ? '/api/strategy/history' : `/api/strategy/history/${entityId}`
+    case QueueEntityType.STRATEGY_HISTORY_BULK:
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/strategy/history/bulk' : null
+    case QueueEntityType.INDICATOR:
+      return operation === QueueOperation.CREATE ? '/api/indicator' : `/api/indicator/${entityId}`
+    case QueueEntityType.INDICATOR_BULK:
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/indicator/bulk' : null
+    case QueueEntityType.INDICATOR_HISTORY:
+      return operation === QueueOperation.CREATE ? '/api/indicator/history' : `/api/indicator/history/${entityId}`
+    case QueueEntityType.INDICATOR_HISTORY_BULK:
+      return operation === QueueOperation.CREATE || QueueOperation.DELETE ? '/api/indicator/history/bulk' : null
+    default:
+      return null
+  }
+}
+
+export const getMethodForOperation = (operation: string): string => {
+  switch (operation) {
+    case QueueOperation.DELETE:
+      return 'DELETE'
+    case QueueOperation.UPDATE:
+      return 'PUT'
+    default:
+      return 'POST'
+  }
+}
+
+export const preparePayloadForSync = (entityType: QueueEntityType, payload: any): any => {
+  switch (entityType) {
+    case QueueEntityType.PLAN:
+      return dexieToPlan(payload)
+    default:
+      return payload
+  }
 }

@@ -102,7 +102,6 @@ export function GoalManager({ onLoading }: Step<Goal[]>) {
 
   return (
     <div className="space-y-4 w-full">
-      Inside new goal manager
       {goals.map((goal) => (
         <Card.Root
           key={goal.id}

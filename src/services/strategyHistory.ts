@@ -1,7 +1,7 @@
 import { strategyHistoryHandler } from '@/db/dexieHandler'
 import { StrategyHistoryExtended, QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 import { Prisma, StrategyHistory } from '@prisma/client'
-import { StrategyHistorySchema, StrategyHistoryArraySchema, PartialStrategyHistorySchema } from '@/lib/validators/strategyHistory'
+import { StrategyHistorySchema, PartialStrategyHistorySchema, StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
 import { SyncService } from '@/services/sync'
 
 const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<StrategyHistory> => {
@@ -12,7 +12,7 @@ const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<Strategy
 }
 
 const createBulk = async (histories: Prisma.StrategyHistoryCreateManyInput[]): Promise<StrategyHistory[]> => {
-  const parsedData = StrategyHistoryArraySchema.parse(histories)
+  const parsedData = StrategyHistoryNoStrategyArraySchema.parse(histories)
   await strategyHistoryHandler.createMany(parsedData)
   await SyncService.queueForSync(QueueEntityType.STRATEGY_HISTORY_BULK, 'bulk', QueueOperation.CREATE, histories)
   return parsedData

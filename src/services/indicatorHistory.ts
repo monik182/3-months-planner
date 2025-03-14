@@ -1,7 +1,7 @@
 import { indicatorHistoryHandler } from '@/db/dexieHandler'
 import { IndicatorHistoryExtended, QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 import { IndicatorHistory, Prisma } from '@prisma/client'
-import { IndicatorHistorySchema, IndicatorHistoryArraySchema, PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
+import { IndicatorHistorySchema, PartialIndicatorHistorySchema, IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { SyncService } from '@/services/sync'
 
 const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
@@ -12,7 +12,7 @@ const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<Indicat
 }
 
 const createBulk = async (histories: Prisma.IndicatorHistoryCreateManyInput[]): Promise<IndicatorHistory[]> => {
-  const parsedData = IndicatorHistoryArraySchema.parse(histories)
+  const parsedData = IndicatorHistoryNoIndicatorArraySchema.parse(histories)
   await indicatorHistoryHandler.createMany(parsedData)
   await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY_BULK, 'bulk', QueueOperation.CREATE, histories)
   return parsedData

@@ -30,10 +30,8 @@ const create = async (user: Prisma.UserCreateInput): Promise<User> => {
       const user = await response.json()
       const exists = await userHandler.findOne(user.id)
       if (!exists) {
-        console.log('^^^^^^^^^^^^^^^^^^ NOT exists and creating', exists)
         await userHandler.create(user)
       } else {
-        console.log('^^^^^^^^^^^^^^^^^^ exists and editing', exists)
         await userHandler.update(user.id, user)
       }
       return user
