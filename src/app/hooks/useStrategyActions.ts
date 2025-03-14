@@ -64,6 +64,10 @@ export function useStrategyActions() {
   const useDelete = () => {
     return useMutation({
       mutationFn: (strategyId: string) => StrategyService.deleteItem(strategyId),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('delete_strategy')
+      },
     })
   }
 

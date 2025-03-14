@@ -4,7 +4,7 @@ import { Indicator, Prisma } from '@prisma/client'
 import { SyncService } from '@/services/sync'
 import { QueueEntityType, QueueOperation, Status } from '@/app/types/types'
 
-const create = async (data: Prisma.IndicatorCreateInput): Promise<Indicator> => {
+const create = async (data: Indicator): Promise<Indicator> => {
   const parsedData = IndicatorNoGoalSchema.parse(data)
   await indicatorHandler.create(parsedData)
   await SyncService.queueForSync(QueueEntityType.INDICATOR, parsedData.id, QueueOperation.CREATE, parsedData)
