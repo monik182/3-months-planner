@@ -14,6 +14,7 @@ const PlanLayout = ({ children }: PlanLayoutProps) => {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const isPlanRelatedPage = pathname.includes('plan') || pathname.includes('dashboard')
+  const isPlanAuthenticatedPage = pathname.includes('plan/view') || pathname.includes('dashboard')
 
   useEffect(() => {
     if (isPlanRelatedPage) {
@@ -29,7 +30,7 @@ const PlanLayout = ({ children }: PlanLayoutProps) => {
         return
       }
   
-      if (hasPlan && hasStartedPlan) {
+      if (hasPlan && hasStartedPlan && !isPlanAuthenticatedPage) {
         setLoading(false)
         router.replace('/dashboard')
         return

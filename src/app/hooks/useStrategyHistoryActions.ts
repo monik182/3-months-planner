@@ -16,6 +16,16 @@ export function useStrategyHistoryActions() {
     })
   }
 
+  const useCreateBulk = () => {
+    return useMutation({
+      mutationFn: (strategies: Prisma.StrategyHistoryCreateManyInput[]) => StrategyHistoryService.createBulk(strategies),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_strategy_history')
+      },
+    })
+  }
+
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyHistoryUpdateInput }) => StrategyHistoryService.update(strategyId, updates),
@@ -56,6 +66,7 @@ export function useStrategyHistoryActions() {
     useGetByPlanId,
     useGetByGoalId,
     useGet,
+    useCreateBulk,
   }
 }
 

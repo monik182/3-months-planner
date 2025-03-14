@@ -15,6 +15,16 @@ export function useIndicatorHistoryActions() {
     })
   }
 
+  const useCreateBulk = () => {
+    return useMutation({
+      mutationFn: (indicators: Prisma.IndicatorHistoryCreateManyInput[]) => IndicatorHistoryService.createBulk(indicators),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_indicator_history')
+      },
+    })
+  }
+
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorHistoryUpdateInput }) => IndicatorHistoryService.update(indicatorId, updates),
@@ -55,6 +65,7 @@ export function useIndicatorHistoryActions() {
     useGetByPlanId,
     useGetByGoalId,
     useGet,
+    useCreateBulk,
   }
 }
 

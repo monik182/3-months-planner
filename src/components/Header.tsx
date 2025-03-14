@@ -97,7 +97,7 @@ const items = [
     label: (
       <HStack>
         <RxDashboard />
-        Dashboard
+        <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
       </HStack>
     ),
   },
@@ -106,7 +106,7 @@ const items = [
     label: (
       <HStack>
         <SlNotebook />
-        Plan
+        <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
       </HStack>
     ),
   },

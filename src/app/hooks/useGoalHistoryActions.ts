@@ -1,15 +1,28 @@
+import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { Status } from '@/app/types/types'
 import { GoalHistoryService } from '@/services/goalHistory'
 import { Prisma } from '@prisma/client'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'goal-history'
 
 export function useGoalHistoryActions() {
+  const queryClient = useQueryClient()
+  const { track } = useMixpanelContext()
 
   const useCreate = () => {
     return useMutation({
       mutationFn: (goal: Prisma.GoalHistoryCreateInput) => GoalHistoryService.create(goal),
+    })
+  }
+
+  const useCreateBulk = () => {
+    return useMutation({
+      mutationFn: (goals: Prisma.GoalHistoryCreateManyInput[]) => GoalHistoryService.createBulk(goals),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_goal_history')
+      },
     })
   }
 
@@ -40,6 +53,7 @@ export function useGoalHistoryActions() {
     useUpdate,
     useGetByPlanId,
     useGet,
+    useCreateBulk,
   }
 }
 
