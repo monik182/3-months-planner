@@ -62,6 +62,7 @@ export function StrategyList({ goalId, planId, maxLimit, onChange, onLoading }: 
     create.mutate(strategy, {
       onSuccess: () => {
         setStrategies(prev => [...prev, strategy])
+        console.log('CREATE NEW STRATEGY')
         onChange?.()
       }
     })

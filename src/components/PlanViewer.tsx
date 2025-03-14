@@ -98,9 +98,9 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
     const newStrategies = strategies.filter(s => !initialStrategies.includes(s.id)).filter(s => goalIds.includes(s.goalId))
     const newIndicators = indicators.filter(i => !initialIndicators.includes(i.id)).filter(i => goalIds.includes(i.goalId))
 
-    // console.log('NEW GOALS>>>>>>', newGoals, goals)
-    // console.log('NEW STRATEGIES>>>>>>', newStrategies, strategies)
-    // console.log('NEW INDICATORS>>>>>>', newIndicators, indicators)
+    console.log('NEW GOALS>>>>>>', newGoals, goals)
+    console.log('NEW STRATEGIES>>>>>>', newStrategies, strategies)
+    console.log('NEW INDICATORS>>>>>>', newIndicators, indicators)
     if (newGoals.length) {
       await createBulkGoal.mutateAsync(createGoalHistoryList(plan.id, newGoals), {
         onSuccess: () => {
