@@ -1,8 +1,14 @@
 # Post Release
-- Enable edit plan [WIP]
-- Create VIP role
 - Solve enable sync getByPlanId/undefined ❓
 - Solve delete item delay
+
+- Clear on logout
+- Store on login
+- Create VIP role
+
+- On the edit, create the bulk with the entity creation ✅
+- Only push to DB strategies and indicators with existing goals ✅
+- Enable edit plan ✅
 - Save user data to DB on signup - Create user put ✅
 - Merge authenticated user and stored user ✅
 - Merge queued syncs  ✅

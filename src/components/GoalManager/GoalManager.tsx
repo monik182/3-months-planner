@@ -24,7 +24,7 @@ import { IoIosClose } from 'react-icons/io'
 import { GoPlus } from 'react-icons/go'
 
 const MAX_GOALS = 4
-export function GoalManager({ onLoading }: Step<Goal[]>) {
+export function GoalManager({ onLoading, onChange }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
   const { data: _goals = [] } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
@@ -70,6 +70,7 @@ export function GoalManager({ onLoading }: Step<Goal[]>) {
       onSuccess: () => {
         setGoals(prev => [...prev, goal])
         setExpandedGoalId(goal.id)
+        onChange?.()
       }
     })
   }
@@ -144,13 +145,13 @@ export function GoalManager({ onLoading }: Step<Goal[]>) {
             <Collapsible.Content>
               <Card.Body className="p-4 bg-white">
                 <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
-                <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} />
+                <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} onChange={onChange} />
               </Card.Body>
               <Separator />
               <Card.Footer className="p-4 bg-white">
                 <Flex flexDirection="column" gap="1rem">
                   <Text className="text-sm font-medium mb-2 text-gray-700">Progress Indicators</Text>
-                  <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} onLoading={onLoading} />
+                  <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} onLoading={onLoading} onChange={onChange} />
                 </Flex>
               </Card.Footer>
             </Collapsible.Content>

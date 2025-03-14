@@ -10,7 +10,7 @@ export enum Status {
 
 export interface Step<T> {
   onLoading?: (loading: boolean) => void
-  onChange?: (value: T) => void
+  onChange?: (value?: T) => void
 }
 
 export interface Vision {

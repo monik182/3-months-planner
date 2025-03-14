@@ -14,10 +14,11 @@ interface StrategyListProps {
   goalId: string
   planId: string
   maxLimit?: number
+  onChange?: () => void
   onLoading?: (loading: boolean) => void
 }
 
-export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyListProps) {
+export function StrategyList({ goalId, planId, maxLimit, onChange, onLoading }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
   const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
@@ -61,6 +62,7 @@ export function StrategyList({ goalId, planId, maxLimit, onLoading }: StrategyLi
     create.mutate(strategy, {
       onSuccess: () => {
         setStrategies(prev => [...prev, strategy])
+        onChange?.()
       }
     })
   }

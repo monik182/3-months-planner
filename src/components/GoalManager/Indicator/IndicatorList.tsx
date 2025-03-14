@@ -14,10 +14,11 @@ interface IndicatorListProps {
   goalId: string
   planId: string
   maxLimit?: number
+  onChange?: () => void
   onLoading?: (loading: boolean) => void
 }
 
-export function IndicatorList({ goalId, planId, maxLimit, onLoading }: IndicatorListProps) {
+export function IndicatorList({ goalId, planId, maxLimit, onChange, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
   const { data: indicators = [] } = indicatorActions.useGetByGoalId(goalId)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
@@ -75,6 +76,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onLoading }: Indicator
     create.mutate(indicator, {
       onSuccess: () => {
         setIndicatorToUpdate(null)
+        onChange?.()
       }
     })
   }

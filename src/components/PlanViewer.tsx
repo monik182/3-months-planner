@@ -15,7 +15,8 @@ import {
   Center,
   IconButton,
   Button,
-  Editable
+  Editable,
+  Spinner
 } from '@chakra-ui/react'
 import { toaster } from '@/components/ui/toaster'
 import {
@@ -29,23 +30,37 @@ import { useRouter } from 'next/navigation'
 import { Tooltip } from '@/components/ui/tooltip'
 import { AiOutlineBarChart } from 'react-icons/ai'
 import { CiEdit } from 'react-icons/ci'
-import { formatDate } from '@/app/util'
+import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList, formatDate } from '@/app/util'
 import { DEFAULT_FREQUENCY_LIST } from '@/app/constants'
+import { GoalManager } from '@/components/GoalManager/GoalManager'
+import { useDebouncedCallback } from 'use-debounce'
+import { PiTarget } from 'react-icons/pi'
 
 export default function PlanViewer({ readonly = true }: { readonly?: boolean }) {
   const router = useRouter()
-  const { plan, isLoading: loadingPlan, goalActions, strategyActions, indicatorActions, planActions } = usePlanContext()
-  const { data: goals = [], isLoading: loadingGoals } = goalActions.useGetByPlanId(plan?.id as string)
-  const { data: strategies = [], isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan?.id as string)
-  const { data: indicators = [], isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan?.id as string)
+  const { plan, goalActions, strategyActions, indicatorActions, planActions, goalHistoryActions, strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
+  const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string)
+  const { data: strategies = [] } = strategyActions.useGetByPlanId(plan?.id as string)
+  const { data: indicators = [] } = indicatorActions.useGetByPlanId(plan?.id as string)
+  const createBulkGoal = goalHistoryActions.useCreateBulk()
+  const createBulkStrategy = strategyHistoryActions.useCreateBulk()
+  const createBulkIndicator = indicatorHistoryActions.useCreateBulk()
+  const [initialGoals, setInitialGoals] = useState<string[]>([])
+  const [initialStrategies, setInitialStrategies] = useState<string[]>([])
+  const [initialIndicators, setInitialIndicators] = useState<string[]>([])
   const updatePlan = planActions.useUpdate()
   const [editingVision, setEditingVision] = useState(false)
+  const [editingGoals, setEditingGoals] = useState(false)
   const [vision, setVision] = useState('')
-  const loading = loadingPlan || loadingGoals || loadingStrategies || loadingIndicators || updatePlan.isPending
-  console.log('Loading viewer....', loading)
+  const loadingGoals = createBulkGoal.isPending || createBulkStrategy.isPending || createBulkIndicator.isPending
 
-  const handleVisionSubmit = (vision: string) => {
-    if (plan) {
+  const handleVisionUpdate = (value: string) => {
+    setVision(value)
+    debouncedVisionUpdate()
+  }
+
+  const updateVision = () => {
+    if (plan && plan.vision !== vision) {
       updatePlan.mutate(
         { planId: plan.id, updates: { vision } },
         {
@@ -69,11 +84,102 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
     }
   }
 
+  const debouncedVisionUpdate = useDebouncedCallback(() => updateVision(), 5000)
+
+  const handleGoalUpdate = async () => {
+    await updateGoals()
+    setEditingGoals(false)
+  }
+
+  const updateGoals = async () => {
+    if (!plan) return
+    const newGoals = goals.filter(g => !initialGoals.includes(g.id))
+    const goalIds = newGoals.map(g => g.id)
+    const newStrategies = strategies.filter(s => !initialStrategies.includes(s.id)).filter(s => goalIds.includes(s.goalId))
+    const newIndicators = indicators.filter(i => !initialIndicators.includes(i.id)).filter(i => goalIds.includes(i.goalId))
+
+    // console.log('NEW GOALS>>>>>>', newGoals, goals)
+    // console.log('NEW STRATEGIES>>>>>>', newStrategies, strategies)
+    // console.log('NEW INDICATORS>>>>>>', newIndicators, indicators)
+    if (newGoals.length) {
+      await createBulkGoal.mutateAsync(createGoalHistoryList(plan.id, newGoals), {
+        onSuccess: () => {
+          setInitialGoals([])
+          toaster.create({
+            title: 'Goals updated',
+            type: 'success',
+            duration: 2000
+          })
+        },
+        onError: (error) => {
+          toaster.create({
+            title: 'Error updating goals',
+            description: error.message,
+            type: 'error'
+          })
+        }
+      })
+    }
+
+    if (newStrategies.length) {
+      await createBulkStrategy.mutateAsync(createStrategyHistoryList(plan.id, newStrategies), {
+        onSuccess: () => {
+          setInitialStrategies([])
+          toaster.create({
+            title: 'Strategies updated',
+            type: 'success',
+            duration: 2000
+          })
+        },
+        onError: (error) => {
+          toaster.create({
+            title: 'Error updating strategies',
+            description: error.message,
+            type: 'error'
+          })
+        }
+      })
+    }
+
+    if (newIndicators.length) {
+      await createBulkIndicator.mutateAsync(createIndicatorHistoryList(plan.id, newIndicators), {
+        onSuccess: () => {
+          setInitialIndicators([])
+          toaster.create({
+            title: 'Indicators updated',
+            type: 'success',
+            duration: 2000
+          })
+        },
+        onError: (error) => {
+          toaster.create({
+            title: 'Error updating indicators',
+            description: error.message,
+            type: 'error'
+          })
+        }
+      })
+    }
+
+  }
+
   useEffect(() => {
     if (plan) {
       setVision(plan.vision)
     }
   }, [plan])
+
+  useEffect(() => {
+    if (goals.length && !initialGoals.length) {
+      setInitialGoals(goals.map(g => g.id))
+    }
+    if (strategies.length && !initialStrategies.length) {
+      setInitialStrategies(strategies.map(s => s.id))
+    }
+    if (indicators.length && !initialIndicators.length) {
+      setInitialIndicators(indicators.map(i => i.id))
+    }
+  }, [goals.length, strategies.length, indicators.length])
 
   if (!plan) return null
 
@@ -187,13 +293,13 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
                   size="sm"
                   onClick={() => {
                     if (editingVision) {
-                      handleVisionSubmit(vision)
+                      updateVision()
                     } else {
                       setEditingVision(true)
                     }
                   }}
                 >
-                  {!editingVision ? <LuCheck /> : <CiEdit />}
+                  {editingVision ? <LuCheck /> : <CiEdit />}
                 </IconButton>
               </Tooltip>
             )}
@@ -201,7 +307,7 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
           {editingVision ? (
             <Editable.Root
               value={vision}
-              onValueChange={e => setVision(e.value)}
+              onValueChange={e => handleVisionUpdate(e.value)}
               fontSize="md"
               colorPalette="gray.700"
               placeholder="Define your long-term vision..."
@@ -228,122 +334,145 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
 
         <Box>
           <Grid
-            templateColumns={{ base: "1fr", lg: "repeat(2, 1fr)" }}
+            templateColumns={{ base: "1fr" }}
             gap={6}
           >
-            {goals.filter((goal) => !!goal.content).map((goal, index) => (
-              <GridItem key={goal.id}>
-                <Card.Root
-                  borderWidth="1px"
-                  p={0}
-                  bg="white"
-                  borderRadius="xl"
-                  boxShadow="lg"
-                  borderColor="transparent"
-                  overflow="hidden"
-                >
-                  <Card.Header bg="gray.50" p={4}>
-                    <Flex justify="space-between" align="center">
-                      <Heading size="md">
-                        <Badge
-                          colorPalette="cyan"
-                          marginRight={2}
-                          borderRadius="md"
-                        >
-                          Goal {index + 1}
-                        </Badge>
-                        {goal.content}
-                      </Heading>
-                      {!readonly && (
-                        <Button
-                          size="xs"
-                          variant="ghost"
-                          onClick={() => router.push('/plan')}
-                        >
-                          <CiEdit />
-                          Edit
-                        </Button>
-                      )}
-                    </Flex>
-                  </Card.Header>
-
-                  <Card.Body p={4}>
-                    {!!strategies.filter(strategy => strategy.goalId === goal.id).length && (
-                      <Box mb={4}>
-                        <Heading size="sm" mb={3} display="flex" alignItems="center">
-                          <Box as="span" mr={2} colorPalette="gray.500">Strategies</Box>
-                          <Box flex="1" height="1px" bg="gray.200" />
-                        </Heading>
-
-                        <VStack align="stretch" gap={3}>
-                          {strategies
-                            .filter(strategy => strategy.goalId === goal.id && !!strategy.content)
-                            .map((strategy, idx) => (
-                              <Flex
-                                key={strategy.id}
-                                p={3}
+            <Heading size="md" colorPalette="purple.800">
+              <Flex justifyContent="space-between" alignItems="center" mb={3}>
+                <HStack>
+                  <PiTarget />
+                  <Text>Goals & Strategies</Text>
+                </HStack>
+                {!readonly && (
+                  <Tooltip content={editingGoals ? "Save" : "Edit"}>
+                    <Button
+                      size="xs"
+                      variant="ghost"
+                      onClick={() => {
+                        if (editingGoals) {
+                          handleGoalUpdate()
+                        } else {
+                          setEditingGoals(true)
+                        }
+                      }}
+                    >
+                      {editingGoals ? (loadingGoals ? <Spinner size="xs" /> : <LuCheck />) : <CiEdit />}
+                    </Button>
+                  </Tooltip>
+                )}
+              </Flex>
+            </Heading>
+            {editingGoals
+              ? (
+                <GoalManager onChange={updateGoals} />
+              )
+              : (
+                <>
+                  {goals.filter((goal) => !!goal.content).map((goal, index) => (
+                    <GridItem key={goal.id}>
+                      <Card.Root
+                        borderWidth="1px"
+                        p={0}
+                        bg="white"
+                        borderRadius="xl"
+                        boxShadow="lg"
+                        borderColor="transparent"
+                        overflow="hidden"
+                      >
+                        <Card.Header bg="gray.50" p={4}>
+                          <Flex justify="space-between" align="center">
+                            <Heading size="md">
+                              <Badge
+                                colorPalette="cyan"
+                                marginRight={2}
                                 borderRadius="md"
-                                bg="gray.50"
-                                justify="space-between"
-                                align="center"
                               >
-                                <VStack align="start" gap={1}>
-                                  <Text fontWeight="medium">
-                                    <Text as="span" colorPalette="gray.500" fontSize="sm" mr={1}>
-                                      {idx + 1}.
-                                    </Text>
-                                    {strategy.content}
-                                  </Text>
-                                  <Text fontSize="xs" colorPalette="gray.600">
-                                    Weeks: {strategy.weeks.length === 12 ? 'Every week' : strategy.weeks.join(', ')}
-                                  </Text>
-                                  <Text fontSize="xs" colorPalette="gray.600">
-                                    <span>{DEFAULT_FREQUENCY_LIST[strategy.frequency - 1].label}</span>
-                                  </Text>
-                                </VStack>
-                              </Flex>
-                            ))}
-                        </VStack>
-                      </Box>
-                    )}
+                                Goal {index + 1}
+                              </Badge>
+                              {goal.content}
+                            </Heading>
+                          </Flex>
+                        </Card.Header>
 
-                    {!!indicators.filter(indicator => indicator.goalId === goal.id).length && (
-                      <Box>
-                        <Heading size="sm" mb={3} display="flex" alignItems="center">
-                          <Box as="span" mr={2} colorPalette="gray.500">Indicators</Box>
-                          <Box flex="1" height="1px" bg="gray.200" />
-                        </Heading>
+                        <Card.Body p={4}>
+                          {!!strategies.filter(strategy => strategy.goalId === goal.id).length && (
+                            <Box mb={4}>
+                              <Heading size="sm" mb={3} display="flex" alignItems="center">
+                                <Box as="span" mr={2} colorPalette="gray.500">Strategies</Box>
+                                <Box flex="1" height="1px" bg="gray.200" />
+                              </Heading>
 
-                        <VStack align="stretch" gap={3}>
-                          {indicators
-                            .filter(indicator => indicator.goalId === goal.id && !!indicator.content)
-                            .map((indicator) => (
-                              <Box
-                                key={indicator.id}
-                                p={3}
-                                borderRadius="md"
-                                bg="gray.50"
-                              >
-                                <HStack mb={1}>
-                                  <Badge colorPalette="yellow" borderRadius="md">
-                                    Indicator
-                                  </Badge>
-                                  <Text fontWeight="medium">{indicator.content}</Text>
-                                </HStack>
+                              <VStack align="stretch" gap={3}>
+                                {strategies
+                                  .filter(strategy => strategy.goalId === goal.id && !!strategy.content)
+                                  .map((strategy, idx) => (
+                                    <Flex
+                                      key={strategy.id}
+                                      p={3}
+                                      borderRadius="md"
+                                      bg="gray.50"
+                                      justify="space-between"
+                                      align="center"
+                                    >
+                                      <VStack align="start" gap={1}>
+                                        <Text fontWeight="medium">
+                                          <Text as="span" colorPalette="gray.500" fontSize="sm" mr={1}>
+                                            {idx + 1}.
+                                          </Text>
+                                          {strategy.content}
+                                        </Text>
+                                        <Text fontSize="xs" colorPalette="gray.600">
+                                          Weeks: {strategy.weeks.length === 12 ? 'Every week' : strategy.weeks.join(', ')}
+                                        </Text>
+                                        <Text fontSize="xs" colorPalette="gray.600">
+                                          <span>{DEFAULT_FREQUENCY_LIST[strategy.frequency - 1].label}</span>
+                                        </Text>
+                                      </VStack>
+                                    </Flex>
+                                  ))}
+                              </VStack>
+                            </Box>
+                          )}
 
-                                <Flex justify="space-between" fontSize="sm" colorPalette="gray.600">
-                                  <Text>Start: {indicator.initialValue} {indicator.metric}</Text>
-                                  <Text>Target: {indicator.goalValue} {indicator.metric}</Text>
-                                </Flex>
-                              </Box>
-                            ))}
-                        </VStack>
-                      </Box>
-                    )}
-                  </Card.Body>
-                </Card.Root>
-              </GridItem>
-            ))}
+                          {!!indicators.filter(indicator => indicator.goalId === goal.id).length && (
+                            <Box>
+                              <Heading size="sm" mb={3} display="flex" alignItems="center">
+                                <Box as="span" mr={2} colorPalette="gray.500">Indicators</Box>
+                                <Box flex="1" height="1px" bg="gray.200" />
+                              </Heading>
+
+                              <VStack align="stretch" gap={3}>
+                                {indicators
+                                  .filter(indicator => indicator.goalId === goal.id && !!indicator.content)
+                                  .map((indicator) => (
+                                    <Box
+                                      key={indicator.id}
+                                      p={3}
+                                      borderRadius="md"
+                                      bg="gray.50"
+                                    >
+                                      <HStack mb={1}>
+                                        <Badge colorPalette="yellow" borderRadius="md">
+                                          Indicator
+                                        </Badge>
+                                        <Text fontWeight="medium">{indicator.content}</Text>
+                                      </HStack>
+
+                                      <Flex justify="space-between" fontSize="sm" colorPalette="gray.600">
+                                        <Text>Start: {indicator.initialValue} {indicator.metric}</Text>
+                                        <Text>Target: {indicator.goalValue} {indicator.metric}</Text>
+                                      </Flex>
+                                    </Box>
+                                  ))}
+                              </VStack>
+                            </Box>
+                          )}
+                        </Card.Body>
+                      </Card.Root>
+                    </GridItem>
+                  ))}
+                </>
+              )}
           </Grid>
         </Box>
       </VStack>
