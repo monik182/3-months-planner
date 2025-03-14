@@ -28,25 +28,22 @@ export const syncAllData = async (userId: string, operation = QueueOperation.UPD
       await queueForSync(QueueEntityType.PLAN, plan.id, operation, plan)
 
       const goals = await goalHandler.findMany({ planId: plan.id })
-      const goalIds = goals.map(i => i.id)
       await queueForSync(QueueEntityType.GOAL_BULK, 'bulk', operation, goals)
 
       const strategies = await strategyHandler.findMany({ planId: plan.id })
-      const strategyIds = strategies.map(i => i.id)
       await queueForSync(QueueEntityType.STRATEGY_BULK, 'bulk', operation, strategies)
 
       const indicators = await indicatorHandler.findMany({ planId: plan.id })
-      const indicatorIds = indicators.map(i => i.id)
       await queueForSync(QueueEntityType.INDICATOR_BULK, 'bulk', operation, indicators)
 
       const goalHistory = await goalHistoryHandler.findMany({ planId: plan.id })
-      await queueForSync(QueueEntityType.GOAL_HISTORY_BULK, 'bulk', operation, goalHistory.filter(i => !!i && goalIds.includes(i.id)))
+      await queueForSync(QueueEntityType.GOAL_HISTORY_BULK, 'bulk', operation, goalHistory)
 
       const strategyHistory = await strategyHistoryHandler.findMany({ planId: plan.id })
-      await queueForSync(QueueEntityType.STRATEGY_HISTORY_BULK, 'bulk', operation, strategyHistory.filter(i => !!i && goalIds.includes(i.strategy.goalId)).filter(i => !!i && strategyIds.includes(i.id)))
+      await queueForSync(QueueEntityType.STRATEGY_HISTORY_BULK, 'bulk', operation, strategyHistory)
 
       const indicatorHistory = await indicatorHistoryHandler.findMany({ planId: plan.id })
-      await queueForSync(QueueEntityType.INDICATOR_HISTORY_BULK, 'bulk', operation, indicatorHistory.filter(i => !!i && goalIds.includes(i.indicator.goalId)).filter(i => !!i && indicatorIds.includes(i.id)))
+      await queueForSync(QueueEntityType.INDICATOR_HISTORY_BULK, 'bulk', operation, indicatorHistory)
     }
 
     await processSyncQueue()
