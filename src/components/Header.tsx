@@ -15,7 +15,7 @@ import { SyncIndicator } from '@/components/SyncIndicator'
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 
 export function Header() {
-  const { user, isGuest } = useAccountContext()
+  const { user, isGuest, isLoggedIn } = useAccountContext()
   const { hasStartedPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
@@ -70,11 +70,11 @@ export function Header() {
               src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
               size="md"
             />
-            {!!user?.auth0Id && ENABLE_CLOUD_SYNC && (
+            {isLoggedIn && ENABLE_CLOUD_SYNC && (
               <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
             )}
           </Flex>
-          {!user?.auth0Id && ENABLE_CLOUD_SYNC && (
+          {!isLoggedIn && ENABLE_CLOUD_SYNC && (
             <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
           )}
         </Flex>

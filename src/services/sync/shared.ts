@@ -152,11 +152,11 @@ export const getApiUrlForEntity = (entityType: QueueEntityType, entityId: string
 export const getMethodForOperation = (operation: string): string => {
   switch (operation) {
     case QueueOperation.DELETE:
-      return 'DELETE'
+      return QueueOperation.DELETE.toUpperCase()
     case QueueOperation.UPDATE:
-      return 'PUT'
+      return QueueOperation.UPDATE.toUpperCase()
     default:
-      return 'POST'
+      return QueueOperation.CREATE.toUpperCase()
   }
 }
 

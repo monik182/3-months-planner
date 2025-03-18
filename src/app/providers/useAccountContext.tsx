@@ -11,6 +11,7 @@ import { userPreferencesHandler } from '@/db/dexieHandler'
 type AccountContextType = {
   user?: UserExtended | null
   isGuest: boolean
+  isLoggedIn: boolean
   isLoading: boolean
   syncEnabled: boolean
   syncInitialized: boolean
@@ -29,10 +30,11 @@ interface AccountTrackingProviderProps {
 
 export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const { user: auth0User, isLoading: isLoadingAuth0User } = useUser()
+  const isLoggedIn = !!auth0User
   const userActions = useUserActions()
   const create = userActions.useCreate()
   const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
-  const canFetchUserFromDB = !isLoadingAuth0User && !!auth0User && !userLocal?.auth0Id && SyncService.isEnabled
+  const canFetchUserFromDB = !isLoadingAuth0User && !!auth0User && !isLoggedIn && SyncService.isEnabled
   const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0User?.sub as string, canFetchUserFromDB)
   const isLoading = isLoadingAuth0User || isLoadingUserLocal || isLoadingUserData
   const user = (!userData?.id ? null : { ...userData, sub: auth0User?.sub, picture: auth0User?.picture } as UserExtended) || userLocal
@@ -56,7 +58,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   }
 
   const triggerSync = async () => {
-    if (!SyncService.isEnabled || !user?.auth0Id) return
+    if (!SyncService.isEnabled || !isLoggedIn || !user?.auth0Id) return
     try {
       const preferences = await userPreferencesHandler.findOne(user.id)
 
@@ -83,7 +85,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
 
   useEffect(() => {
     const updateUserWithAuth0Id = async () => {
-      if (isLoading || !user || userUpdateAttempted.current || !auth0User?.sub || user?.auth0Id || userLocal?.auth0Id) {
+      if (isLoading || !user || userUpdateAttempted.current || !isLoggedIn || !auth0User?.sub || user?.auth0Id || userLocal?.auth0Id) {
         return
       }
 
@@ -107,15 +109,15 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     }
 
     updateUserWithAuth0Id()
-  }, [auth0User, user, userActions, userLocal, isLoading])
+  }, [auth0User, user, userActions, userLocal, isLoading, isLoggedIn])
 
   useEffect(() => {
-    if (!user?.auth0Id || !SyncService.isEnabled || initialSyncAttempted.current || userUpdateAttempted.current) return
+    if (!isLoggedIn || !SyncService.isEnabled || initialSyncAttempted.current || userUpdateAttempted.current) return
 
     initialSyncAttempted.current = true
     triggerSync()
 
-  }, [user])
+  }, [user, isLoggedIn])
 
   useEffect(() => {
     if (!SyncService.isEnabled || !syncInitialized) return
@@ -150,9 +152,10 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
       value={{
         user,
         isGuest,
+        isLoggedIn,
         isLoading,
         userActions,
-        syncEnabled: SyncService.isEnabled && !!user?.auth0Id,
+        syncEnabled: SyncService.isEnabled && isLoggedIn,
         syncInitialized,
         syncStatus,
         triggerSync,
