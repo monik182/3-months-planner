@@ -40,18 +40,12 @@ export function getCurrentWeekFromStartDate(startDate: Date) {
   return Math.ceil((daysDifference + 1) / 7)
 }
 
-export function calculateWeekEndDate(startDate: Date) {
-  const start = dayjs(startDate)
-  const isSunday = start.day() === 0
-  if (isSunday) {
-    return start.add(6, 'day').toDate()
-  }
-  return start.add(6, 'day').toDate()
+export function calculateWeekEndDate(startDate: Date): Date {
+  return dayjs(startDate).add(6, 'day').toDate();
 }
 
-export function calculateWeekStartDate(startDate: Date, weekNumber: number) {
-  const start = dayjs(startDate).add((weekNumber - 1) * 7, 'day')
-  return start.toDate()
+export function calculateWeekStartDate(planStartDate: Date, weekNumber: number): Date {
+  return dayjs(planStartDate).add((weekNumber - 1) * 7, 'day').toDate();
 }
 
 export function formatDate(date: Date | string, format = 'DD MMM') {
