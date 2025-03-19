@@ -11,6 +11,7 @@ export enum Status {
 export interface Step<T> {
   onLoading?: (loading: boolean) => void
   onChange?: (value?: T) => void
+  onEdit?: (entityType: EntityType, entity: any) => void
 }
 
 export interface Vision {

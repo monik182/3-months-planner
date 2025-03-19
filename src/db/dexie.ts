@@ -2,7 +2,7 @@ import { DexiePlan, SyncQueueItem, UserPreferences } from '@/app/types/types'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
 import Dexie, { Table } from 'dexie'
 
-class IdxDB extends Dexie {
+class PlannerDB extends Dexie {
   plans!: Table<DexiePlan>
   goals!: Table<Goal>
   goalHistory!: Table<GoalHistory>
@@ -35,4 +35,4 @@ class IdxDB extends Dexie {
   }
 }
 
-export const db = new IdxDB()
+export const db = new PlannerDB()

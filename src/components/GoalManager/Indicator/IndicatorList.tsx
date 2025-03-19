@@ -6,7 +6,7 @@ import { Indicator } from '@prisma/client'
 import cuid from 'cuid'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { useDebouncedCallback } from 'use-debounce'
-import { Status } from '@/app/types/types'
+import { EntityType, Status } from '@/app/types/types'
 import { AiOutlineBarChart } from 'react-icons/ai'
 import { GoPlus } from 'react-icons/go'
 
@@ -14,11 +14,11 @@ interface IndicatorListProps {
   goalId: string
   planId: string
   maxLimit?: number
-  onChange?: () => void
+  onEdit?: (entityType: EntityType, entity: any) => void
   onLoading?: (loading: boolean) => void
 }
 
-export function IndicatorList({ goalId, planId, maxLimit, onChange, onLoading }: IndicatorListProps) {
+export function IndicatorList({ goalId, planId, maxLimit, onEdit, onLoading }: IndicatorListProps) {
   const { indicatorActions } = usePlanContext()
   const { data: indicators = [] } = indicatorActions.useGetByGoalId(goalId)
   const [indicatorToUpdate, setIndicatorToUpdate] = useState<Indicator | null>()
@@ -74,9 +74,9 @@ export function IndicatorList({ goalId, planId, maxLimit, onChange, onLoading }:
 
   const saveIndicator = (indicator: Indicator) => {
     create.mutate(indicator, {
-      onSuccess: () => {
+      onSuccess: (newIndicator) => {
         setIndicatorToUpdate(null)
-        onChange?.()
+        onEdit?.(EntityType.Indicator, newIndicator)
       }
     })
   }

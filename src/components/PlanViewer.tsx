@@ -35,6 +35,8 @@ import { DEFAULT_FREQUENCY_LIST } from '@/app/constants'
 import { GoalManager } from '@/components/GoalManager/GoalManager'
 import { useDebouncedCallback } from 'use-debounce'
 import { PiTarget } from 'react-icons/pi'
+import { EntityType } from '@/app/types/types'
+import { Goal, Indicator, Strategy } from '@prisma/client'
 
 export default function PlanViewer({ readonly = true }: { readonly?: boolean }) {
   const router = useRouter()
@@ -45,14 +47,27 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
   const createBulkGoal = goalHistoryActions.useCreateBulk()
   const createBulkStrategy = strategyHistoryActions.useCreateBulk()
   const createBulkIndicator = indicatorHistoryActions.useCreateBulk()
-  const [initialGoals, setInitialGoals] = useState<string[]>([])
-  const [initialStrategies, setInitialStrategies] = useState<string[]>([])
-  const [initialIndicators, setInitialIndicators] = useState<string[]>([])
   const updatePlan = planActions.useUpdate()
   const [editingVision, setEditingVision] = useState(false)
   const [editingGoals, setEditingGoals] = useState(false)
   const [vision, setVision] = useState('')
   const loadingGoals = createBulkGoal.isPending || createBulkStrategy.isPending || createBulkIndicator.isPending
+
+  const handleOnEdit = (entityType: EntityType, entity: any) => {
+    if (!plan?.id) return
+
+    if (entityType === EntityType.Goal) {
+      return updateGoals(entity)
+    }
+
+    if (entityType === EntityType.Strategy) {
+      return updateStrategies(entity)
+    }
+
+    if (entityType === EntityType.Indicator) {
+      return updateIndicators(entity)
+    }
+  }
 
   const handleVisionUpdate = (value: string) => {
     setVision(value)
@@ -87,99 +102,73 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
   const debouncedVisionUpdate = useDebouncedCallback(() => updateVision(), 5000)
 
   const handleGoalUpdate = async () => {
-    await updateGoals()
+    // await updateGoals()
     setEditingGoals(false)
   }
 
-  const updateGoals = async () => {
-    if (!plan) return
-    const newGoals = goals.filter(g => !initialGoals.includes(g.id))
-    const goalIds = newGoals.map(g => g.id)
-    const newStrategies = strategies.filter(s => !initialStrategies.includes(s.id)).filter(s => goalIds.includes(s.goalId))
-    const newIndicators = indicators.filter(i => !initialIndicators.includes(i.id)).filter(i => goalIds.includes(i.goalId))
-
-    console.log('NEW GOALS>>>>>>', newGoals, goals)
-    console.log('NEW STRATEGIES>>>>>>', newStrategies, strategies)
-    console.log('NEW INDICATORS>>>>>>', newIndicators, indicators)
-    if (newGoals.length) {
-      await createBulkGoal.mutateAsync(createGoalHistoryList(plan.id, newGoals), {
-        onSuccess: () => {
-          setInitialGoals([])
-          toaster.create({
-            title: 'Goals updated',
-            type: 'success',
-            duration: 2000
-          })
-        },
-        onError: (error) => {
-          toaster.create({
-            title: 'Error updating goals',
-            description: error.message,
-            type: 'error'
-          })
-        }
-      })
-    }
-
-    if (newStrategies.length) {
-      await createBulkStrategy.mutateAsync(createStrategyHistoryList(plan.id, newStrategies), {
-        onSuccess: () => {
-          setInitialStrategies([])
-          toaster.create({
-            title: 'Strategies updated',
-            type: 'success',
-            duration: 2000
-          })
-        },
-        onError: (error) => {
-          toaster.create({
-            title: 'Error updating strategies',
-            description: error.message,
-            type: 'error'
-          })
-        }
-      })
-    }
-
-    if (newIndicators.length) {
-      await createBulkIndicator.mutateAsync(createIndicatorHistoryList(plan.id, newIndicators), {
-        onSuccess: () => {
-          setInitialIndicators([])
-          toaster.create({
-            title: 'Indicators updated',
-            type: 'success',
-            duration: 2000
-          })
-        },
-        onError: (error) => {
-          toaster.create({
-            title: 'Error updating indicators',
-            description: error.message,
-            type: 'error'
-          })
-        }
-      })
-    }
-
+  const updateGoals = (goal: Goal) => {
+    createBulkGoal.mutate(createGoalHistoryList(plan!.id, [goal]), {
+      onSuccess: () => {
+        toaster.create({
+          title: 'Goals updated',
+          type: 'success',
+          duration: 2000
+        })
+      },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error updating goals',
+          description: error.message,
+          type: 'error'
+        })
+      }
+    })
   }
+
+  const updateStrategies = (strategy: Strategy) => {
+    createBulkStrategy.mutate(createStrategyHistoryList(plan!.id, [strategy]), {
+      onSuccess: () => {
+        toaster.create({
+          title: 'Strategies updated',
+          type: 'success',
+          duration: 2000
+        })
+      },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error updating strategies',
+          description: error.message,
+          type: 'error'
+        })
+      }
+    })
+  }
+
+  const updateIndicators = (indicator: Indicator) => {
+    createBulkIndicator.mutate(createIndicatorHistoryList(plan!.id, [indicator]), {
+      onSuccess: () => {
+        toaster.create({
+          title: 'Indicators updated',
+          type: 'success',
+          duration: 2000
+        })
+      },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error updating indicators',
+          description: error.message,
+          type: 'error'
+        })
+      }
+    })
+  }
+
 
   useEffect(() => {
     if (plan) {
       setVision(plan.vision)
     }
   }, [plan])
-
-  useEffect(() => {
-    if (goals.length && !initialGoals.length) {
-      setInitialGoals(goals.map(g => g.id))
-    }
-    if (strategies.length && !initialStrategies.length) {
-      setInitialStrategies(strategies.map(s => s.id))
-    }
-    if (indicators.length && !initialIndicators.length) {
-      setInitialIndicators(indicators.map(i => i.id))
-    }
-  }, [goals.length, strategies.length, indicators.length])
 
   if (!plan) return null
 
@@ -364,7 +353,7 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
             </Heading>
             {editingGoals
               ? (
-                <GoalManager onChange={updateGoals} />
+                <GoalManager onEdit={handleOnEdit} />
               )
               : (
                 <>

@@ -1,7 +1,7 @@
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { StrategyForm } from '@/components/GoalManager/Strategy/StrategyForm'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { Status } from '@/app/types/types'
+import { EntityType, Status } from '@/app/types/types'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Alert, Button } from '@chakra-ui/react'
 import { Strategy } from '@prisma/client'
@@ -14,11 +14,11 @@ interface StrategyListProps {
   goalId: string
   planId: string
   maxLimit?: number
-  onChange?: () => void
+  onEdit?: (entityType: EntityType, entity: any) => void
   onLoading?: (loading: boolean) => void
 }
 
-export function StrategyList({ goalId, planId, maxLimit, onChange, onLoading }: StrategyListProps) {
+export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: StrategyListProps) {
   const { strategyActions } = usePlanContext()
   const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
   const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
@@ -60,10 +60,9 @@ export function StrategyList({ goalId, planId, maxLimit, onChange, onLoading }: 
 
   const saveStrategy = (strategy: Strategy) => {
     create.mutate(strategy, {
-      onSuccess: () => {
+      onSuccess: (newStrategy) => {
         setStrategies(prev => [...prev, strategy])
-        console.log('CREATE NEW STRATEGY')
-        onChange?.()
+        onEdit?.(EntityType.Strategy, newStrategy)
       }
     })
   }

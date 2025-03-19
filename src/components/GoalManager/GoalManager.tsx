@@ -11,7 +11,7 @@ import {
   Alert,
   IconButton,
 } from '@chakra-ui/react'
-import { Status, Step } from '@/app/types/types'
+import { EntityType, Status, Step } from '@/app/types/types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { IndicatorList } from '@/components/GoalManager/Indicator/IndicatorList'
 import { StrategyList } from '@/components/GoalManager/Strategy/StrategyList'
@@ -24,7 +24,7 @@ import { IoIosClose } from 'react-icons/io'
 import { GoPlus } from 'react-icons/go'
 
 const MAX_GOALS = 4
-export function GoalManager({ onLoading, onChange }: Step<Goal[]>) {
+export function GoalManager({ onLoading, onEdit }: Step<Goal[]>) {
   const { plan, goalActions } = usePlanContext()
   const { data: _goals = [] } = goalActions.useGetByPlanId(plan?.id as string, Status.ACTIVE)
   const [goals, setGoals] = useState<Omit<Goal, 'status'>[]>([..._goals])
@@ -67,10 +67,10 @@ export function GoalManager({ onLoading, onChange }: Step<Goal[]>) {
 
   const saveGoal = (goal: Omit<Goal, 'status'>) => {
     create.mutate({ ...goal, plan: { connect: { id: plan!.id } } }, {
-      onSuccess: () => {
+      onSuccess: (newGoal) => {
         setGoals(prev => [...prev, goal])
         setExpandedGoalId(goal.id)
-        onChange?.()
+        onEdit?.(EntityType.Goal, newGoal as Goal)
       }
     })
   }
@@ -145,13 +145,13 @@ export function GoalManager({ onLoading, onChange }: Step<Goal[]>) {
             <Collapsible.Content>
               <Card.Body className="p-4 bg-white">
                 <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
-                <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} onChange={onChange} />
+                <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} onEdit={onEdit} />
               </Card.Body>
               <Separator />
               <Card.Footer className="p-4 bg-white">
                 <Flex flexDirection="column" gap="1rem">
                   <Text className="text-sm font-medium mb-2 text-gray-700">Progress Indicators</Text>
-                  <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} onLoading={onLoading} onChange={onChange} />
+                  <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} onLoading={onLoading} onEdit={onEdit} />
                 </Flex>
               </Card.Footer>
             </Collapsible.Content>
