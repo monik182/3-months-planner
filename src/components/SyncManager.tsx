@@ -1,21 +1,31 @@
 'use client'
 import { useAccountContext } from '@/app/providers/useAccountContext'
-import { useEffect } from 'react'
 import { SyncService } from '@/services/sync'
+import { useEffect } from 'react'
 
 export function SyncManager() {
-  const { user, syncInitialized, isLoggedIn } = useAccountContext()
+  const { syncInitialized, isLoggedIn } = useAccountContext()
 
   useEffect(() => {
     if (!isLoggedIn || !SyncService.isEnabled || !syncInitialized) return
 
+    SyncService.processSyncQueue().catch(console.error)
+
+    // Set up periodic sync (every 10 minutes)
     const syncInterval = setInterval(() => {
-      console.log('**** Setting up periodic sync - 10 minutes interval ****')
       SyncService.processSyncQueue().catch(console.error)
-    }, 10 * 60 * 1000)
+    }, 10 * 60 * 1000) // 10 minutes
 
-    return () => clearInterval(syncInterval)
-  }, [user, syncInitialized])
+    // Clean up completed items daily
+    const cleanupInterval = setInterval(() => {
+      SyncService.cleanupCompletedItems(24 * 60 * 60 * 1000).catch(console.error)
+    }, 24 * 60 * 60 * 1000) // 24 hours
 
-  return null
+    return () => {
+      clearInterval(syncInterval)
+      clearInterval(cleanupInterval)
+    };
+  }, [isLoggedIn, syncInitialized])
+
+  return null // This component doesn't render anything
 }

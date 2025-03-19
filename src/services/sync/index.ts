@@ -46,6 +46,16 @@ const cleanupSyncQueue = async (): Promise<number> => {
     .delete()
 }
 
+const cleanupCompletedItems = async (olderThan: number = 24 * 60 * 60 * 1000): Promise<number> => {
+  const cutoff = Date.now() - olderThan;
+
+  return syncQueueHandler.table
+    .where('status')
+    .equals(QueueStatus.COMPLETED)
+    .and(item => item.timestamp < cutoff)
+    .delete()
+}
+
 export const SyncService = {
   isEnabled: ENABLE_CLOUD_SYNC,
   queueForSync,
@@ -56,4 +66,5 @@ export const SyncService = {
   performFirstTimeSync,
   isItemQueuedForOperation,
   filterQueuedForDeletion,
+  cleanupCompletedItems,
 }
