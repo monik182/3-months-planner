@@ -45,7 +45,13 @@ const get = async (id: string): Promise<StrategyHistory | null> => {
       return null
     }
 
-    return response.json()
+    const remoteHistory = await response.json()
+    try {
+      await strategyHistoryHandler.create(remoteHistory)
+    } catch (error) {
+      console.error('Error creating strategy history:', error)
+    }
+    return remoteHistory
   } catch (error) {
     console.error(`Error fetching strategy history ${id}:`, error)
     return null
@@ -72,6 +78,13 @@ const getByPlanId = async (planId: string, sequence?: string, status = Status.AC
     .then(response => response.json())
 
   const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.STRATEGY_HISTORY)
+  if (filteredHistories.length > 0) {
+    try {
+      await strategyHistoryHandler.createMany(filteredHistories)
+    } catch (error) {
+      console.error('Error creating strategy histories:', error)
+    }
+  }
   return filteredHistories
 }
 
@@ -95,6 +108,13 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
     .then(response => response.json())
 
   const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.STRATEGY_HISTORY)
+  if (filteredHistories.length > 0) {
+    try {
+      await strategyHistoryHandler.createMany(filteredHistories)
+    } catch (error) {
+      console.error('Error creating strategy histories:', error)
+    }
+  }
   return filteredHistories
 }
 

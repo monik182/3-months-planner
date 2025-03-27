@@ -5,6 +5,7 @@ import { Collection, Table } from 'dexie'
 
 export const planHandler = {
   create: async (data: DexiePlan) => db.plans.add(data),
+  createMany: async (data: DexiePlan[]) => db.plans.bulkAdd(data),
   findMany: async (where?: Partial<DexiePlan>) => db.plans.where(where ?? {}).toArray(),
   findOne: async (id: string) => db.plans.get(id),
   findAllByUserId: async (userId: string) => db.plans.where('userId').equals(userId).toArray(),
@@ -282,6 +283,23 @@ export const userPreferencesHandler = {
   findFirst: async () => db.userPreferences.where('id').notEqual('null').first(),
   update: async (id: string, data: Partial<UserPreferences>) => db.userPreferences.update(id, data),
   delete: async (id: string) => db.userPreferences.delete(id),
+}
+
+export const clearDatabase = async () => {
+  await Promise.all([
+    db.plans.clear(),
+    db.goals.clear(),
+    db.goalHistory.clear(),
+    db.strategies.clear(),
+    db.strategyHistory.clear(),
+    db.indicators.clear(),
+    db.indicatorHistory.clear(),
+    db.notifications.clear(),
+    db.users.clear(),
+    db.waitlist.clear(),
+    db.syncQueue.clear(),
+    db.userPreferences.clear(),
+  ])
 }
 
 function getList<T>(table: Table<T>): Table<T>

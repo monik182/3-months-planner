@@ -44,8 +44,13 @@ const get = async (id: string): Promise<Strategy | null> => {
       console.error(`Failed to fetch strategy ${id} from remote:`, response.status)
       return null
     }
-
-    return response.json()
+    const remoteStrategy = await response.json()
+    try {
+      await strategyHandler.create(remoteStrategy)
+    } catch (error) {
+      console.error('Error creating strategy:', error)
+    }
+    return remoteStrategy
   } catch (error) {
     console.error(`Error fetching strategy ${id}:`, error)
     return null
@@ -67,6 +72,13 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Stra
     .then(response => response.json())
 
   const filteredStrategies = await SyncService.filterQueuedForDeletion(remoteStrategies, QueueEntityType.STRATEGY)
+  if (filteredStrategies.length > 0) {
+    try {
+      await strategyHandler.createMany(filteredStrategies)
+    } catch (error) {
+      console.error('Error creating strategies:', error)
+    }
+  }
   return filteredStrategies
 }
 
@@ -85,6 +97,15 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Stra
     .then(response => response.json())
 
   const filteredStrategies = await SyncService.filterQueuedForDeletion(remoteStrategies, QueueEntityType.STRATEGY)
+
+  if (filteredStrategies.length > 0) {
+    try {
+      await strategyHandler.createMany(filteredStrategies)
+    } catch (error) {
+      console.error('Error creating strategies:', error)
+    }
+  }
+
   return filteredStrategies
 }
 
@@ -98,7 +119,7 @@ const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise
 const deleteItem = async (id: string): Promise<void> => {
   // First delete all related histories locally only
   await strategyHistoryHandler.deleteMany({ strategyId: id })
-  
+
   // Delete the strategy locally and queue for sync
   await strategyHandler.delete(id)
   await SyncService.queueForSync(QueueEntityType.STRATEGY, id, QueueOperation.DELETE, id)

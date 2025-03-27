@@ -45,7 +45,13 @@ const get = async (id: string): Promise<Goal | null> => {
       return null
     }
 
-    return response.json()
+    const remoteGoal = await response.json()
+    try {
+      await goalHandler.create(remoteGoal)
+    } catch (error) {
+      console.error('Error creating goal:', error)
+    }
+    return remoteGoal
   } catch (error) {
     console.error(`Error fetching goal ${id}:`, error)
     return null
@@ -67,6 +73,15 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Goal
     .then(response => response.json())
 
   const filteredGoals = await SyncService.filterQueuedForDeletion(remoteGoals, QueueEntityType.GOAL)
+
+  if (filteredGoals.length > 0) {
+    try {
+      await goalHandler.createMany(filteredGoals)
+    } catch (error) {
+      console.error('Error creating goals:', error)
+    }
+  }
+
   return filteredGoals
 }
 

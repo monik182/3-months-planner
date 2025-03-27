@@ -19,8 +19,17 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
     method: 'GET',
   })
-  const plan = await response.json()
-  return plan
+  const remotePlan = await response.json()
+
+  if (remotePlan) {
+    try {
+      await planHandler.create(planToDexie(remotePlan))
+    } catch (error) {
+      console.error('Error creating plan:', error)
+    }
+  }
+
+  return remotePlan
 }
 
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
@@ -40,7 +49,13 @@ const get = async (id: string): Promise<Plan | null> => {
     return null
   }
 
-  return fetch(`/api/plan/${id}`).then(response => response.json())
+  const remotePlan = await fetch(`/api/plan/${id}`).then(response => response.json())
+  try {
+    await planHandler.create(planToDexie(remotePlan))
+  } catch (error) {
+    console.error('Error creating plan:', error)
+  }
+  return remotePlan
 }
 
 const getAll = async (userId: string): Promise<Plan[]> => {
@@ -57,6 +72,13 @@ const getAll = async (userId: string): Promise<Plan[]> => {
     method: 'GET',
   })
   const plan = await response.json()
+  if (plan?.length > 0) {
+    try {
+      await planHandler.createMany(plan.map(planToDexie))
+    } catch (error) {
+      console.error('Error creating plans:', error)
+    }
+  }
   return plan
 }
 

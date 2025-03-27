@@ -45,7 +45,13 @@ const get = async (id: string): Promise<Indicator | null> => {
       return null
     }
 
-    return response.json()
+    const remoteIndicator = await response.json()
+    try {
+      await indicatorHandler.create(remoteIndicator)
+    } catch (error) {
+      console.error('Error creating indicator:', error)
+    }
+    return remoteIndicator
   } catch (error) {
     console.error(`Error fetching indicator ${id}:`, error)
     return null
@@ -67,6 +73,13 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Indi
     .then(response => response.json())
 
   const filteredIndicators = await SyncService.filterQueuedForDeletion(remoteIndicators, QueueEntityType.INDICATOR)
+  if (filteredIndicators.length > 0) {
+    try {
+      await indicatorHandler.createMany(filteredIndicators)
+    } catch (error) {
+      console.error('Error creating indicators:', error)
+    }
+  }
   return filteredIndicators
 }
 

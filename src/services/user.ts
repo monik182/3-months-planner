@@ -49,7 +49,13 @@ const get = async (id: string): Promise<User | null> => {
     return null
   }
 
-  return fetch(`/api/user/${id}`).then(response => response.json())
+  const remoteUser = await fetch(`/api/user/${id}`).then(response => response.json())
+  try {
+    await userHandler.create(remoteUser)
+  } catch (error) {
+    console.error('Error creating user:', error)
+  }
+  return remoteUser
 }
 
 const getByEmail = async (email: string): Promise<User | null> => {
@@ -68,8 +74,13 @@ const getByEmail = async (email: string): Promise<User | null> => {
     const errorData = await response.json()
     throw new Error(errorData.message || 'Something went wrong')
   }
-
-  return response.json()
+  const remoteUser = await response.json()
+  try {
+    await userHandler.create(remoteUser)
+  } catch (error) {
+    console.error('Error creating user:', error)
+  }
+  return remoteUser
 }
 
 const getLocal = async (): Promise<User | null> => {
@@ -91,7 +102,13 @@ const getByAuth0Id = async (id: string): Promise<User | null> => {
     return null
   }
 
-  return fetch(`/api/user/auth0/${id}`).then(response => response.json())
+  const remoteUser = await fetch(`/api/user/auth0/${id}`).then(response => response.json())
+  try {
+    await userHandler.create(remoteUser)
+  } catch (error) {
+    console.error('Error updating user:', error)
+  }
+  return remoteUser
 }
 
 const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial<User>> => {

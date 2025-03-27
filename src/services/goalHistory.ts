@@ -45,7 +45,9 @@ const get = async (id: string): Promise<GoalHistory | null> => {
       return null
     }
 
-    return response.json()
+    const remoteHistory = await response.json()
+    await goalHistoryHandler.create(remoteHistory)
+    return remoteHistory
   } catch (error) {
     console.error(`Error fetching goal history ${id}:`, error)
     return null
@@ -72,6 +74,13 @@ const getByPlanId = async (planId: string, sequence?: number, status = Status.AC
     .then(response => response.json())
 
   const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.GOAL_HISTORY)
+  if (filteredHistories.length > 0) {
+    try {
+      await goalHistoryHandler.createMany(filteredHistories)
+    } catch (error) {
+      console.error('Error creating goal histories:', error)
+    }
+  }
   return filteredHistories
 }
 

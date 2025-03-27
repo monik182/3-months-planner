@@ -35,7 +35,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const userActions = useUserActions()
   const create = userActions.useCreate()
   const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
-  const canFetchUserFromDB = !isLoadingAuth0User && !!auth0User && !isLoggedIn && SyncService.isEnabled
+  const canFetchUserFromDB = !isLoadingAuth0User && isLoggedIn && SyncService.isEnabled
   const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0User?.sub as string, canFetchUserFromDB)
   const isLoading = isLoadingAuth0User || isLoadingUserLocal || isLoadingUserData
   const user = (!userData?.id ? null : { ...userData, sub: auth0User?.sub, picture: auth0User?.picture } as UserExtended) || userLocal

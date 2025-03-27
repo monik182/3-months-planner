@@ -13,6 +13,7 @@ import { useAccountContext } from '@/app/providers/useAccountContext'
 import Link from 'next/link'
 import { SyncIndicator } from '@/components/SyncIndicator'
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
+import { clearDatabase } from '@/db/dexieHandler'
 
 export function Header() {
   const { user, isGuest, isLoggedIn } = useAccountContext()
@@ -40,6 +41,12 @@ export function Header() {
   useEffect(() => {
     setValue(pageMap[pathname])
   }, [pathname])
+
+  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    await clearDatabase()
+    router.push('/api/auth/logout')
+  }
 
   return (
     <header style={{ backgroundColor: "white" }}>
@@ -73,7 +80,14 @@ export function Header() {
               size="xs"
             />
             {isLoggedIn && ENABLE_CLOUD_SYNC && (
-              <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>
+              <Link 
+                href="/api/auth/logout" 
+                onClick={handleLogout} 
+                className="flex flex-col justify-center items-center gap-2"
+              >
+                <SlLogout /> 
+                <Text textStyle="xs">Logout</Text>
+              </Link>
             )}
           </Flex>
           {!isLoggedIn && ENABLE_CLOUD_SYNC && (
