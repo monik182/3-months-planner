@@ -39,7 +39,7 @@ function Dashboard() {
     <Grid>
       <Grid gap="1rem" gridTemplateColumns={{ base: "none", lg: "30% 70%" }} padding="1rem 0" alignItems="center" marginTop="1rem">
         <Box>
-          <Heading size="4xl">Week {week}</Heading>
+          <Heading size={{ md: "4xl", base: "xl" }}>Week {week}</Heading>
           {hasNotStarted && <Text fontSize="xs"> (Your plan has not yet started)</Text>}
           <Box>
             <Grid gridTemplateColumns="80% 20%" gap="1rem" alignItems="center">

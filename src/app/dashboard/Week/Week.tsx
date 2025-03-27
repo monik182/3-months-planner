@@ -28,7 +28,7 @@ export function Week({ score, seq, plan }: WeekProps) {
     <Flex gap="2rem" flexDirection="column">
       <Flex gap="2rem" alignItems="center">
         <Box>
-          <Heading fontSize="2xl">Week {seq}</Heading>
+          <Heading fontSize={{ md: "2xl", base: "lg" }}>Week {seq}</Heading>
           <Text fontSize="sm">{formatDate(startDate)} - {formatDate(endDate)}</Text>
         </Box>
         <Text fontSize="lg">{isRefetching ? <Spinner size="xs" /> : score}/100%</Text>

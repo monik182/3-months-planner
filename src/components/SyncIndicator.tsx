@@ -8,11 +8,11 @@ import { toaster } from '@/components/ui/toaster'
 import { SyncService } from '@/services/sync'
 
 export function SyncIndicator() {
-  const { syncEnabled, syncStatus, triggerSync } = useAccountContext()
+  const { syncEnabled, syncStatus, syncInitialized, triggerSync } = useAccountContext()
   const [isSyncing, setIsSyncing] = useState(false)
 
   // Don't show anything if sync is not enabled or nothing is happening
-  if (!syncEnabled || (syncStatus.pending === 0 && syncStatus.processing === 0 && syncStatus.failed === 0 && !isSyncing)) {
+  if (!syncEnabled || !syncInitialized || (syncStatus.pending === 0 && syncStatus.processing === 0 && syncStatus.failed === 0 && !isSyncing)) {
     return null
   }
 
@@ -51,7 +51,7 @@ export function SyncIndicator() {
   return (
     <Tooltip content={getTooltipLabel(syncStatus)}>
       <Flex align="center" ml={2} cursor={isSyncing ? 'default' : 'pointer'}>
-        {isSyncing || syncStatus.processing > 0 ? (
+        {isSyncing || syncInitialized ? (
           <Spinner size="sm" />
         ) : syncStatus.failed > 0 ? (
           <FiCloudOff

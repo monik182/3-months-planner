@@ -23,6 +23,8 @@ export function Header() {
   const showCreatePlanButton = !!user && !isGuest && !hasStartedPlan && pathname !== '/plan'
 
   const goToHome = () => {
+    if (hasStartedPlan)
+    return router.push('/dashboard')
     router.push('/')
   }
 
@@ -43,18 +45,18 @@ export function Header() {
     <header style={{ backgroundColor: "white" }}>
       <Flex justify="space-between" align="center" marginTop="1rem">
         <Flex gap="1rem" align="center">
-          <Heading size="2xl" onClick={goToHome} cursor="pointer">
+          <Heading size={{ md: "2xl", base: "xl" }} color="black" onClick={goToHome} cursor="pointer">
             The Planner
           </Heading>
-          {hasStartedPlan && (
-            <SegmentedControl
-              size={{ base: "sm", lg: "lg" }}
-              value={value}
-              onValueChange={(e) => handleOnChange(e.value)}
-              items={items}
-            />
-          )}
         </Flex>
+        {hasStartedPlan && (
+          <SegmentedControl
+            size={{ base: "sm", lg: "lg" }}
+            value={value}
+            onValueChange={(e) => handleOnChange(e.value)}
+            items={items}
+          />
+        )}
         <Flex gap="5px" alignItems="center">
           <SyncIndicator />
           <Flex gap="1rem" alignItems="center">
@@ -68,7 +70,7 @@ export function Header() {
               name="User"
               shape="full"
               src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
-              size="md"
+              size="xs"
             />
             {isLoggedIn && ENABLE_CLOUD_SYNC && (
               <Link href="/api/auth/logout" className="flex flex-col justify-center items-center gap-2"><SlLogout /> <Text textStyle="xs">Logout</Text></Link>

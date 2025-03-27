@@ -85,6 +85,8 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     } catch (error) {
       console.error('Error during initial sync:', error)
       setSyncInitialized(false)
+    } finally {
+      setSyncInitialized(false)
     }
   }
 
