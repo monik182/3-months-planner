@@ -41,7 +41,7 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
   const goals = goalHistoryActions.useGetByPlanId(plan?.id as string)
   const strategies = strategyHistoryActions.useGetByPlanId(plan?.id as string)
   const indicators = indicatorHistoryActions.useGetByPlanId(plan?.id as string)
-  const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading 
+  const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading
   const isRefetching = goals.isRefetching || strategies.isRefetching || indicators.isRefetching
 
   const { strategiesByGoal, indicatorsByGoal, weeklyScores, overallGoalScores, overallStrategyScores } = useMemo(() => {
@@ -50,30 +50,30 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
     const goalScores = new Map()
     const strategyScores = new Map();
 
-      (strategies.data || []).forEach(strategy => {
-        const goalId = strategy.strategy.goalId
-        if (!strategiesByGoal.has(goalId)) {
-          strategiesByGoal.set(goalId, [])
-        }
-        strategiesByGoal.get(goalId)!.push(strategy)
-      });
+    (strategies.data || []).forEach(strategy => {
+      const goalId = strategy.strategy.goalId
+      if (!strategiesByGoal.has(goalId)) {
+        strategiesByGoal.set(goalId, [])
+      }
+      strategiesByGoal.get(goalId)!.push(strategy)
+    });
 
-      (indicators.data || []).forEach(indicator => {
-        const goalId = indicator.indicator.goalId
-        if (!indicatorsByGoal.has(goalId)) {
-          indicatorsByGoal.set(goalId, [])
-        }
-        indicatorsByGoal.get(goalId)!.push(indicator)
-      })
+    (indicators.data || []).forEach(indicator => {
+      const goalId = indicator.indicator.goalId
+      if (!indicatorsByGoal.has(goalId)) {
+        indicatorsByGoal.set(goalId, [])
+      }
+      indicatorsByGoal.get(goalId)!.push(indicator)
+    })
 
     const weeklyScores = DEFAULT_WEEKS.map((week) => {
       const filteredGoals = (goals.data || []).filter((g) => g.sequence.toString() === week)
 
       const goalsScore = filteredGoals.map((goal) => {
         const filteredStrategies = (strategies.data || []).filter(
-          (s) => s.sequence.toString() === week && 
-                s.strategy.goalId === goal.goalId &&
-                s.strategy.weeks.includes(week)
+          (s) => s.sequence.toString() === week &&
+            s.strategy.goalId === goal.goalId &&
+            s.strategy.weeks.includes(week)
         )
 
         const strategiesScore = calculateCompletionScore(filteredStrategies)

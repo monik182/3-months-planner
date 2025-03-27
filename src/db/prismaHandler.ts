@@ -72,6 +72,7 @@ export const strategyHistoryHandler = {
           content: true,
           weeks: true,
           goalId: true,
+          frequency: true,
         }
       }
     }
