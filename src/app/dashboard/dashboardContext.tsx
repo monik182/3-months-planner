@@ -10,6 +10,7 @@ import { calculateCompletionScore } from '@/app/util'
 
 type DashboardContextType = {
   isLoading: boolean,
+  isRefetching: boolean,
   isLoadingGoals: boolean,
   isLoadingStrategies: boolean,
   isLoadingIndicators: boolean,
@@ -40,7 +41,8 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
   const goals = goalHistoryActions.useGetByPlanId(plan?.id as string)
   const strategies = strategyHistoryActions.useGetByPlanId(plan?.id as string)
   const indicators = indicatorHistoryActions.useGetByPlanId(plan?.id as string)
-  const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading || goals.isRefetching || strategies.isRefetching || indicators.isRefetching
+  const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading 
+  const isRefetching = goals.isRefetching || strategies.isRefetching || indicators.isRefetching
 
   const { strategiesByGoal, indicatorsByGoal, weeklyScores, overallGoalScores, overallStrategyScores } = useMemo(() => {
     const strategiesByGoal = new Map<string, StrategyHistoryExtended[]>()
@@ -126,6 +128,7 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
         overallGoalScores,
         overallStrategyScores,
         isLoading,
+        isRefetching,
         isLoadingGoals: goals.isLoading || goals.isRefetching,
         isLoadingStrategies: strategies.isLoading || strategies.isRefetching,
         isLoadingIndicators: indicators.isLoading || indicators.isRefetching,
