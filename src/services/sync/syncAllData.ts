@@ -2,7 +2,7 @@ import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { QueueEntityType, QueueOperation } from '@/app/types/types'
 import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, planHandler, strategyHandler, strategyHistoryHandler } from '@/db/dexieHandler'
 import { processSyncQueue } from '@/services/sync/processSyncQueue'
-import { markUserAsSynced, queueForSync, validateUserExists } from '@/services/sync/shared'
+import { markUserAsSynced, queueForSync } from '@/services/sync/shared'
 
 export const syncAllData = async (userId: string, operation = QueueOperation.UPDATE): Promise<{
   success: boolean,
