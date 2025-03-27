@@ -56,8 +56,8 @@ export interface ParentProps {
 export type UserExtended = User & Pick<UserProfile, 'sub' | 'picture'>
 
 export enum QueueOperation {
-  CREATE = 'create',
-  UPDATE = 'update',
+  CREATE = 'post',
+  UPDATE = 'PUT',
   DELETE = 'delete',
 }
 

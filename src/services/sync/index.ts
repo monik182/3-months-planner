@@ -1,6 +1,7 @@
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { QueueOperation, QueueStatus, } from '@/app/types/types'
 import { syncQueueHandler } from '@/db/dexieHandler'
+import { cleanupOrphanedRecords } from '@/services/cleanup'
 import { isItemQueuedForOperation } from '@/services/sync/itemQueuedForOperation'
 import { processSyncQueue } from '@/services/sync/processSyncQueue'
 import { filterQueuedForDeletion, markUserAsSynced, queueForSync } from '@/services/sync/shared'
@@ -24,6 +25,9 @@ const performFirstTimeSync = async (userId: string): Promise<{ success: boolean,
   if (!SyncService.isEnabled) return { success: true }
 
   try {
+    // Clean up any orphaned records first
+    await cleanupOrphanedRecords()
+
     await syncAllData(userId, QueueOperation.CREATE)
     await markUserAsSynced(userId)
 

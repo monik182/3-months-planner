@@ -1,4 +1,4 @@
-import { goalHandler } from '@/db/dexieHandler'
+import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, strategyHandler, strategyHistoryHandler } from '@/db/dexieHandler'
 import { GoalArraySchema, GoalSchema, PartialGoalSchema } from '@/lib/validators/goal'
 import { Goal, Prisma } from '@prisma/client'
 import { SyncService } from '@/services/sync'
@@ -79,6 +79,34 @@ const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial
 }
 
 const deleteItem = async (id: string): Promise<void> => {
+  // First get all related items
+  const strategies = await strategyHandler.findMany({ goalId: id })
+  const indicators = await indicatorHandler.findMany({ goalId: id })
+
+  // Delete all related histories locally only
+  for (const strategy of strategies) {
+    await strategyHistoryHandler.deleteMany({ strategyId: strategy.id })
+  }
+
+  for (const indicator of indicators) {
+    await indicatorHistoryHandler.deleteMany({ indicatorId: indicator.id })
+  }
+
+  // Delete strategies and indicators locally and queue for sync
+  for (const strategy of strategies) {
+    await strategyHandler.delete(strategy.id)
+    await SyncService.queueForSync(QueueEntityType.STRATEGY, strategy.id, QueueOperation.DELETE, strategy.id)
+  }
+
+  for (const indicator of indicators) {
+    await indicatorHandler.delete(indicator.id)
+    await SyncService.queueForSync(QueueEntityType.INDICATOR, indicator.id, QueueOperation.DELETE, indicator.id)
+  }
+
+  // Delete goal history locally only
+  await goalHistoryHandler.deleteMany({ goalId: id })
+
+  // Delete the goal and queue for sync
   await goalHandler.delete(id)
   await SyncService.queueForSync(QueueEntityType.GOAL, id, QueueOperation.DELETE, id)
 }

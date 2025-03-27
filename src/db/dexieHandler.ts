@@ -66,6 +66,7 @@ export const goalHistoryHandler = {
   findOne: async (id: string) => db.goalHistory.get(id),
   update: async (id: string, data: Partial<GoalHistory>) => db.goalHistory.update(id, data),
   delete: async (id: string) => db.goalHistory.delete(id),
+  deleteMany: async (where: Partial<GoalHistory>) => db.goalHistory.where(where).delete(),
 }
 
 export const strategyHandler = {
@@ -147,6 +148,7 @@ export const strategyHistoryHandler = {
   findOne: async (id: string) => db.strategyHistory.get(id),
   update: async (id: string, data: Partial<StrategyHistory>) => db.strategyHistory.update(id, data),
   delete: async (id: string) => db.strategyHistory.delete(id),
+  deleteMany: async (where: Partial<StrategyHistory>) => db.strategyHistory.where(where).delete(),
 }
 
 export const indicatorHandler = {
@@ -230,6 +232,7 @@ export const indicatorHistoryHandler = {
   findOne: async (id: string) => db.indicatorHistory.get(id),
   update: async (id: string, data: Partial<IndicatorHistory>) => db.indicatorHistory.update(id, data),
   delete: async (id: string) => db.indicatorHistory.delete(id),
+  deleteMany: async (where: Partial<IndicatorHistory>) => db.indicatorHistory.where(where).delete(),
 }
 
 export const notificationHandler = {

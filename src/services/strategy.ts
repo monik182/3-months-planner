@@ -1,4 +1,4 @@
-import { strategyHandler } from '@/db/dexieHandler'
+import { strategyHandler, strategyHistoryHandler } from '@/db/dexieHandler'
 import { StrategyArraySchema, PartialStrategySchema, StrategyNoGoalSchema } from '@/lib/validators/strategy'
 import { Strategy, Prisma } from '@prisma/client'
 import { SyncService } from '@/services/sync'
@@ -96,6 +96,10 @@ const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise
 }
 
 const deleteItem = async (id: string): Promise<void> => {
+  // First delete all related histories locally only
+  await strategyHistoryHandler.deleteMany({ strategyId: id })
+  
+  // Delete the strategy locally and queue for sync
   await strategyHandler.delete(id)
   await SyncService.queueForSync(QueueEntityType.STRATEGY, id, QueueOperation.DELETE, id)
 }

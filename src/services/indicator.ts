@@ -1,4 +1,4 @@
-import { indicatorHandler } from '@/db/dexieHandler'
+import { indicatorHandler, indicatorHistoryHandler } from '@/db/dexieHandler'
 import { PartialIndicatorSchema, IndicatorNoGoalSchema, IndicatorNoGoalArraySchema } from '@/lib/validators/indicator'
 import { Indicator, Prisma } from '@prisma/client'
 import { SyncService } from '@/services/sync'
@@ -96,6 +96,10 @@ const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promi
 }
 
 const deleteItem = async (id: string): Promise<void> => {
+  // First delete all related histories locally only
+  await indicatorHistoryHandler.deleteMany({ indicatorId: id })
+
+  // Delete the indicator locally and queue for sync
   await indicatorHandler.delete(id)
   await SyncService.queueForSync(QueueEntityType.INDICATOR, id, QueueOperation.DELETE, id)
 }

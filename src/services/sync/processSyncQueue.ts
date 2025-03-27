@@ -21,7 +21,7 @@ export const processSyncQueue = async () => {
     const items = await syncQueueHandler.table
       .where('status')
       .anyOf(QueueStatus.PENDING, QueueStatus.FAILED)
-      .and(item => item.attempts < 3)
+      .and(item => item.attempts < 5)
       .toArray()
 
     const uniqueItems = new Map()
@@ -303,10 +303,12 @@ export const processSyncQueue = async () => {
           try {
             const planResponse = await fetch(`/api/plan/${planId}`)
             if (!planResponse.ok) {
-              // We'll retry this item later when the plan is synced
+              // Add exponential backoff
+              const retryAfter = Math.min(1000 * Math.pow(2, item.attempts), 30000) // Max 30 seconds
               await syncQueueHandler.update(item.id!, {
                 status: QueueStatus.PENDING,
-                error: `Waiting for plan ${planId} to be synced first`
+                error: `Waiting for plan ${planId} to be synced first`,
+                timestamp: Date.now() + retryAfter // Delay next attempt
               })
               continue
             }

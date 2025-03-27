@@ -14,20 +14,26 @@ export const validateUserExists = async (userId: string): Promise<boolean> => {
       return true
     }
 
+    // If remote check fails, try to create from local
     const localUser = await UserService.getLocal()
     if (!localUser) {
-      console.error(`User with ID ${userId} not found locally`)
-      return false
+      throw new Error(`User with ID ${userId} not found locally`)
     }
 
-    try {
-      await UserService.create(localUser)
-    } catch (error) {
-      console.error('Failed to create user in database:', error)
-      return false
+    // Add retry logic for user creation
+    let retries = 3
+    while (retries > 0) {
+      try {
+        await UserService.create(localUser)
+        return true
+      } catch (error) {
+        retries--
+        if (retries === 0) throw error;
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
     }
 
-    return true
+    return false
   } catch (error) {
     console.error('Error ensuring user exists:', error)
     return false

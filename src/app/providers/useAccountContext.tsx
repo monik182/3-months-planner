@@ -7,6 +7,7 @@ import { SyncStatus, UserExtended } from '@/app/types/types'
 import { Role } from '@prisma/client'
 import { SyncService } from '@/services/sync'
 import { userPreferencesHandler } from '@/db/dexieHandler'
+import { validateUserExists } from '@/services/sync/shared'
 
 type AccountContextType = {
   user?: UserExtended | null
@@ -59,22 +60,26 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
 
   const triggerSync = async () => {
     if (!SyncService.isEnabled || !isLoggedIn || !user?.auth0Id) return
+    
+    // Add delay to ensure auth is fully established
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     try {
       const preferences = await userPreferencesHandler.findOne(user.id)
-
+      
       if (!preferences?.hasSynced) {
         console.log(`Initiating first-time sync for user ${user.id}`)
+        // First ensure user exists
+        await validateUserExists(user.id)
+        
         const result = await SyncService.performFirstTimeSync(user.id)
         if (!result.success) {
           console.error(`First-time sync failed: ${result.error}`)
-        } else {
-          console.log(`First-time sync completed successfully`)
         }
       } else {
-        console.log(`User ${user.id} has already been synced before`)
         await SyncService.processSyncQueue()
       }
-
+      
       setSyncInitialized(true)
       updateSyncStatus()
     } catch (error) {
