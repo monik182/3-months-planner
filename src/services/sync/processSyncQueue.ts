@@ -1,4 +1,4 @@
-import { QueueEntityType, QueueOperation, QueueStatus } from '@/app/types/types'
+import { QueueEntityType, QueueOperation, QueueStatus, SyncQueueItem } from '@/app/types/types'
 import { syncQueueHandler } from '@/db/dexieHandler'
 import { SyncService } from '@/services/sync'
 import { getApiUrlForEntity, getBulkEntityType, getMethodForOperation, preparePayloadForSync, validateUserExists } from '@/services/sync/shared'
@@ -7,8 +7,8 @@ export const processSyncQueue = async () => {
   if (!SyncService.isEnabled) return { success: true, processed: 0, failed: 0 }
 
   try {
+    // First handle stuck items
     const stuckItems = await syncQueueHandler.findByStatus(QueueStatus.PROCESSING)
-
     if (stuckItems.length > 0) {
       await Promise.all(stuckItems.map(item =>
         syncQueueHandler.update(item.id!.toString(), {
@@ -18,18 +18,56 @@ export const processSyncQueue = async () => {
       ))
     }
 
-    const items = await syncQueueHandler.table
+    // Get all pending and failed items
+    const items = await syncQueueHandler.table.toArray()
+
+    // Pre-process to clean up conflicting operations
+    const operationsByEntity = new Map<string, SyncQueueItem[]>()
+
+    // Group operations by entity
+    for (const item of items) {
+      const entityKey = `${item.entityType}:${item.entityId}`
+      if (!operationsByEntity.has(entityKey)) {
+        operationsByEntity.set(entityKey, [])
+      }
+      operationsByEntity.get(entityKey)?.push(item)
+    }
+
+    // Clean up conflicting operations
+    for (const [, operations] of operationsByEntity.entries()) {
+      if (operations.length > 1) {
+        // Sort by timestamp, newest first
+        operations.sort((a, b) => b.timestamp - a.timestamp)
+
+        const hasDelete = operations.some(op => op.operation === QueueOperation.DELETE)
+
+        if (hasDelete) {
+          // If we have a DELETE, mark all other operations as completed
+          for (const op of operations) {
+            if (op.operation !== QueueOperation.DELETE) {
+              await syncQueueHandler.update((op.id!).toString(), {
+                status: QueueStatus.COMPLETED,
+                error: 'Skipped as entity is scheduled for deletion'
+              })
+              console.log(`Skipping ${op.operation} for ${op.entityType}:${op.entityId} as it will be deleted`)
+            }
+          }
+        }
+      }
+    }
+
+    // Re-fetch items after cleanup
+    const cleanedItems = await syncQueueHandler.table
       .where('status')
       .anyOf(QueueStatus.PENDING, QueueStatus.FAILED)
       .and(item => item.attempts < 5)
       .toArray()
 
     const uniqueItems = new Map()
-
     const createOperationsByType = new Map()
     const deleteOperationsByType = new Map()
 
-    for (const item of items) {
+    for (const item of cleanedItems) {
       if (item.operation === QueueOperation.CREATE) {
         const entityType = item.entityType
 
@@ -180,7 +218,7 @@ export const processSyncQueue = async () => {
     // Process UPDATE operations - merge updates for the same entity
     const updatesByEntityId = new Map()
 
-    for (const item of items) {
+    for (const item of cleanedItems) {
       if (item.operation === QueueOperation.UPDATE) {
         const key = `${item.entityType}:${item.entityId}`
 
@@ -239,7 +277,26 @@ export const processSyncQueue = async () => {
     }
 
     // Sort items to ensure correct dependency and operation order
-    const sorted = Array.from(uniqueItems.values()).sort((a, b) => {
+    const sorted = Array.from(uniqueItems.values()).filter(item => {
+      // If this is an UPDATE operation, check if there's a DELETE operation
+      // for the same entity that comes after it
+      if (item.operation === QueueOperation.UPDATE) {
+        const hasDeleteOperation = Array.from(uniqueItems.values()).some(
+          otherItem =>
+            otherItem.operation === QueueOperation.DELETE &&
+            otherItem.entityType === item.entityType &&
+            otherItem.entityId === item.entityId &&
+            otherItem.timestamp > item.timestamp
+        )
+
+        // Skip this UPDATE if there's a DELETE operation
+        if (hasDeleteOperation) {
+          console.log(`Skipping UPDATE for ${item.entityType}:${item.entityId} as it will be deleted`)
+          return false
+        }
+      }
+      return true
+    }).sort((a, b) => {
       // First sort by entity type hierarchy
       const typeOrder = { user: 0, plan: 1 }
       const aType = a.entityType.replace(/_BULK|_HISTORY|_HISTORY_BULK/g, '') as keyof typeof typeOrder

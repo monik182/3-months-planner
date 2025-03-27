@@ -57,7 +57,7 @@ export type UserExtended = User & Pick<UserProfile, 'sub' | 'picture'>
 
 export enum QueueOperation {
   CREATE = 'post',
-  UPDATE = 'PUT',
+  UPDATE = 'put',
   DELETE = 'delete',
 }
 

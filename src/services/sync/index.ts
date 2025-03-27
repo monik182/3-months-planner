@@ -1,7 +1,7 @@
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { QueueOperation, QueueStatus, } from '@/app/types/types'
 import { syncQueueHandler } from '@/db/dexieHandler'
-import { cleanupOrphanedRecords } from '@/services/cleanup'
+import { cleanupOrphanedRecords } from '@/services/sync/cleanup'
 import { isItemQueuedForOperation } from '@/services/sync/itemQueuedForOperation'
 import { processSyncQueue } from '@/services/sync/processSyncQueue'
 import { filterQueuedForDeletion, markUserAsSynced, queueForSync } from '@/services/sync/shared'
@@ -36,7 +36,7 @@ const performFirstTimeSync = async (userId: string): Promise<{ success: boolean,
     console.error('Error during first-time sync:', error)
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? JSON.stringify(error.message) : 'Unknown error'
     }
   }
 }
@@ -60,6 +60,15 @@ const cleanupCompletedItems = async (olderThan: number = 24 * 60 * 60 * 1000): P
     .delete()
 }
 
+const resetFailedItems = async () => {
+  await syncQueueHandler.table
+    .where('status')
+    .equals(QueueStatus.FAILED)
+    .modify({ status: QueueStatus.PENDING, attempts: 0 })
+
+  return SyncService.processSyncQueue()
+}
+
 export const SyncService = {
   isEnabled: ENABLE_CLOUD_SYNC,
   queueForSync,
@@ -71,4 +80,6 @@ export const SyncService = {
   isItemQueuedForOperation,
   filterQueuedForDeletion,
   cleanupCompletedItems,
+  resetFailedItems,
+  cleanupOrphanedRecords,
 }
