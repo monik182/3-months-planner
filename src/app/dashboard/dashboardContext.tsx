@@ -69,7 +69,9 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
 
       const goalsScore = filteredGoals.map((goal) => {
         const filteredStrategies = (strategies.data || []).filter(
-          (s) => s.sequence.toString() === week && s.strategy.goalId === goal.goalId
+          (s) => s.sequence.toString() === week && 
+                s.strategy.goalId === goal.goalId &&
+                s.strategy.weeks.includes(week)
         )
 
         const strategiesScore = calculateCompletionScore(filteredStrategies)
@@ -101,7 +103,12 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
 
   const getStrategiesByGoalId = (goalId: string, seq?: string) => {
     const strategies = strategiesByGoal.get(goalId) || []
-    return seq ? strategies.filter(s => s.sequence.toString() === seq) : strategies
+    return seq 
+      ? strategies.filter(s => 
+          s.sequence.toString() === seq && 
+          s.strategy.weeks.includes(seq)
+        ) 
+      : strategies
   }
 
   const getIndicatorsByGoalId = (goalId: string, seq?: string) => {
