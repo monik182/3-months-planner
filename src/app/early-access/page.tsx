@@ -5,6 +5,7 @@ import { useAccountContext } from '@/app/providers/useAccountContext'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { toaster } from '@/components/ui/toaster'
+import { SyncService } from '@/services/sync'
 import { Flex, Heading, Text, VStack } from '@chakra-ui/react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
@@ -29,6 +30,10 @@ function EarlyAccess(props: WithTokenPageProps) {
     }
     create.mutate(newUser, {
       onSuccess: () => {
+        if (SyncService.isEnabled) {
+          router.push('/api/auth/login')
+          return
+        }
         router.replace('/plan/new')
       },
       onError: (error) => {

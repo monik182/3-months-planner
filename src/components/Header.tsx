@@ -12,8 +12,8 @@ import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import Link from 'next/link'
 import { SyncIndicator } from '@/components/SyncIndicator'
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { clearDatabase } from '@/db/dexieHandler'
+import { SyncService } from '@/services/sync'
 
 export function Header() {
   const { user, isGuest, isLoggedIn } = useAccountContext()
@@ -79,7 +79,7 @@ export function Header() {
               src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
               size="xs"
             />
-            {isLoggedIn && ENABLE_CLOUD_SYNC && (
+            {isLoggedIn && SyncService.isEnabled && (
               <Link 
                 href="/api/auth/logout" 
                 onClick={handleLogout} 
@@ -90,7 +90,7 @@ export function Header() {
               </Link>
             )}
           </Flex>
-          {!isLoggedIn && ENABLE_CLOUD_SYNC && (
+          {!isLoggedIn && SyncService.isEnabled && (
             <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
           )}
         </Flex>

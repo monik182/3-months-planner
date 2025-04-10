@@ -12,7 +12,7 @@ const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> =
     .then(async (response) => {
       if (!response.ok) {
         const error: { message: string } | null = await response.json()
-        throw new Error(error?.message || 'Failed to create waitlist')
+        throw new Error(error?.message || 'Failed to add user to waitlist')
       }
       const waitlist = await response.json()
       await waitlistHandler.create(waitlist)

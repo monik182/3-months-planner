@@ -29,7 +29,7 @@ export function WaitListSection() {
         title: 'Invalid Email',
         description: 'Please enter a valid email address.',
         type: 'error',
-        duration: 3000,
+        duration: 2000,
       })
       return
     }
@@ -44,7 +44,7 @@ export function WaitListSection() {
           title: 'Success!',
           description: "You've been added to the waitlist 🎉",
           type: 'success',
-          duration: 4000,
+          duration: 2000,
         })
 
         setEmail('')
@@ -52,6 +52,8 @@ export function WaitListSection() {
           setTimeout(() => {
             router.replace(`/early-access?token=${inviteToken}`)
           }, 1000)
+        } else {
+          router.replace(`/#get-started`)
         }
 
       },
@@ -60,7 +62,7 @@ export function WaitListSection() {
           title: 'Error',
           description: error.message || 'Something went wrong. Try again later.',
           type: 'error',
-          duration: 4000,
+          duration: 2000,
         })
       },
     })
