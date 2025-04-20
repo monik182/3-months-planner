@@ -14,9 +14,11 @@ import Link from 'next/link'
 import { SyncIndicator } from '@/components/SyncIndicator'
 import { clearDatabase } from '@/db/dexieHandler'
 import { SyncService } from '@/services/sync'
+import { useAuth } from '@/app/providers/AuthContext'
 
 export function Header() {
-  const { user, isGuest, isLoggedIn } = useAccountContext()
+  const { user, isGuest } = useAccountContext()
+  const { session, signOut } = useAuth()
   const { hasStartedPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
@@ -44,8 +46,9 @@ export function Header() {
 
   const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
+    await signOut()
     await clearDatabase()
-    router.push('/api/auth/logout')
+    router.refresh()
   }
 
   return (
@@ -79,7 +82,7 @@ export function Header() {
               src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
               size="xs"
             />
-            {isLoggedIn && SyncService.isEnabled && (
+            {!!session && SyncService.isEnabled && (
               <Link 
                 href="/api/auth/logout" 
                 onClick={handleLogout} 
@@ -90,8 +93,8 @@ export function Header() {
               </Link>
             )}
           </Flex>
-          {!isLoggedIn && SyncService.isEnabled && (
-            <Link href="/api/auth/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
+          {!session && SyncService.isEnabled && (
+            <Link href="/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
           )}
         </Flex>
       </Flex>

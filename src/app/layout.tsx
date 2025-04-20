@@ -13,6 +13,7 @@ import { Toaster } from '@/components/ui/toaster'
 import PlanLayout from '@/app/layout/PlanLayout'
 import { MixpanelProvider } from '@/app/providers/MixpanelProvider'
 import { SyncManager } from '@/components/SyncManager'
+import { AuthProvider } from '@/app/providers/AuthContext'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -45,27 +46,29 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MixpanelProvider>
-          <UserProvider>
-            <ReactQueryProvider>
-              <Provider>
-                <AccountProvider>
-                  <PlanProvider>
-                    <SyncManager /> 
-                    <PlanLayout>
-                      <Box margin="0 2rem 5rem">
-                        <Grid templateRows="10% auto" height="100vh">
-                          <GridItem><Header /></GridItem>
-                          <GridItem overflow="auto">{children}</GridItem>
-                        </Grid>
-                      </Box>
-                    </PlanLayout>
-                  </PlanProvider>
-                  <Extra />
-                </AccountProvider>
-                <Toaster />
-              </Provider>
-            </ReactQueryProvider>
-          </UserProvider>
+          <AuthProvider>
+            <UserProvider>
+              <ReactQueryProvider>
+                <Provider>
+                  <AccountProvider>
+                    <PlanProvider>
+                      <SyncManager />
+                      <PlanLayout>
+                        <Box margin="0 2rem 5rem">
+                          <Grid templateRows="10% auto" height="100vh">
+                            <GridItem><Header /></GridItem>
+                            <GridItem overflow="auto">{children}</GridItem>
+                          </Grid>
+                        </Box>
+                      </PlanLayout>
+                    </PlanProvider>
+                    <Extra />
+                  </AccountProvider>
+                  <Toaster />
+                </Provider>
+              </ReactQueryProvider>
+            </UserProvider>
+          </AuthProvider>
         </MixpanelProvider>
       </body>
     </html>
