@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { Center, Spinner } from '@chakra-ui/react'
 import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
 import { SyncStatus, UserExtended } from '@/app/types/types'
@@ -8,6 +8,7 @@ import { SyncService } from '@/services/sync'
 import { userPreferencesHandler } from '@/db/dexieHandler'
 import { validateUserExists } from '@/services/sync/shared'
 import { useAuth } from '@/app/providers/AuthContext'
+import cuid from 'cuid'
 
 type AccountContextType = {
   user?: UserExtended | null
@@ -30,7 +31,7 @@ interface AccountTrackingProviderProps {
 }
 
 export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
-  const { session } = useAuth()
+  const { session, isNewUser } = useAuth()
   const isLoggedIn = !!session
   const supabaseUser = session?.user
   const auth0Id = supabaseUser?.user_metadata?.sub || supabaseUser?.id
@@ -38,9 +39,27 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const create = userActions.useCreate()
   const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
   const canFetchUserFromDB = isLoggedIn && SyncService.isEnabled
-  const { data: userData, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0Id as string, canFetchUserFromDB)
+  const { data: userByAuthId, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0Id as string, canFetchUserFromDB)
   const isLoading = isLoadingUserLocal || isLoadingUserData
-  const user = (!userData?.id ? null : { ...userData, sub: auth0Id, picture: supabaseUser?.user_metadata?.picture } as UserExtended) || userLocal
+  const user: UserExtended | null = useMemo(() => {
+    if (!session || isLoading) return null
+
+    if (isNewUser && !userByAuthId && !userLocal) {
+      return {
+        id: cuid(),
+        role: Role.GUEST,
+        email: supabaseUser?.email || '',
+        waitlistId: null,
+        auth0Id,
+      } as UserExtended
+    }
+    if (!userByAuthId?.id) {
+      return null || userLocal as UserExtended
+    } else {
+      return { ...userByAuthId, sub: auth0Id, picture: supabaseUser?.user_metadata?.picture } as UserExtended
+    }
+  }, [isNewUser, userByAuthId, auth0Id, supabaseUser, userLocal, isLoading, session])
+
   const isGuest = user?.role === Role.GUEST
   const [syncInitialized, setSyncInitialized] = useState(false)
   const [syncStatus, setSyncStatus] = useState({
@@ -94,14 +113,13 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
 
   useEffect(() => {
     const updateUserWithAuth0Id = async () => {
-      if (isLoading || !user || userUpdateAttempted.current || !isLoggedIn || !auth0Id || user?.auth0Id || userLocal?.auth0Id) {
+      if ((!isNewUser && !user) || (isLoading || !user || userUpdateAttempted.current || !isLoggedIn || !auth0Id || user?.auth0Id || userLocal?.auth0Id)) {
         return
       }
 
       userUpdateAttempted.current = true
 
       try {
-        console.log(`Updating user ${user.id} with Auth0 ID ${auth0Id}`)
         create.mutate({
           ...user,
           auth0Id,
@@ -118,7 +136,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     }
 
     updateUserWithAuth0Id()
-  }, [auth0Id, user, userActions, userLocal, isLoading, isLoggedIn])
+  }, [auth0Id, user, userActions, userLocal, isLoading, isLoggedIn, isNewUser])
 
   useEffect(() => {
     if (!isLoggedIn || !SyncService.isEnabled || initialSyncAttempted.current || userUpdateAttempted.current) return

@@ -46,9 +46,10 @@ export function Header() {
 
   const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
-    await signOut()
     await clearDatabase()
-    router.refresh()
+    await signOut()
+    router.push('/')
+    window.location.reload()
   }
 
   return (

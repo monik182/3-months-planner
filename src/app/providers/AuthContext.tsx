@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 
 interface AuthContextType {
   session: Session | null;
+  isNewUser: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -16,7 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  console.log(session);
+  const [isNewUser, setIsNewUser] = useState(false);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -85,15 +86,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      // console.log('Auth event:', event);
+      // console.log('Session:', session);
+
+      switch (event) {
+        case 'INITIAL_SESSION':
+          if (!!session) {
+            setIsNewUser(true);
+          }
+          // console.log('Initial session', session?.user?.id, session?.user?.user_metadata?.sub);
+          break;
+        // case 'PASSWORD_RECOVERY':
+        //   console.log('Password recovery');
+        //   break;
+        // case 'SIGNED_IN':
+        //   console.log('User signed in:', session?.user?.id);
+        //   break;
+        case 'SIGNED_OUT':
+          // console.log('User signed out');
+          setSession(null);
+          break;
+        // case 'TOKEN_REFRESHED':
+        //   console.log('Token refreshed');
+        //   break;
+        // case 'USER_UPDATED':
+        //   console.log('User updated');
+        //   break;
+        default:
+          setSession(session);
+          break;
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+  
 
   return (
-    <AuthContext.Provider value={{ session, signIn, signUp, signOut, resetPassword, supabaseClient: supabase }}>
+    <AuthContext.Provider value={{ session, isNewUser, signIn, signUp, signOut, resetPassword, supabaseClient: supabase }}>
       {children}
     </AuthContext.Provider>
   );

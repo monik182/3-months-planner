@@ -13,7 +13,7 @@ export async function GET(_: NextRequest, segmentData: SegmentData) {
     const response = await userHandler.findOneByAuth0Id(params.id);
 
     if (!response) {
-      return NextResponse.json({ message: 'User not found', ok: false }, { status: 404 });
+      return NextResponse.json(null, { status: 404 });
     }
 
     return NextResponse.json({ ...response, ok: true }, { status: 200 });

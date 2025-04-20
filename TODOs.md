@@ -1,8 +1,8 @@
 # Post Release
 - Auth Refactor [WIP]
-  - Replace Auth0 with Supabase auth 🚨
-  - Fix new email/password user flow - register to user db
+  - Replace Auth0 with Supabase auth 🚨 [WIP]
   - Simplify Auth and Account providers
+  - Fix new email/password user flow - register to user db ✅
 - Improve HOME page with steps and everything
 - Improve the goals/strategies/indicator creation forms
 - Improve the plan view and colors and reuse component in step4
