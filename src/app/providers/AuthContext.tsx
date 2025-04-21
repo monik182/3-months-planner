@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient';
 
 interface AuthContextType {
   session: Session | null;
+  user: Session['user'] | null;
   isNewUser: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
@@ -124,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
 
   return (
-    <AuthContext.Provider value={{ session, isNewUser, signIn, signUp, signOut, resetPassword, supabaseClient: supabase }}>
+    <AuthContext.Provider value={{ session, user: session?.user || null, isNewUser, signIn, signUp, signOut, resetPassword, supabaseClient: supabase }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,14 +1,13 @@
 # Post Release
-- Auth Refactor [WIP]
-  - Simplify Auth and Account providers
-  - Replace Auth0 with Supabase auth 🚨 ✅
-  - Fix new email/password user flow - register to user db ✅
-- Improve HOME page with steps and everything
-- Improve the goals/strategies/indicator creation forms
-- Improve the plan view and colors and reuse component in step4
 - Integrate templates
+- Integrate progress page
+- Improve the plan view and colors and reuse component in step4
+- Improve the goals/strategies/indicator creation forms
 - Integrate AI suggestions
-- Integrate AI progress
+- Improve HOME page with steps and everything
+
+
+
 
 
 
@@ -219,3 +218,8 @@ with persistance will come success
 - Merge queued syncs  ✅
 - Sync guest user data to cloud ✅
 - Delayed sync ✅
+
+- Auth Refactor [WIP]
+  - Simplify Auth and Account providers
+  - Replace Auth0 with Supabase auth 🚨 ✅
+  - Fix new email/password user flow - register to user db ✅

@@ -31,9 +31,8 @@ interface AccountTrackingProviderProps {
 }
 
 export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
-  const { session, isNewUser } = useAuth()
+  const { session, isNewUser, user: supabaseUser } = useAuth()
   const isLoggedIn = !!session
-  const supabaseUser = session?.user
   const auth0Id = supabaseUser?.user_metadata?.sub || supabaseUser?.id
   const userActions = useUserActions()
   const create = userActions.useCreate()
