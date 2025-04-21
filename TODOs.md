@@ -1,7 +1,7 @@
 # Post Release
 - Auth Refactor [WIP]
-  - Replace Auth0 with Supabase auth 🚨 [WIP]
   - Simplify Auth and Account providers
+  - Replace Auth0 with Supabase auth 🚨 ✅
   - Fix new email/password user flow - register to user db ✅
 - Improve HOME page with steps and everything
 - Improve the goals/strategies/indicator creation forms
@@ -9,6 +9,40 @@
 - Integrate templates
 - Integrate AI suggestions
 - Integrate AI progress
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 - Fix dashboard frequency bug [Don't remember]❓
 - Create VIP role [is it needed?]❓
