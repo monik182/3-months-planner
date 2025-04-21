@@ -27,6 +27,23 @@ export function useIndicatorActions() {
     })
   }
 
+  const useCreateBulk = () => {
+    return useMutation({
+      mutationFn: (indicators: Indicator[]) => IndicatorService.createBulk(indicators),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_indicators_bulk')
+      },
+      onError: (error) => {
+        toaster.create({
+          type: 'error',
+          title: 'Error creating the indicators',
+          description: error.message,
+        })
+      }
+    })
+  }
+
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorUpdateInput }) => IndicatorService.update(indicatorId, updates),
@@ -72,6 +89,7 @@ export function useIndicatorActions() {
 
   return {
     useCreate,
+    useCreateBulk,
     useUpdate,
     useGetByPlanId,
     useGetByGoalId,

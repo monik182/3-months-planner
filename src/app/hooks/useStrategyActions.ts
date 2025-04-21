@@ -27,6 +27,23 @@ export function useStrategyActions() {
     })
   }
 
+  const useCreateBulk = () => {
+    return useMutation({
+      mutationFn: (strategies: Strategy[]) => StrategyService.createBulk(strategies),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('create_strategies_bulk')
+      },
+      onError: (error) => {
+        toaster.create({
+          type: 'error',
+          title: 'Error creating the strategies',
+          description: error.message,
+        })
+      }
+    })
+  }
+
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyUpdateInput }) => StrategyService.update(strategyId, updates),
@@ -73,6 +90,7 @@ export function useStrategyActions() {
 
   return {
     useCreate,
+    useCreateBulk,
     useUpdate,
     useGetByPlanId,
     useGetByGoalId,
