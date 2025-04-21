@@ -4,7 +4,7 @@ import { usePlanContext } from '@/app/providers/usePlanContext';
 import { GOAL_TEMPLATES, GoalTemplate } from '@/app/templates/constants';
 import { Status } from '@/app/types/types';
 import { toaster } from '@/components/ui/toaster';
-import { Button, Card, CardDescription, CardHeader, CardTitle, Dialog, Input, Tabs } from '@chakra-ui/react';
+import { Button, Card, CardDescription, CardHeader, CardTitle, Dialog, Heading, Input, List, Portal, Tabs } from '@chakra-ui/react';
 import cuid from 'cuid';
 import React, { useState } from "react";
 import { CiSearch } from 'react-icons/ci';
@@ -107,7 +107,7 @@ export default function TemplateGallery() {
           />
         </div>
 
-        <Tabs.Root value={selectedCategory} onValueChange={(e) => setSelectedCategory(e.value)} className="w-full md:w-auto" lazyMount unmountOnExit>
+        <Tabs.Root value={selectedCategory} onValueChange={(e) => setSelectedCategory(e.value)} className="w-full md:w-auto" unmountOnExit>
           <Tabs.List className="grid grid-cols-3 md:grid-cols-6 w-full md:w-auto">
             {TEMPLATE_CATEGORIES.map(category => (
               <Tabs.Trigger key={category.id} value={category.id} className="text-xs">
@@ -142,25 +142,26 @@ export default function TemplateGallery() {
               </CardHeader>
               <Card.Body className="flex-1">
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium">Strategies:</h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
+                  <Heading size="md">Strategies:</Heading>
+                  <List.Root>
                     {template.strategies.slice(0, 2).map((strategy, i) => (
-                      <li key={i}>• {strategy.content} ({strategy.frequency}x/week)</li>
+                      <List.Item key={i} className="text-xs">{strategy.content} ({strategy.frequency}x/week)</List.Item>
                     ))}
                     {template.strategies.length > 2 && (
-                      <li className="text-xs text-muted-foreground">+ {template.strategies.length - 2} more</li>
+                      <List.Item className="text-xs">+ {template.strategies.length - 2} more</List.Item>
                     )}
-                  </ul>
+                  </List.Root>
 
-                  <h4 className="text-sm font-medium mt-3">Indicators:</h4>
-                  <ul className="text-xs text-muted-foreground space-y-1">
+                  <Heading size="md">Indicators:</Heading>
+
+                  <List.Root>
                     {template.indicators.slice(0, 2).map((indicator, i) => (
-                      <li key={i}>• {indicator.content}</li>
+                      <List.Item key={i} className="text-xs">{indicator.content}</List.Item>
                     ))}
                     {template.indicators.length > 2 && (
-                      <li className="text-xs text-muted-foreground">+ {template.indicators.length - 2} more</li>
+                      <List.Item className="text-xs">+ {template.indicators.length - 2} more</List.Item>
                     )}
-                  </ul>
+                  </List.Root>
                 </div>
               </Card.Body>
               <Card.Footer>
@@ -178,43 +179,48 @@ export default function TemplateGallery() {
                       <GoPlus className="h-4 w-4 mr-2" /> Use Template
                     </Button>
                   </Dialog.Trigger>
-                  <Dialog.Content>
-                    <Dialog.Header>
-                      <Dialog.Title>Apply Template: {template.title}</Dialog.Title>
-                      <Dialog.Body>
-                        This will add a new goal to your plan based on this template.
-                      </Dialog.Body>
-                    </Dialog.Header>
+                  <Portal>
+                    <Dialog.Backdrop />
+                    <Dialog.Positioner>
+                      <Dialog.Content>
+                        <Dialog.Header>
+                          <Dialog.Title>Apply Template: {template.title}</Dialog.Title>
+                          <Dialog.Body>
+                            This will add a new goal to your plan based on this template.
+                          </Dialog.Body>
+                        </Dialog.Header>
+                        <Dialog.Body>
+                          <div className="space-y-4 py-4">
+                            <div className="space-y-2">
+                              <Heading size="md" className="font-medium">Strategies:</Heading>
+                              <List.Root>
+                                {template.strategies.map((strategy, i) => (
+                                  <List.Item key={i} className="text-xs">{strategy.content} ({strategy.frequency}x/week)</List.Item>
+                                ))}
+                              </List.Root>
+                            </div>
 
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Strategies:</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          {template.strategies.map((strategy, i) => (
-                            <li key={i}>• {strategy.content} ({strategy.frequency}x/week)</li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      <div className="space-y-2">
-                        <h4 className="font-medium">Indicators:</h4>
-                        <ul className="text-sm text-muted-foreground space-y-1">
-                          {template.indicators.map((indicator, i) => (
-                            <li key={i}>• {indicator.content}: {indicator.initialValue} → {indicator.goalValue} {indicator.metric}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <Dialog.Footer className="h-20px">
-                      <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={handleApplyTemplate}>
-                        Apply Template
-                      </Button>
-                    </Dialog.Footer>
-                  </Dialog.Content>
+                            <div className="space-y-2">
+                              <Heading size="md" className="font-medium">Indicators:</Heading>
+                              <List.Root>
+                                {template.indicators.map((indicator, i) => (
+                                  <List.Item key={i} className="text-xs">{indicator.content}: {indicator.initialValue} → {indicator.goalValue} {indicator.metric}</List.Item>
+                                ))}
+                              </List.Root>
+                            </div>
+                          </div>
+                        </Dialog.Body>
+                        <Dialog.Footer className="h-20px">
+                          <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleApplyTemplate}>
+                            Apply Template
+                          </Button>
+                        </Dialog.Footer>
+                      </Dialog.Content>
+                    </Dialog.Positioner>
+                  </Portal>
                 </Dialog.Root>
               </Card.Footer>
             </Card.Root>
