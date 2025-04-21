@@ -53,7 +53,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
       } as UserExtended
     }
     if (!userByAuthId?.id) {
-      return null || userLocal as UserExtended
+      return userLocal as UserExtended || null
     } else {
       return { ...userByAuthId, sub: auth0Id, picture: supabaseUser?.user_metadata?.picture } as UserExtended
     }
