@@ -1,5 +1,5 @@
 'use client';
-import { usePlanContext } from '@/app/providers/usePlanContext';
+// import { usePlanContext } from '@/app/providers/usePlanContext';
 import TemplateGallery from '@/app/templates/TemplateGallery';
 import { Button } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
@@ -16,7 +16,7 @@ import { PiFileTextThin } from 'react-icons/pi';
 // import { SubscriptionGuard } from "@/components/SubscriptionGuard";
 
 const Templates = () => {
-  const { plan: currentPlan } = usePlanContext();
+  // const { plan: currentPlan } = usePlanContext();
   const navigate = useRouter();
 
   return (
