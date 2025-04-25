@@ -1,66 +1,80 @@
 import { indicatorHistoryHandler } from '@/db/dexieHandler'
-import { IndicatorHistoryExtended, QueueEntityType, QueueOperation, Status } from '@/app/types/types'
+import { IndicatorHistoryExtended, Status } from '@/app/types/types'
 import { IndicatorHistory, Prisma } from '@prisma/client'
 import { IndicatorHistorySchema, PartialIndicatorHistorySchema, IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { SyncService } from '@/services/sync'
 
 const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
   const parsedData = IndicatorHistorySchema.parse(data)
+
+  if (!SyncService.isEnabled) {
+    await indicatorHistoryHandler.create(parsedData)
+    return parsedData
+  }
+
+  const response = await fetch('/api/indicator/history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create indicator history')
+  }
+
   await indicatorHistoryHandler.create(parsedData)
-  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY, parsedData.id, QueueOperation.CREATE, parsedData)
   return parsedData
 }
 
 const createBulk = async (histories: Prisma.IndicatorHistoryCreateManyInput[]): Promise<IndicatorHistory[]> => {
   const parsedData = IndicatorHistoryNoIndicatorArraySchema.parse(histories)
+
+  if (!SyncService.isEnabled) {
+    await indicatorHistoryHandler.createMany(parsedData)
+    return parsedData
+  }
+
+  const response = await fetch('/api/indicator/history/bulk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create indicator histories')
+  }
+
   await indicatorHistoryHandler.createMany(parsedData)
-  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY_BULK, 'bulk', QueueOperation.CREATE, histories)
   return parsedData
 }
 
 const get = async (id: string): Promise<IndicatorHistory | null> => {
-  try {
-    const history = await indicatorHistoryHandler.findOne(id)
-    if (history) {
-      return history
-    }
+  const history = await indicatorHistoryHandler.findOne(id)
+  if (history) {
+    return history
+  }
 
-    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
-      QueueEntityType.INDICATOR_HISTORY,
-      id,
-      QueueOperation.DELETE
-    )
-
-    if (isQueuedForDeletion) {
-      return null
-    }
-
-    if (!SyncService.isEnabled) {
-      return null
-    }
-
-    const response = await fetch(`/api/indicator/history/${id}`)
-    if (!response.ok) {
-      console.error(`Failed to fetch indicator history ${id} from remote:`, response.status)
-      return null
-    }
-
-    const remoteHistory = await response.json()
-    try {
-      await indicatorHistoryHandler.create(remoteHistory)
-    } catch (error) {
-      console.error('Error creating indicator history:', error)
-    }
-    return remoteHistory
-  } catch (error) {
-    console.error(`Error fetching indicator history ${id}:`, error)
+  if (!SyncService.isEnabled) {
     return null
   }
+
+  const response = await fetch(`/api/indicator/history/${id}`)
+  if (!response.ok) {
+    console.error(`Failed to fetch indicator history ${id} from remote:`, response.status)
+    return null
+  }
+
+  const remoteHistory = await response.json()
+  try {
+    await indicatorHistoryHandler.create(remoteHistory)
+  } catch (error) {
+    console.error('Error creating indicator history:', error)
+  }
+  return remoteHistory
 }
 
 const getByPlanId = async (planId: string, sequence?: number, status = Status.ACTIVE): Promise<IndicatorHistoryExtended[]> => {
   const histories = await indicatorHistoryHandler.findMany({ planId, status }, { sequence })
-
   if (histories?.length > 0) {
     return histories as IndicatorHistoryExtended[]
   }
@@ -74,23 +88,22 @@ const getByPlanId = async (planId: string, sequence?: number, status = Status.AC
   if (sequence !== undefined) url.searchParams.append('sequence', sequence.toString())
   url.searchParams.append('status', status)
 
-  const remoteHistories = await fetch(url.toString())
-    .then(response => response.json())
-
-  const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.INDICATOR_HISTORY)
-  if (filteredHistories.length > 0) {
-    try {
-      await indicatorHistoryHandler.createMany(filteredHistories)
-    } catch (error) {
-      console.error('Error creating indicator histories:', error)
-    }
+  const response = await fetch(url.toString())
+  if (!response.ok) {
+    return []
   }
-  return filteredHistories
+
+  const remoteHistories = await response.json()
+  try {
+    await indicatorHistoryHandler.createMany(remoteHistories)
+  } catch (error) {
+    console.error('Error creating indicator histories:', error)
+  }
+  return remoteHistories
 }
 
 const getByGoalId = async (goalId: string, sequence?: number, status = Status.ACTIVE): Promise<IndicatorHistoryExtended[]> => {
   const histories = await indicatorHistoryHandler.findManyByGoalId({ goalId, status }, { sequence })
-
   if (histories?.length > 0) {
     return histories as IndicatorHistoryExtended[]
   }
@@ -104,30 +117,57 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
   if (sequence !== undefined) url.searchParams.append('sequence', sequence.toString())
   url.searchParams.append('status', status)
 
-  const remoteHistories = await fetch(url.toString())
-    .then(response => response.json())
-
-  const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.INDICATOR_HISTORY)
-  if (filteredHistories.length > 0) {
-    try {
-      await indicatorHistoryHandler.createMany(filteredHistories)
-    } catch (error) {
-      console.error('Error creating indicator histories:', error)
-    }
+  const response = await fetch(url.toString())
+  if (!response.ok) {
+    return []
   }
-  return filteredHistories
+
+  const remoteHistories = await response.json()
+  try {
+    await indicatorHistoryHandler.createMany(remoteHistories)
+  } catch (error) {
+    console.error('Error creating indicator histories:', error)
+  }
+  return remoteHistories
 }
 
 const update = async (id: string, history: Prisma.IndicatorHistoryUpdateInput): Promise<Partial<IndicatorHistory>> => {
   const parsedData = PartialIndicatorHistorySchema.parse(history)
-  await indicatorHistoryHandler.update(id, parsedData as IndicatorHistory)
-  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY, id, QueueOperation.UPDATE, { ...parsedData, id })
-  return { ...parsedData, id }
+
+  if (!SyncService.isEnabled) {
+    await indicatorHistoryHandler.update(id, parsedData as IndicatorHistory)
+    return { ...parsedData, id }
+  }
+
+  const response = await fetch(`/api/indicator/history/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to update indicator history')
+  }
+
+  await indicatorHistoryHandler.update(id, parsedData)
+  return parsedData
 }
 
 const deleteItem = async (id: string): Promise<void> => {
+  if (!SyncService.isEnabled) {
+    await indicatorHistoryHandler.delete(id)
+    return
+  }
+
+  const response = await fetch(`/api/indicator/history/${id}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to delete indicator history')
+  }
+
   await indicatorHistoryHandler.delete(id)
-  await SyncService.queueForSync(QueueEntityType.INDICATOR_HISTORY, id, QueueOperation.DELETE, id)
 }
 
 export const IndicatorHistoryService = {

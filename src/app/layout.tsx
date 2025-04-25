@@ -12,7 +12,6 @@ import { AccountProvider } from '@/app/providers/useAccountContext'
 import { Toaster } from '@/components/ui/toaster'
 import PlanLayout from '@/app/layout/PlanLayout'
 import { MixpanelProvider } from '@/app/providers/MixpanelProvider'
-import { SyncManager } from '@/components/SyncManager'
 import { AuthProvider } from '@/app/providers/AuthContext'
 
 const geistSans = Geist({
@@ -52,7 +51,6 @@ export default function RootLayout({
                 <Provider>
                   <AccountProvider>
                     <PlanProvider>
-                      <SyncManager />
                       <PlanLayout>
                         <Box margin="0 2rem 5rem">
                           <Grid templateRows="10% auto" height="100vh">

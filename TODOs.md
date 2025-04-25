@@ -1,4 +1,52 @@
 # Post Release
+- 🚨 FIX Sync/login Bug 🚨
+- Test Claude implementation
+
+
+
+
+for each method here remove ALL the  SyncService.queueForSync and SyncService.filterQueuedForDeletion calls and add a validation to check the SyncService.isEnabled
+if it is not enabled, then get the data drom dexie and return it, if there are no results then return null, else return the data from the api call. and for the post and put make sure to save to dexie if SyncService.isEnabled is NOT enabled and if it is, then make sure to create/update the record before saving changes to dexie
+
+Error updating goals
+Cannot set properties of undefined (setting 'onerror')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 - Integrate templates
 - Integrate progress page
 - Improve the plan view and colors and reuse component in step4

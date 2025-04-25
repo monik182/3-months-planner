@@ -11,7 +11,6 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import Link from 'next/link'
-import { SyncIndicator } from '@/components/SyncIndicator'
 import { clearDatabase } from '@/db/dexieHandler'
 import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthContext'
@@ -69,7 +68,6 @@ export function Header() {
           />
         )}
         <Flex gap="5px" alignItems="center">
-          <SyncIndicator />
           <Flex gap="1rem" alignItems="center">
             {showCreatePlanButton && (
               <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>

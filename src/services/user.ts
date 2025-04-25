@@ -1,5 +1,4 @@
 import { ENABLE_CLOUD_SYNC } from '@/app/constants'
-import { QueueEntityType, QueueOperation } from '@/app/types/types'
 import { userHandler } from '@/db/dexieHandler'
 import { PartialUserSchema } from '@/lib/validators/user'
 import { SyncService } from '@/services/sync'
@@ -98,25 +97,46 @@ const getByAuth0Id = async (id: string): Promise<User | null> => {
     return user
   }
 
-  if (!ENABLE_CLOUD_SYNC) {
+  if (!SyncService.isEnabled) {
     return null
   }
 
-  const remoteUser = await fetch(`/api/user/auth0/${id}`).then(response => response.json())
+  const response = await fetch(`/api/user/auth0/${id}`)
+  if (!response.ok) {
+    return null
+  }
+
+  const remoteUser = await response.json()
   try {
     await userHandler.create(remoteUser)
   } catch (error) {
-    console.error('Error updating user:', error)
+    console.error('Error creating user:', error)
   }
   return remoteUser
 }
 
 const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial<User>> => {
   const parsedData = PartialUserSchema.parse(user)
+
+  if (!SyncService.isEnabled) {
+    await userHandler.update(id, parsedData)
+    return { ...parsedData, id }
+  }
+
+  const response = await fetch(`/api/user/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to update user')
+  }
+
   await userHandler.update(id, parsedData)
-  await SyncService.queueForSync(QueueEntityType.USER, id, QueueOperation.UPDATE, { ...parsedData, id })
   return { ...parsedData, id }
 }
+
 
 export const UserService = {
   get,

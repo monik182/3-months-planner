@@ -1,66 +1,80 @@
 import { strategyHistoryHandler } from '@/db/dexieHandler'
-import { StrategyHistoryExtended, QueueEntityType, QueueOperation, Status } from '@/app/types/types'
+import { StrategyHistoryExtended, Status } from '@/app/types/types'
 import { Prisma, StrategyHistory } from '@prisma/client'
 import { StrategyHistorySchema, PartialStrategyHistorySchema, StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
 import { SyncService } from '@/services/sync'
 
 const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<StrategyHistory> => {
   const parsedData = StrategyHistorySchema.parse(data)
+
+  if (!SyncService.isEnabled) {
+    await strategyHistoryHandler.create(parsedData)
+    return parsedData
+  }
+
+  const response = await fetch('/api/strategy/history', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create strategy history')
+  }
+
   await strategyHistoryHandler.create(parsedData)
-  await SyncService.queueForSync(QueueEntityType.STRATEGY_HISTORY, parsedData.id, QueueOperation.CREATE, parsedData)
   return parsedData
 }
 
 const createBulk = async (histories: Prisma.StrategyHistoryCreateManyInput[]): Promise<StrategyHistory[]> => {
   const parsedData = StrategyHistoryNoStrategyArraySchema.parse(histories)
+
+  if (!SyncService.isEnabled) {
+    await strategyHistoryHandler.createMany(parsedData)
+    return parsedData
+  }
+
+  const response = await fetch('/api/strategy/history/bulk', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create strategy histories')
+  }
+
   await strategyHistoryHandler.createMany(parsedData)
-  await SyncService.queueForSync(QueueEntityType.STRATEGY_HISTORY_BULK, 'bulk', QueueOperation.CREATE, histories)
   return parsedData
 }
 
 const get = async (id: string): Promise<StrategyHistory | null> => {
-  try {
-    const history = await strategyHistoryHandler.findOne(id)
-    if (history) {
-      return history
-    }
+  const history = await strategyHistoryHandler.findOne(id)
+  if (history) {
+    return history
+  }
 
-    const isQueuedForDeletion = await SyncService.isItemQueuedForOperation(
-      QueueEntityType.STRATEGY_HISTORY,
-      id,
-      QueueOperation.DELETE
-    )
-
-    if (isQueuedForDeletion) {
-      return null
-    }
-
-    if (!SyncService.isEnabled) {
-      return null
-    }
-
-    const response = await fetch(`/api/strategy/history/${id}`)
-    if (!response.ok) {
-      console.error(`Failed to fetch strategy history ${id} from remote:`, response.status)
-      return null
-    }
-
-    const remoteHistory = await response.json()
-    try {
-      await strategyHistoryHandler.create(remoteHistory)
-    } catch (error) {
-      console.error('Error creating strategy history:', error)
-    }
-    return remoteHistory
-  } catch (error) {
-    console.error(`Error fetching strategy history ${id}:`, error)
+  if (!SyncService.isEnabled) {
     return null
   }
+
+  const response = await fetch(`/api/strategy/history/${id}`)
+  if (!response.ok) {
+    console.error(`Failed to fetch strategy history ${id} from remote:`, response.status)
+    return null
+  }
+
+  const remoteHistory = await response.json()
+  try {
+    await strategyHistoryHandler.create(remoteHistory)
+  } catch (error) {
+    console.error('Error creating strategy history:', error)
+  }
+  return remoteHistory
 }
 
 const getByPlanId = async (planId: string, sequence?: string, status = Status.ACTIVE): Promise<StrategyHistoryExtended[]> => {
   const histories = await strategyHistoryHandler.findMany({ planId, status }, {}, sequence)
-
   if (histories?.length > 0) {
     return histories as StrategyHistoryExtended[]
   }
@@ -74,23 +88,22 @@ const getByPlanId = async (planId: string, sequence?: string, status = Status.AC
   if (sequence !== undefined) url.searchParams.append('sequence', sequence)
   url.searchParams.append('status', status)
 
-  const remoteHistories = await fetch(url.toString())
-    .then(response => response.json())
-
-  const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.STRATEGY_HISTORY)
-  if (filteredHistories.length > 0) {
-    try {
-      await strategyHistoryHandler.createMany(filteredHistories)
-    } catch (error) {
-      console.error('Error creating strategy histories:', error)
-    }
+  const response = await fetch(url.toString())
+  if (!response.ok) {
+    return []
   }
-  return filteredHistories
+
+  const remoteHistories = await response.json()
+  try {
+    await strategyHistoryHandler.createMany(remoteHistories)
+  } catch (error) {
+    console.error('Error creating strategy histories:', error)
+  }
+  return remoteHistories
 }
 
 const getByGoalId = async (goalId: string, sequence?: number, status = Status.ACTIVE): Promise<StrategyHistoryExtended[]> => {
   const histories = await strategyHistoryHandler.findManyByGoalId({ goalId, status }, { sequence })
-
   if (histories?.length > 0) {
     return histories as StrategyHistoryExtended[]
   }
@@ -104,30 +117,57 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
   if (sequence !== undefined) url.searchParams.append('sequence', sequence.toString())
   url.searchParams.append('status', status)
 
-  const remoteHistories = await fetch(url.toString())
-    .then(response => response.json())
-
-  const filteredHistories = await SyncService.filterQueuedForDeletion(remoteHistories, QueueEntityType.STRATEGY_HISTORY)
-  if (filteredHistories.length > 0) {
-    try {
-      await strategyHistoryHandler.createMany(filteredHistories)
-    } catch (error) {
-      console.error('Error creating strategy histories:', error)
-    }
+  const response = await fetch(url.toString())
+  if (!response.ok) {
+    return []
   }
-  return filteredHistories
+
+  const remoteHistories = await response.json()
+  try {
+    await strategyHistoryHandler.createMany(remoteHistories)
+  } catch (error) {
+    console.error('Error creating strategy histories:', error)
+  }
+  return remoteHistories
 }
 
 const update = async (id: string, history: Prisma.StrategyHistoryUpdateInput): Promise<Partial<StrategyHistory>> => {
   const parsedData = PartialStrategyHistorySchema.parse(history)
-  await strategyHistoryHandler.update(id, parsedData as StrategyHistory)
-  await SyncService.queueForSync(QueueEntityType.STRATEGY_HISTORY, id, QueueOperation.UPDATE, { ...parsedData, id })
-  return { ...parsedData, id }
+
+  if (!SyncService.isEnabled) {
+    await strategyHistoryHandler.update(id, parsedData as StrategyHistory)
+    return { ...parsedData, id }
+  }
+
+  const response = await fetch(`/api/strategy/history/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to update strategy history')
+  }
+
+  await strategyHistoryHandler.update(id, parsedData)
+  return parsedData
 }
 
 const deleteItem = async (id: string): Promise<void> => {
+  if (!SyncService.isEnabled) {
+    await strategyHistoryHandler.delete(id)
+    return
+  }
+
+  const response = await fetch(`/api/strategy/history/${id}`, {
+    method: 'DELETE',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to delete strategy history')
+  }
+
   await strategyHistoryHandler.delete(id)
-  await SyncService.queueForSync(QueueEntityType.STRATEGY_HISTORY, id, QueueOperation.DELETE, id)
 }
 
 export const StrategyHistoryService = {

@@ -5,7 +5,6 @@ import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
 import { SyncStatus, UserExtended } from '@/app/types/types'
 import { Role } from '@prisma/client'
 import { SyncService } from '@/services/sync'
-import { userPreferencesHandler } from '@/db/dexieHandler'
 import { validateUserExists } from '@/services/sync/shared'
 import { useAuth } from '@/app/providers/AuthContext'
 import cuid from 'cuid'
@@ -19,7 +18,6 @@ type AccountContextType = {
   syncInitialized: boolean
   syncStatus: SyncStatus
   userActions: UseUserActions
-  triggerSync: () => Promise<void>
 }
 
 const AccountContext = createContext<AccountContextType | undefined>(
@@ -68,7 +66,6 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     total: 0
   })
 
-  const initialSyncAttempted = useRef(false)
   const userUpdateAttempted = useRef(false)
 
   const updateSyncStatus = async () => {
@@ -85,22 +82,17 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     try {
-      const preferences = await userPreferencesHandler.findOne(user.id)
       
-      if (!preferences?.hasSynced) {
-        console.log(`Initiating first-time sync for user ${user.id}`)
-        // First ensure user exists
-        await validateUserExists(user.id)
-        
-        const result = await SyncService.performFirstTimeSync(user.id)
-        if (!result.success) {
-          console.error(`First-time sync failed: ${result.error}`)
-        }
-      } else {
-        await SyncService.processSyncQueue()
+      console.log(`Initiating first-time sync for user ${user.id}`)
+      await validateUserExists(user.id)
+      setSyncInitialized(true)
+      
+      const result = await SyncService.performFirstTimeSync(user.id)
+      if (!result.success) {
+        console.error(`First-time sync failed: ${result.error}`)
       }
       
-      setSyncInitialized(true)
+      
       updateSyncStatus()
     } catch (error) {
       console.error('Error during initial sync:', error)
@@ -123,8 +115,9 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
           ...user,
           auth0Id,
         }, {
-          onSuccess() {
-            triggerSync()
+          onSuccess: async () => {
+            await SyncService.cleanupSyncQueue()
+            await triggerSync()
             userUpdateAttempted.current = false
           },
         })
@@ -137,33 +130,6 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     updateUserWithAuth0Id()
   }, [auth0Id, user, userActions, userLocal, isLoading, isLoggedIn, isNewUser])
 
-  useEffect(() => {
-    if (!isLoggedIn || !SyncService.isEnabled || initialSyncAttempted.current || userUpdateAttempted.current) return
-
-    initialSyncAttempted.current = true
-    triggerSync()
-
-  }, [user, isLoggedIn])
-
-  useEffect(() => {
-    if (!SyncService.isEnabled || !syncInitialized) return
-
-    const statusInterval = setInterval(() => {
-      updateSyncStatus()
-    }, 10000)
-
-    return () => clearInterval(statusInterval)
-  }, [syncInitialized])
-
-  useEffect(() => {
-    if (!SyncService.isEnabled || !syncInitialized) return
-
-    const cleanupInterval = setInterval(() => {
-      SyncService.cleanupSyncQueue()
-    }, 24 * 60 * 60 * 1000)
-
-    return () => clearInterval(cleanupInterval)
-  }, [syncInitialized])
 
   if (isLoading) {
     return (
@@ -184,7 +150,6 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
         syncEnabled: SyncService.isEnabled && isLoggedIn,
         syncInitialized,
         syncStatus,
-        triggerSync,
       }}
     >
       {children}

@@ -3,11 +3,9 @@ import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { Plan, Prisma } from '@prisma/client'
 import { SyncService } from '@/services/sync'
 import { dexieToPlan, planToDexie } from '@/app/util'
-import { QueueEntityType, QueueOperation } from '@/app/types/types'
 
 const getByUserId = async (userId: string): Promise<Plan | null> => {
   const planLocal = await planHandler.findInProgress(userId)
-
   if (planLocal) {
     return dexieToPlan(planLocal)
   }
@@ -34,8 +32,23 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
 
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
   const parsedData = PlanSchema.parse(data)
+
+  if (!SyncService.isEnabled) {
+    await planHandler.create(planToDexie(parsedData))
+    return parsedData
+  }
+
+  const response = await fetch('/api/plan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to create plan')
+  }
+
   await planHandler.create(planToDexie(parsedData))
-  await SyncService.queueForSync(QueueEntityType.PLAN, parsedData.id, QueueOperation.CREATE, parsedData)
   return parsedData
 }
 
@@ -49,7 +62,12 @@ const get = async (id: string): Promise<Plan | null> => {
     return null
   }
 
-  const remotePlan = await fetch(`/api/plan/${id}`).then(response => response.json())
+  const response = await fetch(`/api/plan/${id}`)
+  if (!response.ok) {
+    return null
+  }
+
+  const remotePlan = await response.json()
   try {
     await planHandler.create(planToDexie(remotePlan))
   } catch (error) {
@@ -71,23 +89,37 @@ const getAll = async (userId: string): Promise<Plan[]> => {
   const response = await fetch(`/api/plan/all?userId=${userId}`, {
     method: 'GET',
   })
-  const plan = await response.json()
-  if (plan?.length > 0) {
+  const remotePlans = await response.json()
+  if (remotePlans?.length > 0) {
     try {
-      await planHandler.createMany(plan.map(planToDexie))
+      await planHandler.createMany(remotePlans.map(planToDexie))
     } catch (error) {
       console.error('Error creating plans:', error)
     }
   }
-  return plan
+  return remotePlans
 }
 
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
   const parsedData = PartialPlanSchema.parse(plan)
-  const planLocal = await planHandler.findOne(id)
-  await planHandler.update(id, planToDexie({ ...planLocal, ...parsedData } as Plan))
-  await SyncService.queueForSync(QueueEntityType.PLAN, id, QueueOperation.UPDATE, { ...parsedData, id })
-  return { ...parsedData, id }
+
+  if (!SyncService.isEnabled) {
+    await planHandler.update(id, planToDexie({ ...parsedData, id } as Plan))
+    return { ...parsedData, id }
+  }
+
+  const response = await fetch(`/api/plan/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(parsedData),
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to update plan')
+  }
+
+  await planHandler.update(id, planToDexie(parsedData as Plan))
+  return parsedData
 }
 
 export const PlanService = {
