@@ -1,5 +1,5 @@
 'use client'
-import { Flex, HStack, Heading, Separator, Text } from '@chakra-ui/react'
+import { Flex, HStack, Heading, IconButton, Separator, Text } from '@chakra-ui/react'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { usePathname, useRouter } from 'next/navigation'
 import { Avatar } from './ui/avatar'
@@ -43,8 +43,7 @@ export function Header() {
     setValue(pageMap[pathname])
   }, [pathname])
 
-  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
+  const handleLogout = async () => {
     await clearDatabase()
     await signOut()
     router.push('/')
@@ -82,14 +81,15 @@ export function Header() {
               size="xs"
             />
             {!!session && SyncService.isEnabled && (
-              <Link 
-                href="/api/auth/logout" 
+              <IconButton 
+                size="xs"
+                variant="ghost"
                 onClick={handleLogout} 
                 className="flex flex-col justify-center items-center gap-2"
               >
                 <SlLogout /> 
                 <Text textStyle="xs">Logout</Text>
-              </Link>
+              </IconButton>
             )}
           </Flex>
           {!session && SyncService.isEnabled && (
