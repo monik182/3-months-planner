@@ -47,7 +47,6 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
         role: Role.GUEST,
         email: supabaseUser?.email || '',
         waitlistId: null,
-        auth0Id,
       } as UserExtended
     }
     if (!userByAuthId?.id) {
