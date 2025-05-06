@@ -4,7 +4,6 @@ import './globals.css'
 import { Provider } from '@/components/ui/provider'
 import { Box, Grid, GridItem } from '@chakra-ui/react'
 import { Header } from '@/components/Header'
-import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { ReactQueryProvider } from './providers/ReactQueryProvider'
 import { PlanProvider } from '@/app/providers/usePlanContext'
 import { Extra } from '@/components/Extra'
@@ -46,26 +45,24 @@ export default function RootLayout({
       >
         <MixpanelProvider>
           <AuthProvider>
-            <UserProvider>
-              <ReactQueryProvider>
-                <Provider>
-                  <AccountProvider>
-                    <PlanProvider>
-                      <PlanLayout>
-                        <Box margin="0 2rem 5rem">
-                          <Grid templateRows="10% auto" height="100vh">
-                            <GridItem><Header /></GridItem>
-                            <GridItem overflow="auto">{children}</GridItem>
-                          </Grid>
-                        </Box>
-                      </PlanLayout>
-                    </PlanProvider>
-                    <Extra />
-                  </AccountProvider>
-                  <Toaster />
-                </Provider>
-              </ReactQueryProvider>
-            </UserProvider>
+            <ReactQueryProvider>
+              <Provider>
+                <AccountProvider>
+                  <PlanProvider>
+                    <PlanLayout>
+                      <Box margin="0 2rem 5rem">
+                        <Grid templateRows="10% auto" height="100vh">
+                          <GridItem><Header /></GridItem>
+                          <GridItem overflow="auto">{children}</GridItem>
+                        </Grid>
+                      </Box>
+                    </PlanLayout>
+                  </PlanProvider>
+                  <Extra />
+                </AccountProvider>
+                <Toaster />
+              </Provider>
+            </ReactQueryProvider>
           </AuthProvider>
         </MixpanelProvider>
       </body>

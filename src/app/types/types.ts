@@ -1,5 +1,5 @@
-import { UserProfile } from '@auth0/nextjs-auth0/client'
 import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory, User } from '@prisma/client'
+import { User as UserProfile } from '@supabase/supabase-js'
 
 // FIXME: will this be the final enums?
 export enum Status {
@@ -53,7 +53,7 @@ export interface ParentProps {
   status?: string
 }
 
-export type UserExtended = User & Pick<UserProfile, 'sub' | 'picture'>
+export type UserExtended = User & Pick<UserProfile['user_metadata'], 'sub' | 'picture'>
 
 export enum QueueOperation {
   CREATE = 'post',

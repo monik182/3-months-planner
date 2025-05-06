@@ -1,51 +1,18 @@
+# URGENT BUGS
+- Fix edit strategy sequences
+- Create all 12 weeks for each strategy history
+- Fix cross browser sync - when login in another browser the data is not synced
+- Simplify BE
+- Optimize dashboard get requests
+  - Improve cache use
+  - Remove indexed db code, not needed?
+- Fix "random" redirect to plan/new
+- Remove auth0 code ✅
+
+
+
 # Post Release
-- 🚨 FIX Sync/login Bug 🚨
-- Test Claude implementation
-
-
-
-
-for each method here remove ALL the  SyncService.queueForSync and SyncService.filterQueuedForDeletion calls and add a validation to check the SyncService.isEnabled
-if it is not enabled, then get the data drom dexie and return it, if there are no results then return null, else return the data from the api call. and for the post and put make sure to save to dexie if SyncService.isEnabled is NOT enabled and if it is, then make sure to create/update the record before saving changes to dexie
-
-Error updating goals
-Cannot set properties of undefined (setting 'onerror')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+- Add password login? Or another auth provider?
 
 - Integrate templates
 - Integrate progress page
@@ -271,3 +238,5 @@ with persistance will come success
   - Simplify Auth and Account providers
   - Replace Auth0 with Supabase auth 🚨 ✅
   - Fix new email/password user flow - register to user db ✅
+- 🚨 FIX Sync/login Bug 🚨 ✅
+- Test Claude implementation ❌
