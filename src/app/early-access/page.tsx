@@ -31,7 +31,7 @@ function EarlyAccess(props: WithTokenPageProps) {
     create.mutate(newUser, {
       onSuccess: () => {
         if (SyncService.isEnabled) {
-          router.push('/login')
+          router.push('/signup')
           return
         }
         router.replace('/plan/new')
