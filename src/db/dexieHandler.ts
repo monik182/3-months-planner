@@ -286,20 +286,25 @@ export const userPreferencesHandler = {
 }
 
 export const clearDatabase = async () => {
-  await Promise.all([
-    db.plans.clear(),
-    db.goals.clear(),
-    db.goalHistory.clear(),
-    db.strategies.clear(),
-    db.strategyHistory.clear(),
-    db.indicators.clear(),
-    db.indicatorHistory.clear(),
-    db.notifications.clear(),
-    db.users.clear(),
-    db.waitlist.clear(),
-    db.syncQueue.clear(),
-    db.userPreferences.clear(),
-  ])
+  try {
+    await Promise.all([
+      db.plans.clear(),
+      db.goals.clear(),
+      db.goalHistory.clear(),
+      db.strategies.clear(),
+      db.strategyHistory.clear(),
+      db.indicators.clear(),
+      db.indicatorHistory.clear(),
+      db.notifications.clear(),
+      db.users.clear(),
+      db.waitlist.clear(),
+      db.syncQueue.clear(),
+      db.userPreferences.clear(),
+    ]);
+    console.log("Database cleared.");
+  } catch (error) {
+    console.error("Failed to clear database:", error);
+  }
 }
 
 function getList<T>(table: Table<T>): Table<T>

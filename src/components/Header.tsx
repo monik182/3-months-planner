@@ -45,8 +45,13 @@ export function Header() {
 
   const handleLogout = async () => {
     await clearDatabase()
-    await signOut()
+    Object.keys(localStorage).forEach((key) => {
+      if (key.startsWith('sb-')) {
+        localStorage.removeItem(key);
+      }
+    })
     router.push('/')
+    await signOut()
     window.location.reload()
   }
 
