@@ -2,15 +2,17 @@
 import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
 import withAuth from '@/app/hoc/withAuth'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { getCurrentWeekFromStartDate } from '@/app/util'
+import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
+import { SavingSpinner } from '@/components/SavingSpinner'
 import { Button } from '@/components/ui/button'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { Box, Card, Center, Container, Flex, HStack, Heading, Spinner, Stat, Text, VStack } from '@chakra-ui/react'
+import { Box, Card, Center, Container, Flex, HStack, Heading, Separator, Spacer, Spinner, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
 import dayjs from 'dayjs'
+import { useState } from 'react'
 import { LuCalendarDays } from 'react-icons/lu'
 
 function PlanV2Page() {
-  const { plan, isLoading } = usePlanContext()
+  const { plan, isLoading, planActions } = usePlanContext()
   const { planScore } = useDashboardContext()
   const startOfYPlan = dayjs(plan?.startDate).format('MMMM, DD YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('MMMM, DD YYYY')
@@ -18,6 +20,19 @@ function PlanV2Page() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
   const week = hasNotStarted ? 1 : currentWeek
+  const [editing, setEditing] = useState(false)
+  const [vision, setVision] = useState(plan?.vision || '')
+  const update = planActions.useUpdate()
+
+  const handleSave = () => {
+    setEditing(false)
+    update.mutate({ planId: plan!.id, updates: { vision } })
+  }
+
+  const handleCancel = () => {
+    setEditing(false)
+    setVision(plan!.vision)
+  }
 
   if (isLoading) {
     return (
@@ -69,10 +84,33 @@ function PlanV2Page() {
               <Card.Description>
                 Dare to dream without limits. Picture a future where you've achieved everything you’ve ever desired. Be bold and dream unapologetically—this is your life, your vision, your legacy. What passions have you followed fearlessly? What does fulfillment look like in your career, relationships, and personal growth? Envision a life where every choice you make aligns with your deepest values and aspirations. Let your imagination run free, embrace your wildest ambitions, and create a vision that excites and motivates you every day. Dream as if failure isn’t an option, and let your boldness pave the way.
               </Card.Description>
+              <Spacer />
+              {editing || update.isPending ? (
+                <Textarea
+                  autoresize
+                  size="xl"
+                  variant="subtle"
+                  value={vision}
+                  readOnly={update.isPending}
+                  onChange={(e) => setVision(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e, handleSave)}
+                  placeholder="Think big. What are the dreams you’ve always wanted to pursue? How would your life look if you reached your full potential? Be bold and dream unapologetically."
+                />
+              ) : (
+                  <Text fontSize="sm">{plan.vision}</Text>
+              )}
+
+              <SavingSpinner loading={update.isPending} />
             </Card.Body>
             <Card.Footer justifyContent="flex-end">
-              <Button>Save</Button>
-              <Button variant="ghost">Edit</Button>
+              {editing || update.isPending ? (
+                <>
+                  <Button variant="outline" onClick={handleCancel} disabled={update.isPending}>Cancel</Button>
+                  <Button onClick={handleSave} disabled={update.isPending}>Save</Button>
+                </>
+              ) : (
+                <Button variant="ghost" onClick={() => setEditing(true)}>Edit</Button>
+              )} 
             </Card.Footer>
           </Card.Root>
         </Box>

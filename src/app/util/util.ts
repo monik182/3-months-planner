@@ -126,3 +126,9 @@ export function planToDexie(plan: Plan): DexiePlan {
     started: Number(Boolean(plan.started))
   }
 }
+
+export function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, callback: () => void) {
+  if (event.code === 'Enter' || event.key === 'Enter') {
+    callback()
+  }
+}
