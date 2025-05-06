@@ -15,6 +15,7 @@ type DashboardContextType = {
   isLoadingStrategies: boolean,
   isLoadingIndicators: boolean,
   weeklyScores: number[],
+  planScore: number,
   overallGoalScores: Map<string, number>,
   overallStrategyScores: Map<string, number>,
   goals: GoalHistoryExtended[] | undefined,
@@ -44,7 +45,7 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
   const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading
   const isRefetching = goals.isRefetching || strategies.isRefetching || indicators.isRefetching
 
-  const { strategiesByGoal, indicatorsByGoal, weeklyScores, overallGoalScores, overallStrategyScores } = useMemo(() => {
+  const { strategiesByGoal, indicatorsByGoal, weeklyScores, overallGoalScores, overallStrategyScores, planScore } = useMemo(() => {
     const strategiesByGoal = new Map<string, StrategyHistoryExtended[]>()
     const indicatorsByGoal = new Map<string, IndicatorHistoryExtended[]>()
     const goalScores = new Map()
@@ -94,10 +95,14 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
       return weekScores
     })
 
+    // Calculate the average plan score
+    const planScore = Math.floor(weeklyScores.reduce((acc, score) => acc + score, 0) / weeklyScores.length)
+
     return {
       strategiesByGoal,
       indicatorsByGoal,
       weeklyScores,
+      planScore,
       overallGoalScores: goalScores,
       overallStrategyScores: strategyScores,
     }
@@ -125,6 +130,7 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
         strategies: strategies.data,
         indicators: indicators.data,
         weeklyScores,
+        planScore,
         overallGoalScores,
         overallStrategyScores,
         isLoading,

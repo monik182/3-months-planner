@@ -1,0 +1,93 @@
+'use client'
+import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
+import withAuth from '@/app/hoc/withAuth'
+import { usePlanContext } from '@/app/providers/usePlanContext'
+import { getCurrentWeekFromStartDate } from '@/app/util'
+import { Button } from '@/components/ui/button'
+import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
+import { Box, Card, Center, Container, Flex, HStack, Heading, Spinner, Stat, Text, VStack } from '@chakra-ui/react'
+import dayjs from 'dayjs'
+import { LuCalendarDays } from 'react-icons/lu'
+
+function PlanV2Page() {
+  const { plan, isLoading } = usePlanContext()
+  const { planScore } = useDashboardContext()
+  const startOfYPlan = dayjs(plan?.startDate).format('MMMM, DD YYYY')
+  const endOfYPlan = dayjs(plan?.endDate).format('MMMM, DD YYYY')
+  const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 0
+  const hasNotStarted = currentWeek <= 0
+  const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
+  const week = hasNotStarted ? 1 : currentWeek
+
+  if (isLoading) {
+    return (
+      <Center height="100vh">
+        <Spinner size="xl" />
+      </Center>
+    )
+  }
+
+  if (!plan) return null
+
+  return (
+    <Container padding="10px">
+      <Flex gap="20px" direction="column">
+        <Box shadow="lg" padding="20px" borderRadius="sm" border="none" className="flex gap-5 flex-col">
+          <Flex justifyContent="space-between">
+            <VStack gap="2" align="start">
+              <Heading size="2xl">My Plan</Heading>
+              <HStack gap="2">
+                <LuCalendarDays /> 
+                <Text fontWeight="light" fontSize="sm">{startOfYPlan} to {endOfYPlan}</Text>
+              </HStack>
+            </VStack>
+            <HStack gap="2">
+              <Stat.Root maxW="300px" borderWidth="1px" p="4" rounded="md">
+                <HStack justify="space-between">
+                  <Stat.Label>Current Week</Stat.Label>
+                </HStack>
+                <Stat.ValueText>{currentWeek}/12</Stat.ValueText>
+              </Stat.Root>
+              <Stat.Root maxW="300px" borderWidth="1px" p="4" rounded="md">
+                <HStack justify="space-between">
+                  <Stat.Label>Progress</Stat.Label>
+                </HStack>
+                <Stat.ValueText>{planScore}%</Stat.ValueText>
+              </Stat.Root>
+            </HStack>
+          </Flex>
+            <ProgressRoot colorPalette="yellow" value={progressValue}>
+              <HStack gap="5">
+                <ProgressBar flex="1" />
+                <ProgressValueText>{week}/12</ProgressValueText>
+              </HStack>
+            </ProgressRoot>
+          <Card.Root>
+            <Card.Body gap="2">
+              {/* TODO: change to this year's vision? */}
+              <Card.Title mt="2">Define your long term vision</Card.Title>
+              <Card.Description>
+                Dare to dream without limits. Picture a future where you've achieved everything you’ve ever desired. Be bold and dream unapologetically—this is your life, your vision, your legacy. What passions have you followed fearlessly? What does fulfillment look like in your career, relationships, and personal growth? Envision a life where every choice you make aligns with your deepest values and aspirations. Let your imagination run free, embrace your wildest ambitions, and create a vision that excites and motivates you every day. Dream as if failure isn’t an option, and let your boldness pave the way.
+              </Card.Description>
+            </Card.Body>
+            <Card.Footer justifyContent="flex-end">
+              <Button>Save</Button>
+              <Button variant="ghost">Edit</Button>
+            </Card.Footer>
+          </Card.Root>
+        </Box>
+        <Box shadow="lg" padding="20px" borderRadius="sm" border="none">Tracking here</Box>
+      </Flex>
+    </Container>
+  )
+}
+
+function PlanV2WithContext() {
+  return (
+    <DashboardProvider>
+      <PlanV2Page />
+    </DashboardProvider>
+  )
+}
+
+export default withAuth(PlanV2WithContext)
