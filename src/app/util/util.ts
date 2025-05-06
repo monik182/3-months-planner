@@ -55,11 +55,10 @@ export function formatDate(date: Date | string, format = 'DD MMM') {
 export function createGoalHistoryList(planId: string, goals: Goal[]): Prisma.GoalHistoryCreateManyInput[] {
   return goals.map((goal) => {
     return DEFAULT_WEEKS.map((week) => {
-      const sequence = parseInt(week)
       return {
         planId,
         goalId: goal.id,
-        sequence,
+        sequence: parseInt(week),
       }
     })
   }).flat()
@@ -67,11 +66,10 @@ export function createGoalHistoryList(planId: string, goals: Goal[]): Prisma.Goa
 
 export function createStrategyHistoryList(planId: string, strategies: Strategy[]): Prisma.StrategyHistoryCreateManyInput[] {
   return strategies.map((strategy) => {
-    return strategy.weeks.map((week) => {
-      const sequence = parseInt(week)
+    return DEFAULT_WEEKS.map((week) => {
       return {
         planId,
-        sequence,
+        sequence: parseInt(week),
         strategyId: strategy.id,
         firstUpdate: null,
         lastUpdate: null,
@@ -83,10 +81,9 @@ export function createStrategyHistoryList(planId: string, strategies: Strategy[]
 export function createIndicatorHistoryList(planId: string, indicators: Indicator[]): Prisma.IndicatorHistoryCreateManyInput[] {
   return indicators?.map((indicator) => {
     return DEFAULT_WEEKS.map((week) => {
-      const sequence = parseInt(week)
       return {
         planId,
-        sequence,
+        sequence: parseInt(week),
         indicatorId: indicator.id,
         value: 0,
       }
