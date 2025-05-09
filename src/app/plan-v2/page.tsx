@@ -6,9 +6,10 @@ import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Button } from '@/components/ui/button'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { Box, Card, Center, Container, Flex, HStack, Heading, Separator, Spacer, Spinner, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
+import { Box, Card, Center, Collapsible, Container, Flex, HStack, Heading, Separator, Spacer, Spinner, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { useState } from 'react'
+import { HiChevronDown, HiChevronUp } from 'react-icons/hi'
 import { LuCalendarDays } from 'react-icons/lu'
 
 function PlanV2Page() {
@@ -23,6 +24,11 @@ function PlanV2Page() {
   const [editing, setEditing] = useState(false)
   const [vision, setVision] = useState(plan?.vision || '')
   const update = planActions.useUpdate()
+  const [detailsOpen, setDetailsOpen] = useState(false)
+
+  const toggleDetails = () => {
+    setDetailsOpen(!detailsOpen)
+  }
 
   const handleSave = () => {
     setEditing(false)
@@ -52,7 +58,7 @@ function PlanV2Page() {
             <VStack gap="2" align="start">
               <Heading size="2xl">My Plan</Heading>
               <HStack gap="2">
-                <LuCalendarDays /> 
+                <LuCalendarDays />
                 <Text fontWeight="light" fontSize="sm">{startOfYPlan} to {endOfYPlan}</Text>
               </HStack>
             </VStack>
@@ -71,12 +77,12 @@ function PlanV2Page() {
               </Stat.Root>
             </HStack>
           </Flex>
-            <ProgressRoot colorPalette="yellow" value={progressValue}>
-              <HStack gap="5">
-                <ProgressBar flex="1" />
-                <ProgressValueText>{week}/12</ProgressValueText>
-              </HStack>
-            </ProgressRoot>
+          <ProgressRoot colorPalette="yellow" value={progressValue}>
+            <HStack gap="5">
+              <ProgressBar flex="1" />
+              <ProgressValueText>{week}/12</ProgressValueText>
+            </HStack>
+          </ProgressRoot>
           <Card.Root>
             <Card.Body gap="2">
               {/* TODO: change to this year's vision? */}
@@ -97,7 +103,7 @@ function PlanV2Page() {
                   placeholder="Think big. What are the dreams you’ve always wanted to pursue? How would your life look if you reached your full potential? Be bold and dream unapologetically."
                 />
               ) : (
-                  <Text fontSize="sm">{plan.vision}</Text>
+                <Text fontSize="sm">{plan.vision}</Text>
               )}
 
               <SavingSpinner loading={update.isPending} />
@@ -110,8 +116,30 @@ function PlanV2Page() {
                 </>
               ) : (
                 <Button variant="ghost" onClick={() => setEditing(true)}>Edit</Button>
-              )} 
+              )}
             </Card.Footer>
+          </Card.Root>
+          <Card.Root>
+            <Card.Body gap="2">
+              <Card.Title mt="2">Goals</Card.Title>
+              <Card.Description>
+                <GoalDescription open={detailsOpen} onToggle={toggleDetails} />
+              </Card.Description>
+              {/* TODO: Goals section */}
+              <section>
+
+              </section>
+            </Card.Body>
+            {/* <Card.Footer justifyContent="flex-end">
+              {editing || update.isPending ? (
+                <>
+                  <Button variant="outline" onClick={handleCancel} disabled={update.isPending}>Cancel</Button>
+                  <Button onClick={handleSave} disabled={update.isPending}>Save</Button>
+                </>
+              ) : (
+                <Button variant="ghost" onClick={() => setEditing(true)}>Edit</Button>
+              )}
+            </Card.Footer> */}
           </Card.Root>
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">Tracking here</Box>
@@ -129,3 +157,39 @@ function PlanV2WithContext() {
 }
 
 export default withAuth(PlanV2WithContext)
+
+function GoalDescription({ open, onToggle }: { open: boolean, onToggle: () => void }) {
+  return (
+    <div className="text-gray-700">
+      <Text textStyle="sm">Goals are the building blocks of your vision. They start with a clear action verb and are written as complete sentences.</Text>
+
+      <Collapsible.Root open={open}>
+        <Collapsible.Trigger
+          onClick={onToggle}
+          className="flex items-center text-sm text-gray-600 hover:text-gray-900 mt-2 mb-1"
+        >
+          {open ? 'Show less' : 'Show more'}
+          {open ? <HiChevronUp size={16} className="ml-1" /> : <HiChevronDown size={16} className="ml-1" />}
+        </Collapsible.Trigger>
+
+        <Collapsible.Content className="text-sm space-y-2">
+          <Text textStyle="sm">To create effective goals, follow these criteria:</Text>
+
+          <ul className="list-disc pl-5 space-y-1">
+            <li><Text textStyle="sm"><strong>Specific and Measurable:</strong> Clearly define what you want to achieve and how progress will be measured.</Text></li>
+            <li><Text textStyle="sm"><strong>Positive Framing:</strong> Write goals as affirmations of what you will accomplish.</Text></li>
+            <li><Text textStyle="sm"><strong>Realistic Ambition:</strong> Set goals that are challenging yet attainable.</Text></li>
+            <li><Text textStyle="sm"><strong>Time-Bound:</strong> Tie each goal to a specific due date.</Text></li>
+          </ul>
+
+          <Text textStyle="sm" className="italic">Focus on no more than three goals at a time for maximum effectiveness.</Text>
+
+          <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mt-2">
+            <Text textStyle="sm" className="font-medium">Example:</Text>
+            <Text textStyle="sm">Instead of "Stop procrastinating," write "Complete my weekly project tasks by Friday."</Text>
+          </div>
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </div>
+  )
+}
