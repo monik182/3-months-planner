@@ -1,25 +1,36 @@
 # URGENT BUGS
-- Fix edit strategy sequences
-- Create all 12 weeks for each strategy history
-- Fix cross browser sync - when login in another browser the data is not synced
-- Simplify BE
+- Login issues? - Joel's email
+- Duplicated goals? - Joel's email
+
+
 - Optimize dashboard get requests
   - Improve cache use
   - Remove indexed db code, not needed?
+
+- Fix cross browser sync - when login in another browser the data is not synced [WIP]
+  * Haven't been able to reproduce it consistently, but it's happening
+- Simplify BE
 - Fix "random" redirect to plan/new
+- Create all 12 weeks for each strategy history ✅
 - Remove auth0 code ✅
+- Fix edit strategy sequences ❓ (not sure if already fixed)
 
 
 
 # Post Release
-- Add password login? Or another auth provider?
-
 - Integrate templates
 - Integrate progress page
 - Improve the plan view and colors and reuse component in step4
 - Improve the goals/strategies/indicator creation forms
 - Integrate AI suggestions
 - Improve HOME page with steps and everything
+- Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
+- In strategies, create 7 checkboxes, one for each day, and let the user select the days they worked on it
+- Add reflection section for each week
+- Unify colors
+
+Print: 🔥
+- Create printable templates for the weekly score tracking
 
 
 
@@ -124,9 +135,6 @@ Time blocking:
 - Buffer blocks: 1 or 2 daily, 30 min - 1 hour -> low level activities
 - Breakout blocks: once a month, 3 hours
 - Week 13: Celebrate last year achievements/last opportunity to close last year's goals/**Plan next year**
-
-Print: 🔥
-- Create printable templates for the weekly score tracking
 
 
 # ####################

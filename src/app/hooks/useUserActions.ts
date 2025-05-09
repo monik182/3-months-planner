@@ -26,13 +26,6 @@ export function useUserActions() {
     })
   }
 
-  const useGetLocal = () => {
-    return useQuery({
-      queryKey: [QUERY_KEY],
-      queryFn: () => UserService.getLocal(),
-    })
-  }
-
   const useGetByEmail = (email: string) => {
     return useQuery({
       queryKey: [QUERY_KEY, { email }],
@@ -63,7 +56,6 @@ export function useUserActions() {
     useCreate,
     useGet,
     useGetByEmail,
-    useGetLocal,
     useGetByAuth0Id,
     useUpdate,
   }

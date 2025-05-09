@@ -1,11 +1,10 @@
 'use client'
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useRef } from 'react'
 import { Center, Spinner } from '@chakra-ui/react'
 import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
-import { SyncStatus, UserExtended } from '@/app/types/types'
+import { UserExtended } from '@/app/types/types'
 import { Role } from '@prisma/client'
 import { SyncService } from '@/services/sync'
-import { validateUserExists } from '@/services/sync/shared'
 import { useAuth } from '@/app/providers/AuthContext'
 import cuid from 'cuid'
 
@@ -15,8 +14,6 @@ type AccountContextType = {
   isLoggedIn: boolean
   isLoading: boolean
   syncEnabled: boolean
-  syncInitialized: boolean
-  syncStatus: SyncStatus
   userActions: UseUserActions
 }
 
@@ -34,14 +31,13 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
   const auth0Id = supabaseUser?.user_metadata?.sub || supabaseUser?.id
   const userActions = useUserActions()
   const create = userActions.useCreate()
-  const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
+  // const { data: userLocal, isLoading: isLoadingUserLocal } = userActions.useGetLocal()
   const canFetchUserFromDB = isLoggedIn && SyncService.isEnabled
-  const { data: userByAuthId, isLoading: isLoadingUserData } = userActions.useGetByAuth0Id(auth0Id as string, canFetchUserFromDB)
-  const isLoading = isLoadingUserLocal || isLoadingUserData
+  const { data: userByAuthId, isLoading } = userActions.useGetByAuth0Id(auth0Id as string, canFetchUserFromDB)
   const user: UserExtended | null = useMemo(() => {
     if (!session || isLoading) return null
 
-    if (isNewUser && !userByAuthId && !userLocal) {
+    if (isNewUser && !userByAuthId) {
       return {
         id: cuid(),
         role: Role.GUEST,
@@ -49,61 +45,16 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
         waitlistId: null,
       } as UserExtended
     }
-    if (!userByAuthId?.id) {
-      return userLocal as UserExtended || null
-    } else {
-      return { ...userByAuthId, sub: auth0Id, picture: supabaseUser?.user_metadata?.picture } as UserExtended
-    }
-  }, [isNewUser, userByAuthId, auth0Id, supabaseUser, userLocal, isLoading, session])
+    return { ...userByAuthId, sub: auth0Id, picture: supabaseUser?.user_metadata?.picture } as UserExtended
+  }, [isNewUser, userByAuthId, auth0Id, supabaseUser, isLoading, session])
 
   const isGuest = user?.role === Role.GUEST
-  const [syncInitialized, setSyncInitialized] = useState(false)
-  const [syncStatus, setSyncStatus] = useState({
-    pending: 0,
-    processing: 0,
-    failed: 0,
-    total: 0
-  })
 
   const userUpdateAttempted = useRef(false)
 
-  const updateSyncStatus = async () => {
-    if (!SyncService.isEnabled) return
-
-    const status = await SyncService.getSyncQueueStatus()
-    setSyncStatus(status)
-  }
-
-  const triggerSync = async () => {
-    if (!SyncService.isEnabled || !isLoggedIn || !user?.auth0Id) return
-    
-    // Add delay to ensure auth is fully established
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    try {
-      
-      console.log(`Initiating first-time sync for user ${user.id}`)
-      await validateUserExists(user.id)
-      setSyncInitialized(true)
-      
-      const result = await SyncService.performFirstTimeSync(user.id)
-      if (!result.success) {
-        console.error(`First-time sync failed: ${result.error}`)
-      }
-      
-      
-      updateSyncStatus()
-    } catch (error) {
-      console.error('Error during initial sync:', error)
-      setSyncInitialized(false)
-    } finally {
-      setSyncInitialized(false)
-    }
-  }
-
   useEffect(() => {
     const updateUserWithAuth0Id = async () => {
-      if ((!isNewUser && !user) || (isLoading || !user || userUpdateAttempted.current || !isLoggedIn || !auth0Id || user?.auth0Id || userLocal?.auth0Id)) {
+      if ((!isNewUser && !user) || (isLoading || !user || userUpdateAttempted.current || !isLoggedIn || !auth0Id || user?.auth0Id)) {
         return
       }
 
@@ -115,8 +66,6 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
           auth0Id,
         }, {
           onSuccess: async () => {
-            await SyncService.cleanupSyncQueue()
-            await triggerSync()
             userUpdateAttempted.current = false
           },
         })
@@ -127,7 +76,7 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
     }
 
     updateUserWithAuth0Id()
-  }, [auth0Id, user, userActions, userLocal, isLoading, isLoggedIn, isNewUser])
+  }, [auth0Id, user, userActions, isLoading, isLoggedIn, isNewUser])
 
 
   if (isLoading) {
@@ -147,8 +96,6 @@ export const AccountProvider = ({ children }: AccountTrackingProviderProps) => {
         isLoading,
         userActions,
         syncEnabled: SyncService.isEnabled && isLoggedIn,
-        syncInitialized,
-        syncStatus,
       }}
     >
       {children}

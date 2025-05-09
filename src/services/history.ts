@@ -1,10 +1,11 @@
 import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList } from '@/app/util'
-import { goalHandler, goalHistoryHandler, indicatorHandler, indicatorHistoryHandler, strategyHandler, strategyHistoryHandler } from '@/db/dexieHandler'
 import { GoalHistoryNoGoalArraySchema } from '@/lib/validators/goalHistory'
 import { IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
+import { GoalService } from '@/services/goal'
+import { IndicatorService } from '@/services/indicator'
+import { StrategyService } from '@/services/strategy'
 import { Goal, GoalHistory, IndicatorHistory, StrategyHistory } from '@prisma/client'
-import { SyncService } from '@/services/sync'
 
 interface HistoryData {
   goalHistory: GoalHistory[]
@@ -17,15 +18,6 @@ const create = async (planId: string): Promise<HistoryData> => {
     const data = await parseData(planId)
     const { goalHistory, strategiesHistory, indicatorsHistory } = data
 
-    if (!SyncService.isEnabled) {
-      await Promise.all([
-        goalHistoryHandler.createMany(goalHistory),
-        strategyHistoryHandler.createMany(strategiesHistory),
-        indicatorHistoryHandler.createMany(indicatorsHistory),
-      ])
-      return data
-    }
-
     const response = await fetch('/api/history', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -35,12 +27,6 @@ const create = async (planId: string): Promise<HistoryData> => {
     if (!response.ok) {
       throw new Error('Failed to create history')
     }
-
-    await Promise.all([
-      goalHistoryHandler.createMany(goalHistory),
-      strategyHistoryHandler.createMany(strategiesHistory),
-      indicatorHistoryHandler.createMany(indicatorsHistory),
-    ])
 
     return { goalHistory, strategiesHistory, indicatorsHistory }
   } catch (error) {
@@ -54,9 +40,9 @@ export const HistoryService = {
 }
 
 async function parseData(planId: string): Promise<HistoryData> {
-  const goals = (await goalHandler.findMany({ planId })) || []
-  const strategies = (await strategyHandler.findMany({ planId })) || []
-  const indicators = (await indicatorHandler.findMany({ planId })) || []
+  const goals = await GoalService.getByPlanId(planId)
+  const strategies = await StrategyService.getByPlanId(planId)
+  const indicators = await IndicatorService.getByPlanId(planId)
 
   const goalHistory = GoalHistoryNoGoalArraySchema.parse(createGoalHistoryList(planId, goals as Goal[]))
   const strategiesHistory = StrategyHistoryNoStrategyArraySchema.parse(createStrategyHistoryList(planId, strategies))

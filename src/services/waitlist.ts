@@ -1,5 +1,3 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
-import { waitlistHandler } from '@/db/dexieHandler'
 import { Prisma, Waitlist } from '@prisma/client'
 
 const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> => {
@@ -15,19 +13,14 @@ const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> =
         throw new Error(error?.message || 'Failed to add user to waitlist')
       }
       const waitlist = await response.json()
-      await waitlistHandler.create(waitlist)
       return waitlist
     })
 }
 
 const getByToken = async (token: string): Promise<Waitlist | null> => {
-  if (ENABLE_CLOUD_SYNC) {
-    return fetch(`/api/waitlist/token/${token}`).then(response => response.json())
-  }
-
-  const response = await waitlistHandler.findOneByToken(token)
-  if (response) {
-    return response
+  const response = await fetch(`/api/waitlist/token/${token}`).then(response => response.json())
+  if (response.ok) {
+    return response.json()
   }
 
   return null
@@ -44,7 +37,6 @@ const update = async (id: string, waitlist: Prisma.WaitlistUpdateInput): Promise
       throw new Error('Failed to update waitlist')
     }
     const waitlist = await response.json()
-    await waitlistHandler.update(id, waitlist)
     return waitlist
   })
 }

@@ -15,7 +15,7 @@ export const validateUserExists = async (userId: string): Promise<boolean> => {
     }
 
     // If remote check fails, try to create from local
-    const localUser = await UserService.getLocal()
+    const localUser = await UserService.get(userId)
     if (!localUser) {
       throw new Error(`User with ID ${userId} not found locally`)
     }

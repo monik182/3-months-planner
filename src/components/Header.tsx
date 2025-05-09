@@ -11,7 +11,6 @@ import { SegmentedControl } from '@/components/ui/segmented-control'
 import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import Link from 'next/link'
-import { clearDatabase } from '@/db/dexieHandler'
 import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthContext'
 
@@ -44,7 +43,6 @@ export function Header() {
   }, [pathname])
 
   const handleLogout = async () => {
-    await clearDatabase()
     Object.keys(localStorage).forEach((key) => {
       if (key.startsWith('sb-')) {
         localStorage.removeItem(key);
