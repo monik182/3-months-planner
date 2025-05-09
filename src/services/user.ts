@@ -1,4 +1,3 @@
-import { ENABLE_CLOUD_SYNC } from '@/app/constants'
 import { PartialUserSchema } from '@/lib/validators/user'
 import { Prisma, User } from '@prisma/client'
 
