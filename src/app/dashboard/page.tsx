@@ -22,7 +22,7 @@ function Dashboard() {
   const endOfYPlan = dayjs(plan?.endDate).format('DD MMMM YYYY')
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 0
   const hasNotStarted = currentWeek <= 0
-  const progressValue = hasNotStarted ? 0 : currentWeek / 12 * 100
+  const progressValue = hasNotStarted ? 0 : Math.min((currentWeek / 12) * 100, 100);
   const week = hasNotStarted ? 1 : currentWeek
 
   if (isLoading) {
@@ -70,7 +70,7 @@ function Dashboard() {
         </EmptyState>
         :
         <Box marginTop="2rem">
-          <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle"  width="calc(100vw - 6rem)">
+          <Tabs.Root lazyMount unmountOnExit defaultValue={`tab-${currentWeek}`} fitted variant="subtle" width="calc(100vw - 6rem)">
             <Tabs.List
               overflowX="auto"
               whiteSpace="nowrap"
