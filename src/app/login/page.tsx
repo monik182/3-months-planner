@@ -1,43 +1,125 @@
 'use client';
-import React, { useEffect } from 'react';
-import { Auth } from '@supabase/auth-ui-react'
-import { ThemeSupa } from '@supabase/auth-ui-shared'
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/providers/AuthContext';
+
+import {
+  Box,
+  Button,
+  Input,
+  Alert,
+  VStack,
+  Heading,
+  Text,
+  Spinner,
+  Link as ChakraLink,
+  Field,
+} from '@chakra-ui/react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { login } from '@/services/auth';
+
+const formSchema = z.object({
+  email: z.email({ message: 'Please enter a valid email.' }),
+  password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
+});
+type FormValues = z.infer<typeof formSchema>;
 
 export default function Login() {
-  const { session, supabaseClient } = useAuth();
-  const navigate = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (session) {
-      navigate.push('/');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  const onSubmit = async (values: FormValues) => {
+    setIsLoading(true);
+    setError(null);
+
+    const formData = new FormData();
+    formData.append('email', values.email);
+    formData.append('password', values.password);
+
+    try {
+      const response = await login(formData);
+      console.log('response', response);
+      if (response.error) setError(response.error);
+    } finally {
+      setIsLoading(false);
     }
-  }, [session, navigate]);
+  };
 
   return (
-    <div className="container flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Welcome back</h2>
-          <p className="text-muted-foreground">Sign in to your account</p>
-        </div>
-        <Auth
-          supabaseClient={supabaseClient}
-          appearance={{
-            theme: ThemeSupa,
-            variables: {
-              default: {
-                colors: {
-                  brand: '#000',
-                  brandAccent: '#000',
-                },
-              },
-            },
-          }}
-          providers={['google']}
-        />
-      </div>
-    </div>
+    <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" px={4}>
+      <Box w="full" maxW="md" p={6} borderWidth={1} borderRadius="md" boxShadow="md">
+        <VStack gap={4} textAlign="center">
+          <Heading size="lg">Welcome back</Heading>
+          <Text color="gray.600">Sign in to your account</Text>
+        </VStack>
+
+        <Box my={4} borderTopWidth={1} borderColor="gray.300" />
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <VStack gap={4}>
+            <Field.Root invalid={!!errors.email}>
+              <Field.Label>Email</Field.Label>
+              <Input
+                placeholder="Your email address"
+                {...register('email')}
+                bg="white"
+              />
+              <Field.ErrorText>{errors.email && errors.email.message}</Field.ErrorText>
+            </Field.Root>
+
+            <Field.Root invalid={!!errors.password}>
+              <Field.Label>Password</Field.Label>
+              <Input
+                type="password"
+                placeholder="Your password"
+                {...register('password')}
+                bg="white"
+              />
+              <Field.ErrorText>{errors.password && errors.password.message}</Field.ErrorText>
+            </Field.Root>
+
+            <Button type="submit" disabled={isLoading} colorPalette="black" className="w-full">
+              {isLoading ? (
+                <Spinner size="sm" mr={2} />
+              ) : null}
+              {isLoading ? 'Signing in...' : 'Sign in'}
+            </Button>
+          </VStack>
+        </form>
+
+        {error && (
+          <Alert.Root status="error" mt={4} borderRadius="md">
+            <Alert.Indicator />
+            <Box flex="1">
+              <Alert.Title>Error Logging In</Alert.Title>
+              <Alert.Description display="block">{error}</Alert.Description>
+            </Box>
+          </Alert.Root>
+        )}
+
+        <VStack gap={2} mt={6} fontSize="sm">
+          <Link href="/recover-password" passHref>
+            <ChakraLink color="gray.500" _hover={{ textDecoration: 'underline' }}>
+              Forgot your password?
+            </ChakraLink>
+          </Link>
+          <Link href="/signup" passHref>
+            <ChakraLink color="gray.500" _hover={{ textDecoration: 'underline' }}>
+              Don&apos;t have an account? Sign up
+            </ChakraLink>
+          </Link>
+        </VStack>
+      </Box>
+    </Box>
   );
 }

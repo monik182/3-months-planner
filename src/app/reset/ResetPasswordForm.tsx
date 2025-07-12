@@ -19,16 +19,19 @@ import {
   VStack,
   Progress,
 } from '@chakra-ui/react';
-import { signup } from '@/services/auth';
 import { Tooltip } from '@/components/ui/tooltip';
 import { CiCircleInfo } from 'react-icons/ci';
+
+interface ResetPasswordFormProps {
+  token: string | null;
+  resetPassword: (formData: FormData) => Promise<{ error?: string }>;
+}
 
 // const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const passwordRequirements = /^.{8,}$/;
 
 export const formSchema = z
   .object({
-    email: z.email({ message: 'Please enter a valid email.' }),
     password: z
       .string()
       .min(8, { message: 'Password must be at least 8 characters.' })
@@ -46,7 +49,7 @@ export const formSchema = z
 const strengthColors = ['red.500', 'orange.400', 'yellow.400', 'green.500', 'green.700'];
 const strengthLabels = ['Very Weak', 'Weak', 'Fair', 'Strong', 'Very Strong'];
 
-export default function SignUpForm() {
+export default function ResetPasswordForm({ resetPassword, token }: ResetPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,7 +60,7 @@ export default function SignUpForm() {
     formState: { errors },
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: { email: '', password: '', confirmPassword: '' },
+    defaultValues: { password: '', confirmPassword: '' },
   });
 
   const password = watch('password');
@@ -75,13 +78,11 @@ export default function SignUpForm() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     setError(null);
-
     const formData = new FormData();
-    formData.append('email', values.email);
     formData.append('password', values.password);
 
     try {
-      const response = await signup(formData);
+      const response = await resetPassword(formData);
       if (response.error) {
         setError(response.error);
       }
@@ -90,43 +91,39 @@ export default function SignUpForm() {
     }
   };
 
+  // Clear transient errors
   useEffect(() => {
     if (error) {
-      const t = setTimeout(() => setError(null), 3000);
+      const t = setTimeout(() => setError(null), 5000);
       return () => clearTimeout(t);
     }
   }, [error]);
+
+  // Invalid token
+  useEffect(() => {
+    if (!token) {
+      setError(
+        'Email link is invalid or has expired. Please request a new password reset.'
+      );
+    }
+  }, [token]);
 
   return (
     <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" px={4}>
       <Box w="full" maxW="md" p={6} borderWidth={1} borderRadius="md" boxShadow="md">
         <Stack gap={6}>
-          {/* Header */}
           <Box textAlign="center">
             <Text fontSize="2xl" fontWeight="bold">
-              Create an account
+              Recover Password
             </Text>
-            <Text color="gray.600">Start your journey with us</Text>
+            <Text color="gray.600">Enter a new password for your account</Text>
           </Box>
 
           <Box borderTop="1px" borderColor="gray.300" />
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <Stack gap={6}>
-              {/* Email */}
-              <Field.Root invalid={!!errors.email}>
-                <Field.Label>Email</Field.Label>
-                <Input
-                  type="email"
-                  placeholder="Your email address"
-                  bg="white"
-                  {...register('email')}
-                />
-                <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
-              </Field.Root>
-
-              {/* Password */}
+              {/* Password Field */}
               <Field.Root invalid={!!errors.password}>
                 <Field.Label>
                   Password{' '}
@@ -134,8 +131,8 @@ export default function SignUpForm() {
                     content={
                       <Box fontSize="xs" textAlign="left">
                         Password must be at least 8 characters
-                        {/* and contain: */}
-                        {/* <Box as="ul" pl={4} mt={1}>
+                        {/* and contain:
+                        <Box as="ul" pl={4} mt={1} gap={1}>
                           <Box as="li">One lowercase letter</Box>
                           <Box as="li">One uppercase letter</Box>
                           <Box as="li">One digit</Box>
@@ -161,7 +158,7 @@ export default function SignUpForm() {
                     </Progress.Track>
                     <VStack align="start" gap="2">
                       <Progress.Label>{label}</Progress.Label>
-                      {feedback  && <Progress.ValueText>{feedback}</Progress.ValueText>}
+                      {feedback && <Progress.ValueText>{feedback}</Progress.ValueText>}
                     </VStack>
                   </Progress.Root>
                 )}
@@ -169,25 +166,32 @@ export default function SignUpForm() {
 
               {/* Confirm Password */}
               <Field.Root invalid={!!errors.confirmPassword}>
-                <Field.Label>Confirm password</Field.Label>
+                <Field.Label>Confirm Password</Field.Label>
                 <Input
                   type="password"
                   placeholder="Repeat your password"
                   bg="white"
                   {...register('confirmPassword')}
                 />
-                <Field.ErrorText>{errors.confirmPassword?.message}</Field.ErrorText>
+                <Field.ErrorText>
+                  {errors.confirmPassword?.message}
+                </Field.ErrorText>
               </Field.Root>
 
               {/* Submit */}
-              <Button type="submit" w="full" colorScheme="blue" disabled={isLoading}>
+              <Button
+                type="submit"
+                w="full"
+                colorScheme="blue"
+                disabled={isLoading || !token}
+              >
                 {isLoading ? (
                   <Stack direction="row" align="center" justify="center">
                     <Spinner size="sm" />
-                    <Text>Creating...</Text>
+                    <Text>Resetting password...</Text>
                   </Stack>
                 ) : (
-                  'Create account'
+                  'Reset Password'
                 )}
               </Button>
 
@@ -196,7 +200,7 @@ export default function SignUpForm() {
                 <Alert.Root status="error" borderRadius="md">
                   <Alert.Indicator />
                   <Box flex="1" textAlign="left">
-                    <Alert.Title>Error Creating Account</Alert.Title>
+                    <Alert.Title>Error Resetting Password</Alert.Title>
                     <Alert.Description>{error}</Alert.Description>
                   </Box>
                 </Alert.Root>
@@ -204,10 +208,12 @@ export default function SignUpForm() {
             </Stack>
           </form>
 
-          {/* Footer Link */}
-          <VStack>
-            <ChakraLink as={NextLink} href="/login" textAlign="center" color="gray.500" fontSize="sm">
+          <VStack gap={2} textAlign="center" fontSize="sm">
+            <ChakraLink as={NextLink} href="/login" color="gray.500">
               Already have an account? Sign in
+            </ChakraLink>
+            <ChakraLink as={NextLink} href="/signup" color="gray.500">
+              Don’t have an account? Sign up
             </ChakraLink>
           </VStack>
         </Stack>
