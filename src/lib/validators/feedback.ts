@@ -5,7 +5,7 @@ export const FeedbackSchema = z.object({
   id: z.string().default(() => cuid()),
   useId: z.string().optional(),
   feedback: z.string(),
-  email: z.string().email().optional(),
+  email: z.email().optional(),
   createdAt: z.date().default(() => new Date()),
 })
 

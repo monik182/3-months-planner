@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const WaitlistSchema = z.object({
   id: z.string().default(() => cuid()),
-  email: z.string().email(),
+  email: z.email(),
   name: z.string().optional(),
   inviteToken: z.string().default(() => cuid()).nullable(),
   position: z.number().int().default(0),

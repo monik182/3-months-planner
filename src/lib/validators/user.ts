@@ -5,7 +5,7 @@ import { z } from 'zod'
 export const UserSchema = z.object({
   id: z.string().default(() => cuid()),
   auth0Id: z.string().optional().nullable().default(null),
-  email: z.string().email(),
+  email: z.email(),
   role: z.nativeEnum(Role).default(Role.USER),
   waitlistId: z.string().optional().nullable().default(null),
   createdAt: z.preprocess((arg) => (typeof arg === 'string' ? new Date(arg) : arg), z.date()).default(() => new Date()),
