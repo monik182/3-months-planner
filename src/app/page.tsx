@@ -22,7 +22,7 @@ export default function Home() {
         <Heading as="h1" size={{ lg: "7xl", base: "4xl" }}>The Planner</Heading>
         <Flex flexDir="column" gap="1rem" alignItems="center">
           <Text>Stay Focused and Achieve More</Text>
-          <Button size="xl" onClick={() => router.push('/#wait-list')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
+          <Button size="xl" onClick={() => router.push('/signup')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
           <Text fontSize="xs">Already have an account?</Text>
         </Flex>
         <Button size="xs" onClick={() => router.push('/login')} variant="plain" textDecoration="underline">Login</Button>
@@ -33,9 +33,9 @@ export default function Home() {
       {/* <section className="page" id="pricing">
         Pricing... TBD
       </section> */}
-      <section className="page" id="wait-list">
+      {/* <section className="page" id="wait-list">
         <WaitListSection />
-      </section>
+      </section> */}
     </div>
   )
 }

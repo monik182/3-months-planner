@@ -29,6 +29,25 @@
 - Add reflection section for each week
 - Unify colors
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Print: 🔥
 - Create printable templates for the weekly score tracking
 

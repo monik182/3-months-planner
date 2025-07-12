@@ -25,7 +25,7 @@ export function Header() {
 
   const goToHome = () => {
     if (hasStartedPlan)
-    return router.push('/dashboard')
+      return router.push('/dashboard')
     router.push('/')
   }
 
@@ -77,20 +77,22 @@ export function Header() {
                 Create Plan
               </Button>
             )}
-            <Avatar
-              name="User"
-              shape="full"
-              src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
-              size="xs"
-            />
+            {!!session && (
+              <Avatar
+                name="User"
+                shape="full"
+                src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
+                size="xs"
+              />
+            )}
             {!!session && SyncService.isEnabled && (
-              <IconButton 
+              <IconButton
                 size="xs"
                 variant="ghost"
-                onClick={handleLogout} 
+                onClick={handleLogout}
                 className="flex flex-col justify-center items-center gap-2"
               >
-                <SlLogout /> 
+                <SlLogout />
                 <Text textStyle="xs">Logout</Text>
               </IconButton>
             )}

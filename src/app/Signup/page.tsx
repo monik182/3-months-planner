@@ -20,7 +20,7 @@ export default function Signup() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h2 className="text-2xl font-bold">Create an account</h2>
-          <p className="text-muted-foreground">Start your journey with QuarterFocus</p>
+          <p className="text-muted-foreground">Start your journey with The Planner</p>
         </div>
         <Auth
           supabaseClient={supabaseClient}
