@@ -11,13 +11,16 @@ import {
   Spinner,
   Link as ChakraLink,
   Field,
+  HStack,
+  Separator,
 } from '@chakra-ui/react';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { login } from '@/services/auth';
+import { OneTapComponent } from '@/components/OneTap';
 
 const formSchema = z.object({
   email: z.email({ message: 'Please enter a valid email.' }),
@@ -58,12 +61,18 @@ export default function Login() {
   return (
     <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" px={4}>
       <Box w="full" maxW="md" p={6} borderWidth={1} borderRadius="md" boxShadow="md">
-        <VStack gap={4} textAlign="center">
+        <VStack gap={4} textAlign="center" mb={4}>
           <Heading size="lg">Welcome back</Heading>
           <Text color="gray.600">Sign in to your account</Text>
         </VStack>
 
-        <Box my={4} borderTopWidth={1} borderColor="gray.300" />
+        <OneTapComponent context="signin" />
+
+        <HStack my={4}>
+          <Separator flex="1" />
+          <Text flexShrink="0" color="gray.500" fontSize="sm">or</Text>
+          <Separator flex="1" />
+        </HStack>
 
         <form onSubmit={handleSubmit(onSubmit)}>
           <VStack gap={4}>
@@ -108,16 +117,12 @@ export default function Login() {
         )}
 
         <VStack gap={2} mt={6} fontSize="sm">
-          <Link href="/recover-password" passHref>
-            <ChakraLink color="gray.500" _hover={{ textDecoration: 'underline' }}>
-              Forgot your password?
-            </ChakraLink>
-          </Link>
-          <Link href="/signup" passHref>
-            <ChakraLink color="gray.500" _hover={{ textDecoration: 'underline' }}>
-              Don&apos;t have an account? Sign up
-            </ChakraLink>
-          </Link>
+          <ChakraLink href="/recover-password" color="gray.500" _hover={{ textDecoration: 'underline' }} as={NextLink}>
+            Forgot your password?
+          </ChakraLink>
+          <ChakraLink href="/signup" color="gray.500" _hover={{ textDecoration: 'underline' }} as={NextLink}>
+            Don&apos;t have an account? Sign up
+          </ChakraLink>
         </VStack>
       </Box>
     </Box>

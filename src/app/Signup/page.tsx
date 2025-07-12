@@ -18,6 +18,8 @@ import {
   Field,
   VStack,
   Progress,
+  HStack,
+  Separator,
 } from '@chakra-ui/react';
 import { signup } from '@/services/auth';
 import { Tooltip } from '@/components/ui/tooltip';
@@ -94,119 +96,122 @@ export default function SignUpForm() {
   return (
     <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" px={4}>
       <Box w="full" maxW="md" p={6} borderWidth={1} borderRadius="md" boxShadow="md">
-        <Stack gap={6}>
-          {/* Header */}
-          <Box textAlign="center">
-            <Text fontSize="2xl" fontWeight="bold">
-              Create an account
-            </Text>
-            <Text color="gray.600">Start your journey with us</Text>
-          </Box>
+        {/* Header */}
+        <Box textAlign="center" mb={4}>
+          <Text fontSize="2xl" fontWeight="bold">
+            Create an account
+          </Text>
+          <Text color="gray.600">Start your journey with us</Text>
+        </Box>
 
-          <Box borderTop="1px" borderColor="gray.300" />
+        <OneTapComponent context="signup" />
 
-          {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack gap={6}>
-              {/* Email */}
-              <Field.Root invalid={!!errors.email}>
-                <Field.Label>Email</Field.Label>
-                <Input
-                  type="email"
-                  placeholder="Your email address"
-                  bg="white"
-                  {...register('email')}
-                />
-                <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
-              </Field.Root>
+        <HStack my={4}>
+          <Separator flex="1" />
+          <Text flexShrink="0" color="gray.500" fontSize="sm">or</Text>
+          <Separator flex="1" />
+        </HStack>
 
-              {/* Password */}
-              <Field.Root invalid={!!errors.password}>
-                <Field.Label>
-                  Password{' '}
-                  <Tooltip
-                    content={
-                      <Box fontSize="xs" textAlign="left">
-                        Password must be at least 8 characters
-                        {/* and contain: */}
-                        {/* <Box as="ul" pl={4} mt={1}>
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Stack gap={6}>
+            {/* Email */}
+            <Field.Root invalid={!!errors.email}>
+              <Field.Label>Email</Field.Label>
+              <Input
+                type="email"
+                placeholder="Your email address"
+                bg="white"
+                {...register('email')}
+              />
+              <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
+            </Field.Root>
+
+            {/* Password */}
+            <Field.Root invalid={!!errors.password}>
+              <Field.Label>
+                Password{' '}
+                <Tooltip
+                  content={
+                    <Box fontSize="xs" textAlign="left">
+                      Password must be at least 8 characters
+                      {/* and contain: */}
+                      {/* <Box as="ul" pl={4} mt={1}>
                           <Box as="li">One lowercase letter</Box>
                           <Box as="li">One uppercase letter</Box>
                           <Box as="li">One digit</Box>
                         </Box> */}
-                      </Box>
-                    }
-                  >
-                    <CiCircleInfo color="gray.500" cursor="pointer" />
-                  </Tooltip>
-                </Field.Label>
-                <Input
-                  type="password"
-                  placeholder="Your password"
-                  bg="white"
-                  {...register('password')}
-                />
-                <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
+                    </Box>
+                  }
+                >
+                  <CiCircleInfo color="gray.500" cursor="pointer" />
+                </Tooltip>
+              </Field.Label>
+              <Input
+                type="password"
+                placeholder="Your password"
+                bg="white"
+                {...register('password')}
+              />
+              <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
 
-                {password && (
-                  <Progress.Root value={progressValue} colorPalette={color.split('.')[0]} className="w-full mt-2">
-                    <Progress.Track>
-                      <Progress.Range />
-                    </Progress.Track>
-                    <VStack align="start" gap="2">
-                      <Progress.Label>{label}</Progress.Label>
-                      {feedback  && <Progress.ValueText>{feedback}</Progress.ValueText>}
-                    </VStack>
-                  </Progress.Root>
-                )}
-              </Field.Root>
-
-              {/* Confirm Password */}
-              <Field.Root invalid={!!errors.confirmPassword}>
-                <Field.Label>Confirm password</Field.Label>
-                <Input
-                  type="password"
-                  placeholder="Repeat your password"
-                  bg="white"
-                  {...register('confirmPassword')}
-                />
-                <Field.ErrorText>{errors.confirmPassword?.message}</Field.ErrorText>
-              </Field.Root>
-
-              {/* Submit */}
-              <Button type="submit" w="full" colorScheme="blue" disabled={isLoading}>
-                {isLoading ? (
-                  <Stack direction="row" align="center" justify="center">
-                    <Spinner size="sm" />
-                    <Text>Creating...</Text>
-                  </Stack>
-                ) : (
-                  'Create account'
-                )}
-              </Button>
-
-              {/* Error Alert */}
-              {error && (
-                <Alert.Root status="error" borderRadius="md">
-                  <Alert.Indicator />
-                  <Box flex="1" textAlign="left">
-                    <Alert.Title>Error Creating Account</Alert.Title>
-                    <Alert.Description>{error}</Alert.Description>
-                  </Box>
-                </Alert.Root>
+              {password && (
+                <Progress.Root value={progressValue} colorPalette={color.split('.')[0]} className="w-full mt-2">
+                  <Progress.Track>
+                    <Progress.Range />
+                  </Progress.Track>
+                  <VStack align="start" gap="2">
+                    <Progress.Label>{label}</Progress.Label>
+                    {feedback && <Progress.ValueText>{feedback}</Progress.ValueText>}
+                  </VStack>
+                </Progress.Root>
               )}
-            </Stack>
-          </form>
+            </Field.Root>
 
-          {/* Footer Link */}
-          <VStack>
-            <ChakraLink as={NextLink} href="/login" textAlign="center" color="gray.500" fontSize="sm">
-              Already have an account? Sign in
-            </ChakraLink>
-          </VStack>
-        </Stack>
+            {/* Confirm Password */}
+            <Field.Root invalid={!!errors.confirmPassword}>
+              <Field.Label>Confirm password</Field.Label>
+              <Input
+                type="password"
+                placeholder="Repeat your password"
+                bg="white"
+                {...register('confirmPassword')}
+              />
+              <Field.ErrorText>{errors.confirmPassword?.message}</Field.ErrorText>
+            </Field.Root>
+
+            {/* Submit */}
+            <Button type="submit" w="full" colorScheme="blue" disabled={isLoading}>
+              {isLoading ? (
+                <Stack direction="row" align="center" justify="center">
+                  <Spinner size="sm" />
+                  <Text>Creating...</Text>
+                </Stack>
+              ) : (
+                'Create account'
+              )}
+            </Button>
+
+            {/* Error Alert */}
+            {error && (
+              <Alert.Root status="error" borderRadius="md">
+                <Alert.Indicator />
+                <Box flex="1" textAlign="left">
+                  <Alert.Title>Error Creating Account</Alert.Title>
+                  <Alert.Description>{error}</Alert.Description>
+                </Box>
+              </Alert.Root>
+            )}
+          </Stack>
+        </form>
+
+        {/* Footer Link */}
+        <VStack>
+          <ChakraLink as={NextLink} href="/login" textAlign="center" color="gray.500" fontSize="sm">
+            Already have an account? Sign in
+          </ChakraLink>
+        </VStack>
       </Box>
-      <OneTapComponent />
     </Box>
   );
 }
