@@ -1,7 +1,7 @@
 'use client';
 
 import NextLink from 'next/link';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import zxcvbn from 'zxcvbn';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,6 +22,7 @@ import {
 import { signup } from '@/services/auth';
 import { Tooltip } from '@/components/ui/tooltip';
 import { CiCircleInfo } from 'react-icons/ci';
+import { OneTapComponent } from '@/components/OneTap';
 
 // const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const passwordRequirements = /^.{8,}$/;
@@ -89,13 +90,6 @@ export default function SignUpForm() {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (error) {
-      const t = setTimeout(() => setError(null), 3000);
-      return () => clearTimeout(t);
-    }
-  }, [error]);
 
   return (
     <Box minH="100vh" display="flex" alignItems="center" justifyContent="center" px={4}>
@@ -212,6 +206,7 @@ export default function SignUpForm() {
           </VStack>
         </Stack>
       </Box>
+      <OneTapComponent />
     </Box>
   );
 }
