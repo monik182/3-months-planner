@@ -206,7 +206,7 @@ export default function SignUpForm() {
         </form>
 
         {/* Footer Link */}
-        <VStack>
+        <VStack mt={6} fontSize="sm">
           <ChakraLink as={NextLink} href="/login" textAlign="center" color="gray.500" fontSize="sm">
             Already have an account? Sign in
           </ChakraLink>
