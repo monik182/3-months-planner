@@ -1,18 +1,22 @@
 'use client'
 import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
+import { GoalCard } from '@/app/plan-v2/GoalCard'
+import { GoalDialog } from '@/app/plan-v2/GoalDialog'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Button } from '@/components/ui/button'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { Box, Card, Collapsible, Container, Flex, HStack, Heading, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
+import { Box, Card, Collapsible, Container, Dialog, Flex, HStack, Heading, Portal, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
+import { Goal } from '@prisma/client'
+import cuid from 'cuid'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi'
-import { LuCalendarDays } from 'react-icons/lu'
+import { LuCalendarDays, LuPlus, LuTarget } from 'react-icons/lu'
 
 function PlanV2Page() {
-  const { plan, planActions } = usePlanContext()
+  const { plan, planActions, goalActions } = usePlanContext()
   const { planScore } = useDashboardContext()
   const startOfYPlan = dayjs(plan?.startDate).format('MMMM, DD YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('MMMM, DD YYYY')
@@ -23,7 +27,12 @@ function PlanV2Page() {
   const [editing, setEditing] = useState(false)
   const [vision, setVision] = useState(plan?.vision || '')
   const update = planActions.useUpdate()
+  const createGoal = goalActions.useCreate()
   const [detailsOpen, setDetailsOpen] = useState(false)
+  const [openDialog, setOpenDialog] = useState(false)
+  // const [newGoalContent, setNewGoalContent] = useState("");
+
+  const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id)
 
   const toggleDetails = () => {
     setDetailsOpen(!detailsOpen)
@@ -39,11 +48,26 @@ function PlanV2Page() {
     setVision(plan!.vision)
   }
 
+  const generateNewGoal = () => {
+    return {
+      id: cuid(),
+      planId: plan!.id,
+      content: '',
+    }
+  }
+
+  const handleCreateGoal = (newGoal: Goal) => {
+    createGoal.mutate({
+      ...newGoal,
+      plan: { connect: { id: plan!.id } },
+    })
+  };
+
   return (
     <Container padding="10px">
       <Flex gap="20px" direction="column">
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none" className="flex gap-5 flex-col">
-          <Flex justifyContent={{  base: 'flex-start', md: 'space-between' }} flexDirection={{ base: 'column', md: 'row' }}>
+          <Flex justifyContent={{ base: 'flex-start', md: 'space-between' }} flexDirection={{ base: 'column', md: 'row' }}>
             <VStack gap="2" align="start" mb="4">
               <Heading size="2xl">My Plan</Heading>
               <HStack gap="2">
@@ -115,24 +139,35 @@ function PlanV2Page() {
                 <GoalDescription open={detailsOpen} onToggle={toggleDetails} />
               </Card.Description>
               {/* TODO: Goals section */}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+                {goals.map((goal) => <GoalCard key={goal.id} goal={goal} />)}
+              </div>
               <section>
-
+                <Card.Root className="col-span-full border-dashed bg-muted/50">
+                  <Card.Body className="flex flex-col items-center justify-center py-10">
+                    <div className="text-center space-y-2">
+                      <LuTarget className="mx-auto h-8 w-8 text-muted-foreground" />
+                      <h3 className="font-semibold text-lg">No Goals Yet</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Create goals to track your progress over the next 12 weeks.
+                      </p>
+                      <Button
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => setOpenDialog(true)}
+                      >
+                        <LuPlus className="mr-2 h-4 w-4" /> Add Your First Goal
+                      </Button>
+                    </div>
+                  </Card.Body>
+                </Card.Root>
               </section>
             </Card.Body>
-            {/* <Card.Footer justifyContent="flex-end">
-              {editing || update.isPending ? (
-                <>
-                  <Button variant="outline" onClick={handleCancel} disabled={update.isPending}>Cancel</Button>
-                  <Button onClick={handleSave} disabled={update.isPending}>Save</Button>
-                </>
-              ) : (
-                <Button variant="ghost" onClick={() => setEditing(true)}>Edit</Button>
-              )}
-            </Card.Footer> */}
           </Card.Root>
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">Tracking here</Box>
       </Flex>
+      <GoalDialog open={openDialog} goal={generateNewGoal()} onOpenChange={setOpenDialog} onAddGoal={handleCreateGoal} />
     </Container>
   )
 }

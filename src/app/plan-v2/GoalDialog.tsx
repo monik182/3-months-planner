@@ -1,42 +1,44 @@
-import { Button, Dialog, Portal, Textarea } from '@chakra-ui/react';
+import { IndicatorList } from '@/components/GoalManager/Indicator/IndicatorList';
+import { StrategyList } from '@/components/GoalManager/Strategy/StrategyList';
+import { Button, Card, Dialog, Flex, Portal, Separator, Textarea, Text, Container, Box } from '@chakra-ui/react';
+import { Goal } from '@prisma/client';
+import cuid from 'cuid';
 import { useEffect, useState } from 'react';
+import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
+import { IoIosClose } from 'react-icons/io';
 
 interface GoalDialogProps {
   open: boolean;
-  content?: string;
+  goal: Goal;
   onOpenChange: (open: boolean) => void;
-  onAddGoal: (goal: string) => void;
+  onAddGoal: (goal: Goal) => void;
 }
 
-export function GoalDialog({ open, content, onOpenChange, onAddGoal }: GoalDialogProps) {
+export function GoalDialog({ open, goal, onOpenChange, onAddGoal }: GoalDialogProps) {
   const [newGoalContent, setNewGoalContent] = useState("");
   const [buttonText, setButtonText] = useState("Create Goal");
   const [title, setTitle] = useState("Create a New Goal");
 
   const handleSave = () => {
     if (newGoalContent.trim()) {
-      onAddGoal(newGoalContent);
+      onAddGoal({ ...goal, content: newGoalContent });
       setNewGoalContent("");
     }
+    // onOpenChange(false);
   };
 
   useEffect(() => {
     if (open) {
-      setNewGoalContent(content || "");
-      if (content) {
+      setNewGoalContent(goal.content || "");
+      if (goal.content) {
         setButtonText("Save Changes");
         setTitle("Edit Goal");
       }
     }
-  }, [open, content]);
+  }, [open, goal.content]);
 
   return (
     <Dialog.Root open={open} onOpenChange={({ open }) => onOpenChange(open)}>
-      {/* <Dialog.Trigger asChild>
-          <Button className="bg-quarterFocus-purple hover:bg-quarterFocus-purple-dark">
-            <LuPlus className="mr-2 h-4 w-4" /> Add Goal
-          </Button>
-        </Dialog.Trigger> */}
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
@@ -47,7 +49,7 @@ export function GoalDialog({ open, content, onOpenChange, onAddGoal }: GoalDialo
             </Dialog.Header>
             <Dialog.Body>
               <div className="space-y-4 py-4">
-                {!content && (
+                {!goal.content && (
                   <Dialog.Description>
                     Add a new goal to your 12-week plan. Keep it specific and achievable.
                   </Dialog.Description>
@@ -60,15 +62,29 @@ export function GoalDialog({ open, content, onOpenChange, onAddGoal }: GoalDialo
                     onChange={(e) => setNewGoalContent(e.target.value)}
                     placeholder="Enter your goal here..."
                     className="min-h-[100px]"
+                    onBlur={handleSave}
                   />
+                </div>
+                <div>
+                  <Box>
+                    <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
+                    <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} />
+                  </Box>
+                  <Separator my={4} />
+                  <Box>
+
+                    <Flex flexDirection="column" gap="1rem">
+                      <Text className="text-sm font-medium mb-2 text-gray-700">Progress Indicators</Text>
+                      <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} />
+                    </Flex>
+                  </Box>
                 </div>
               </div>
             </Dialog.Body>
             <Dialog.Footer>
               <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Cancel
+                Close
               </Button>
-              <Button onClick={handleSave}>{buttonText}</Button>
             </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Positioner>
