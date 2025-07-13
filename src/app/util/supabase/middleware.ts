@@ -37,19 +37,47 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/signup') &&
-    !request.nextUrl.pathname.startsWith('/reset') &&
-    !request.nextUrl.pathname.startsWith('/recover-password') &&
-    !request.nextUrl.pathname.startsWith('/auth')
-  ) {
+
+  const { pathname } = request.nextUrl
+
+  // define your protected/unprotected routes
+  const isAuthPage = ['/login', '/signup', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
+  const isDashboard = pathname.startsWith('/dashboard')
+  const isPlanNew = pathname === '/plan/new'
+
+  // 3) If no user → only allow auth pages
+  if (!user && !isAuthPage) {
     console.log('No user, redirecting to login', request.nextUrl.pathname)
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // 4) If user is logged in → block auth pages
+  if (user && isAuthPage) {
+    console.log('User, redirecting to dashboard', request.nextUrl.pathname)
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
+
+  // 5) For logged-in users, enforce plan logic
+  if (user) {
+    // fetch whether this user has a plan
+    const { data: plan } = await supabase
+      .from('plans')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    const hasPlan = Boolean(plan)
+
+    // 5a) no plan → only allow plan/new
+    if (!hasPlan && isDashboard) {
+      return NextResponse.redirect(new URL('/plan/new', request.url))
+    }
+
+    // 5b) has plan → block plan/new
+    if (hasPlan && isPlanNew) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
