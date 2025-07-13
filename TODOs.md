@@ -1,8 +1,9 @@
 # Auth integration
-- Create Trigger in Supabase to create user on signup
-- Clean up non needed sync code - auth0 related
-- Remove AuthContext (?)
+- Create Trigger in Supabase to create user on signup ✅
+- Clean up non needed sync code - auth0 related ✅
+- Remove AuthContext (?) ✅
 - Remove all redirect logic and validate the middleware is handling it correctly
+- Remove all prisma related code
 
 # URGENT BUGS
 - Login issues? - Joel's email

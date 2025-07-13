@@ -44,6 +44,18 @@ export async function signup(formData: FormData): Promise<{ error?: string }> {
   if (error) {
     // Log full error for debugging
     console.error('❌ Signup error:', error);
+    console.error('❌ Signup error code:', error.code);
+    console.error('❌ Signup error message:', error.message);
+
+    // Fallbacks based on status/message
+    if (error.status === 400 && error.message?.includes('already registered')) {
+      return { error: 'This email is already registered. Please sign in instead.' };
+    }
+    const isFetchFailure = error.message?.includes('fetch failed') || error.status === 0;
+
+    if (isFetchFailure) {
+      return { error: 'Network error. Please try again in a few seconds.' };
+    }
 
     // Return friendly messages based on known Supabase auth error codes
     switch (error.code) {
@@ -58,16 +70,6 @@ export async function signup(formData: FormData): Promise<{ error?: string }> {
         };
       default:
         break;
-    }
-
-    // Fallbacks based on status/message
-    if (error.status === 400 && error.message?.includes('already registered')) {
-      return { error: 'This email is already registered. Please sign in instead.' };
-    }
-    const isFetchFailure = error.message?.includes('fetch failed') || error.status === 0;
-
-    if (isFetchFailure) {
-      return { error: 'Network error. Please try again in a few seconds.' };
     }
 
     return { error: error.message || 'Something went wrong. Please try again.' };
@@ -142,4 +144,29 @@ export async function updatePassword(formData: FormData) {
 
   revalidatePath('/', 'layout');
   redirect('/dashboard');
+}
+
+export async function handleSignInWithGoogle(token: string, nonce = '') {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.auth.signInWithIdToken({
+    provider: 'google',
+    token,
+    nonce,
+  })
+
+  console.log('---------------------------data login in with google', data);
+
+  if (error) {
+    console.error('❌ Google sign in error:', error);
+    const isFetchFailure = error.message?.includes('fetch failed') || error.status === 0;
+
+    if (isFetchFailure) {
+      return { error: 'Network error. Please try again in a few seconds.' };
+    }
+    return { error: error.message || 'Failed to sign in with Google.' };
+  }
+
+  // revalidatePath('/', 'layout');
+  // redirect('/dashboard');
 }
