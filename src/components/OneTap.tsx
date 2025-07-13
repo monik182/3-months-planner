@@ -7,7 +7,12 @@ import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { generateNonce } from '@/app/util'
 
-export function OneTapComponent({ context }: { context: 'signin' | 'signup' }) {
+interface OneTapProps {
+  context: 'signin' | 'signup'
+  onError?: (error: string) => void
+}
+
+export function OneTap({ context, onError }: OneTapProps) {
   const supabase = createClient()
   const router = useRouter()
 
@@ -45,13 +50,15 @@ export function OneTapComponent({ context }: { context: 'signin' | 'signup' }) {
             })
 
             if (error) throw error
-            console.log('Session data: ', data)
+            console.log('-----Session data: ', data)
             console.log('Successfully logged in with Google One Tap')
 
             // redirect to protected page
             router.push('/')
           } catch (error) {
             console.error('Error logging in with Google One Tap', error)
+            console.error('Error logging in with Google One Tap', error.message)
+            onError?.(error.message)
           }
         },
         nonce: hashedNonce,

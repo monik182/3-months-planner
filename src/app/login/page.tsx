@@ -20,7 +20,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { login } from '@/services/auth';
-import { OneTapComponent } from '@/components/OneTap';
+import { OneTap } from '@/components/OneTap';
 
 const formSchema = z.object({
   email: z.email({ message: 'Please enter a valid email.' }),
@@ -66,7 +66,7 @@ export default function Login() {
           <Text color="gray.600">Sign in to your account</Text>
         </VStack>
 
-        <OneTapComponent context="signin" />
+        <OneTap context="signin" onError={setError} />
 
         <HStack my={4}>
           <Separator flex="1" />

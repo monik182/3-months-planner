@@ -24,7 +24,7 @@ import {
 import { signup } from '@/services/auth';
 import { Tooltip } from '@/components/ui/tooltip';
 import { CiCircleInfo } from 'react-icons/ci';
-import { OneTapComponent } from '@/components/OneTap';
+import { OneTap } from '@/components/OneTap';
 
 // const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const passwordRequirements = /^.{8,}$/;
@@ -104,7 +104,7 @@ export default function SignUpForm() {
           <Text color="gray.600">Start your journey with us</Text>
         </Box>
 
-        <OneTapComponent context="signup" />
+        <OneTap context="signup" onError={setError} />
 
         <HStack my={4}>
           <Separator flex="1" />
