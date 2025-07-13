@@ -5,7 +5,7 @@ import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Button } from '@/components/ui/button'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { Box, Card, Center, Collapsible, Container, Flex, HStack, Heading, Spacer, Spinner, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
+import { Box, Card, Collapsible, Container, Flex, HStack, Heading, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi'
@@ -38,16 +38,6 @@ function PlanV2Page() {
     setEditing(false)
     setVision(plan!.vision)
   }
-
-  // if (isLoading) {
-  //   return (
-  //     <Center height="100vh">
-  //       <Spinner size="xl" />
-  //     </Center>
-  //   )
-  // }
-
-  // if (!plan) return null
 
   return (
     <Container padding="10px">

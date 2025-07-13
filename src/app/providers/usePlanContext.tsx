@@ -12,7 +12,7 @@ import { Center, Spinner } from '@chakra-ui/react'
 import { useAuth } from '@/app/providers/AuthProvider'
 
 type PlanContextType = {
-  plan: Plan | null | undefined,
+  plan: Plan,
   hasPlan: boolean
   hasStartedPlan: boolean
   planActions: UsePlanActions
@@ -58,7 +58,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   return (
     <PlanContext.Provider
       value={{
-        plan,
+        plan: plan!,
         hasPlan,
         hasStartedPlan,
         planActions,

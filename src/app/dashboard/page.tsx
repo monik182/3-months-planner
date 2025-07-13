@@ -23,8 +23,6 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : Math.min((currentWeek / 12) * 100, 100);
   const week = hasNotStarted ? 1 : currentWeek
-  // // FIXME: if no plan then redirect to new plan
-  // if (!plan) return null
 
   return (
     <Grid>
