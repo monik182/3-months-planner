@@ -7,7 +7,7 @@ import { IoMdClose } from 'react-icons/io'
 import { useFeedbackActions } from '@/app/hooks/useFeedbackActions'
 import { Button } from '@/components/ui/button'
 import { CloseButton } from '@/components/ui/close-button'
-import { useAccountContext } from '@/app/providers/useAccountContext'
+import { useAuth } from '@/app/providers/AuthProvider'
 
 // const MAX_FILES = 3
 
@@ -16,7 +16,7 @@ export function FloatingFeedback() {
   const [feedback, setFeedback] = useState('')
   const [files, setFiles] = useState<File[]>([])
   const boxRef = useRef<HTMLDivElement>(null)
-  const { user } = useAccountContext()
+  const { user } = useAuth()
   const { useCreate } = useFeedbackActions()
   const create = useCreate()
   // const disableUpload = files.length >= MAX_FILES

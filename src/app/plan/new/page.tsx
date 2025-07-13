@@ -10,13 +10,13 @@ import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
-import { useAccountContext } from '@/app/providers/useAccountContext'
 import withAuth from '@/app/hoc/withAuth'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/app/providers/AuthProvider'
 
 function NewPlan() {
   const router = useRouter()
-  const { user } = useAccountContext()
+  const { user } = useAuth()
   const { planActions } = usePlanContext()
   const createPlan = planActions.useCreate()
   const [startDate, setStartDate] = useState<string | undefined>(formatDate(getPlanStartDate(), 'YYYY-MM-DD'))

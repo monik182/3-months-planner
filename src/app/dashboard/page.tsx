@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Center, Flex, Grid, HStack, Heading, Spinner, Tabs, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, Grid, HStack, Heading, Tabs, Text } from '@chakra-ui/react'
 import { getCurrentWeekFromStartDate } from '@/app/util'
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
@@ -15,7 +15,7 @@ import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboar
 
 function Dashboard() {
   const router = useRouter()
-  const { plan, isLoading } = usePlanContext()
+  const { plan } = usePlanContext()
   const { weeklyScores } = useDashboardContext()
   const today = dayjs().format('DD MMMM YYYY')
   const startOfYPlan = dayjs(plan?.startDate).format('DD MMMM YYYY')
@@ -24,15 +24,7 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : Math.min((currentWeek / 12) * 100, 100);
   const week = hasNotStarted ? 1 : currentWeek
-
-  if (isLoading) {
-    return (
-      <Center height="100vh">
-        <Spinner size="xl" />
-      </Center>
-    )
-  }
-
+  // FIXME: if no plan then redirect to new plan
   if (!plan) return null
 
   return (

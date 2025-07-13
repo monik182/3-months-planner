@@ -12,16 +12,18 @@ import { RxDashboard } from 'react-icons/rx'
 import { useAccountContext } from '@/app/providers/useAccountContext'
 import Link from 'next/link'
 import { SyncService } from '@/services/sync'
-import { useAuth } from '@/app/providers/AuthContext'
+import { useAuth } from '@/app/providers/AuthProvider'
+import { logout } from '@/services/auth'
 
 export function Header() {
-  const { user, isGuest } = useAccountContext()
-  const { session, signOut } = useAuth()
+  const { isGuest } = useAccountContext()
+  const { session, user } = useAuth()
   const { hasStartedPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
   const [value, setValue] = useState('plan')
   const showCreatePlanButton = !!user && !isGuest && !hasStartedPlan && pathname !== '/plan'
+  const userAvatar = user?.user_metadata?.picture || `https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=${user?.email?.split('@')[0] || user?.user_metadata?.name || 'Guest%20User'}`
 
   const goToHome = () => {
     if (hasStartedPlan)
@@ -49,7 +51,7 @@ export function Header() {
       }
     })
     router.push('/')
-    await signOut()
+    await logout()
     window.location.reload()
   }
 
@@ -65,7 +67,7 @@ export function Header() {
           <SegmentedControl
             size={{ base: "sm", lg: "lg" }}
             value={value}
-            onValueChange={(e) => handleOnChange(e.value)}
+            onValueChange={(e) => handleOnChange(e.value || '')}
             items={items}
           />
         )}
@@ -81,7 +83,7 @@ export function Header() {
               <Avatar
                 name="User"
                 shape="full"
-                src={user?.picture || 'https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=Guest%20User'}
+                src={userAvatar}
                 size="xs"
               />
             )}
