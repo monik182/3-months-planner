@@ -11,7 +11,8 @@ import { AccountProvider } from '@/app/providers/useAccountContext'
 import { Toaster } from '@/components/ui/toaster'
 import PlanLayout from '@/app/layout/PlanLayout'
 import { MixpanelProvider } from '@/app/providers/MixpanelProvider'
-import { AuthProvider } from '@/app/providers/AuthContext'
+import { getUser } from '@/app/util/auth'
+import { AuthProvider } from '@/app/providers/AuthProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,11 +33,13 @@ export const metadata: Metadata = {
   description: 'Achieve your goals faster with the 12-Week Year Plan Tracker. Create focused action plans, track progress weekly, and boost productivity—all in one place.',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
+  const user = await getUser();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -44,7 +47,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <MixpanelProvider>
-          <AuthProvider>
+          <AuthProvider initialUser={user}>
             <ReactQueryProvider>
               <Provider>
                 <AccountProvider>
