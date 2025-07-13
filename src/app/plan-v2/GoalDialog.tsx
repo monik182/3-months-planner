@@ -22,7 +22,7 @@ export function GoalDialog({ open, goal, onOpenChange, onAddGoal }: GoalDialogPr
   const handleSave = () => {
     if (newGoalContent.trim()) {
       onAddGoal({ ...goal, content: newGoalContent });
-      setNewGoalContent("");
+      // setNewGoalContent("");
     }
     // onOpenChange(false);
   };
