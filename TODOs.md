@@ -1,6 +1,12 @@
+# Auth integration
+- Create Trigger in Supabase to create user on signup
+- Clean up non needed sync code - auth0 related
+- Remove AuthContext (?)
+- Remove all redirect logic and validate the middleware is handling it correctly
+
 # URGENT BUGS
 - Login issues? - Joel's email
-- Duplicated goals? - Joel's email
+- Duplicated goals? - Joel's email - CANNOT REPRODUCE
 
 
 - Optimize dashboard get requests
