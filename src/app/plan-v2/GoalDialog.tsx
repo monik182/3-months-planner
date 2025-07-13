@@ -1,11 +1,11 @@
 import { IndicatorList } from '@/components/GoalManager/Indicator/IndicatorList';
 import { StrategyList } from '@/components/GoalManager/Strategy/StrategyList';
-import { Button, Card, Dialog, Flex, Portal, Separator, Textarea, Text, Container, Box } from '@chakra-ui/react';
+import { Button, Dialog, Flex, Portal, Separator, Textarea, Text, Box } from '@chakra-ui/react';
+import { CloseButton } from '@/components/ui/close-button';
 import { Goal } from '@prisma/client';
 import cuid from 'cuid';
 import { useEffect, useState } from 'react';
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
-import { IoIosClose } from 'react-icons/io';
 
 interface GoalDialogProps {
   open: boolean;
@@ -45,7 +45,13 @@ export function GoalDialog({ open, goal, onOpenChange, onAddGoal }: GoalDialogPr
           <Dialog.Content>
             <Dialog.Header>
               <Dialog.Title>{title}</Dialog.Title>
-
+              <CloseButton
+                size="sm"
+                position="absolute"
+                top="2"
+                right="2"
+                onClick={() => onOpenChange(false)}
+              />
             </Dialog.Header>
             <Dialog.Body>
               <div className="space-y-4 py-4">
