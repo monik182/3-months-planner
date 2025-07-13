@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { goalHistoryHandler } from '@/db/prismaHandler'
+import { goalHistoryHandler } from '@/db/supabaseHandler'
 
 export async function GET(request: NextRequest) {
   const goalId = request.nextUrl.searchParams.get('goalId') ?? undefined

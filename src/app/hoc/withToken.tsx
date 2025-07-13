@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
-import { Waitlist } from '@prisma/client'
+import { Waitlist } from '@/app/types/models'
 import { Center, Spinner } from '@chakra-ui/react'
 
 export interface WithTokenPageProps {

@@ -1,5 +1,5 @@
-import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
-import { Plan, Prisma } from '@prisma/client'
+import { PartialPlanSchema, PlanSchema, PlanSchemaType, PartialPlanSchemaType } from '@/lib/validators/plan'
+import { Plan } from '@/app/types/models'
 
 const getByUserId = async (userId: string): Promise<Plan | null> => {
   const response = await fetch(`/api/plan?userId=${userId}`, {
@@ -9,7 +9,7 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
   return remotePlan
 }
 
-const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
+const create = async (data: PlanSchemaType): Promise<Plan> => {
   const parsedData = PlanSchema.parse(data)
 
   const response = await fetch('/api/plan', {
@@ -43,7 +43,7 @@ const getAll = async (userId: string): Promise<Plan[]> => {
   return remotePlans
 }
 
-const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
+const update = async (id: string, plan: PartialPlanSchemaType): Promise<Partial<Plan>> => {
   const parsedData = PartialPlanSchema.parse(plan)
 
   const response = await fetch(`/api/plan/${id}`, {

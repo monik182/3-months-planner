@@ -1,8 +1,9 @@
 import { StrategyHistoryExtended, Status } from '@/app/types/types'
-import { Prisma, StrategyHistory } from '@prisma/client'
+import { StrategyHistory } from '@/app/types/models'
+import { StrategyHistorySchemaType, StrategyHistoryNoStrategyArraySchemaType, PartialStrategyHistorySchemaType } from '@/lib/validators/strategyHistory'
 import { StrategyHistorySchema, PartialStrategyHistorySchema, StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyHistory'
 
-const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<StrategyHistory> => {
+const create = async (data: StrategyHistorySchemaType): Promise<StrategyHistory> => {
   const parsedData = StrategyHistorySchema.parse(data)
 
   const response = await fetch('/api/strategy/history', {
@@ -18,7 +19,7 @@ const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<Strategy
   return parsedData
 }
 
-const createBulk = async (histories: Prisma.StrategyHistoryCreateManyInput[]): Promise<StrategyHistory[]> => {
+const createBulk = async (histories: StrategyHistoryNoStrategyArraySchemaType): Promise<StrategyHistory[]> => {
   const parsedData = StrategyHistoryNoStrategyArraySchema.parse(histories)
 
   const response = await fetch('/api/strategy/history/bulk', {
@@ -76,7 +77,7 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
   return remoteHistories
 }
 
-const update = async (id: string, history: Prisma.StrategyHistoryUpdateInput): Promise<Partial<StrategyHistory>> => {
+const update = async (id: string, history: PartialStrategyHistorySchemaType): Promise<Partial<StrategyHistory>> => {
   const parsedData = PartialStrategyHistorySchema.parse(history)
 
   const response = await fetch(`/api/strategy/history/${id}`, {

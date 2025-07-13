@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { planHandler } from '@/db/prismaHandler'
+import { planHandler } from '@/db/supabaseHandler'
 import { SegmentData } from '@/app/types/types'
 
 export async function DELETE(request: NextRequest, segmentData: SegmentData) {

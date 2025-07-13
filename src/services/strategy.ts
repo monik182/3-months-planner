@@ -1,5 +1,5 @@
-import { StrategyArraySchema, PartialStrategySchema, StrategyNoGoalSchema } from '@/lib/validators/strategy'
-import { Strategy, Prisma } from '@prisma/client'
+import { StrategyArraySchema, PartialStrategySchema, StrategyNoGoalSchema, StrategyArraySchemaType, PartialStrategySchemaType } from '@/lib/validators/strategy'
+import { Strategy } from '@/app/types/models'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Strategy): Promise<Strategy> => {
@@ -66,7 +66,7 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Stra
   return remoteStrategies
 }
 
-const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise<Partial<Strategy>> => {
+const update = async (id: string, strategy: PartialStrategySchemaType): Promise<Partial<Strategy>> => {
   const parsedData = PartialStrategySchema.parse(strategy)
 
   const response = await fetch(`/api/strategy/${id}`, {

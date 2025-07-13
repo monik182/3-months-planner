@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { strategyHandler } from '@/db/prismaHandler'
+import { strategyHandler } from '@/db/supabaseHandler'
 import { SegmentData } from '@/app/types/types'
 import { PartialStrategySchema } from '@/lib/validators/strategy'
 

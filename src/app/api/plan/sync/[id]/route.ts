@@ -1,5 +1,5 @@
 import { SegmentData } from '@/app/types/types'
-import { planHandler } from '@/db/prismaHandler'
+import { planHandler } from '@/db/supabaseHandler'
 
 import { PartialPlanSchema, PlanSchema } from '@/lib/validators/plan'
 import { NextRequest } from 'next/server'

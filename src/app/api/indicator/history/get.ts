@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { indicatorHistoryHandler } from '@/db/prismaHandler'
+import { indicatorHistoryHandler } from '@/db/supabaseHandler'
 
 export async function GET(request: NextRequest) {
   const indicatorId = request.nextUrl.searchParams.get('indicatorId') ?? undefined

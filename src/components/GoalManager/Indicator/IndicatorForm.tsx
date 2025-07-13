@@ -1,7 +1,7 @@
 import { Input } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { Alert } from '@/components/ui/alert'
-import { Indicator } from '@prisma/client'
+import { Indicator } from '@/app/types/models'
 import { NumberInputField, NumberInputRoot } from '@/components/ui/number-input'
 import { ValueChangeDetails } from 'node_modules/@chakra-ui/react/dist/types/components/number-input/namespace'
 import { Field } from '@/components/ui/field'

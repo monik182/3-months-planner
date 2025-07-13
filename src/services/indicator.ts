@@ -1,5 +1,5 @@
-import { PartialIndicatorSchema, IndicatorNoGoalSchema, IndicatorNoGoalArraySchema } from '@/lib/validators/indicator'
-import { Indicator, Prisma } from '@prisma/client'
+import { PartialIndicatorSchema, IndicatorNoGoalSchema, IndicatorNoGoalArraySchema, IndicatorNoGoalSchemaType, IndicatorNoGoalArraySchemaType, PartialIndicatorSchemaType } from '@/lib/validators/indicator'
+import { Indicator } from '@/app/types/models'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Indicator): Promise<Indicator> => {
@@ -18,7 +18,7 @@ const create = async (data: Indicator): Promise<Indicator> => {
   return parsedData
 }
 
-const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promise<Indicator[]> => {
+const createBulk = async (indicators: IndicatorNoGoalArraySchemaType): Promise<Indicator[]> => {
   const parsedData = IndicatorNoGoalArraySchema.parse(indicators)
 
   const response = await fetch('/api/indicator/bulk', {
@@ -72,7 +72,7 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Indi
   return remoteIndicators
 }
 
-const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Partial<Indicator>> => {
+const update = async (id: string, indicator: PartialIndicatorSchemaType): Promise<Partial<Indicator>> => {
   const parsedData = PartialIndicatorSchema.parse(indicator)
 
   const response = await fetch(`/api/indicator/${id}`, {

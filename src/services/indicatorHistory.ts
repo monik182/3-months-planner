@@ -1,8 +1,8 @@
 import { IndicatorHistoryExtended, Status } from '@/app/types/types'
-import { IndicatorHistory, Prisma } from '@prisma/client'
-import { IndicatorHistorySchema, PartialIndicatorHistorySchema, IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
+import { IndicatorHistory } from '@/app/types/models'
+import { IndicatorHistorySchema, PartialIndicatorHistorySchema, IndicatorHistoryNoIndicatorArraySchema, IndicatorHistorySchemaType, IndicatorHistoryNoIndicatorArraySchemaType, PartialIndicatorHistorySchemaType } from '@/lib/validators/indicatorHistory'
 
-const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<IndicatorHistory> => {
+const create = async (data: IndicatorHistorySchemaType): Promise<IndicatorHistory> => {
   const parsedData = IndicatorHistorySchema.parse(data)
 
   const response = await fetch('/api/indicator/history', {
@@ -18,7 +18,7 @@ const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<Indicat
   return parsedData
 }
 
-const createBulk = async (histories: Prisma.IndicatorHistoryCreateManyInput[]): Promise<IndicatorHistory[]> => {
+const createBulk = async (histories: IndicatorHistoryNoIndicatorArraySchemaType): Promise<IndicatorHistory[]> => {
   const parsedData = IndicatorHistoryNoIndicatorArraySchema.parse(histories)
 
   const response = await fetch('/api/indicator/history/bulk', {
@@ -76,7 +76,7 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
   return remoteHistories
 }
 
-const update = async (id: string, history: Prisma.IndicatorHistoryUpdateInput): Promise<Partial<IndicatorHistory>> => {
+const update = async (id: string, history: PartialIndicatorHistorySchemaType): Promise<Partial<IndicatorHistory>> => {
   const parsedData = PartialIndicatorHistorySchema.parse(history)
 
   const response = await fetch(`/api/indicator/history/${id}`, {

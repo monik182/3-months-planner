@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { waitlistHandler } from '@/db/prismaHandler'
+import { waitlistHandler } from '@/db/supabaseHandler'
 import { SegmentData } from '@/app/types/types'
 
 export async function GET(_: NextRequest, segmentData: SegmentData) {

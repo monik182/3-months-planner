@@ -1,7 +1,7 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { Status } from '@/app/types/types'
 import { GoalHistoryService } from '@/services/goalHistory'
-import { Prisma } from '@prisma/client'
+import { GoalHistorySchemaType, GoalHistoryNoGoalArraySchemaType, PartialGoalHistorySchemaType } from '@/lib/validators/goalHistory'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'goal-history'
@@ -12,13 +12,13 @@ export function useGoalHistoryActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (goal: Prisma.GoalHistoryCreateInput) => GoalHistoryService.create(goal),
+      mutationFn: (goal: GoalHistorySchemaType) => GoalHistoryService.create(goal),
     })
   }
 
   const useCreateBulk = () => {
     return useMutation({
-      mutationFn: (goals: Prisma.GoalHistoryCreateManyInput[]) => GoalHistoryService.createBulk(goals),
+      mutationFn: (goals: GoalHistoryNoGoalArraySchemaType) => GoalHistoryService.createBulk(goals),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_goal_history')
@@ -28,7 +28,7 @@ export function useGoalHistoryActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ goalId, updates }: { goalId: string, updates: Prisma.GoalHistoryUpdateInput }) => GoalHistoryService.update(goalId, updates),
+      mutationFn: ({ goalId, updates }: { goalId: string, updates: PartialGoalHistorySchemaType }) => GoalHistoryService.update(goalId, updates),
     })
   }
 

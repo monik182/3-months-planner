@@ -5,7 +5,7 @@ import { StrategyHistoryNoStrategyArraySchema } from '@/lib/validators/strategyH
 import { GoalService } from '@/services/goal'
 import { IndicatorService } from '@/services/indicator'
 import { StrategyService } from '@/services/strategy'
-import { Goal, GoalHistory, IndicatorHistory, StrategyHistory } from '@prisma/client'
+import { Goal, GoalHistory, IndicatorHistory, StrategyHistory } from '@/app/types/models'
 
 interface HistoryData {
   goalHistory: GoalHistory[]

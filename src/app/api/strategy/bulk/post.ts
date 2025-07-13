@@ -1,4 +1,4 @@
-import { strategyHandler } from '@/db/prismaHandler'
+import { strategyHandler } from '@/db/supabaseHandler'
 
 import { StrategyNoGoalSchemaArraySchema } from '@/lib/validators/strategy'
 import { NextRequest } from 'next/server'

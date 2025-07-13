@@ -1,4 +1,4 @@
-import { planHandler } from '@/db/prismaHandler'
+import { planHandler } from '@/db/supabaseHandler'
 
 import { PlanSchema } from '@/lib/validators/plan'
 import { NextRequest } from 'next/server'

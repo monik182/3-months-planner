@@ -1,7 +1,7 @@
 'use client'
 import React, { createContext, useContext } from 'react'
 import { UseUserActions, useUserActions } from '@/app/hooks/useUserActions'
-import { Role } from '@prisma/client'
+import { Role } from '@/app/types/models'
 import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthProvider'
 

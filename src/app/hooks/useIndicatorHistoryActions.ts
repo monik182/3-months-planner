@@ -1,6 +1,6 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { IndicatorHistoryService } from '@/services/indicatorHistory'
-import { Prisma } from '@prisma/client'
+import { IndicatorHistorySchemaType, IndicatorHistoryNoIndicatorArraySchemaType, PartialIndicatorHistorySchemaType } from '@/lib/validators/indicatorHistory'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'indicator-history'
@@ -11,13 +11,13 @@ export function useIndicatorHistoryActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (indicator: Prisma.IndicatorHistoryCreateInput) => IndicatorHistoryService.create(indicator),
+      mutationFn: (indicator: IndicatorHistorySchemaType) => IndicatorHistoryService.create(indicator),
     })
   }
 
   const useCreateBulk = () => {
     return useMutation({
-      mutationFn: (indicators: Prisma.IndicatorHistoryCreateManyInput[]) => IndicatorHistoryService.createBulk(indicators),
+      mutationFn: (indicators: IndicatorHistoryNoIndicatorArraySchemaType) => IndicatorHistoryService.createBulk(indicators),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_indicator_history')
@@ -27,7 +27,7 @@ export function useIndicatorHistoryActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorHistoryUpdateInput }) => IndicatorHistoryService.update(indicatorId, updates),
+      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: PartialIndicatorHistorySchemaType }) => IndicatorHistoryService.update(indicatorId, updates),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('update_indicator_history', { updated: Object.keys(data) })

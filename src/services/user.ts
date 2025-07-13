@@ -1,7 +1,7 @@
-import { PartialUserSchema } from '@/lib/validators/user'
-import { Prisma, User } from '@prisma/client'
+import { PartialUserSchema, PartialUserSchemaType, UserSchemaType } from '@/lib/validators/user'
+import { User } from '@/app/types/models'
 
-const create = async (user: Prisma.UserCreateInput): Promise<User> => {
+const create = async (user: UserSchemaType): Promise<User> => {
 
   return fetch(`/api/user`, {
     method: 'POST',
@@ -47,7 +47,7 @@ const getByAuth0Id = async (id: string): Promise<User | null> => {
   return remoteUser
 }
 
-const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial<User>> => {
+const update = async (id: string, user: PartialUserSchemaType): Promise<Partial<User>> => {
   const parsedData = PartialUserSchema.parse(user)
 
   const response = await fetch(`/api/user/${id}`, {

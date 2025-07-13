@@ -1,6 +1,7 @@
-import { Prisma, Feedback } from '@prisma/client'
+import { Feedback } from '@/app/types/models'
+import { FeedbackSchemaType } from '@/lib/validators/feedback'
 
-const create = async (feedback: Prisma.FeedbackCreateInput): Promise<Feedback> => {
+const create = async (feedback: FeedbackSchemaType): Promise<Feedback> => {
 
   return fetch(`/api/feedback`, {
     method: 'POST',

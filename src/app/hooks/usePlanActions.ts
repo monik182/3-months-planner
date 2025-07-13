@@ -1,5 +1,5 @@
 import { PlanService } from '@/services/plan'
-import { Prisma } from '@prisma/client'
+import { PlanSchemaType, PartialPlanSchemaType } from '@/lib/validators/plan'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 
@@ -11,7 +11,7 @@ export function usePlanActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (plan: Prisma.PlanCreateInput) => PlanService.create(plan),
+      mutationFn: (plan: PlanSchemaType) => PlanService.create(plan),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_plan')
@@ -21,7 +21,7 @@ export function usePlanActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ planId, updates }: { planId: string, updates: Prisma.PlanUpdateInput }) => PlanService.update(planId, updates),
+      mutationFn: ({ planId, updates }: { planId: string, updates: PartialPlanSchemaType }) => PlanService.update(planId, updates),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('update_plan', { updated: Object.keys(data) })

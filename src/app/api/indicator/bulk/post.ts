@@ -1,4 +1,4 @@
-import { indicatorHandler } from '@/db/prismaHandler'
+import { indicatorHandler } from '@/db/supabaseHandler'
 
 import { IndicatorNoGoalArraySchema } from '@/lib/validators/indicator'
 import { NextRequest } from 'next/server'

@@ -1,4 +1,4 @@
-import { goalHandler } from '@/db/prismaHandler'
+import { goalHandler } from '@/db/supabaseHandler'
 
 import { GoalArraySchema } from '@/lib/validators/goal'
 import { NextRequest } from 'next/server'

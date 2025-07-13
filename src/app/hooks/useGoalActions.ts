@@ -2,7 +2,7 @@ import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { Status } from '@/app/types/types'
 import { toaster } from '@/components/ui/toaster'
 import { GoalService } from '@/services/goal'
-import { Prisma } from '@prisma/client'
+import { GoalSchemaType, GoalArraySchemaType, PartialGoalSchemaType } from '@/lib/validators/goal'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'goals'
@@ -13,7 +13,7 @@ export function useGoalActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (goal: Prisma.GoalCreateInput) => GoalService.create(goal),
+      mutationFn: (goal: GoalSchemaType) => GoalService.create(goal),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_goal')
@@ -30,13 +30,13 @@ export function useGoalActions() {
 
   const useCreateBulk = () => {
     return useMutation({
-      mutationFn: (goals: Prisma.GoalCreateManyInput[]) => GoalService.createBulk(goals),
+      mutationFn: (goals: GoalArraySchemaType) => GoalService.createBulk(goals),
     })
   }
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ goalId, updates }: { goalId: string, updates: Prisma.GoalUpdateInput }) => GoalService.update(goalId, updates),
+      mutationFn: ({ goalId, updates }: { goalId: string, updates: PartialGoalSchemaType }) => GoalService.update(goalId, updates),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('update_goal', { updated: Object.keys(data) })

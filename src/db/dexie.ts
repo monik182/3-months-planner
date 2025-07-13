@@ -1,5 +1,5 @@
 import { DexiePlan, SyncQueueItem, UserPreferences } from '@/app/types/types'
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@/app/types/models'
 import Dexie, { Table } from 'dexie'
 
 class PlannerDB extends Dexie {

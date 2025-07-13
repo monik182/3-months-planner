@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { planHandler } from '@/db/prismaHandler'
+import { planHandler } from '@/db/supabaseHandler'
 
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get('userId')

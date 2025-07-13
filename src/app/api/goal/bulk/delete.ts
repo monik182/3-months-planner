@@ -1,4 +1,4 @@
-import { goalHandler } from '@/db/prismaHandler'
+import { goalHandler } from '@/db/supabaseHandler'
 
 import { NextRequest } from 'next/server'
 

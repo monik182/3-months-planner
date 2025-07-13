@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client'
+import { Role } from '@/app/types/models'
 import cuid from 'cuid'
 import { z } from 'zod'
 

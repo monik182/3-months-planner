@@ -1,4 +1,4 @@
-import { indicatorHistoryHandler } from '@/db/prismaHandler'
+import { indicatorHistoryHandler } from '@/db/supabaseHandler'
 
 import { IndicatorHistoryNoIndicatorArraySchema } from '@/lib/validators/indicatorHistory'
 import { NextRequest } from 'next/server'

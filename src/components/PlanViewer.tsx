@@ -36,7 +36,7 @@ import { GoalManager } from '@/components/GoalManager/GoalManager'
 import { useDebouncedCallback } from 'use-debounce'
 import { PiTarget } from 'react-icons/pi'
 import { EntityType } from '@/app/types/types'
-import { Goal, Indicator, Strategy } from '@prisma/client'
+import { Goal, Indicator, Strategy } from '@/app/types/models'
 
 export default function PlanViewer({ readonly = true }: { readonly?: boolean }) {
   const router = useRouter()

@@ -1,4 +1,4 @@
-import { feedbackHandler } from '@/db/prismaHandler'
+import { feedbackHandler } from '@/db/supabaseHandler'
 import { FeedbackSchema } from '@/lib/validators/feedback'
 import { NextRequest } from 'next/server'
 

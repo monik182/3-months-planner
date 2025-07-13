@@ -6,7 +6,7 @@ import {
 } from '@chakra-ui/react'
 import { StepLayout } from '@/app/plan/stepLayout'
 import { Step } from '@/app/types/types'
-import { Goal } from '@prisma/client'
+import { Goal } from '@/app/types/models'
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2'
 import { GoalManager } from '@/components/GoalManager/GoalManager'
 

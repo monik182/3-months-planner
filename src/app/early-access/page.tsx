@@ -7,7 +7,7 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { toaster } from '@/components/ui/toaster'
 import { SyncService } from '@/services/sync'
 import { Flex, Heading, Text, VStack } from '@chakra-ui/react'
-import { Role } from '@prisma/client'
+import { Role } from '@/app/types/models'
 import { useRouter } from 'next/navigation'
 import { PiMailboxThin } from 'react-icons/pi'
 

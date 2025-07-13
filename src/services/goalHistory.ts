@@ -1,8 +1,10 @@
 import { GoalHistoryExtended, Status } from '@/app/types/types'
-import { Prisma, GoalHistory } from '@prisma/client'
+import { GoalHistory } from '@/app/types/models'
 import { GoalHistorySchema, PartialGoalHistorySchema, GoalHistoryNoGoalArraySchema } from '@/lib/validators/goalHistory'
 
-const create = async (data: Prisma.GoalHistoryCreateInput): Promise<GoalHistory> => {
+import { GoalHistorySchemaType, GoalHistoryNoGoalArraySchemaType, PartialGoalHistorySchemaType } from '@/lib/validators/goalHistory'
+
+const create = async (data: GoalHistorySchemaType): Promise<GoalHistory> => {
   const parsedData = GoalHistorySchema.parse(data)
 
   const response = await fetch('/api/goal/history', {
@@ -18,7 +20,7 @@ const create = async (data: Prisma.GoalHistoryCreateInput): Promise<GoalHistory>
   return parsedData
 }
 
-const createBulk = async (histories: Prisma.GoalHistoryCreateManyInput[]): Promise<GoalHistory[]> => {
+const createBulk = async (histories: GoalHistoryNoGoalArraySchemaType): Promise<GoalHistory[]> => {
   const parsedData = GoalHistoryNoGoalArraySchema.parse(histories)
 
   const response = await fetch('/api/goal/history/bulk', {
@@ -60,7 +62,7 @@ const getByPlanId = async (planId: string, sequence?: number, status = Status.AC
   return remoteHistories
 }
 
-const update = async (id: string, history: Prisma.GoalHistoryUpdateInput): Promise<Partial<GoalHistory>> => {
+const update = async (id: string, history: PartialGoalHistorySchemaType): Promise<Partial<GoalHistory>> => {
   const parsedData = PartialGoalHistorySchema.parse(history)
 
   const response = await fetch(`/api/goal/history/${id}`, {

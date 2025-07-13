@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { goalHistoryHandler } from '@/db/prismaHandler'
+import { goalHistoryHandler } from '@/db/supabaseHandler'
 import { SegmentData } from '@/app/types/types'
 
 export async function GET(_: NextRequest, segmentData: SegmentData) {

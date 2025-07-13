@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { userHandler } from "@/db/prismaHandler";
+import { userHandler } from "@/db/supabaseHandler";
 import { SegmentData } from "@/app/types/types";
 
 export async function GET(_: NextRequest, segmentData: SegmentData) {

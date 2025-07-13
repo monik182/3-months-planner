@@ -1,6 +1,6 @@
 import { DEFAULT_WEEKS } from '@/app/constants'
 import { DexiePlan, StrategyHistoryExtended } from '@/app/types/types'
-import { Goal, Indicator, Plan, Prisma, Strategy } from '@prisma/client'
+import { Goal, Indicator, Plan, Strategy, GoalHistory, StrategyHistory, IndicatorHistory } from '@/app/types/models'
 import dayjs from 'dayjs'
 
 export function getDate(date?: Date) {
@@ -52,7 +52,7 @@ export function formatDate(date: Date | string, format = 'DD MMM') {
   return dayjs(date).format(format)
 }
 
-export function createGoalHistoryList(planId: string, goals: Goal[]): Prisma.GoalHistoryCreateManyInput[] {
+export function createGoalHistoryList(planId: string, goals: Goal[]): GoalHistory[] {
   return goals.map((goal) => {
     return DEFAULT_WEEKS.map((week) => {
       return {
@@ -64,7 +64,7 @@ export function createGoalHistoryList(planId: string, goals: Goal[]): Prisma.Goa
   }).flat()
 }
 
-export function createStrategyHistoryList(planId: string, strategies: Strategy[]): Prisma.StrategyHistoryCreateManyInput[] {
+export function createStrategyHistoryList(planId: string, strategies: Strategy[]): StrategyHistory[] {
   return strategies.map((strategy) => {
     return DEFAULT_WEEKS.map((week) => {
       return {
@@ -78,7 +78,7 @@ export function createStrategyHistoryList(planId: string, strategies: Strategy[]
   }).flat()
 }
 
-export function createIndicatorHistoryList(planId: string, indicators: Indicator[]): Prisma.IndicatorHistoryCreateManyInput[] {
+export function createIndicatorHistoryList(planId: string, indicators: Indicator[]): IndicatorHistory[] {
   return indicators?.map((indicator) => {
     return DEFAULT_WEEKS.map((week) => {
       return {

@@ -1,6 +1,6 @@
 import { DexiePlan, ParentProps, SyncQueueItem, UserPreferences } from '@/app/types/types'
 import { db } from '@/db/dexie'
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Strategy, StrategyHistory, Notification, User, Waitlist } from '@/app/types/models'
 import { Collection, Table } from 'dexie'
 
 export const planHandler = {

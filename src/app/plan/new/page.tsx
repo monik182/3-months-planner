@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { toaster } from '@/components/ui/toaster'
 import { Center, Flex } from '@chakra-ui/react'
-import { Prisma } from '@prisma/client'
+import { PlanSchemaType } from '@/lib/validators/plan'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
@@ -24,7 +24,7 @@ function NewPlan() {
     const date = dayjs(startDate).toDate()
     const now = dayjs().toDate()
     
-    const plan: Prisma.PlanCreateInput = {
+    const plan: PlanSchemaType = {
       startDate: date,
       userId: user!.id as string,
       endDate: calculatePlanEndDate(date),

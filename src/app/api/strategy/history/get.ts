@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { strategyHistoryHandler } from '@/db/prismaHandler'
+import { strategyHistoryHandler } from '@/db/supabaseHandler'
 
 export async function GET(request: NextRequest) {
   const strategyId = request.nextUrl.searchParams.get('strategyId') ?? undefined

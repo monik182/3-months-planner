@@ -1,6 +1,6 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { WaitlistService } from '@/services/waitlist'
-import { Prisma } from '@prisma/client'
+import { WaitlistSchemaType, PartialWaitlistSchemaType } from '@/lib/validators/waitlist'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'waitlist'
@@ -10,7 +10,7 @@ export function useWaitlistActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (waitlist: Prisma.WaitlistCreateInput) => WaitlistService.create(waitlist),
+      mutationFn: (waitlist: WaitlistSchemaType) => WaitlistService.create(waitlist),
       onSuccess: (data) => {
         track('add_to_waitlist', data)
       }
@@ -27,7 +27,7 @@ export function useWaitlistActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ id, updates }: { id: string, updates: Prisma.WaitlistUpdateInput }) => WaitlistService.update(id, updates),
+      mutationFn: ({ id, updates }: { id: string, updates: PartialWaitlistSchemaType }) => WaitlistService.update(id, updates),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
       }

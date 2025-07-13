@@ -1,4 +1,4 @@
-import { indicatorHandler } from '@/db/prismaHandler'
+import { indicatorHandler } from '@/db/supabaseHandler'
 
 import { NextRequest } from 'next/server'
 

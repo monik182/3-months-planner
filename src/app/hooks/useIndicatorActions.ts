@@ -1,7 +1,8 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { toaster } from '@/components/ui/toaster'
 import { IndicatorService } from '@/services/indicator'
-import { Indicator, Prisma } from '@prisma/client'
+import { Indicator } from '@/app/types/models'
+import { IndicatorNoGoalArraySchemaType, PartialIndicatorSchemaType } from '@/lib/validators/indicator'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'indicators'
@@ -29,7 +30,7 @@ export function useIndicatorActions() {
 
   const useCreateBulk = () => {
     return useMutation({
-      mutationFn: (indicators: Indicator[]) => IndicatorService.createBulk(indicators),
+      mutationFn: (indicators: IndicatorNoGoalArraySchemaType) => IndicatorService.createBulk(indicators),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_indicators_bulk')
@@ -46,7 +47,7 @@ export function useIndicatorActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorUpdateInput }) => IndicatorService.update(indicatorId, updates),
+      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: PartialIndicatorSchemaType }) => IndicatorService.update(indicatorId, updates),
       onSuccess: (data) => {
         track('update_indicator', { updated: Object.keys(data) })
       }

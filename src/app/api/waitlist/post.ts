@@ -1,4 +1,4 @@
-import { waitlistHandler } from '@/db/prismaHandler'
+import { waitlistHandler } from '@/db/supabaseHandler'
 
 import { WaitlistSchema } from '@/lib/validators/waitlist'
 import { NextRequest } from 'next/server'

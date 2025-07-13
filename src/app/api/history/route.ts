@@ -1,5 +1,5 @@
-import { goalHistoryHandler, indicatorHistoryHandler, strategyHistoryHandler } from '@/db/prismaHandler'
-import { prisma } from '@/lib/prisma'
+import { goalHistoryHandler, indicatorHistoryHandler, strategyHistoryHandler } from '@/db/supabaseHandler'
+import { createClient } from '@/app/util/supabase/server'
 
 import { NextRequest } from 'next/server'
 
@@ -17,16 +17,14 @@ export async function POST(request: NextRequest) {
   const { goalHistory, strategiesHistory, indicatorsHistory } = data
 
   try {
-
-    await prisma.$transaction(async () => {
-      return Promise.all([
-        goalHistoryHandler.createMany(goalHistory),
-        strategyHistoryHandler.createMany(strategiesHistory),
-        indicatorHistoryHandler.createMany(indicatorsHistory),
-      ]);
-    });
-
-    const response = { message: "all was created successfully" }
+    const supabase = await createClient()
+    const { error } = await supabase.rpc('create_history_snapshot', {
+      goal_history: goalHistory,
+      strategy_history: strategiesHistory,
+      indicator_history: indicatorsHistory,
+    })
+    if (error) throw error
+    const response = { message: 'all was created successfully' }
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(JSON.stringify({ error, ok: false }), { status: 500 })

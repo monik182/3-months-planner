@@ -1,6 +1,7 @@
-import { Prisma, Waitlist } from '@prisma/client'
+import { Waitlist } from '@/app/types/models'
+import { WaitlistSchemaType, PartialWaitlistSchemaType } from '@/lib/validators/waitlist'
 
-const create = async (waitlist: Prisma.WaitlistCreateInput): Promise<Waitlist> => {
+const create = async (waitlist: WaitlistSchemaType): Promise<Waitlist> => {
 
   return fetch(`/api/waitlist`, {
     method: 'POST',
@@ -26,7 +27,7 @@ const getByToken = async (token: string): Promise<Waitlist | null> => {
   return null
 }
 
-const update = async (id: string, waitlist: Prisma.WaitlistUpdateInput): Promise<Partial<Waitlist>> => {
+const update = async (id: string, waitlist: PartialWaitlistSchemaType): Promise<Partial<Waitlist>> => {
 
   return fetch(`/api/waitlist/${id}`, {
     method: 'PUT',

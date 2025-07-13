@@ -1,6 +1,6 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { UserService } from '@/services/user'
-import { Prisma } from '@prisma/client'
+import { UserSchemaType, PartialUserSchemaType } from '@/lib/validators/user'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'users'
@@ -10,7 +10,7 @@ export function useUserActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (user: Prisma.UserCreateInput) => UserService.create(user),
+      mutationFn: (user: UserSchemaType) => UserService.create(user),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_user', data)
@@ -44,7 +44,7 @@ export function useUserActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ userId, updates }: { userId: string, updates: Prisma.UserUpdateInput }) => UserService.update(userId, updates),
+      mutationFn: ({ userId, updates }: { userId: string, updates: PartialUserSchemaType }) => UserService.update(userId, updates),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('update_user', { updated: Object.keys(data) })

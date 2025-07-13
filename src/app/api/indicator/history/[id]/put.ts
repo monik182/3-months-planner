@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { indicatorHistoryHandler } from '@/db/prismaHandler'
+import { indicatorHistoryHandler } from '@/db/supabaseHandler'
 import { SegmentData } from '@/app/types/types'
 import { PartialIndicatorHistorySchema } from '@/lib/validators/indicatorHistory'
 

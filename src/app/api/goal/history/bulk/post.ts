@@ -1,4 +1,4 @@
-import { goalHistoryHandler } from '@/db/prismaHandler'
+import { goalHistoryHandler } from '@/db/supabaseHandler'
 
 import { GoalHistoryNoGoalArraySchema } from '@/lib/validators/goalHistory'
 import { NextRequest } from 'next/server'

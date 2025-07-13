@@ -1,6 +1,7 @@
 import { toaster } from '@/components/ui/toaster'
 import { StrategyService } from '@/services/strategy'
-import { Prisma, Strategy } from '@prisma/client'
+import { Strategy } from '@/app/types/models'
+import { StrategyArraySchemaType, PartialStrategySchemaType } from '@/lib/validators/strategy'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 
@@ -29,7 +30,7 @@ export function useStrategyActions() {
 
   const useCreateBulk = () => {
     return useMutation({
-      mutationFn: (strategies: Strategy[]) => StrategyService.createBulk(strategies),
+      mutationFn: (strategies: StrategyArraySchemaType) => StrategyService.createBulk(strategies),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_strategies_bulk')
@@ -46,7 +47,7 @@ export function useStrategyActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyUpdateInput }) => StrategyService.update(strategyId, updates),
+      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: PartialStrategySchemaType }) => StrategyService.update(strategyId, updates),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('update_strategy', { updated: Object.keys(data) })

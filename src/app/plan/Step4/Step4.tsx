@@ -2,7 +2,7 @@ import { StepLayout } from '../stepLayout'
 import { Step } from '@/app/types/types'
 import { Spinner } from '@chakra-ui/react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { Plan } from '@prisma/client'
+import { Plan } from '@/app/types/models'
 import PlanViewer from '@/components/PlanViewer'
 
 export function Step4({ }: Step<Plan>) {

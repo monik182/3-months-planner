@@ -7,7 +7,7 @@ import { UseIndicatorActions, useIndicatorActions } from '@/app/hooks/useIndicat
 import { UseGoalHistoryActions, useGoalHistoryActions } from '@/app/hooks/useGoalHistoryActions'
 import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hooks/useStrategyHistoryActions'
 import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
-import { Plan } from '@prisma/client'
+import { Plan } from '@/app/types/models'
 import { Center, Spinner } from '@chakra-ui/react'
 import { useAuth } from '@/app/providers/AuthProvider'
 

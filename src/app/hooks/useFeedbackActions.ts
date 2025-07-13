@@ -1,7 +1,7 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { FeedbackService } from '@/services/feedback'
 import { LimitService } from '@/services/limit'
-import { Prisma } from '@prisma/client'
+import { FeedbackSchemaType } from '@/lib/validators/feedback'
 import { useMutation } from '@tanstack/react-query'
 import cuid from 'cuid'
 
@@ -10,7 +10,7 @@ export function useFeedbackActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: async (feedback: Prisma.FeedbackCreateInput) => {
+      mutationFn: async (feedback: FeedbackSchemaType) => {
         const userId = feedback.userId || feedback.email || cuid()
         const remainingRequests = await LimitService.check(userId)
         if (remainingRequests === false) {

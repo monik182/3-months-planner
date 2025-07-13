@@ -1,8 +1,8 @@
-import { GoalArraySchema, GoalSchema, PartialGoalSchema } from '@/lib/validators/goal'
-import { Goal, Prisma } from '@prisma/client'
+import { GoalArraySchema, GoalSchema, PartialGoalSchema, GoalSchemaType, GoalArraySchemaType, PartialGoalSchemaType } from '@/lib/validators/goal'
+import { Goal } from '@/app/types/models'
 import { Status } from '@/app/types/types'
 
-const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
+const create = async (data: GoalSchemaType): Promise<Goal> => {
   const parsedData = { ...GoalSchema.parse(data), planId: data.plan.connect!.id! }
 
   const response = await fetch('/api/goal', {
@@ -18,7 +18,7 @@ const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
   return parsedData
 }
 
-const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> => {
+const createBulk = async (goals: GoalArraySchemaType): Promise<Goal[]> => {
   const parsedData = GoalArraySchema.parse(goals)
   const response = await fetch('/api/goal/bulk', {
     method: 'POST',
@@ -53,7 +53,7 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Goal
 }
 
 
-const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial<Goal>> => {
+const update = async (id: string, goal: PartialGoalSchemaType): Promise<Partial<Goal>> => {
   const parsedData = PartialGoalSchema.parse(goal)
 
   const response = await fetch(`/api/goal/${id}`, {

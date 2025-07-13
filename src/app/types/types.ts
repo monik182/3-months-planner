@@ -1,4 +1,4 @@
-import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory, User } from '@prisma/client'
+import { Goal, GoalHistory, Indicator, IndicatorHistory, Plan, Strategy, StrategyHistory, User } from '@/app/types/models'
 import { User as UserProfile } from '@supabase/supabase-js'
 
 // FIXME: will this be the final enums?

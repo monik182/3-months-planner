@@ -1,4 +1,4 @@
-import { userHandler } from '@/db/prismaHandler'
+import { userHandler } from '@/db/supabaseHandler'
 import { UserSchema } from '@/lib/validators/user'
 import { NextRequest } from 'next/server'
 

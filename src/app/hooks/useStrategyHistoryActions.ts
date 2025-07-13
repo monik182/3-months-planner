@@ -1,7 +1,7 @@
 import { useMixpanelContext } from '@/app/providers/MixpanelProvider'
 import { Status } from '@/app/types/types'
 import { StrategyHistoryService } from '@/services/strategyHistory'
-import { Prisma } from '@prisma/client'
+import { StrategyHistorySchemaType, StrategyHistoryNoStrategyArraySchemaType, PartialStrategyHistorySchemaType } from '@/lib/validators/strategyHistory'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 const QUERY_KEY = 'strategy-history'
@@ -12,13 +12,13 @@ export function useStrategyHistoryActions() {
 
   const useCreate = () => {
     return useMutation({
-      mutationFn: (strategy: Prisma.StrategyHistoryCreateInput) => StrategyHistoryService.create(strategy),
+      mutationFn: (strategy: StrategyHistorySchemaType) => StrategyHistoryService.create(strategy),
     })
   }
 
   const useCreateBulk = () => {
     return useMutation({
-      mutationFn: (strategies: Prisma.StrategyHistoryCreateManyInput[]) => StrategyHistoryService.createBulk(strategies),
+      mutationFn: (strategies: StrategyHistoryNoStrategyArraySchemaType) => StrategyHistoryService.createBulk(strategies),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('create_strategy_history')
@@ -28,7 +28,7 @@ export function useStrategyHistoryActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyHistoryUpdateInput }) => StrategyHistoryService.update(strategyId, updates),
+      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: PartialStrategyHistorySchemaType }) => StrategyHistoryService.update(strategyId, updates),
       onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('update_strategy_history', { updated: Object.keys(data) })

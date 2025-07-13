@@ -1,5 +1,5 @@
 import { SegmentData } from '@/app/types/types'
-import { strategyHandler } from '@/db/prismaHandler'
+import { strategyHandler } from '@/db/supabaseHandler'
 
 import { NextRequest } from 'next/server'
 

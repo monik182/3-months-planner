@@ -1,6 +1,6 @@
 
 import { NextRequest } from 'next/server'
-import { goalHistoryHandler } from '@/db/prismaHandler'
+import { goalHistoryHandler } from '@/db/supabaseHandler'
 import { SegmentData } from '@/app/types/types'
 import { PartialGoalHistorySchema } from '@/lib/validators/goalHistory'
 
