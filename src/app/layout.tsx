@@ -9,7 +9,6 @@ import { PlanProvider } from '@/app/providers/usePlanContext'
 import { Extra } from '@/components/Extra'
 import { AccountProvider } from '@/app/providers/useAccountContext'
 import { Toaster } from '@/components/ui/toaster'
-import PlanLayout from '@/app/layout/PlanLayout'
 import { MixpanelProvider } from '@/app/providers/MixpanelProvider'
 import { getUser } from '@/app/util/auth'
 import { AuthProvider } from '@/app/providers/AuthProvider'
@@ -52,14 +51,12 @@ export default async function RootLayout({
               <Provider>
                 <AccountProvider>
                   <PlanProvider>
-                    <PlanLayout>
-                      <Box margin="0 2rem 5rem">
-                        <Grid templateRows="10% auto" height="100vh">
-                          <GridItem><Header /></GridItem>
-                          <GridItem overflow="auto">{children}</GridItem>
-                        </Grid>
-                      </Box>
-                    </PlanLayout>
+                    <Box margin="0 2rem 5rem">
+                      <Grid templateRows="10% auto" height="100vh">
+                        <GridItem><Header /></GridItem>
+                        <GridItem overflow="auto">{children}</GridItem>
+                      </Grid>
+                    </Box>
                   </PlanProvider>
                   <Extra />
                 </AccountProvider>

@@ -11,7 +11,6 @@ import { toaster } from '@/components/ui/toaster'
 import { useHistoryActions } from '@/app/hooks/useHistoryActions'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineCelebration } from 'react-icons/md'
-import withAuth from '@/app/hoc/withAuth'
 
 function PlanPage() {
   const router = useRouter()
@@ -140,4 +139,4 @@ function PlanPage() {
   )
 }
 
-export default withAuth(PlanPage)
+export default PlanPage

@@ -9,7 +9,6 @@ import { Week } from '@/app/dashboard/Week/Week'
 import { useRouter } from 'next/navigation'
 import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
-import withAuth from '@/app/hoc/withAuth'
 import { Overview } from '@/app/dashboard/Overview'
 import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
 
@@ -24,8 +23,8 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : Math.min((currentWeek / 12) * 100, 100);
   const week = hasNotStarted ? 1 : currentWeek
-  // FIXME: if no plan then redirect to new plan
-  if (!plan) return null
+  // // FIXME: if no plan then redirect to new plan
+  // if (!plan) return null
 
   return (
     <Grid>
@@ -99,4 +98,4 @@ function DashboardWithContext() {
   )
 }
 
-export default withAuth(DashboardWithContext)
+export default DashboardWithContext

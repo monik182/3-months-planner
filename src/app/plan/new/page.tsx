@@ -10,7 +10,6 @@ import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
-import withAuth from '@/app/hoc/withAuth'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/providers/AuthProvider'
 
@@ -67,4 +66,4 @@ function NewPlan() {
   )
 }
 
-export default withAuth(NewPlan)
+export default NewPlan

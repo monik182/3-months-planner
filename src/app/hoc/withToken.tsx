@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { toaster } from '@/components/ui/toaster'
 import { useWaitlistActions } from '@/app/hooks/useWaitlistActions'
 import { Waitlist } from '@prisma/client'
-import { useAccountContext } from '@/app/providers/useAccountContext'
+import { Center, Spinner } from '@chakra-ui/react'
 
 export interface WithTokenPageProps {
   params: {
@@ -20,18 +20,11 @@ const withToken = (WrappedComponent: React.FC<WithTokenPageProps>) => {
     const searchParams = useSearchParams()
     const token = searchParams.get('token')
     const waitlistActions = useWaitlistActions()
-    const { user, isLoading } = useAccountContext()
     const { data: waitlistData, isLoading: isLoadingWaitlist } = waitlistActions.useGet(token as string)
     const extendedProps = { ...props, token, waitlistData }
-    const loading = isLoadingWaitlist || isLoading
 
     useEffect(() => {
-      if (loading) return
-
-      if (user) {
-        router.replace('/plan')
-        return
-      }
+      if (isLoadingWaitlist) return
 
       if (!token) {
         router.replace('/')
@@ -49,9 +42,15 @@ const withToken = (WrappedComponent: React.FC<WithTokenPageProps>) => {
           description: 'You have not been invited yet. Please wait for an invitation to gain access.'
         })
       }
-    }, [token, waitlistData, loading, user, router])
+    }, [token, waitlistData, isLoadingWaitlist, router])
 
-    if (loading) return null
+    if (isLoadingWaitlist) {
+      return (
+        <Center height="100vh">
+          <Spinner size="xl" />
+        </Center>
+      )
+    }
 
     return <WrappedComponent {...extendedProps} />
   }

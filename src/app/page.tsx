@@ -1,20 +1,10 @@
 'use client'
-import { useAccountContext } from '@/app/providers/useAccountContext'
-import { WaitListSection } from '@/components/WaitlistSection'
 import { Button, Flex, Heading, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
 import { RiArrowRightLine } from 'react-icons/ri'
 
 export default function Home() {
   const router = useRouter()
-  const { user } = useAccountContext()
-
-  useEffect(() => {
-    if (user) {
-      router.push('/dashboard')
-    }
-  })
 
   return (
     <div className="container">

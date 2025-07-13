@@ -1,6 +1,5 @@
 'use client'
 import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
-import withAuth from '@/app/hoc/withAuth'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
 import { SavingSpinner } from '@/components/SavingSpinner'
@@ -13,7 +12,7 @@ import { HiChevronDown, HiChevronUp } from 'react-icons/hi'
 import { LuCalendarDays } from 'react-icons/lu'
 
 function PlanV2Page() {
-  const { plan, isLoading, planActions } = usePlanContext()
+  const { plan, planActions } = usePlanContext()
   const { planScore } = useDashboardContext()
   const startOfYPlan = dayjs(plan?.startDate).format('MMMM, DD YYYY')
   const endOfYPlan = dayjs(plan?.endDate).format('MMMM, DD YYYY')
@@ -40,15 +39,15 @@ function PlanV2Page() {
     setVision(plan!.vision)
   }
 
-  if (isLoading) {
-    return (
-      <Center height="100vh">
-        <Spinner size="xl" />
-      </Center>
-    )
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Center height="100vh">
+  //       <Spinner size="xl" />
+  //     </Center>
+  //   )
+  // }
 
-  if (!plan) return null
+  // if (!plan) return null
 
   return (
     <Container padding="10px">
@@ -156,7 +155,7 @@ function PlanV2WithContext() {
   )
 }
 
-export default withAuth(PlanV2WithContext)
+export default PlanV2WithContext
 
 function GoalDescription({ open, onToggle }: { open: boolean, onToggle: () => void }) {
   return (
