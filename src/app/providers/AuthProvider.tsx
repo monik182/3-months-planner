@@ -3,6 +3,7 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { createClient } from '@/app/util/supabase/client';
+import { Center, Spinner } from '@chakra-ui/react';
 
 type AuthContextType = {
   user: User | null;
@@ -45,6 +46,14 @@ export function AuthProvider({
   }, [initialUser]);
 
   if (typeof window === "undefined") return null;
+
+  if (isLoading) {
+    return (
+      <Center height="100vh">
+        <Spinner size="xl" />
+      </Center>
+    )
+  }
 
   return (
     <AuthContext.Provider value={{ user, session, isLoading }}>
