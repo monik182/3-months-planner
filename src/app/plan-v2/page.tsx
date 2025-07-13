@@ -43,28 +43,28 @@ function PlanV2Page() {
     <Container padding="10px">
       <Flex gap="20px" direction="column">
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none" className="flex gap-5 flex-col">
-          <Flex justifyContent="space-between">
-            <VStack gap="2" align="start">
+          <Flex justifyContent={{  base: 'flex-start', md: 'space-between' }} flexDirection={{ base: 'column', md: 'row' }}>
+            <VStack gap="2" align="start" mb="4">
               <Heading size="2xl">My Plan</Heading>
               <HStack gap="2">
                 <LuCalendarDays />
-                <Text fontWeight="light" fontSize="sm">{startOfYPlan} to {endOfYPlan}</Text>
+                <Text fontWeight="light" fontSize="sm" color="gray.500">{startOfYPlan} to {endOfYPlan}</Text>
               </HStack>
             </VStack>
-            <HStack gap="2">
-              <Stat.Root maxW="300px" borderWidth="1px" p="4" rounded="md">
+            <Flex gap="4" >
+              <Stat.Root maxW="300px" borderWidth="1px" p="4" rounded="md" alignItems="center" justifyContent="center">
                 <HStack justify="space-between">
                   <Stat.Label>Current Week</Stat.Label>
                 </HStack>
                 <Stat.ValueText>{currentWeek}/12</Stat.ValueText>
               </Stat.Root>
-              <Stat.Root maxW="300px" borderWidth="1px" p="4" rounded="md">
+              <Stat.Root maxW="300px" borderWidth="1px" p="4" rounded="md" alignItems="center" justifyContent="center">
                 <HStack justify="space-between">
                   <Stat.Label>Progress</Stat.Label>
                 </HStack>
                 <Stat.ValueText>{planScore}%</Stat.ValueText>
               </Stat.Root>
-            </HStack>
+            </Flex>
           </Flex>
           <ProgressRoot colorPalette="yellow" value={progressValue}>
             <HStack gap="5">
