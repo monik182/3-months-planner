@@ -7,7 +7,7 @@ import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Button } from '@/components/ui/button'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { Box, Card, Collapsible, Container, Dialog, Flex, HStack, Heading, Portal, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
+import { Box, Card, Collapsible, Container, Flex, HStack, Heading, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
 import { Goal } from '@prisma/client'
 import cuid from 'cuid'
 import dayjs from 'dayjs'
@@ -27,11 +27,9 @@ function PlanV2Page() {
   const [editing, setEditing] = useState(false)
   const [vision, setVision] = useState(plan?.vision || '')
   const update = planActions.useUpdate()
-  const createGoal = goalActions.useCreate()
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
   const [newGoal, setNewGoal] = useState<Goal | null>(null)
-  // const [newGoalContent, setNewGoalContent] = useState("");
 
   const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id)
 
@@ -54,15 +52,9 @@ function PlanV2Page() {
       id: cuid(),
       planId: plan!.id,
       content: '',
+      status: `1`,
     }
   }
-
-  const handleCreateGoal = (goal: Goal) => {
-    createGoal.mutate({
-      ...goal,
-      plan: { connect: { id: plan!.id } },
-    })
-  };
 
   const openGoalDialog = () => {
     setNewGoal(generateNewGoal())
@@ -184,7 +176,6 @@ function PlanV2Page() {
         open={openDialog}
         goal={newGoal ?? generateNewGoal()}
         onOpenChange={closeGoalDialog}
-        onAddGoal={handleCreateGoal}
       />
     </Container>
   )
