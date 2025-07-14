@@ -9,17 +9,20 @@ interface GoalDialogProps {
   open: boolean;
   goal: Goal;
   onOpenChange: (open: boolean) => void;
+  edit?: boolean
 }
 
-export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
+export function GoalDialog({ open, goal, edit = false, onOpenChange }: GoalDialogProps) {
   const [content, setContent] = useState("");
   const [isNew, setIsNew] = useState(true)
   const [isPristine, setIsPristine] = useState(true)
   const { goalActions } = usePlanContext()
   const [title, setTitle] = useState("Create a New Goal");
   const createGoal = goalActions.useCreate()
-  const saveDisabled = !content || content === goal.content || createGoal.isPending
-  const showOverlay = isNew && !goal.content && !createGoal.isPending
+  const updateGoal = goalActions.useUpdate()
+  const loading = createGoal.isPending || updateGoal.isPending
+  const saveDisabled = !content || content === goal.content || loading
+  const showOverlay = isNew && !goal.content && !loading
 
   const handleOnChange = (content: string) => {
     setIsPristine(!content)
@@ -28,28 +31,36 @@ export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
 
   const handleSave = () => {
     if (content.trim()) {
-      createGoal.mutate({
-        ...goal,
-        content: content,
-        plan: { connect: { id: goal.planId } },
-      }, 
-      {
-        onSuccess: () => {
-          setIsNew(false)
-        }
+
+      if (edit) {
+        updateGoal.mutate({  goalId: goal.id, updates: { content } })
+      } else {
+        createGoal.mutate({
+          ...goal,
+          content: content,
+          plan: { connect: { id: goal.planId } },
+        }, 
+        {
+          onSuccess: () => {
+            setIsNew(false)
+          }
+        })
       }
-    )
     }
   };
 
   useEffect(() => {
     if (open) {
       setContent(goal.content || "");
-      setTitle(goal.content ? "Create a New Goal" : "Edit Goal");
-      setIsNew(!goal.content)
-      setIsPristine(!goal.content)
+
     }
   }, [open, goal.content]);
+
+  useEffect(() => {
+    setTitle(!edit ? "Create a New Goal" : "Edit Goal");
+    setIsNew(!edit)
+    setIsPristine(!edit)
+  }, [edit])
 
   return (
     <Dialog.Root open={open} onOpenChange={({ open }) => onOpenChange(open)}>
@@ -58,7 +69,7 @@ export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>{title}</Dialog.Title>
+              <Dialog.Title>{title} {goal.id}</Dialog.Title>
               <CloseButton
                 size="sm"
                 position="absolute"
@@ -69,7 +80,7 @@ export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
             </Dialog.Header>
             <Dialog.Body>
               <div className="space-y-4 py-4">
-                {!goal.content && (
+                {!edit && (
                   <Dialog.Description>
                     Add a new goal to your 12-week plan. Keep it specific and achievable.
                   </Dialog.Description>
@@ -83,17 +94,18 @@ export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
                     placeholder="Enter your goal here..."
                     className="min-h-[100px]"
                     onBlur={handleSave}
+                    readOnly={loading}
                   />
                   <HStack justifyContent="flex-end">
                     {!isPristine && <Button size="xs" onClick={handleSave} disabled={saveDisabled}>Save Changes</Button>}
                   </HStack>
                 </div>
                 <Box position="relative" aria-busy="true" userSelect="none">
-                  {(createGoal.isPending) && (
+                  {(loading) && (
                     <Box pos="absolute" inset="0" bg="bg/80" zIndex={999}>
                       <VStack>
                         <Spinner />
-                        <Text color="colorPalette.600">Creating goal...</Text>
+                        <Text color="colorPalette.600">{edit ? 'Updating' : 'Creating'} goal...</Text>
                       </VStack>
                     </Box>
                   )}
@@ -123,11 +135,6 @@ export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
                 </Box>
               </div>
             </Dialog.Body>
-            <Dialog.Footer>
-              <Button variant="outline" onClick={() => onOpenChange(false)}>
-                Close
-              </Button>
-            </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>

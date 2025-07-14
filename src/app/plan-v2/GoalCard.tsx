@@ -114,25 +114,9 @@ export function GoalCard({ goal }: GoalCardProps) {
         </Collapsible.Content>
       </Collapsible.Root>
 
-      {/* <Card.Footer className="pt-2 flex justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-xs"
-          onClick={() => setIsStrategyDialogOpen(true)}
-        >
-          <LuPlus className="h-3 w-3 mr-1" /> Strategy
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-xs"
-          onClick={() => setIsIndicatorDialogOpen(true)}
-        >
-          <LuPlus className="h-3 w-3 mr-1" /> Indicator
-        </Button>
-      </Card.Footer> */}
-      <GoalDialog open={isEditDialogOpen} goal={goal} onOpenChange={setIsEditDialogOpen} />
+      {isEditDialogOpen && (
+        <GoalDialog edit open={isEditDialogOpen} goal={goal} onOpenChange={setIsEditDialogOpen} />
+      )}
 
       {/* Delete Goal Dialog */}
       <Dialog.Root open={isDeleteDialogOpen} onOpenChange={({ open }) => setIsDeleteDialogOpen(open)}>
