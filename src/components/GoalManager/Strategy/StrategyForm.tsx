@@ -94,7 +94,7 @@ export const StrategyForm = React.memo(function StrategyForm({
           <Editable.Root
             value={value.content}
             onValueChange={(e) => handleValueUpdate(e.value)}
-            placeholder="What is your next strategy?"
+            placeholder="What is your next action?"
             onKeyDown={(e) => handleKeyDown(e)}
             defaultEdit
             disabled={disabled}
@@ -107,7 +107,7 @@ export const StrategyForm = React.memo(function StrategyForm({
           <IconButton
             size="xs"
             variant="ghost"
-            aria-label="Remove strategy"
+            aria-label="Remove action"
             onClick={(e) => { e.stopPropagation(); onRemove(); }}
             className="text-gray-400 hover:text-gray-700"
           >
