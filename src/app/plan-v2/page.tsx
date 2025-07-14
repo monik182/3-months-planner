@@ -7,7 +7,7 @@ import { getCurrentWeekFromStartDate, handleKeyDown } from '@/app/util'
 import { SavingSpinner } from '@/components/SavingSpinner'
 import { Button } from '@/components/ui/button'
 import { ProgressBar, ProgressRoot, ProgressValueText } from '@/components/ui/progress'
-import { Box, Card, Collapsible, Container, Dialog, Flex, HStack, Heading, Portal, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
+import { Box, Card, Collapsible, Container, Flex, HStack, Heading, Spacer, Stat, Text, Textarea, VStack } from '@chakra-ui/react'
 import { Goal } from '@prisma/client'
 import cuid from 'cuid'
 import dayjs from 'dayjs'
@@ -27,10 +27,9 @@ function PlanV2Page() {
   const [editing, setEditing] = useState(false)
   const [vision, setVision] = useState(plan?.vision || '')
   const update = planActions.useUpdate()
-  const createGoal = goalActions.useCreate()
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
-  // const [newGoalContent, setNewGoalContent] = useState("");
+  const [newGoal, setNewGoal] = useState<Goal | null>(null)
 
   const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id)
 
@@ -53,15 +52,21 @@ function PlanV2Page() {
       id: cuid(),
       planId: plan!.id,
       content: '',
+      status: `1`,
     }
   }
 
-  const handleCreateGoal = (newGoal: Goal) => {
-    createGoal.mutate({
-      ...newGoal,
-      plan: { connect: { id: plan!.id } },
-    })
-  };
+  const openGoalDialog = () => {
+    setNewGoal(generateNewGoal())
+    setOpenDialog(true)
+  }
+
+  const closeGoalDialog = (open: boolean) => {
+    setOpenDialog(open)
+    if (!open) {
+      setNewGoal(null)
+    }
+  }
 
   return (
     <Container padding="10px">
@@ -154,7 +159,7 @@ function PlanV2Page() {
                       <Button
                         variant="outline"
                         className="mt-2"
-                        onClick={() => setOpenDialog(true)}
+                        onClick={openGoalDialog}
                       >
                         <LuPlus className="mr-2 h-4 w-4" /> Add Your First Goal
                       </Button>
@@ -167,7 +172,11 @@ function PlanV2Page() {
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">Tracking here</Box>
       </Flex>
-      <GoalDialog open={openDialog} goal={generateNewGoal()} onOpenChange={setOpenDialog} onAddGoal={handleCreateGoal} />
+      <GoalDialog
+        open={openDialog}
+        goal={newGoal ?? generateNewGoal()}
+        onOpenChange={closeGoalDialog}
+      />
     </Container>
   )
 }

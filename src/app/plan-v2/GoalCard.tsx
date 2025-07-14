@@ -19,7 +19,6 @@ export function GoalCard({ goal }: GoalCardProps) {
   const [isIndicatorDialogOpen, setIsIndicatorDialogOpen] = useState(false);
   const [editedContent, setEditedContent] = useState(goal.content);
   const [isOpen, setIsOpen] = useState(false);
-  const updateGoal = goalActions.useUpdate()
   const deleteGoal = goalActions.useDelete()
   const { data: strategies = [] } = strategyActions.useGetByGoalId(goal.id)
   const { data: indicators = [] } = indicatorActions.useGetByGoalId(goal.id)
@@ -27,13 +26,6 @@ export function GoalCard({ goal }: GoalCardProps) {
   // const progress = calculateCompletionScore(strategies);
   const strategiesCount = strategies?.length || 0;
   const indicatorsCount = indicators?.length || 0;
-
-  const handleUpdateGoal = () => {
-    if (editedContent.trim()) {
-      updateGoal.mutate({ goalId: goal.id, updates: { content: editedContent } });
-      // setIsEditDialogOpen(false);
-    }
-  };
 
   const handleDeleteGoal = () => {
     deleteGoal.mutate(goal.id);
@@ -140,7 +132,7 @@ export function GoalCard({ goal }: GoalCardProps) {
           <LuPlus className="h-3 w-3 mr-1" /> Indicator
         </Button>
       </Card.Footer> */}
-      <GoalDialog open={isEditDialogOpen} goal={goal} onOpenChange={setIsEditDialogOpen} onAddGoal={handleUpdateGoal} />
+      <GoalDialog open={isEditDialogOpen} goal={goal} onOpenChange={setIsEditDialogOpen} />
 
       {/* Delete Goal Dialog */}
       {/* <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

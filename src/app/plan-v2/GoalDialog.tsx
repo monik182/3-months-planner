@@ -1,39 +1,53 @@
-import { IndicatorList } from '@/components/GoalManager/Indicator/IndicatorList';
 import { StrategyList } from '@/components/GoalManager/Strategy/StrategyList';
-import { Button, Dialog, Flex, Portal, Separator, Textarea, Text, Box } from '@chakra-ui/react';
+import { Button, Dialog, Portal, Textarea, Text, Box, Spinner, VStack, HStack } from '@chakra-ui/react';
 import { CloseButton } from '@/components/ui/close-button';
 import { Goal } from '@prisma/client';
-import cuid from 'cuid';
 import { useEffect, useState } from 'react';
-import { HiChevronDown, HiChevronUp } from 'react-icons/hi';
+import { usePlanContext } from '@/app/providers/usePlanContext';
 
 interface GoalDialogProps {
   open: boolean;
   goal: Goal;
   onOpenChange: (open: boolean) => void;
-  onAddGoal: (goal: Goal) => void;
 }
 
-export function GoalDialog({ open, goal, onOpenChange, onAddGoal }: GoalDialogProps) {
-  const [newGoalContent, setNewGoalContent] = useState("");
-  const [buttonText, setButtonText] = useState("Create Goal");
+export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
+  const [content, setContent] = useState("");
+  const [isNew, setIsNew] = useState(true)
+  const [isPristine, setIsPristine] = useState(true)
+  const { goalActions } = usePlanContext()
   const [title, setTitle] = useState("Create a New Goal");
+  const createGoal = goalActions.useCreate()
+  const saveDisabled = !content || content === goal.content || createGoal.isPending
+  const showOverlay = isNew && !goal.content && !createGoal.isPending
+
+  const handleOnChange = (content: string) => {
+    setIsPristine(!content)
+    setContent(content)
+  }
 
   const handleSave = () => {
-    if (newGoalContent.trim()) {
-      onAddGoal({ ...goal, content: newGoalContent });
-      // setNewGoalContent("");
+    if (content.trim()) {
+      createGoal.mutate({
+        ...goal,
+        content: content,
+        plan: { connect: { id: goal.planId } },
+      }, 
+      {
+        onSuccess: () => {
+          setIsNew(false)
+        }
+      }
+    )
     }
-    // onOpenChange(false);
   };
 
   useEffect(() => {
     if (open) {
-      setNewGoalContent(goal.content || "");
-      if (goal.content) {
-        setButtonText("Save Changes");
-        setTitle("Edit Goal");
-      }
+      setContent(goal.content || "");
+      setTitle(goal.content ? "Create a New Goal" : "Edit Goal");
+      setIsNew(!goal.content)
+      setIsPristine(!goal.content)
     }
   }, [open, goal.content]);
 
@@ -64,27 +78,49 @@ export function GoalDialog({ open, goal, onOpenChange, onAddGoal }: GoalDialogPr
                   {/* <Label htmlFor="goal">Goal Description</Label> */}
                   <Textarea
                     id="goal"
-                    value={newGoalContent}
-                    onChange={(e) => setNewGoalContent(e.target.value)}
+                    value={content}
+                    onChange={(e) => handleOnChange(e.target.value)}
                     placeholder="Enter your goal here..."
                     className="min-h-[100px]"
                     onBlur={handleSave}
                   />
+                  <HStack justifyContent="flex-end">
+                    {!isPristine && <Button size="xs" onClick={handleSave} disabled={saveDisabled}>Save Changes</Button>}
+                  </HStack>
                 </div>
-                <div>
-                  <Box>
-                    <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
-                    <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} />
-                  </Box>
-                  <Separator my={4} />
-                  <Box>
-
-                    <Flex flexDirection="column" gap="1rem">
-                      <Text className="text-sm font-medium mb-2 text-gray-700">Progress Indicators</Text>
-                      <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} />
-                    </Flex>
-                  </Box>
-                </div>
+                <Box position="relative" aria-busy="true" userSelect="none">
+                  {(createGoal.isPending) && (
+                    <Box pos="absolute" inset="0" bg="bg/80" zIndex={999}>
+                      <VStack>
+                        <Spinner />
+                        <Text color="colorPalette.600">Creating goal...</Text>
+                      </VStack>
+                    </Box>
+                  )}
+                  {(showOverlay) && (
+                    <Box pos="absolute" inset="0" bg="bg/80" zIndex={999}>
+                      <VStack>
+                        <Text color="colorPalette.600">Enter your goal to enable the strategies</Text>
+                      </VStack>
+                    </Box>
+                  )}
+                  
+                    <div>
+                      <Box>
+                        <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
+                        <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} />
+                      </Box>
+                      {/* // TODO: Check if indicators are necessary */}
+                      {/* <Separator my={4} />
+                        <Box>
+                          <Flex flexDirection="column" gap="1rem">
+                            <Text className="text-sm font-medium mb-2 text-gray-700">Progress Indicators</Text>
+                            <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} />
+                          </Flex>
+                        </Box> */}
+                    </div>
+                  
+                </Box>
               </div>
             </Dialog.Body>
             <Dialog.Footer>

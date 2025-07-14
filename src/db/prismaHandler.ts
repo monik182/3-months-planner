@@ -22,6 +22,7 @@ export const goalHandler = {
   update: async (id: string, data: Prisma.GoalUpdateInput) => prisma.goal.update({ where: { id }, data }),
   delete: async (id: string) => prisma.goal.delete({ where: { id } }),
   deleteMany: async (id: string[]) => prisma.goal.deleteMany({ where: { id: { in: id } } }),
+  upsert: async (data: Prisma.GoalCreateInput) => prisma.goal.upsert({ where: { id: data.id }, update: data, create: data }),
 }
 
 export const goalHistoryHandler = {

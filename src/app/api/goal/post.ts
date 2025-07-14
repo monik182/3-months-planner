@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const parsedData = GoalSchema.parse(data)
-    const response = await goalHandler.create(parsedData)
+    const response = await goalHandler.upsert(parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {
     return new Response(JSON.stringify({ error, ok: false }), { status: 500 })
