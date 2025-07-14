@@ -75,6 +75,8 @@ export function useGoalActions() {
         queryClient.setQueriesData<Goal[] | undefined>({ queryKey: [QUERY_KEY] }, (old) => {
           return old ? old.filter(g => g.id !== goalId) : old
         })
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+        track('delete_goal')
       },
     })
   }

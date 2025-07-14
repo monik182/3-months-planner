@@ -5,7 +5,8 @@ import { calculateCompletionScore } from '@/app/util';
 import { Badge, Button, Card, Collapsible, Dialog, Portal } from '@chakra-ui/react';
 import { Goal } from '@prisma/client';
 import React, { useState } from "react";
-import { LuChevronDown, LuChevronUp, LuListChecks, LuPlus, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { LuChevronDown, LuChevronUp, LuListChecks, LuPencil, LuTrash2 } from 'react-icons/lu';
+import { SavingSpinner } from '@/components/SavingSpinner';
 
 interface GoalCardProps {
   goal: Goal;
@@ -27,8 +28,8 @@ export function GoalCard({ goal }: GoalCardProps) {
   const strategiesCount = strategies?.length || 0;
   // const indicatorsCount = indicators?.length || 0;
 
-  const handleDeleteGoal = () => {
-    deleteGoal.mutate(goal.id);
+  const handleDeleteGoal = async () => {
+    await deleteGoal.mutateAsync(goal.id);
     setIsDeleteDialogOpen(false);
   };
 
@@ -146,10 +147,19 @@ export function GoalCard({ goal }: GoalCardProps) {
                 Are you sure you want to delete this goal? This action cannot be undone.
               </Dialog.Body>
               <Dialog.Footer className="gap-2 flex justify-end">
-                <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                <SavingSpinner loading={deleteGoal.isPending} text="Deleting" />
+                <Button
+                  variant="outline"
+                  onClick={() => setIsDeleteDialogOpen(false)}
+                  disabled={deleteGoal.isPending}
+                >
                   Cancel
                 </Button>
-                <Button colorPalette="red" onClick={handleDeleteGoal}>
+                <Button
+                  colorPalette="red"
+                  onClick={handleDeleteGoal}
+                  disabled={deleteGoal.isPending}
+                >
                   Delete Goal
                 </Button>
               </Dialog.Footer>
