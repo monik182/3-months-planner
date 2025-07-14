@@ -30,6 +30,7 @@ function PlanV2Page() {
   const createGoal = goalActions.useCreate()
   const [detailsOpen, setDetailsOpen] = useState(false)
   const [openDialog, setOpenDialog] = useState(false)
+  const [newGoal, setNewGoal] = useState<Goal | null>(null)
   // const [newGoalContent, setNewGoalContent] = useState("");
 
   const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id)
@@ -56,12 +57,24 @@ function PlanV2Page() {
     }
   }
 
-  const handleCreateGoal = (newGoal: Goal) => {
+  const handleCreateGoal = (goal: Goal) => {
     createGoal.mutate({
-      ...newGoal,
+      ...goal,
       plan: { connect: { id: plan!.id } },
     })
   };
+
+  const openGoalDialog = () => {
+    setNewGoal(generateNewGoal())
+    setOpenDialog(true)
+  }
+
+  const closeGoalDialog = (open: boolean) => {
+    setOpenDialog(open)
+    if (!open) {
+      setNewGoal(null)
+    }
+  }
 
   return (
     <Container padding="10px">
@@ -154,7 +167,7 @@ function PlanV2Page() {
                       <Button
                         variant="outline"
                         className="mt-2"
-                        onClick={() => setOpenDialog(true)}
+                        onClick={openGoalDialog}
                       >
                         <LuPlus className="mr-2 h-4 w-4" /> Add Your First Goal
                       </Button>
@@ -167,7 +180,12 @@ function PlanV2Page() {
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">Tracking here</Box>
       </Flex>
-      <GoalDialog open={openDialog} goal={generateNewGoal()} onOpenChange={setOpenDialog} onAddGoal={handleCreateGoal} />
+      <GoalDialog
+        open={openDialog}
+        goal={newGoal ?? generateNewGoal()}
+        onOpenChange={closeGoalDialog}
+        onAddGoal={handleCreateGoal}
+      />
     </Container>
   )
 }
