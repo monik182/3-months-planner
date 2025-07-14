@@ -1,6 +1,7 @@
 import { PartialIndicatorSchema, IndicatorNoGoalSchema, IndicatorNoGoalArraySchema } from '@/lib/validators/indicator'
 import { Indicator, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
+import { getCachedData, setCachedData } from '@/lib/cache'
 
 const create = async (data: Indicator): Promise<Indicator> => {
   const parsedData = IndicatorNoGoalSchema.parse(data)
@@ -14,6 +15,10 @@ const create = async (data: Indicator): Promise<Indicator> => {
   if (!response.ok) {
     throw new Error('Failed to create indicator')
   }
+
+  const cacheKey = `indicators:${parsedData.planId}`
+  const cached = getCachedData<Indicator[]>(cacheKey) || []
+  setCachedData(cacheKey, [...cached, parsedData as Indicator])
 
   return parsedData
 }
@@ -31,11 +36,21 @@ const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promis
     throw new Error('Failed to create indicators in bulk')
   }
 
+  const planId = indicators[0]?.planId
+  if (planId) {
+    const cacheKey = `indicators:${planId}`
+    const cached = getCachedData<Indicator[]>(cacheKey) || []
+    setCachedData(cacheKey, [...cached, ...parsedData as Indicator[]])
+  }
+
   return parsedData
 }
 
 const get = async (id: string): Promise<Indicator | null> => {
   try {
+    const cacheKey = `indicator:${id}`
+    const cached = getCachedData<Indicator>(cacheKey)
+    if (cached) return cached
 
     const response = await fetch(`/api/indicator/${id}`)
     if (!response.ok) {
@@ -44,6 +59,7 @@ const get = async (id: string): Promise<Indicator | null> => {
     }
 
     const remoteIndicator = await response.json()
+    if (remoteIndicator) setCachedData(cacheKey, remoteIndicator)
     return remoteIndicator
   } catch (error) {
     console.error(`Error fetching indicator ${id}:`, error)
@@ -52,6 +68,9 @@ const get = async (id: string): Promise<Indicator | null> => {
 }
 
 const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Indicator[]> => {
+  const cacheKey = `indicators:${planId}`
+  const cached = getCachedData<Indicator[]>(cacheKey)
+  if (cached) return cached
 
   const response = await fetch(`/api/indicator?planId=${planId}&status=${status}`)
   if (!response.ok) {
@@ -59,16 +78,22 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Indi
   }
 
   const remoteIndicators = await response.json()
+  setCachedData(cacheKey, remoteIndicators)
   return remoteIndicators
 }
 
 const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Indicator[]> => {
+  const cacheKey = `indicators:goal:${goalId}`
+  const cached = getCachedData<Indicator[]>(cacheKey)
+  if (cached) return cached
+
   const response = await fetch(`/api/indicator?goalId=${goalId}&status=${status}`)
   if (!response.ok) {
     return []
   }
 
   const remoteIndicators = await response.json()
+  setCachedData(cacheKey, remoteIndicators)
   return remoteIndicators
 }
 
@@ -85,6 +110,17 @@ const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promi
     throw new Error('Failed to update indicator')
   }
 
+  const cacheKey = `indicator:${id}`
+  const data = { ...(getCachedData<Indicator>(cacheKey) || {}), ...parsedData } as Indicator
+  setCachedData(cacheKey, data)
+  if (indicator.planId) {
+    const listKey = `indicators:${indicator.planId}`
+    const list = getCachedData<Indicator[]>(listKey)
+    if (list) {
+      setCachedData(listKey, list.map(i => i.id === id ? { ...i, ...parsedData } as Indicator : i))
+    }
+  }
+
   return parsedData
 }
 
@@ -98,6 +134,16 @@ const deleteItem = async (id: string): Promise<void> => {
     throw new Error('Failed to delete indicator')
   }
 
+  const cacheKey = `indicator:${id}`
+  const indicator = getCachedData<Indicator>(cacheKey)
+  setCachedData(cacheKey, null as any)
+  if (indicator?.planId) {
+    const listKey = `indicators:${indicator.planId}`
+    const list = getCachedData<Indicator[]>(listKey)
+    if (list) {
+      setCachedData(listKey, list.filter(i => i.id !== id))
+    }
+  }
 }
 
 export const IndicatorService = {
