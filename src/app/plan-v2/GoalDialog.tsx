@@ -100,15 +100,15 @@ export function GoalDialog({ open, goal, onOpenChange }: GoalDialogProps) {
                   {(showOverlay) && (
                     <Box pos="absolute" inset="0" bg="bg/80" zIndex={999}>
                       <VStack>
-                        <Text color="colorPalette.600">Enter your goal to enable the strategies</Text>
+                        <Text color="colorPalette.600">Enter your goal to add actions</Text>
                       </VStack>
                     </Box>
                   )}
                   
                     <div>
                       <Box>
-                        <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
-                        <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} />
+                        <Text className="text-sm font-medium mb-2 text-gray-700">Actions</Text>
+                        <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={Infinity} />
                       </Box>
                       {/* // TODO: Check if indicators are necessary */}
                       {/* <Separator my={4} />
