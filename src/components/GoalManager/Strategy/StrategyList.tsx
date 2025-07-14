@@ -117,7 +117,7 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
 
       {strategies.length === 0 && (
         <div className="text-sm text-gray-500 p-2">
-          No strategies added yet. Add a strategy to support your goal.
+          No actions added yet. Add an action to support your goal.
         </div>
       )}
 
@@ -130,7 +130,7 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
           className="text-xs"
         >
           <GoPlus size={14} className="mr-1" />
-          Add Strategy
+          Add Action
         </Button>
 
         <SavingSpinner loading={loading} text={loadingText} />
@@ -140,7 +140,7 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
         <Alert.Root status="info" size="sm" variant="outline" className="mt-2">
           <Alert.Indicator />
           <Alert.Title className="text-xs">
-            Maximum {maxLimit} strategies per goal
+            Maximum {maxLimit} actions per goal
           </Alert.Title>
         </Alert.Root>
       )}
