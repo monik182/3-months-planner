@@ -2,10 +2,10 @@
 import { GoalDialog } from '@/app/plan-v2/GoalDialog';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { calculateCompletionScore } from '@/app/util';
-import { Badge, Button, Card, Collapsible } from '@chakra-ui/react';
+import { Badge, Button, Card, Collapsible, Dialog, Portal } from '@chakra-ui/react';
 import { Goal } from '@prisma/client';
 import React, { useState } from "react";
-import { LuChevronDown, LuChevronUp, LuListChecks, LuPlus } from 'react-icons/lu';
+import { LuChevronDown, LuChevronUp, LuListChecks, LuPlus, LuPencil, LuTrash2 } from 'react-icons/lu';
 
 interface GoalCardProps {
   goal: Goal;
@@ -39,12 +39,10 @@ export function GoalCard({ goal }: GoalCardProps) {
           <Card.Title className="text-lg">{goal.content}</Card.Title>
           <div className="flex space-x-1">
             <Button variant="ghost" size="sm" onClick={() => setIsEditDialogOpen(true)}>
-              {/* <Edit className="h-4 w-4" /> */}
-              EDIT
+              <LuPencil className="h-4 w-4" />
             </Button>
             <Button variant="ghost" size="sm" onClick={() => setIsDeleteDialogOpen(true)}>
-              {/* <Trash2 className="h-4 w-4 text-destructive" /> */}
-              TRASH
+              <LuTrash2 className="h-4 w-4 text-destructive" />
             </Button>
           </div>
         </div>
@@ -135,27 +133,29 @@ export function GoalCard({ goal }: GoalCardProps) {
       <GoalDialog open={isEditDialogOpen} goal={goal} onOpenChange={setIsEditDialogOpen} />
 
       {/* Delete Goal Dialog */}
-      {/* <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Goal</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this goal? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter className="gap-2 sm:gap-0">
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={handleDeleteGoal}
-            >
-              Delete Goal
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog> */}
+      <Dialog.Root open={isDeleteDialogOpen} onOpenChange={({ open }) => setIsDeleteDialogOpen(open)}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>Delete Goal</Dialog.Title>
+                <Dialog.Description>
+                  Are you sure you want to delete this goal? This action cannot be undone.
+                </Dialog.Description>
+              </Dialog.Header>
+              <Dialog.Footer className="gap-2 sm:gap-0">
+                <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={handleDeleteGoal}>
+                  Delete Goal
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
     </Card.Root>
   );
 }
