@@ -46,8 +46,15 @@ export function useIndicatorActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorUpdateInput }) => IndicatorService.update(indicatorId, updates),
-      onSuccess: (data) => {
+      mutationFn: ({ indicatorId, updates }: { indicatorId: string, updates: Prisma.IndicatorUpdateInput }) =>
+        IndicatorService.update(indicatorId, updates),
+      onSuccess: (data, variables) => {
+        queryClient.setQueriesData<Indicator[] | undefined>({ queryKey: [QUERY_KEY] }, (old) => {
+          if (!old) return old
+          return old.map((i) =>
+            i.id === variables.indicatorId ? ({ ...i, ...variables.updates } as Indicator) : i
+          )
+        })
         track('update_indicator', { updated: Object.keys(data) })
       }
     })
@@ -80,7 +87,10 @@ export function useIndicatorActions() {
   const useDelete = () => {
     return useMutation({
       mutationFn: (indicatorId: string) => IndicatorService.deleteItem(indicatorId),
-      onSuccess: () => {
+      onSuccess: (_, indicatorId) => {
+        queryClient.setQueriesData<Indicator[] | undefined>({ queryKey: [QUERY_KEY] }, (old) => {
+          return old ? old.filter((i) => i.id !== indicatorId) : old
+        })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('delete_indicator')
       },

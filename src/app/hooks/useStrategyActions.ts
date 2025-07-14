@@ -46,9 +46,15 @@ export function useStrategyActions() {
 
   const useUpdate = () => {
     return useMutation({
-      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyUpdateInput }) => StrategyService.update(strategyId, updates),
-      onSuccess: (data) => {
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
+      mutationFn: ({ strategyId, updates }: { strategyId: string, updates: Prisma.StrategyUpdateInput }) =>
+        StrategyService.update(strategyId, updates),
+      onSuccess: (data, variables) => {
+        queryClient.setQueriesData<Strategy[] | undefined>({ queryKey: [QUERY_KEY] }, (old) => {
+          if (!old) return old
+          return old.map((s) =>
+            s.id === variables.strategyId ? ({ ...s, ...variables.updates } as Strategy) : s
+          )
+        })
         track('update_strategy', { updated: Object.keys(data) })
       },
     })
@@ -81,7 +87,10 @@ export function useStrategyActions() {
   const useDelete = () => {
     return useMutation({
       mutationFn: (strategyId: string) => StrategyService.deleteItem(strategyId),
-      onSuccess: () => {
+      onSuccess: (_, strategyId) => {
+        queryClient.setQueriesData<Strategy[] | undefined>({ queryKey: [QUERY_KEY] }, (old) => {
+          return old ? old.filter((s) => s.id !== strategyId) : old
+        })
         queryClient.invalidateQueries({ queryKey: [QUERY_KEY] })
         track('delete_strategy')
       },
