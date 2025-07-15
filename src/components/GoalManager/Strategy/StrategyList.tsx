@@ -6,7 +6,7 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 import { Alert, Button } from '@chakra-ui/react'
 import { Strategy } from '@prisma/client'
 import cuid from 'cuid'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { GoPlus } from 'react-icons/go'
 import { useDebouncedCallback } from 'use-debounce'
 
@@ -19,9 +19,12 @@ interface StrategyListProps {
 }
 
 export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: StrategyListProps) {
-  const { strategyActions } = usePlanContext()
-  const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
-  const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
+  const { strategyActions, strategies } = usePlanContext()
+  const goalStrategies = useMemo(
+    () => strategies.filter((s) => s.goalId === goalId),
+    [strategies, goalId]
+  )
+  const [strategies, setStrategies] = useState<Strategy[]>([...goalStrategies])
   const [activeStrategy, setActiveStrategy] = useState<string | null>(null)
 
   const create = strategyActions.useCreate()
@@ -89,11 +92,11 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
 
   useEffect(() => {
     setStrategies(prev => {
-      if (!prev.length) return _strategies
-      if (prev.length !== _strategies.length) return _strategies
+      if (!prev.length) return goalStrategies
+      if (prev.length !== goalStrategies.length) return goalStrategies
       return prev
     })
-  }, [_strategies.length])
+  }, [goalStrategies.length])
 
   return (
     <div className="space-y-3">
