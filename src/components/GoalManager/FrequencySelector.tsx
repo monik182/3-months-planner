@@ -19,7 +19,7 @@ export const FrequencySelector = ({ frequency = DEFAULT_FREQUENCY, setFrequency,
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-md shadow-sm FREQUENCY_SELECTOR">
+    <div className="relative z-50 bg-white border border-gray-200 rounded-md shadow-sm FREQUENCY_SELECTOR">
       <SelectRoot
         open
         collection={COLLECTION}
@@ -33,7 +33,7 @@ export const FrequencySelector = ({ frequency = DEFAULT_FREQUENCY, setFrequency,
         <SelectTrigger clearable>
           <SelectValueText placeholder="Frequency" />
         </SelectTrigger>
-        <SelectContent onMouseLeave={onFocusOutside} className="max-h-64">
+        <SelectContent portalled={false} onMouseLeave={onFocusOutside} className="max-h-64">
           {COLLECTION.items.map((item) => (
             <SelectItem
               item={item}
