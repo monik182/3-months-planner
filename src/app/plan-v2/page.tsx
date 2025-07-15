@@ -68,6 +68,8 @@ function PlanV2Page() {
     }
   }
 
+  if (!plan) return null
+
   return (
     <Container padding="10px">
       <Flex gap="20px" direction="column">

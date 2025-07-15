@@ -19,7 +19,7 @@ export const FrequencySelector = ({ frequency = DEFAULT_FREQUENCY, setFrequency,
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-md shadow-sm">
+    <div className="bg-white border border-gray-200 rounded-md shadow-sm FREQUENCY_SELECTOR">
       <SelectRoot
         open
         collection={COLLECTION}
