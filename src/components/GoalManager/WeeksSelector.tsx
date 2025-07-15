@@ -26,7 +26,7 @@ export const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelector
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-md shadow-sm">
+    <div className="relative z-50 bg-white border border-gray-200 rounded-md shadow-sm">
       <SelectRoot
         open
         multiple
@@ -43,6 +43,7 @@ export const WeeksSelector = ({ weeks, setWeeks, onFocusOutside }: WeeksSelector
           <SelectValueText placeholder="Weeks" />
         </SelectTrigger>
         <SelectContent
+          portalled={false}
           onMouseLeave={onFocusOutside}
           className="max-h-64 overflow-auto"
         >
