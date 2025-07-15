@@ -35,7 +35,12 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser()
+
+  if (userError) {
+    console.error('Error fetching user in middleware:', userError.message)
+  }
 
 
   const { pathname } = request.nextUrl
@@ -46,7 +51,7 @@ export async function updateSession(request: NextRequest) {
   const isPlanNew = pathname === '/plan/new'
 
   // 3) If no user → only allow auth pages
-  if (!user && !isAuthPage) {
+  if (!user && !isAuthPage && !userError) {
     console.log('No user, redirecting to login', request.nextUrl.pathname)
     return NextResponse.redirect(new URL('/login', request.url))
   }
