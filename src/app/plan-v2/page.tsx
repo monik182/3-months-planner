@@ -150,7 +150,7 @@ function PlanV2Page() {
                 {goals.map((goal) => <GoalCard key={goal.id} goal={goal} />)}
               </div>
               <section>
-                <Card.Root className="col-span-full border-dashed bg-muted/50">
+                <Card.Root className="col-span-full border-dashed bg-muted/50 new-goal-card">
                   <Card.Body className="flex flex-col items-center justify-center py-10">
                     <div className="text-center space-y-2">
                       <LuTarget className="mx-auto h-8 w-8 text-muted-foreground" />
