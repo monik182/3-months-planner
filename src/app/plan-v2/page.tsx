@@ -308,7 +308,7 @@ function PlanV2Page() {
 
 function PlanV2WithContext() {
   return (
-    <DashboardProvider>
+    <DashboardProvider fetchHistory={false}>
       <PlanV2Page />
     </DashboardProvider>
   );

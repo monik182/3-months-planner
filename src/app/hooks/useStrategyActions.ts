@@ -59,6 +59,8 @@ export function useStrategyActions() {
       queryKey: [QUERY_KEY, { planId }],
       queryFn: () => StrategyService.getByPlanId(planId),
       enabled: !!planId,
+      staleTime: 60000,
+      refetchOnWindowFocus: false,
     })
   }
 
