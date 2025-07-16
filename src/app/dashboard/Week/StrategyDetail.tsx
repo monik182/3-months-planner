@@ -14,16 +14,32 @@ export function StrategyDetail({ strategy, onChange }: StrategyDetailProps) {
   const { content, frequency } = strategy.strategy
   const debouncedUpdate = useDebouncedCallback((updates) => onChange(updates), 1000)
   const handleOnCheckedChange = (details: CheckedChangeDetails, index: number) => {
-    const updatedFrequencies = [...frequencies].map((f, i) => i === index ? Boolean(details.checked) : f)
+    const updatedFrequencies = [...frequencies].map((f, i) =>
+      i === index ? Boolean(details.checked) : f
+    )
     setFrequencies(updatedFrequencies)
     debouncedUpdate({ strategyId: strategy.id, updates: { frequencies: updatedFrequencies } })
   }
   const [frequencies, setFrequencies] = useState(strategy.frequencies)
 
   useEffect(() => {
-    if (!strategy.frequencies.length && !frequencies.length) {
-      setFrequencies([...Array(frequency).keys()].map(() => false))
+    let newFrequencies = strategy.frequencies
+
+    if (!strategy.frequencies.length) {
+      newFrequencies = [...Array(frequency).keys()].map(() => false)
+    } else if (strategy.frequencies.length !== frequency) {
+      if (strategy.frequencies.length < frequency) {
+        newFrequencies = [
+          ...strategy.frequencies,
+          ...Array(frequency - strategy.frequencies.length).fill(false),
+        ]
+      } else {
+        newFrequencies = strategy.frequencies.slice(0, frequency)
+      }
+      debouncedUpdate({ strategyId: strategy.id, updates: { frequencies: newFrequencies } })
     }
+
+    setFrequencies(newFrequencies)
   }, [strategy.frequencies, frequency])
 
   return (
@@ -31,10 +47,10 @@ export function StrategyDetail({ strategy, onChange }: StrategyDetailProps) {
       <Text fontSize="md">{content}</Text>
       <Flex gap="5px">
         {frequencies.map((value, index) => (
-          <Checkbox 
-            key={index} 
-            size="lg" 
-            defaultChecked={value}
+          <Checkbox
+            key={index}
+            size="lg"
+            checked={value}
             variant="subtle"
             onCheckedChange={(e) => handleOnCheckedChange(e, index)}
             padding="4px"
