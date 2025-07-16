@@ -69,7 +69,7 @@ export function GoalCard({ goal }: GoalCardProps) {
         </div>
       </Card.Body>
 
-      <Collapsible.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)} className="px-4">
+      <Collapsible.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)} className="px-4 pb-4">
         {/* {(goalStrategies?.length > 0 || indicators?.length > 0) && ( */}
         {(goalStrategies?.length > 0) && (
           <Collapsible.Trigger asChild>
