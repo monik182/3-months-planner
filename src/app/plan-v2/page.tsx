@@ -303,11 +303,9 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 View charts and trends of your indicators to see your progress over time.
               </p>
-              <NextLink href="/indicators" passHref legacyBehavior>
-                <Button as="a" colorPalette="black" className="mt-auto">
-                  View Indicators
-                </Button>
-              </NextLink>
+              <Button asChild colorPalette="black" className="mt-auto">
+                <NextLink href="/indicators">View Indicators</NextLink>
+              </Button>
             </Card.Root>
 
             <Card.Root className="flex flex-col items-center text-center p-6">
@@ -316,11 +314,9 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 Browse pre-built goal templates for common objectives and add them to your plan.
               </p>
-              <NextLink href="/templates" passHref legacyBehavior>
-                <Button as="a" colorPalette="black" className="mt-auto">
-                  Browse Templates
-                </Button>
-              </NextLink>
+              <Button asChild colorPalette="black" className="mt-auto">
+                <NextLink href="/templates">Browse Templates</NextLink>
+              </Button>
             </Card.Root>
 
             <Card.Root className="flex flex-col items-center text-center p-6">
@@ -329,11 +325,9 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 Get intelligent suggestions for goals, strategies, and indicators based on your plan.
               </p>
-              <NextLink href="/suggestions" passHref legacyBehavior>
-                <Button as="a" colorPalette="black" className="mt-auto">
-                  Get Suggestions
-                </Button>
-              </NextLink>
+              <Button asChild colorPalette="black" className="mt-auto">
+                <NextLink href="/suggestions">Get Suggestions</NextLink>
+              </Button>
             </Card.Root>
           </div>
         </Box>
