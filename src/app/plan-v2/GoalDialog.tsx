@@ -69,7 +69,7 @@ export function GoalDialog({ open, goal, edit = false, onOpenChange }: GoalDialo
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Header>
-              <Dialog.Title>{title} {goal.id}</Dialog.Title>
+              <Dialog.Title>{title}</Dialog.Title>
               <CloseButton
                 size="sm"
                 position="absolute"

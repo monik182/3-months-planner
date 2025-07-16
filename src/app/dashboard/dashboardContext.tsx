@@ -32,20 +32,42 @@ const DashboardContext = createContext<DashboardContextType | undefined>(undefin
 
 interface DashboardTrackingProviderProps {
   children: React.ReactNode
+  fetchHistory?: boolean
 }
 
-export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) => {
+export const DashboardProvider = ({ children, fetchHistory = true }: DashboardTrackingProviderProps) => {
   const { plan } = usePlanContext()
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
   const indicatorHistoryActions = useIndicatorHistoryActions()
-  const goals = goalHistoryActions.useGetByPlanId(plan?.id as string)
-  const strategies = strategyHistoryActions.useGetByPlanId(plan?.id as string)
-  const indicators = indicatorHistoryActions.useGetByPlanId(plan?.id as string)
-  const isLoading = goals.isLoading || strategies.isLoading || indicators.isLoading
-  const isRefetching = goals.isRefetching || strategies.isRefetching || indicators.isRefetching
+
+  const goals = fetchHistory
+    ? goalHistoryActions.useGetByPlanId(plan?.id as string)
+    : ({ data: [], isLoading: false, isRefetching: false } as ReturnType<typeof goalHistoryActions.useGetByPlanId>)
+
+  const strategies = fetchHistory
+    ? strategyHistoryActions.useGetByPlanId(plan?.id as string)
+    : ({ data: [], isLoading: false, isRefetching: false } as ReturnType<typeof strategyHistoryActions.useGetByPlanId>)
+
+  const indicators = fetchHistory
+    ? indicatorHistoryActions.useGetByPlanId(plan?.id as string)
+    : ({ data: [], isLoading: false, isRefetching: false } as ReturnType<typeof indicatorHistoryActions.useGetByPlanId>)
+
+  const isLoading = fetchHistory && (goals.isLoading || strategies.isLoading || indicators.isLoading)
+  const isRefetching = fetchHistory && (goals.isRefetching || strategies.isRefetching || indicators.isRefetching)
 
   const { strategiesByGoal, indicatorsByGoal, weeklyScores, overallGoalScores, overallStrategyScores, planScore } = useMemo(() => {
+    if (!fetchHistory) {
+      return {
+        strategiesByGoal: new Map<string, StrategyHistoryExtended[]>(),
+        indicatorsByGoal: new Map<string, IndicatorHistoryExtended[]>(),
+        weeklyScores: [],
+        planScore: 0,
+        overallGoalScores: new Map(),
+        overallStrategyScores: new Map(),
+      }
+    }
+
     const strategiesByGoal = new Map<string, StrategyHistoryExtended[]>()
     const indicatorsByGoal = new Map<string, IndicatorHistoryExtended[]>()
     const goalScores = new Map()
@@ -106,7 +128,7 @@ export const DashboardProvider = ({ children }: DashboardTrackingProviderProps) 
       overallGoalScores: goalScores,
       overallStrategyScores: strategyScores,
     }
-  }, [goals.data, strategies.data, indicators.data])
+  }, [fetchHistory, goals.data, strategies.data, indicators.data])
 
   const getStrategiesByGoalId = (goalId: string, seq?: string) => {
     const strategies = strategiesByGoal.get(goalId) || []

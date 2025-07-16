@@ -4,7 +4,7 @@ import { usePlanContext } from '@/app/providers/usePlanContext';
 import { calculateCompletionScore } from '@/app/util';
 import { Badge, Button, Card, Collapsible, Dialog, Portal } from '@chakra-ui/react';
 import { Goal } from '@prisma/client';
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { LuChevronDown, LuChevronUp, LuListChecks, LuPencil, LuTrash2 } from 'react-icons/lu';
 import { SavingSpinner } from '@/components/SavingSpinner';
 
@@ -13,7 +13,7 @@ interface GoalCardProps {
 }
 
 export function GoalCard({ goal }: GoalCardProps) {
-  const { plan, planActions, goalActions, strategyActions, indicatorActions } = usePlanContext()
+  const { goalActions, strategies } = usePlanContext()
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   // const [isStrategyDialogOpen, setIsStrategyDialogOpen] = useState(false);
@@ -21,11 +21,14 @@ export function GoalCard({ goal }: GoalCardProps) {
   // const [editedContent, setEditedContent] = useState(goal.content);
   const [isOpen, setIsOpen] = useState(false);
   const deleteGoal = goalActions.useDelete()
-  const { data: strategies = [] } = strategyActions.useGetByGoalId(goal.id)
+  const goalStrategies = useMemo(
+    () => strategies.filter((s) => s.goalId === goal.id),
+    [strategies, goal.id]
+  )
   // const { data: indicators = [] } = indicatorActions.useGetByGoalId(goal.id)
 
-  // const progress = calculateCompletionScore(strategies);
-  const strategiesCount = strategies?.length || 0;
+  // const progress = calculateCompletionScore(goalStrategies);
+  const strategiesCount = goalStrategies?.length || 0;
   // const indicatorsCount = indicators?.length || 0;
 
   const handleDeleteGoal = async () => {
@@ -66,9 +69,9 @@ export function GoalCard({ goal }: GoalCardProps) {
         </div>
       </Card.Body>
 
-      <Collapsible.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)} className="px-4">
-        {/* {(strategies?.length > 0 || indicators?.length > 0) && ( */}
-        {(strategies?.length > 0) && (
+      <Collapsible.Root open={isOpen} onOpenChange={({ open }) => setIsOpen(open)} className="px-4 pb-4">
+        {/* {(goalStrategies?.length > 0 || indicators?.length > 0) && ( */}
+        {(goalStrategies?.length > 0) && (
           <Collapsible.Trigger asChild>
             <Button variant="ghost" size="sm" className="flex w-full justify-center">
               {isOpen ? (
@@ -81,13 +84,13 @@ export function GoalCard({ goal }: GoalCardProps) {
         )}
 
         <Collapsible.Content className="space-y-4 pt-2">
-          {strategies?.length > 0 && (
+          {goalStrategies?.length > 0 && (
             <div className="space-y-2">
               <h4 className="text-sm font-medium flex items-center">
                 <LuListChecks className="h-3 w-3 mr-1" /> Actions
               </h4>
               <ul className="space-y-1">
-                {strategies.map(strategy => (
+                {goalStrategies.map(strategy => (
                   <li key={strategy.id} className="text-xs text-muted-foreground">
                     • {strategy.content} ({strategy.frequency}x/week)
                   </li>

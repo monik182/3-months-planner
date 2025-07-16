@@ -7,7 +7,7 @@ import { UseIndicatorActions, useIndicatorActions } from '@/app/hooks/useIndicat
 import { UseGoalHistoryActions, useGoalHistoryActions } from '@/app/hooks/useGoalHistoryActions'
 import { UseStrategyHistoryActions, useStrategyHistoryActions } from '@/app/hooks/useStrategyHistoryActions'
 import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/hooks/useIndicatorHistoryActions'
-import { Plan } from '@prisma/client'
+import { Plan, Strategy } from '@prisma/client'
 import { Center, Spinner } from '@chakra-ui/react'
 import { useAuth } from '@/app/providers/AuthProvider'
 
@@ -19,6 +19,8 @@ type PlanContextType = {
   goalActions: UseGoalActions
   strategyActions: UseStrategyActions
   indicatorActions: UseIndicatorActions
+
+  strategies: Strategy[]
 
   goalHistoryActions: UseGoalHistoryActions
   strategyHistoryActions: UseStrategyHistoryActions
@@ -43,11 +45,14 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const hasPlan = !!plan
   const hasStartedPlan = !!plan?.started
 
+  const { data: strategies = [], isLoading: strategiesLoading } =
+    strategyActions.useGetByPlanId(plan?.id as string)
+
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
   const indicatorHistoryActions = useIndicatorHistoryActions()
 
-  if (isLoadingPlan) {
+  if (isLoadingPlan || strategiesLoading) {
     return (
       <Center height="100vh">
         <Spinner size="xl" />
@@ -65,6 +70,8 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         goalActions,
         strategyActions,
         indicatorActions,
+
+        strategies,
         goalHistoryActions,
         strategyHistoryActions,
         indicatorHistoryActions,

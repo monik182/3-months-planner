@@ -6,7 +6,7 @@ import { SavingSpinner } from '@/components/SavingSpinner'
 import { Alert, Button } from '@chakra-ui/react'
 import { Strategy } from '@prisma/client'
 import cuid from 'cuid'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { GoPlus } from 'react-icons/go'
 import { useDebouncedCallback } from 'use-debounce'
 
@@ -19,9 +19,12 @@ interface StrategyListProps {
 }
 
 export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: StrategyListProps) {
-  const { strategyActions } = usePlanContext()
-  const { data: _strategies = [] } = strategyActions.useGetByGoalId(goalId)
-  const [strategies, setStrategies] = useState<Strategy[]>([..._strategies])
+  const { strategyActions, strategies } = usePlanContext()
+  const goalStrategies = useMemo(
+    () => strategies.filter((s) => s.goalId === goalId),
+    [strategies, goalId]
+  )
+  const [strategyList, setStrategyList] = useState<Strategy[]>([...goalStrategies])
   const [activeStrategy, setActiveStrategy] = useState<string | null>(null)
 
   const create = strategyActions.useCreate()
@@ -30,10 +33,10 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
 
   const loadingText = create.isPending ? 'Creating' : 'Saving'
   const loading = create.isPending || update.isPending || remove.isPending
-  const canAdd = maxLimit ? strategies.length < maxLimit : true
+  const canAdd = maxLimit ? strategyList.length < maxLimit : true
 
   const handleUpdate = (id: string, strategy: Partial<Strategy>) => {
-    setStrategies(prev => prev.map(s => s.id === id ? { ...s, ...strategy } : s))
+    setStrategyList(prev => prev.map(s => s.id === id ? { ...s, ...strategy } : s))
     debouncedUpdate(id, strategy)
   }
 
@@ -54,14 +57,14 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
   }
 
   const handleRemove = (id: string) => {
-    setStrategies(prev => prev.filter(s => s.id !== id))
+    setStrategyList(prev => prev.filter(s => s.id !== id))
     debouncedRemove(id)
   }
 
   const saveStrategy = (strategy: Strategy) => {
     create.mutate(strategy, {
       onSuccess: (newStrategy) => {
-        setStrategies(prev => [...prev, strategy])
+        setStrategyList(prev => [...prev, strategy])
         onEdit?.(EntityType.Strategy, newStrategy)
       }
     })
@@ -88,17 +91,17 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
   }, [loading])
 
   useEffect(() => {
-    setStrategies(prev => {
-      if (!prev.length) return _strategies
-      if (prev.length !== _strategies.length) return _strategies
+    setStrategyList(prev => {
+      if (!prev.length) return goalStrategies
+      if (prev.length !== goalStrategies.length) return goalStrategies
       return prev
     })
-  }, [_strategies.length])
+  }, [goalStrategies.length])
 
   return (
     <div className="space-y-3">
       <div className="space-y-2">
-        {strategies.map((strategy) => (
+        {strategyList.map((strategy) => (
           <div
             key={strategy.id}
             className={`border rounded-md transition-colors ${activeStrategy === strategy.id ? 'border-gray-400 bg-gray-50' : 'border-gray-200'}`}
@@ -115,7 +118,7 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
         ))}
       </div>
 
-      {strategies.length === 0 && (
+      {strategyList.length === 0 && (
         <div className="text-sm text-gray-500 p-2">
           No actions added yet. Add an action to support your goal.
         </div>
