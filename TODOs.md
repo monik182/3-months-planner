@@ -1,14 +1,7 @@
-# Auth integration
-- Create Trigger in Supabase to create user on signup ✅
-- Clean up non needed sync code - auth0 related ✅
-- Remove AuthContext (?) ✅
-- Remove all redirect logic and validate the middleware is handling it correctly ✅
-- Remove all prisma related code
 
-# URGENT BUGS
-- Login issues? - Joel's email
-- Duplicated goals? - Joel's email - CANNOT REPRODUCE
+# Auth & Persistency P4
 
+  - Fix: when a strategy is created, let's say frequency 3, the user checks one of the checkboxes in the dashboard and the boolean array is created with length frequency, but then the user updates it, let's say to 5, the checkboxes are still 3. This must be addressed in the update logic.
 
 - Optimize dashboard get requests
   - Improve cache use
@@ -17,7 +10,7 @@
 - Fix cross browser sync - when login in another browser the data is not synced [WIP]
   * Haven't been able to reproduce it consistently, but it's happening
 - Simplify BE
-- Fix "random" redirect to plan/new
+- Fix "random" redirect to plan/new ✅
 - Create all 12 weeks for each strategy history ✅
 - Remove auth0 code ✅
 - Fix edit strategy sequences ❓ (not sure if already fixed)
@@ -29,14 +22,17 @@
 - Integrate progress page
 - Improve the plan view and colors and reuse component in step4
 - Improve the goals/strategies/indicator creation forms
-- Integrate AI suggestions
 - Improve HOME page with steps and everything
-- Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
 - In strategies, create 7 checkboxes, one for each day, and let the user select the days they worked on it
 - Add reflection section for each week
 - Unify colors
+- Integrate AI suggestions
+- Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
 
-
+# Complimentary Pages:
+ - Vision & 3-year Milestone
+ - Goals & Strategies editor
+ - Past years
 
 
 
@@ -119,8 +115,8 @@ Print: 🔥
   - only save on click ❓
 - FE Improvements
   - Create plan history page
-  - Unify services - structure is repeated
-  - Unify actions - structure is repeated
+  - Unify services - structure is repeated ❌
+  - Unify actions - structure is repeated ❌
   - Create overview progress page ✅ - Can be improved
   - Create route guard ✅
   - Create plan read only view ✅
@@ -163,9 +159,9 @@ Time blocking:
 - Week 13: Celebrate last year achievements/last opportunity to close last year's goals/**Plan next year**
 
 
-# ####################
+# ################################################################################################################################################################
 # DONE
-# ####################
+# ################################################################################################################################################################
 
 
 # Wizard
@@ -274,3 +270,14 @@ with persistance will come success
   - Fix new email/password user flow - register to user db ✅
 - 🚨 FIX Sync/login Bug 🚨 ✅
 - Test Claude implementation ❌
+
+# Auth integration
+- Create Trigger in Supabase to create user on signup ✅
+- Clean up non needed sync code - auth0 related ✅
+- Remove AuthContext (?) ✅
+- Remove all redirect logic and validate the middleware is handling it correctly ✅
+- Remove all prisma related code ❌
+
+# URGENT BUGS
+- Login issues? - Joel's email - CANNOT REPRODUCE  ❌
+- Duplicated goals? - Joel's email - CANNOT REPRODUCE ❌
