@@ -33,8 +33,10 @@ import { Goal } from "@prisma/client";
 import cuid from "cuid";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
+import NextLink from "next/link";
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
 import { LuCalendarDays, LuPlus, LuTarget } from "react-icons/lu";
+import { PiChartPieSlice, PiFileText, PiLightbulb } from "react-icons/pi";
 
 function PlanV2Page() {
   const { plan, planActions, goalActions } = usePlanContext();
@@ -294,7 +296,40 @@ function PlanV2Page() {
           </Card.Root>
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">
-          Feature Buttons here
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card.Root className="flex flex-col items-center text-center p-6">
+              <PiChartPieSlice className="h-12 w-12 mb-4 text-black" />
+              <h3 className="text-xl font-bold mb-2">Track Progress</h3>
+              <p className="text-muted-foreground mb-4">
+                View charts and trends of your indicators to see your progress over time.
+              </p>
+              <Button as={NextLink} href="/indicators" colorPalette="black" className="mt-auto">
+                View Indicators
+              </Button>
+            </Card.Root>
+
+            <Card.Root className="flex flex-col items-center text-center p-6">
+              <PiFileText className="h-12 w-12 mb-4 text-black" />
+              <h3 className="text-xl font-bold mb-2">Goal Templates</h3>
+              <p className="text-muted-foreground mb-4">
+                Browse pre-built goal templates for common objectives and add them to your plan.
+              </p>
+              <Button as={NextLink} href="/templates" colorPalette="black" className="mt-auto">
+                Browse Templates
+              </Button>
+            </Card.Root>
+
+            <Card.Root className="flex flex-col items-center text-center p-6">
+              <PiLightbulb className="h-12 w-12 mb-4 text-black" />
+              <h3 className="text-xl font-bold mb-2">AI Suggestions</h3>
+              <p className="text-muted-foreground mb-4">
+                Get intelligent suggestions for goals, strategies, and indicators based on your plan.
+              </p>
+              <Button as={NextLink} href="/suggestions" colorPalette="black" className="mt-auto">
+                Get Suggestions
+              </Button>
+            </Card.Root>
+          </div>
         </Box>
       </Flex>
       <GoalDialog
