@@ -3,7 +3,7 @@ import { Goal, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
-  const parsedData = { ...GoalSchema.parse(data), planId: data.plan.connect!.id! }
+  const parsedData = { ...GoalSchema.omit({ id: true }).parse(data), planId: data.plan.connect!.id! }
 
   const response = await fetch('/api/goal', {
     method: 'POST',
@@ -15,11 +15,12 @@ const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
     throw new Error('Failed to create goal')
   }
 
-  return parsedData
+  const remoteGoal = await response.json()
+  return remoteGoal
 }
 
 const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> => {
-  const parsedData = GoalArraySchema.parse(goals)
+  const parsedData = GoalArraySchema.omit({ id: true }).parse(goals)
   const response = await fetch('/api/goal/bulk', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -30,7 +31,8 @@ const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> 
     throw new Error('Failed to create goals')
   }
 
-  return parsedData
+  const remoteGoals = await response.json()
+  return remoteGoals
 }
 
 const get = async (id: string): Promise<Goal | null> => {

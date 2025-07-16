@@ -3,7 +3,7 @@ import { Strategy, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Strategy): Promise<Strategy> => {
-  const parsedData = StrategyNoGoalSchema.parse(data)
+  const parsedData = StrategyNoGoalSchema.omit({ id: true }).parse(data)
 
   const response = await fetch('/api/strategy', {
     method: 'POST',
@@ -15,11 +15,12 @@ const create = async (data: Strategy): Promise<Strategy> => {
     throw new Error('Failed to create strategy')
   }
 
-  return parsedData
+  const remoteStrategy = await response.json()
+  return remoteStrategy
 }
 
 const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
-  const parsedData = StrategyArraySchema.parse(strategies)
+  const parsedData = StrategyArraySchema.omit({ id: true }).parse(strategies)
 
   const response = await fetch('/api/strategy/bulk', {
     method: 'POST',
@@ -31,7 +32,8 @@ const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
     throw new Error('Failed to create strategies')
   }
 
-  return parsedData
+  const remoteStrategies = await response.json()
+  return remoteStrategies
 }
 
 const get = async (id: string): Promise<Strategy | null> => {

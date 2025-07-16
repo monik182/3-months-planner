@@ -3,7 +3,7 @@ import { Indicator, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Indicator): Promise<Indicator> => {
-  const parsedData = IndicatorNoGoalSchema.parse(data)
+  const parsedData = IndicatorNoGoalSchema.omit({ id: true }).parse(data)
 
   const response = await fetch('/api/indicator', {
     method: 'POST',
@@ -15,11 +15,12 @@ const create = async (data: Indicator): Promise<Indicator> => {
     throw new Error('Failed to create indicator')
   }
 
-  return parsedData
+  const remoteIndicator = await response.json()
+  return remoteIndicator
 }
 
 const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promise<Indicator[]> => {
-  const parsedData = IndicatorNoGoalArraySchema.parse(indicators)
+  const parsedData = IndicatorNoGoalArraySchema.omit({ id: true }).parse(indicators)
 
   const response = await fetch('/api/indicator/bulk', {
     method: 'POST',
@@ -31,7 +32,8 @@ const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promis
     throw new Error('Failed to create indicators in bulk')
   }
 
-  return parsedData
+  const remoteIndicators = await response.json()
+  return remoteIndicators
 }
 
 const get = async (id: string): Promise<Indicator | null> => {
