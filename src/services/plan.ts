@@ -22,7 +22,8 @@ const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
     throw new Error('Failed to create plan')
   }
 
-  return parsedData
+  const remotePlan = await response.json()
+  return remotePlan
 }
 
 const get = async (id: string): Promise<Plan | null> => {
