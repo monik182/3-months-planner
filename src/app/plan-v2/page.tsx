@@ -296,7 +296,7 @@ function PlanV2Page() {
           </Card.Root>
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2">
             <Card.Root className="flex flex-col items-center text-center p-6">
               <PiChartPieSlice className="h-12 w-12 mb-4 text-black" />
               <h3 className="text-xl font-bold mb-2">Track Progress</h3>
@@ -318,7 +318,7 @@ function PlanV2Page() {
                 <NextLink href="/templates">Browse Templates</NextLink>
               </Button>
             </Card.Root>
-
+{/* 
             <Card.Root className="flex flex-col items-center text-center p-6">
               <PiLightbulb className="h-12 w-12 mb-4 text-black" />
               <h3 className="text-xl font-bold mb-2">AI Suggestions</h3>
@@ -328,7 +328,7 @@ function PlanV2Page() {
               <Button asChild colorPalette="black" className="mt-auto">
                 <NextLink href="/suggestions">Get Suggestions</NextLink>
               </Button>
-            </Card.Root>
+            </Card.Root> */}
           </div>
         </Box>
       </Flex>
