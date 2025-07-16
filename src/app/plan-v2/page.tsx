@@ -294,7 +294,7 @@ function PlanV2Page() {
           </Card.Root>
         </Box>
         <Box shadow="lg" padding="20px" borderRadius="sm" border="none">
-          Tracking here
+          Feature Buttons here
         </Box>
       </Flex>
       <GoalDialog
