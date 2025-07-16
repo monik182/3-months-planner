@@ -11,9 +11,12 @@ import { EmptyState } from '@/components/ui/empty-state'
 import { MdOutlineBeachAccess } from 'react-icons/md'
 import { Overview } from '@/app/dashboard/Overview'
 import { DashboardProvider, useDashboardContext } from '@/app/dashboard/dashboardContext'
+import { useAuth } from '@/app/providers/AuthProvider'
+import { useEffect } from 'react'
 
 function Dashboard() {
   const router = useRouter()
+  const { user } = useAuth()
   const { plan } = usePlanContext()
   const { weeklyScores } = useDashboardContext()
   const today = dayjs().format('DD MMMM YYYY')
@@ -23,6 +26,14 @@ function Dashboard() {
   const hasNotStarted = currentWeek <= 0
   const progressValue = hasNotStarted ? 0 : Math.min((currentWeek / 12) * 100, 100);
   const week = hasNotStarted ? 1 : currentWeek
+
+  useEffect(() => {
+    if (!user) {
+      router.replace('/login')
+    }
+  }, [user, router])
+
+  if (!user) return null
 
   return (
     <Grid>
