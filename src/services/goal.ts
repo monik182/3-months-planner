@@ -3,7 +3,7 @@ import { Goal, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
-  const parsedData = GoalSchema.omit({ id: true }).parse(data)
+  const parsedData = GoalSchema.parse(data)
 
   const response = await fetch('/api/goal', {
     method: 'POST',
@@ -20,7 +20,7 @@ const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
 }
 
 const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> => {
-  const parsedData = GoalArraySchema.omit({ id: true }).parse(goals)
+  const parsedData = GoalArraySchema.parse(goals)
   const response = await fetch('/api/goal/bulk', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -56,7 +56,7 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Goal
 
 
 const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial<Goal>> => {
-  const parsedData = PartialGoalSchema.parse(goal)
+  const parsedData = PartialGoalSchema.omit({ id: true }).parse(goal)
 
   const response = await fetch(`/api/goal/${id}`, {
     method: 'PUT',
@@ -68,7 +68,7 @@ const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial
     throw new Error('Failed to update goal')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {
