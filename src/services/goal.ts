@@ -3,7 +3,7 @@ import { Goal, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
-  const parsedData = { ...GoalSchema.omit({ id: true }).parse(data), planId: data.plan.connect!.id! }
+  const parsedData = GoalSchema.omit({ id: true }).parse(data)
 
   const response = await fetch('/api/goal', {
     method: 'POST',

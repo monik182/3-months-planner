@@ -44,7 +44,7 @@ const getAll = async (userId: string): Promise<Plan[]> => {
   return remotePlans
 }
 
-const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
+const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Plan> => {
   const parsedData = PartialPlanSchema.parse(plan)
 
   const response = await fetch(`/api/plan/${id}`, {
@@ -57,7 +57,8 @@ const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial
     throw new Error('Failed to update plan')
   }
 
-  return parsedData
+  const remotePlan = await response.json()
+  return remotePlan
 }
 
 export const PlanService = {
