@@ -1,19 +1,5 @@
-
-# Auth & Persistency P4
-
-- Optimize dashboard get requests
-  - Improve cache use
-  - Remove indexed db code, not needed?
-
-- Fix cross browser sync - when login in another browser the data is not synced [WIP]
-  * Haven't been able to reproduce it consistently, but it's happening
-- Simplify BE
-- Fix "random" redirect to plan/new ✅
-- Create all 12 weeks for each strategy history ✅
-- Remove auth0 code ✅
-- Fix edit strategy sequences ❓ (not sure if already fixed)
-
-
+# Bug
+- strategies and goals are reordering randomly - avoid that.
 
 # Post Release
 - Integrate templates
@@ -33,23 +19,7 @@
  - Past years
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Print: 🔥
+# Print: 🔥
 - Create printable templates for the weekly score tracking
 
 
@@ -76,12 +46,19 @@ Print: 🔥
 
 
 
+# Auth & Persistency P4
 
+- Optimize dashboard get requests
+  - Improve cache use
+  - Remove indexed db code, not needed?
 
-
-
-
-
+- Fix cross browser sync - when login in another browser the data is not synced [WIP]
+  * Haven't been able to reproduce it consistently, but it's happening
+- Simplify BE
+- Fix "random" redirect to plan/new ✅
+- Create all 12 weeks for each strategy history ✅
+- Remove auth0 code ✅
+- Fix edit strategy sequences ❓ (not sure if already fixed)
 
 
 
