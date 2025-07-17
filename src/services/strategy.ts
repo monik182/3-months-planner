@@ -3,7 +3,7 @@ import { Strategy, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Strategy): Promise<Strategy> => {
-  const parsedData = StrategyNoGoalSchema.omit({ id: true }).parse(data)
+  const parsedData = StrategyNoGoalSchema.parse(data)
 
   const response = await fetch('/api/strategy', {
     method: 'POST',
@@ -20,7 +20,7 @@ const create = async (data: Strategy): Promise<Strategy> => {
 }
 
 const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
-  const parsedData = StrategyArraySchema.omit({ id: true }).parse(strategies)
+  const parsedData = StrategyArraySchema.parse(strategies)
 
   const response = await fetch('/api/strategy/bulk', {
     method: 'POST',
@@ -69,7 +69,7 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Stra
 }
 
 const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise<Partial<Strategy>> => {
-  const parsedData = PartialStrategySchema.parse(strategy)
+  const parsedData = PartialStrategySchema.omit({ id: true }).parse(strategy)
 
   const response = await fetch(`/api/strategy/${id}`, {
     method: 'PUT',
@@ -81,7 +81,7 @@ const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise
     throw new Error('Failed to update strategy')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {

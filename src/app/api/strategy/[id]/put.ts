@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const parsedData = PartialStrategySchema.parse(data)
+    const parsedData = PartialStrategySchema.omit({ id: true }).parse(data)
     const response = await strategyHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {

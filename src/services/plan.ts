@@ -10,7 +10,7 @@ const getByUserId = async (userId: string): Promise<Plan | null> => {
 }
 
 const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
-  const parsedData = PlanSchema.omit({ id: true }).parse(data)
+  const parsedData = PlanSchema.parse(data)
 
   const response = await fetch('/api/plan', {
     method: 'POST',
@@ -45,7 +45,7 @@ const getAll = async (userId: string): Promise<Plan[]> => {
 }
 
 const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Plan> => {
-  const parsedData = PartialPlanSchema.parse(plan)
+  const parsedData = PartialPlanSchema.omit({ id: true }).parse(plan)
 
   const response = await fetch(`/api/plan/${id}`, {
     method: 'PUT',

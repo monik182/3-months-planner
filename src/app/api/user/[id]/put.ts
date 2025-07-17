@@ -12,7 +12,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const parsedData = PartialUserSchema.parse(data)
+    const parsedData = PartialUserSchema.omit({ id: true }).parse(data)
     const response = await userHandler.update(params.id, parsedData)
     return new Response(JSON.stringify({ ...response, ok: true }), { status: 200 })
   } catch (error) {

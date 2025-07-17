@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const parsedData = PartialWaitlistSchema.parse(data)
+    const parsedData = PartialWaitlistSchema.omit({ id: true }).parse(data)
     const response = await waitlistHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {

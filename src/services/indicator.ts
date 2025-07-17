@@ -3,7 +3,7 @@ import { Indicator, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Indicator): Promise<Indicator> => {
-  const parsedData = IndicatorNoGoalSchema.omit({ id: true }).parse(data)
+  const parsedData = IndicatorNoGoalSchema.parse(data)
 
   const response = await fetch('/api/indicator', {
     method: 'POST',
@@ -20,7 +20,7 @@ const create = async (data: Indicator): Promise<Indicator> => {
 }
 
 const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promise<Indicator[]> => {
-  const parsedData = IndicatorNoGoalArraySchema.omit({ id: true }).parse(indicators)
+  const parsedData = IndicatorNoGoalArraySchema.parse(indicators)
 
   const response = await fetch('/api/indicator/bulk', {
     method: 'POST',
@@ -75,7 +75,7 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Indi
 }
 
 const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Partial<Indicator>> => {
-  const parsedData = PartialIndicatorSchema.parse(indicator)
+  const parsedData = PartialIndicatorSchema.omit({ id: true }).parse(indicator)
 
   const response = await fetch(`/api/indicator/${id}`, {
     method: 'PUT',
@@ -87,7 +87,7 @@ const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promi
     throw new Error('Failed to update indicator')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {
