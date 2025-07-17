@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const parsedData = PartialIndicatorSchema.parse(data)
+    const parsedData = PartialIndicatorSchema.omit({ id: true }).parse(data)
     const indicator = await indicatorHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(indicator), { status: 200 })
   } catch (error) {

@@ -24,6 +24,7 @@ function Dashboard() {
   const progressValue = hasNotStarted ? 0 : Math.min((currentWeek / 12) * 100, 100);
   const week = hasNotStarted ? 1 : currentWeek
 
+
   return (
     <Grid>
       <Grid gap="1rem" gridTemplateColumns={{ base: "none", lg: "30% 70%" }} padding="1rem 0" alignItems="center" marginTop="1rem">

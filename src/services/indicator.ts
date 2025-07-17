@@ -15,7 +15,8 @@ const create = async (data: Indicator): Promise<Indicator> => {
     throw new Error('Failed to create indicator')
   }
 
-  return parsedData
+  const remoteIndicator = await response.json()
+  return remoteIndicator
 }
 
 const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promise<Indicator[]> => {
@@ -31,7 +32,8 @@ const createBulk = async (indicators: Prisma.IndicatorCreateManyInput[]): Promis
     throw new Error('Failed to create indicators in bulk')
   }
 
-  return parsedData
+  const remoteIndicators = await response.json()
+  return remoteIndicators
 }
 
 const get = async (id: string): Promise<Indicator | null> => {
@@ -73,7 +75,7 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Indi
 }
 
 const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promise<Partial<Indicator>> => {
-  const parsedData = PartialIndicatorSchema.parse(indicator)
+  const parsedData = PartialIndicatorSchema.omit({ id: true }).parse(indicator)
 
   const response = await fetch(`/api/indicator/${id}`, {
     method: 'PUT',
@@ -85,7 +87,7 @@ const update = async (id: string, indicator: Prisma.IndicatorUpdateInput): Promi
     throw new Error('Failed to update indicator')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {

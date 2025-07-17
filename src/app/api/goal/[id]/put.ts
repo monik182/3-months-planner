@@ -13,7 +13,7 @@ export async function PUT(request: NextRequest, segmentData: SegmentData) {
   }
 
   try {
-    const parsedData = PartialGoalSchema.parse(data)
+    const parsedData = PartialGoalSchema.omit({ id: true }).parse(data)
     const response = await goalHandler.update(params.id, parsedData)
     return new Response(JSON.stringify(response), { status: 200 })
   } catch (error) {

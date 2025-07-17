@@ -61,7 +61,7 @@ const getByPlanId = async (planId: string, sequence?: number, status = Status.AC
 }
 
 const update = async (id: string, history: Prisma.GoalHistoryUpdateInput): Promise<Partial<GoalHistory>> => {
-  const parsedData = PartialGoalHistorySchema.parse(history)
+  const parsedData = PartialGoalHistorySchema.omit({ id: true }).parse(history)
 
   const response = await fetch(`/api/goal/history/${id}`, {
     method: 'PUT',
@@ -73,7 +73,7 @@ const update = async (id: string, history: Prisma.GoalHistoryUpdateInput): Promi
     throw new Error('Failed to update goal history')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {
