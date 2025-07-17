@@ -1,8 +1,6 @@
 
 # Auth & Persistency P4
 
-  - Fix: when a strategy is created, let's say frequency 3, the user checks one of the checkboxes in the dashboard and the boolean array is created with length frequency, but then the user updates it, let's say to 5, the checkboxes are still 3. This must be addressed in the update logic.
-
 - Optimize dashboard get requests
   - Improve cache use
   - Remove indexed db code, not needed?
@@ -281,3 +279,4 @@ with persistance will come success
 # URGENT BUGS
 - Login issues? - Joel's email - CANNOT REPRODUCE  ❌
 - Duplicated goals? - Joel's email - CANNOT REPRODUCE ❌
+- Fix: when a strategy is created, let's say frequency 3, the user checks one of the checkboxes in the dashboard and the boolean array is created with length frequency, but then the user updates it, let's say to 5, the checkboxes are still 3. This must be addressed in the update logic. ✅
