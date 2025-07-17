@@ -77,7 +77,7 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
 }
 
 const update = async (id: string, history: Prisma.IndicatorHistoryUpdateInput): Promise<Partial<IndicatorHistory>> => {
-  const parsedData = PartialIndicatorHistorySchema.parse(history)
+  const parsedData = PartialIndicatorHistorySchema.omit({ id: true }).parse(history)
 
   const response = await fetch(`/api/indicator/history/${id}`, {
     method: 'PUT',
@@ -89,7 +89,7 @@ const update = async (id: string, history: Prisma.IndicatorHistoryUpdateInput): 
     throw new Error('Failed to update indicator history')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {

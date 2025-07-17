@@ -15,7 +15,8 @@ const create = async (data: Strategy): Promise<Strategy> => {
     throw new Error('Failed to create strategy')
   }
 
-  return parsedData
+  const remoteStrategy = await response.json()
+  return remoteStrategy
 }
 
 const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
@@ -31,7 +32,8 @@ const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
     throw new Error('Failed to create strategies')
   }
 
-  return parsedData
+  const remoteStrategies = await response.json()
+  return remoteStrategies
 }
 
 const get = async (id: string): Promise<Strategy | null> => {
@@ -67,7 +69,7 @@ const getByGoalId = async (goalId: string, status = Status.ACTIVE): Promise<Stra
 }
 
 const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise<Partial<Strategy>> => {
-  const parsedData = PartialStrategySchema.parse(strategy)
+  const parsedData = PartialStrategySchema.omit({ id: true }).parse(strategy)
 
   const response = await fetch(`/api/strategy/${id}`, {
     method: 'PUT',
@@ -79,7 +81,7 @@ const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise
     throw new Error('Failed to update strategy')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {

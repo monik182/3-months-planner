@@ -36,8 +36,7 @@ const update = async (id: string, waitlist: Prisma.WaitlistUpdateInput): Promise
     if (!response.ok) {
       throw new Error('Failed to update waitlist')
     }
-    const waitlist = await response.json()
-    return waitlist
+    return response.json()
   })
 }
 

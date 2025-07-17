@@ -77,7 +77,7 @@ const getByGoalId = async (goalId: string, sequence?: number, status = Status.AC
 }
 
 const update = async (id: string, history: Prisma.StrategyHistoryUpdateInput): Promise<Partial<StrategyHistory>> => {
-  const parsedData = PartialStrategyHistorySchema.parse(history)
+  const parsedData = PartialStrategyHistorySchema.omit({ id: true }).parse(history)
 
   const response = await fetch(`/api/strategy/history/${id}`, {
     method: 'PUT',
@@ -89,7 +89,7 @@ const update = async (id: string, history: Prisma.StrategyHistoryUpdateInput): P
     throw new Error('Failed to update strategy history')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {

@@ -68,8 +68,8 @@ export function GoalManager({ onLoading, onEdit }: Step<Goal[]>) {
   const saveGoal = (goal: Omit<Goal, 'status'>) => {
     create.mutate({ ...goal, plan: { connect: { id: plan!.id } } }, {
       onSuccess: (newGoal) => {
-        setGoals(prev => [...prev, goal])
-        setExpandedGoalId(goal.id)
+        setGoals(prev => [...prev, { ...goal, id: newGoal.id }])
+        setExpandedGoalId(newGoal.id)
         onEdit?.(EntityType.Goal, newGoal as Goal)
       }
     })

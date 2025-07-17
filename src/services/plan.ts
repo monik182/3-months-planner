@@ -22,7 +22,8 @@ const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
     throw new Error('Failed to create plan')
   }
 
-  return parsedData
+  const remotePlan = await response.json()
+  return remotePlan
 }
 
 const get = async (id: string): Promise<Plan | null> => {
@@ -43,8 +44,8 @@ const getAll = async (userId: string): Promise<Plan[]> => {
   return remotePlans
 }
 
-const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial<Plan>> => {
-  const parsedData = PartialPlanSchema.parse(plan)
+const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Plan> => {
+  const parsedData = PartialPlanSchema.omit({ id: true }).parse(plan)
 
   const response = await fetch(`/api/plan/${id}`, {
     method: 'PUT',
@@ -56,7 +57,8 @@ const update = async (id: string, plan: Prisma.PlanUpdateInput): Promise<Partial
     throw new Error('Failed to update plan')
   }
 
-  return parsedData
+  const remotePlan = await response.json()
+  return remotePlan
 }
 
 export const PlanService = {

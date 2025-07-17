@@ -1,3 +1,4 @@
+'use client'
 import { GoalDetail } from '@/app/dashboard/Week/GoalDetail'
 import { useDashboardContext } from '@/app/dashboard/dashboardContext'
 import { calculateWeekEndDate, calculateWeekStartDate, formatDate } from '@/app/util'
@@ -6,13 +7,18 @@ import { Plan } from '@prisma/client'
 
 interface WeekProps {
   seq: number
-  plan: Plan
+  plan: Plan | null
   score: number
 }
 
-export function Week({ score, seq, plan }: WeekProps) {  
+export function Week({ score, seq, plan }: WeekProps) {
   const { goalHistoryActions, isRefetching } = useDashboardContext()
   const { data: goals = [], isLoading } = goalHistoryActions.useGetByPlanId(plan?.id as string, seq)
+
+  if (!plan) {
+    return null
+  }
+
   const startDate = calculateWeekStartDate(plan.startDate, seq)
   const endDate = calculateWeekEndDate(startDate)
 

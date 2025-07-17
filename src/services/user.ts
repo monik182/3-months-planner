@@ -48,7 +48,7 @@ const getByAuth0Id = async (id: string): Promise<User | null> => {
 }
 
 const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial<User>> => {
-  const parsedData = PartialUserSchema.parse(user)
+  const parsedData = PartialUserSchema.omit({ id: true }).parse(user)
 
   const response = await fetch(`/api/user/${id}`, {
     method: 'PUT',
@@ -60,7 +60,7 @@ const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial
     throw new Error('Failed to update user')
   }
 
-  return { ...parsedData, id }
+  return response.json()
 }
 
 

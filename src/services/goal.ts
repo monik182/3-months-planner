@@ -3,7 +3,7 @@ import { Goal, Prisma } from '@prisma/client'
 import { Status } from '@/app/types/types'
 
 const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
-  const parsedData = { ...GoalSchema.parse(data), planId: data.plan.connect!.id! }
+  const parsedData = GoalSchema.parse(data)
 
   const response = await fetch('/api/goal', {
     method: 'POST',
@@ -15,7 +15,8 @@ const create = async (data: Prisma.GoalCreateInput): Promise<Goal> => {
     throw new Error('Failed to create goal')
   }
 
-  return parsedData
+  const remoteGoal = await response.json()
+  return remoteGoal
 }
 
 const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> => {
@@ -30,7 +31,8 @@ const createBulk = async (goals: Prisma.GoalCreateManyInput[]): Promise<Goal[]> 
     throw new Error('Failed to create goals')
   }
 
-  return parsedData
+  const remoteGoals = await response.json()
+  return remoteGoals
 }
 
 const get = async (id: string): Promise<Goal | null> => {
@@ -54,7 +56,7 @@ const getByPlanId = async (planId: string, status = Status.ACTIVE): Promise<Goal
 
 
 const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial<Goal>> => {
-  const parsedData = PartialGoalSchema.parse(goal)
+  const parsedData = PartialGoalSchema.omit({ id: true }).parse(goal)
 
   const response = await fetch(`/api/goal/${id}`, {
     method: 'PUT',
@@ -66,7 +68,7 @@ const update = async (id: string, goal: Prisma.GoalUpdateInput): Promise<Partial
     throw new Error('Failed to update goal')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const deleteItem = async (id: string): Promise<void> => {

@@ -64,7 +64,7 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
   const saveStrategy = (strategy: Strategy) => {
     create.mutate(strategy, {
       onSuccess: (newStrategy) => {
-        setStrategyList(prev => [...prev, strategy])
+        setStrategyList(prev => [...prev, { ...strategy, id: newStrategy.id }])
         onEdit?.(EntityType.Strategy, newStrategy)
       }
     })
