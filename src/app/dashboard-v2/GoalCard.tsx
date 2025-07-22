@@ -112,7 +112,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
                           minW="24px"
                           h="24px"
                           aria-label={`${isCompleted ? 'Mark as incomplete' : 'Mark as complete'} for ${dayName}`}
-                          disabled={reachedLimit}
+                          disabled={reachedLimit && !isCompleted}
                         >
                           {isCompleted && '✓'}
                         </Button>
