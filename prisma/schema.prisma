@@ -53,7 +53,7 @@ model GoalHistory {
   goalId     String    @map("goal_id")
   planId     String    @map("plan_id")
   sequence   Int
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt  DateTime? @default(now()) @db.Timestamptz(6) @map("created_at")
   goal       Goal      @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
   @@unique([goalId, sequence])
@@ -71,7 +71,7 @@ model Strategy {
   weeks           String[]
   status          String            @default("1")
   frequency       Int
-  created_at      DateTime?         @default(now()) @db.Timestamptz(6)
+  createdAt      DateTime?          @default(now()) @db.Timestamptz(6) @map("created_at")
   goal            Goal              @relation(fields: [goalId], references: [id], onDelete: Cascade)
   strategyHistory StrategyHistory[]
 

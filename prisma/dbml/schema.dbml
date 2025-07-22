@@ -34,7 +34,7 @@ Table goal_history {
   goalId String [not null]
   planId String [not null]
   sequence Int [not null]
-  created_at DateTime [default: `now()`]
+  createdAt DateTime [default: `now()`]
   goal goals [not null]
 
   indexes {
@@ -50,7 +50,7 @@ Table strategies {
   weeks String[] [not null]
   status String [not null, default: '1']
   frequency Int [not null]
-  created_at DateTime [default: `now()`]
+  createdAt DateTime [default: `now()`]
   goal goals [not null]
   strategyHistory strategy_history [not null]
 }
