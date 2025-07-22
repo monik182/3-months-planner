@@ -36,7 +36,7 @@ import { useState, useEffect } from "react";
 import NextLink from "next/link";
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
 import { LuCalendarDays, LuPlus, LuTarget } from "react-icons/lu";
-import { PiChartPieSlice, PiFileText, PiLightbulb } from "react-icons/pi";
+import { PiChartPieSlice, PiFileText } from "react-icons/pi";
 
 function PlanV2Page() {
   const { plan, planActions, goalActions } = usePlanContext();
@@ -50,7 +50,8 @@ function PlanV2Page() {
   const [editing, setEditing] = useState(false);
   const [vision, setVision] = useState(plan?.vision || "");
   const update = planActions.useUpdate();
-  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [goalsDescriptionOpen, setGoalsDescriptionOpen] = useState(false);
+  const [visionDescriptionOpen, setVisionDescriptionOpen] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
   const [newGoal, setNewGoal] = useState<Goal | null>(null);
 
@@ -76,8 +77,12 @@ function PlanV2Page() {
     });
   }, [goalsData]);
 
-  const toggleDetails = () => {
-    setDetailsOpen(!detailsOpen);
+  const toggleGoalDescription = () => {
+    setGoalsDescriptionOpen(!goalsDescriptionOpen);
+  };
+
+  const toggleVisionDescription = () => {
+    setVisionDescriptionOpen(prev => !prev);
   };
 
   const handleSave = () => {
@@ -174,18 +179,9 @@ function PlanV2Page() {
           <Card.Root>
             <Card.Body gap="2">
               {/* TODO: change to this year's vision? */}
-              <Card.Title mt="2">Define your long term vision</Card.Title>
+              <Card.Title mt="2">Define Your 3-Month Vision</Card.Title>
               <Card.Description>
-                Dare to dream without limits. Picture a future where you've
-                achieved everything you’ve ever desired. Be bold and dream
-                unapologetically—this is your life, your vision, your legacy.
-                What passions have you followed fearlessly? What does
-                fulfillment look like in your career, relationships, and
-                personal growth? Envision a life where every choice you make
-                aligns with your deepest values and aspirations. Let your
-                imagination run free, embrace your wildest ambitions, and create
-                a vision that excites and motivates you every day. Dream as if
-                failure isn’t an option, and let your boldness pave the way.
+                <VisionDescription open={visionDescriptionOpen} onToggle={toggleVisionDescription} />
               </Card.Description>
               <Spacer />
               {editing || update.isPending ? (
@@ -230,9 +226,8 @@ function PlanV2Page() {
             <Card.Body gap="2">
               <Card.Title mt="2">Goals</Card.Title>
               <Card.Description>
-                <GoalDescription open={detailsOpen} onToggle={toggleDetails} />
+                <GoalDescription open={goalsDescriptionOpen} onToggle={toggleGoalDescription} />
               </Card.Description>
-              {/* TODO: Goals section */}
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
                 {orderedGoals.map((goal) => (
                   <GoalCard key={goal.id} goal={goal} />
@@ -318,7 +313,7 @@ function PlanV2Page() {
                 <NextLink href="/templates">Browse Templates</NextLink>
               </Button>
             </Card.Root>
-{/* 
+            {/* 
             <Card.Root className="flex flex-col items-center text-center p-6">
               <PiLightbulb className="h-12 w-12 mb-4 text-black" />
               <h3 className="text-xl font-bold mb-2">AI Suggestions</h3>
@@ -424,6 +419,87 @@ function GoalDescription({
               project tasks by Friday."
             </Text>
           </div>
+        </Collapsible.Content>
+      </Collapsible.Root>
+    </div>
+  );
+}
+function VisionDescription({
+  open,
+  onToggle,
+}: {
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="text-gray-700">
+      <Text textStyle="sm">
+        Dare to plan without limits—focus on what you’ll achieve in the next quarter. Picture where you want to be
+        three months from now. Be bold and unapologetic—this is your life, your next chapter.
+      </Text>
+
+      <Collapsible.Root open={open}>
+        <Collapsible.Trigger
+          onClick={onToggle}
+          className="flex items-center text-sm text-gray-600 hover:text-gray-900 mt-2 mb-1"
+        >
+          {open ? "Show less" : "Show more"}
+          {open ? (
+            <HiChevronUp size={16} className="ml-1" />
+          ) : (
+            <HiChevronDown size={16} className="ml-1" />
+          )}
+        </Collapsible.Trigger>
+
+        <Collapsible.Content className="text-sm space-y-2">
+
+          <ul className="list-disc pl-5 space-y-1">
+            <li>
+              <Text textStyle="sm">
+                <strong>Identify Your Core Passions:</strong> Which interests energize you right now? What projects or skills
+                do you most want to dive into over the next 90 days?
+              </Text>
+            </li>
+            <li>
+              <Text textStyle="sm">
+                <strong>Clarify Key Milestones:</strong> In your career, relationships, health, or personal growth, what specific
+                outcomes would make you feel accomplished by the end of the quarter?
+              </Text>
+            </li>
+            <li>
+              <Text textStyle="sm">
+                <strong>Align with Your Values:</strong> How will each milestone reflect what matters most to you? Make sure
+                every goal resonates with your deeper purpose.
+              </Text>
+            </li>
+            <li>
+              <Text textStyle="sm">
+                <strong>Visualize Daily Actions:</strong> Break each milestone into weekly and daily “must-do” tasks. Envision
+                yourself checking off each step—what does that feel like?
+              </Text>
+            </li>
+            <li>
+              <Text textStyle="sm">
+                <strong>Fuel Your Motivation:</strong> Picture yourself at the end of three months—energized, proud, and on track.
+                How will you celebrate your wins?
+              </Text>
+            </li>
+          </ul>
+
+          <Text textStyle="sm" className="italic">
+            Dream as if failure isn’t an option—then map out exactly how you’ll make it happen in the next 12 weeks. Let this
+            focused vision excite and guide you every single day.
+          </Text>
+          <div className="bg-gray-50 p-3 rounded-md border border-gray-200 mt-2">
+            <Text textStyle="sm" className="font-medium">
+              Example:
+            </Text>
+            <ul className="list-disc pl-5 space-y-1">
+              <li>Complete an online course in digital marketing</li>
+              <li>Have weekly coffee dates with three mentors</li>
+              <li>Run a 5K in under 30 minutes</li>
+            </ul>
+          </div> 
         </Collapsible.Content>
       </Collapsible.Root>
     </div>
