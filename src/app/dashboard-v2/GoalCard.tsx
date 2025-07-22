@@ -1,6 +1,6 @@
 import { Goal } from '@prisma/client';
 import WeekProgressIndicator from './WeekProgressIndicator';
-import { Box, Button, Card, Flex, Heading } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Heading, Badge } from '@chakra-ui/react'
 import { useMemo } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 
@@ -27,11 +27,25 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
   )
 
   const handleToggleStrategy = (id: string, index: number) => {
-    console.log('toggle>>>>', id, index)
-    const updatedFrequencies = [...strategies.find(s => s.id === id)!.frequencies]
-    console.log('updatedFrequencies>>>>', updatedFrequencies)
+    const strategy = strategies.find((s) => s.id === id)
+    if (!strategy) return
+
+    let updatedFrequencies = [...strategy.frequencies]
+
+    if (!updatedFrequencies.length) {
+      updatedFrequencies = Array(7).fill(false)
+    } else if (updatedFrequencies.length < 7) {
+      updatedFrequencies = [
+        ...updatedFrequencies,
+        ...Array(7 - updatedFrequencies.length).fill(false),
+      ]
+    }
+
     updatedFrequencies[index] = !updatedFrequencies[index]
-    updateStrategy.mutate({ strategyId: id, updates: { frequencies: updatedFrequencies } })
+    updateStrategy.mutate({
+      strategyId: id,
+      updates: { frequencies: updatedFrequencies },
+    })
   }
 
   const calculateCompletionPercentage = () => {
@@ -63,10 +77,18 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
         </Box>
         <Box display="flex" flexDirection="column" gap={6}>
           {goalStrategies.map((action) => {
+            const completedCount = action.frequencies.filter(Boolean).length
+            const reachedLimit = completedCount >= action.strategy.frequency
+
             return (
               <Box key={action.id} display="flex" flexDirection="column" gap={2}>
                 <Flex justify="space-between" align="center">
                   <Heading as="h4" size="sm">{action.strategy.content}</Heading>
+                  {reachedLimit && (
+                    <Badge colorPalette="green" borderRadius="md">
+                      Complete action
+                    </Badge>
+                  )}
                 </Flex>
                 <Flex flexWrap="wrap" gap={2}>
                   {[...Array(7).keys()].map((_, index) => {
@@ -86,6 +108,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
                           minW="24px"
                           h="24px"
                           aria-label={`${isCompleted ? 'Mark as incomplete' : 'Mark as complete'} for ${dayName}`}
+                          disabled={reachedLimit}
                         >
                           {isCompleted && '✓'}
                         </Button>
