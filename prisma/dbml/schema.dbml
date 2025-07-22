@@ -4,7 +4,6 @@
 
 Table plans {
   id String [pk]
-  userId String [not null]
   vision String [not null, default: '']
   milestone String [not null, default: '']
   completed Boolean [not null, default: false]
@@ -13,7 +12,9 @@ Table plans {
   endDate DateTime [not null]
   created DateTime [default: `now()`, not null]
   lastUpdate DateTime [not null]
+  userId String
   goals goals [not null]
+  users users
 }
 
 Table goals {
@@ -21,10 +22,11 @@ Table goals {
   planId String [not null]
   content String [not null]
   status String [not null, default: '1']
-  plan plans [not null]
+  created_at DateTime [default: `now()`]
   goalHistory goal_history [not null]
-  strategies strategies [not null]
+  plan plans [not null]
   indicators indicators [not null]
+  strategies strategies [not null]
 }
 
 Table goal_history {
@@ -32,6 +34,7 @@ Table goal_history {
   goalId String [not null]
   planId String [not null]
   sequence Int [not null]
+  created_at DateTime [default: `now()`]
   goal goals [not null]
 
   indexes {
@@ -47,6 +50,7 @@ Table strategies {
   weeks String[] [not null]
   status String [not null, default: '1']
   frequency Int [not null]
+  created_at DateTime [default: `now()`]
   goal goals [not null]
   strategyHistory strategy_history [not null]
 }
@@ -61,6 +65,7 @@ Table strategy_history {
   lastUpdate DateTime
   sequence Int [not null]
   frequencies Boolean[] [not null]
+  created_at DateTime [default: `now()`]
   strategy strategies [not null]
 
   indexes {
@@ -77,8 +82,9 @@ Table indicators {
   initialValue Int [not null]
   goalValue Int [not null]
   status String [not null, default: '1']
-  goal goals [not null]
+  created_at DateTime [default: `now()`]
   indicatorHistory indicator_history [not null]
+  goal goals [not null]
 }
 
 Table indicator_history {
@@ -87,6 +93,7 @@ Table indicator_history {
   planId String [not null]
   value Int [not null, default: 0]
   sequence Int [not null]
+  created_at DateTime [default: `now()`]
   indicator indicators [not null]
 
   indexes {
@@ -96,7 +103,6 @@ Table indicator_history {
 
 Table notifications {
   id String [pk]
-  userId String [not null]
   planId String [not null]
   entityType String [not null]
   entityId String [not null]
@@ -106,6 +112,8 @@ Table notifications {
   sendDate DateTime [not null]
   created DateTime [default: `now()`, not null]
   lastUpdate DateTime [not null]
+  userId String
+  users users
 }
 
 Table waitlist {
@@ -126,22 +134,25 @@ Table feedbacks {
   email String
   feedback String [not null]
   createdAt DateTime [default: `now()`, not null]
+  new_user_id String
 }
 
 Table users {
-  id String [pk]
-  auth0Id String
+  old_id String
   email String [unique, not null]
   role Role [not null, default: 'USER']
   waitlistId String [unique]
   createdAt DateTime [default: `now()`, not null]
-  Subscription subscriptions
+  id String [pk]
+  last_sign_in_at DateTime
+  notifications notifications [not null]
+  plans plans [not null]
+  Subscription subscriptions [not null]
+  users users [not null]
 }
 
 Table subscriptions {
   id String [pk]
-  userId String [unique, not null]
-  user users [not null]
   status SubscriptionStatus [not null, default: 'ACTIVE']
   plan SubscriptionPlan [not null]
   startedAt DateTime [default: `now()`, not null]
@@ -151,6 +162,295 @@ Table subscriptions {
   trialEndsAt DateTime
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
+  userId String
+  user users
+}
+
+Table audit_log_entries {
+  instance_id String
+  id String [pk]
+  payload Json
+  created_at DateTime
+  ip_address String [not null, default: '']
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table flow_state {
+  id String [pk]
+  user_id String
+  auth_code String [not null]
+  code_challenge_method code_challenge_method [not null]
+  code_challenge String [not null]
+  provider_type String [not null]
+  provider_access_token String
+  provider_refresh_token String
+  created_at DateTime
+  updated_at DateTime
+  authentication_method String [not null]
+  auth_code_issued_at DateTime
+  saml_relay_states saml_relay_states [not null]
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table identities {
+  provider_id String [not null]
+  user_id String [not null]
+  identity_data Json [not null]
+  provider String [not null]
+  last_sign_in_at DateTime
+  created_at DateTime
+  updated_at DateTime
+  email String
+  id String [pk]
+  users users [not null]
+
+  indexes {
+    (provider_id, provider) [unique]
+  }
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table instances {
+  id String [pk]
+  uuid String
+  raw_base_config String
+  created_at DateTime
+  updated_at DateTime
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table mfa_amr_claims {
+  session_id String [not null]
+  created_at DateTime [not null]
+  updated_at DateTime [not null]
+  authentication_method String [not null]
+  id String [pk]
+  sessions sessions [not null]
+
+  indexes {
+    (session_id, authentication_method) [unique]
+  }
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table mfa_challenges {
+  id String [pk]
+  factor_id String [not null]
+  created_at DateTime [not null]
+  verified_at DateTime
+  ip_address String [not null]
+  otp_code String
+  web_authn_session_data Json
+  mfa_factors mfa_factors [not null]
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table mfa_factors {
+  id String [pk]
+  user_id String [not null]
+  friendly_name String
+  factor_type factor_type [not null]
+  status factor_status [not null]
+  created_at DateTime [not null]
+  updated_at DateTime [not null]
+  secret String
+  phone String
+  last_challenged_at DateTime [unique]
+  web_authn_credential Json
+  web_authn_aaguid String
+  mfa_challenges mfa_challenges [not null]
+  users users [not null]
+
+  indexes {
+    (user_id, phone) [unique]
+  }
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table one_time_tokens {
+  id String [pk]
+  user_id String [not null]
+  token_type one_time_token_type [not null]
+  token_hash String [not null]
+  relates_to String [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [default: `now()`, not null]
+  users users [not null]
+
+  indexes {
+    (user_id, token_type) [unique]
+  }
+
+  Note: 'This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table refresh_tokens {
+  instance_id String
+  id BigInt [pk, increment]
+  token String [unique]
+  user_id String
+  revoked Boolean
+  created_at DateTime
+  updated_at DateTime
+  parent String
+  session_id String
+  sessions sessions
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table saml_providers {
+  id String [pk]
+  sso_provider_id String [not null]
+  entity_id String [unique, not null]
+  metadata_xml String [not null]
+  metadata_url String
+  attribute_mapping Json
+  created_at DateTime
+  updated_at DateTime
+  name_id_format String
+  sso_providers sso_providers [not null]
+
+  Note: 'This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table saml_relay_states {
+  id String [pk]
+  sso_provider_id String [not null]
+  request_id String [not null]
+  for_email String
+  redirect_to String
+  created_at DateTime
+  updated_at DateTime
+  flow_state_id String
+  flow_state flow_state
+  sso_providers sso_providers [not null]
+
+  Note: 'This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table schema_migrations {
+  version String [pk]
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table sessions {
+  id String [pk]
+  user_id String [not null]
+  created_at DateTime
+  updated_at DateTime
+  factor_id String
+  aal aal_level
+  not_after DateTime
+  refreshed_at DateTime
+  user_agent String
+  ip String
+  tag String
+  mfa_amr_claims mfa_amr_claims [not null]
+  refresh_tokens refresh_tokens [not null]
+  users users [not null]
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.'
+}
+
+Table sso_domains {
+  id String [pk]
+  sso_provider_id String [not null]
+  domain String [not null]
+  created_at DateTime
+  updated_at DateTime
+  sso_providers sso_providers [not null]
+
+  Note: 'This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.'
+}
+
+Table sso_providers {
+  id String [pk]
+  resource_id String
+  created_at DateTime
+  updated_at DateTime
+  saml_providers saml_providers [not null]
+  saml_relay_states saml_relay_states [not null]
+  sso_domains sso_domains [not null]
+
+  Note: 'This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.'
+}
+
+Table users {
+  instance_id String
+  id String [pk]
+  aud String
+  role String
+  email String
+  encrypted_password String
+  email_confirmed_at DateTime
+  invited_at DateTime
+  confirmation_token String
+  confirmation_sent_at DateTime
+  recovery_token String
+  recovery_sent_at DateTime
+  email_change_token_new String
+  email_change String
+  email_change_sent_at DateTime
+  last_sign_in_at DateTime
+  raw_app_meta_data Json
+  raw_user_meta_data Json
+  is_super_admin Boolean
+  created_at DateTime
+  updated_at DateTime
+  phone String [unique]
+  phone_confirmed_at DateTime
+  phone_change String [default: '']
+  phone_change_token String [default: '']
+  phone_change_sent_at DateTime
+  confirmed_at DateTime
+  email_change_token_current String [default: '']
+  email_change_confirm_status Int [default: 0]
+  banned_until DateTime
+  reauthentication_token String [default: '']
+  reauthentication_sent_at DateTime
+  is_sso_user Boolean [not null, default: false]
+  deleted_at DateTime
+  is_anonymous Boolean [not null, default: false]
+  identities identities [not null]
+  mfa_factors mfa_factors [not null]
+  one_time_tokens one_time_tokens [not null]
+  sessions sessions [not null]
+  users users
+
+  Note: 'This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.'
 }
 
 Enum Role {
@@ -180,6 +480,39 @@ Enum SubscriptionPlan {
   PREMIUM
 }
 
+Enum aal_level {
+  aal1
+  aal2
+  aal3
+}
+
+Enum code_challenge_method {
+  s256
+  plain
+}
+
+Enum factor_status {
+  unverified
+  verified
+}
+
+Enum factor_type {
+  totp
+  webauthn
+  phone
+}
+
+Enum one_time_token_type {
+  confirmation_token
+  reauthentication_token
+  recovery_token
+  email_change_token_new
+  email_change_token_current
+  phone_change_token
+}
+
+Ref: plans.userId > users.id [delete: Cascade]
+
 Ref: goals.planId > plans.id [delete: Cascade]
 
 Ref: goal_history.goalId > goals.id [delete: Cascade]
@@ -192,4 +525,30 @@ Ref: indicators.goalId > goals.id [delete: Cascade]
 
 Ref: indicator_history.indicatorId > indicators.id [delete: Cascade]
 
-Ref: subscriptions.userId - users.id [delete: Cascade]
+Ref: notifications.userId > users.id [delete: Cascade]
+
+Ref: users.id - users.id [delete: Cascade]
+
+Ref: subscriptions.userId > users.id [delete: Cascade]
+
+Ref: identities.user_id > users.id [delete: Cascade]
+
+Ref: mfa_amr_claims.session_id > sessions.id [delete: Cascade]
+
+Ref: mfa_challenges.factor_id > mfa_factors.id [delete: Cascade]
+
+Ref: mfa_factors.user_id > users.id [delete: Cascade]
+
+Ref: one_time_tokens.user_id > users.id [delete: Cascade]
+
+Ref: refresh_tokens.session_id > sessions.id [delete: Cascade]
+
+Ref: saml_providers.sso_provider_id > sso_providers.id [delete: Cascade]
+
+Ref: saml_relay_states.flow_state_id > flow_state.id [delete: Cascade]
+
+Ref: saml_relay_states.sso_provider_id > sso_providers.id [delete: Cascade]
+
+Ref: sessions.user_id > users.id [delete: Cascade]
+
+Ref: sso_domains.sso_provider_id > sso_providers.id [delete: Cascade]
