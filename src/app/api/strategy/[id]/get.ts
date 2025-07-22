@@ -7,7 +7,7 @@ export async function GET(_: NextRequest, segmentData: SegmentData) {
   const params = await segmentData.params
 
   if (!params.id) {
-    return new Response('Invalid strategy id', { status: 400 })
+    return new Response('Invalid action id', { status: 400 })
   }
 
   try {

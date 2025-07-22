@@ -144,7 +144,7 @@ export function GoalManager({ onLoading, onEdit }: Step<Goal[]>) {
           <Collapsible.Root open={expandedGoalId === goal.id}>
             <Collapsible.Content>
               <Card.Body className="p-4 bg-white">
-                <Text className="text-sm font-medium mb-2 text-gray-700">Strategies</Text>
+                <Text className="text-sm font-medium mb-2 text-gray-700">Actions</Text>
                 <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={5} onLoading={onLoading} onEdit={onEdit} />
               </Card.Body>
               <Separator />

@@ -129,14 +129,14 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
     createBulkStrategy.mutate(createStrategyHistoryList(plan!.id, [strategy]), {
       onSuccess: () => {
         toaster.create({
-          title: 'Strategies updated',
+          title: 'Actions updated',
           type: 'success',
           duration: 2000
         })
       },
       onError: (error) => {
         toaster.create({
-          title: 'Error updating strategies',
+          title: 'Error updating actions',
           description: error.message,
           type: 'error'
         })
@@ -330,7 +330,7 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
               <Flex justifyContent="space-between" alignItems="center" mb={3}>
                 <HStack>
                   <PiTarget />
-                  <Text>Goals & Strategies</Text>
+                  <Text>Goals & Actions</Text>
                 </HStack>
                 {!readonly && (
                   <Tooltip content={editingGoals ? "Save" : "Edit"}>
@@ -387,7 +387,7 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
                           {!!strategies.filter(strategy => strategy.goalId === goal.id).length && (
                             <Box mb={4}>
                               <Heading size="sm" mb={3} display="flex" alignItems="center">
-                                <Box as="span" mr={2} colorPalette="gray.500">Strategies</Box>
+                                <Box as="span" mr={2} colorPalette="gray.500">Actions</Box>
                                 <Box flex="1" height="1px" bg="gray.200" />
                               </Heading>
 

@@ -178,7 +178,6 @@ function PlanV2Page() {
           </ProgressRoot>
           <Card.Root>
             <Card.Body gap="2">
-              {/* TODO: change to this year's vision? */}
               <Card.Title mt="2">Define Your 3-Month Vision</Card.Title>
               <Card.Description>
                 <VisionDescription open={visionDescriptionOpen} onToggle={toggleVisionDescription} />

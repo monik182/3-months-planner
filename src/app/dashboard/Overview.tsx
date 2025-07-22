@@ -101,7 +101,7 @@ export function Overview({ }: OverviewProps) {
       <Separator />
 
       <Box>
-        <Heading size="md" mb={2}>Score By Strategy</Heading>
+        <Heading size="md" mb={2}>Score By Action</Heading>
         <ResponsiveContainer width="100%" height={strategyScoresData.length * 80}>
           <BarChart
             layout="vertical"

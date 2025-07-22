@@ -142,7 +142,7 @@ export default function TemplateGallery() {
               </CardHeader>
               <Card.Body className="flex-1">
                 <div className="space-y-2">
-                  <Heading size="md">Strategies:</Heading>
+                  <Heading size="md">Actions:</Heading>
                   <List.Root>
                     {template.strategies.slice(0, 2).map((strategy, i) => (
                       <List.Item key={i} className="text-xs">{strategy.content} ({strategy.frequency}x/week)</List.Item>
@@ -192,7 +192,7 @@ export default function TemplateGallery() {
                         <Dialog.Body>
                           <div className="space-y-4 py-4">
                             <div className="space-y-2">
-                              <Heading size="md" className="font-medium">Strategies:</Heading>
+                              <Heading size="md" className="font-medium">Actions:</Heading>
                               <List.Root>
                                 {template.strategies.map((strategy, i) => (
                                   <List.Item key={i} className="text-xs">{strategy.content} ({strategy.frequency}x/week)</List.Item>

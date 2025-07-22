@@ -12,7 +12,7 @@ const create = async (data: Strategy): Promise<Strategy> => {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to create strategy')
+    throw new Error('Failed to create action')
   }
 
   const remoteStrategy = await response.json()
@@ -29,7 +29,7 @@ const createBulk = async (strategies: Strategy[]): Promise<Strategy[]> => {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to create strategies')
+    throw new Error('Failed to create actions')
   }
 
   const remoteStrategies = await response.json()
@@ -40,7 +40,7 @@ const get = async (id: string): Promise<Strategy | null> => {
 
   const response = await fetch(`/api/strategy/${id}`)
   if (!response.ok) {
-    console.error(`Failed to fetch strategy ${id} from remote:`, response.status)
+    console.error(`Failed to fetch action ${id} from remote:`, response.status)
     return null
   }
 
@@ -78,7 +78,7 @@ const update = async (id: string, strategy: Prisma.StrategyUpdateInput): Promise
   })
 
   if (!response.ok) {
-    throw new Error('Failed to update strategy')
+    throw new Error('Failed to update action')
   }
 
   return response.json()
@@ -90,7 +90,7 @@ const deleteItem = async (id: string): Promise<void> => {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to delete strategy')
+    throw new Error('Failed to delete action')
   }
 }
 

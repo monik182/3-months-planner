@@ -12,7 +12,7 @@ const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<Strategy
   })
 
   if (!response.ok) {
-    throw new Error('Failed to create strategy history')
+    throw new Error('Failed to create action history')
   }
 
   return parsedData
@@ -28,7 +28,7 @@ const createBulk = async (histories: Prisma.StrategyHistoryCreateManyInput[]): P
   })
 
   if (!response.ok) {
-    throw new Error('Failed to create strategy histories')
+    throw new Error('Failed to create action histories')
   }
 
   return parsedData
@@ -38,7 +38,7 @@ const get = async (id: string): Promise<StrategyHistory | null> => {
 
   const response = await fetch(`/api/strategy/history/${id}`)
   if (!response.ok) {
-    console.error(`Failed to fetch strategy history ${id} from remote:`, response.status)
+    console.error(`Failed to fetch action history ${id} from remote:`, response.status)
     return null
   }
 
@@ -86,7 +86,7 @@ const update = async (id: string, history: Prisma.StrategyHistoryUpdateInput): P
   })
 
   if (!response.ok) {
-    throw new Error('Failed to update strategy history')
+    throw new Error('Failed to update action history')
   }
 
   return response.json()
@@ -98,7 +98,7 @@ const deleteItem = async (id: string): Promise<void> => {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to delete strategy history')
+    throw new Error('Failed to delete action history')
   }
 
 }
