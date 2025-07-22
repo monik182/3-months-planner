@@ -2,8 +2,10 @@ import { Goal } from '@prisma/client';
 import WeekProgressIndicator from './WeekProgressIndicator';
 import { Box, Card, Flex, Heading, Badge, Text } from '@chakra-ui/react'
 import { Button } from '@/components/ui/button'
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
+import { setStrategyOrder, getOrderedStrategies } from '@/app/util/order';
+import { StrategyHistoryExtended } from '@/app/types/types';
 
 export interface GoalAction {
   id: string
@@ -27,9 +29,10 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
     () => strategies.filter((s) => s.strategy.goalId === goal.id && s.sequence === sequence),
     [strategies, goal.id]
   )
+  const orderedStrategies: StrategyHistoryExtended[] = getOrderedStrategies(goal.planId, goalStrategies)
 
   const handleToggleStrategy = (id: string, index: number) => {
-    const strategy = strategies.find((s) => s.id === id)
+    const strategy = orderedStrategies.find((s) => s.id === id)
     if (!strategy) return
 
     let updatedFrequencies = [...strategy.frequencies]
@@ -57,16 +60,21 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
   }
 
   const calculateCompletionPercentage = () => {
-    const total = goalStrategies.reduce((acc, strategy) => {
+    const total = orderedStrategies.reduce((acc, strategy) => {
       return acc + strategy.strategy.frequency
     }, 0)
 
-    const completed = goalStrategies.reduce((acc, strategy) => {
+    const completed = orderedStrategies.reduce((acc, strategy) => {
       return acc + strategy.frequencies.filter(Boolean).length
     }, 0)
 
     return Math.floor((completed / total) * 100)
   }
+
+  useEffect(() => {
+    if (!goal.planId || orderedStrategies.length === goalStrategies.length) return
+    setStrategyOrder(goal.planId, goalStrategies.map((s) => s.id))
+  }, [goalStrategies, goal.planId, orderedStrategies])
 
   return (
     <Card.Root>
@@ -82,7 +90,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
           />
         </Box>
         <Box display="flex" flexDirection="column" gap={6}>
-          {goalStrategies.map((action) => {
+          {orderedStrategies.map((action) => {
             const completedCount = action.frequencies.filter(Boolean).length
             const reachedLimit = completedCount >= action.strategy.frequency
 

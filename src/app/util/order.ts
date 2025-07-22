@@ -34,3 +34,18 @@ export function clearStrategyOrder() {
     }
   })
 }
+
+export function getOrderedStrategies<T>(planId: string, strategies: (T & { id: string; createdAt: Date | null })[]): T[] {
+  const order = getStrategyOrder(planId)
+  if (!order) return strategies
+  const orderMap = new Map(order.map((id, idx) => [id, idx]))
+  const sorted = [...strategies].sort((a, b) => {
+    const ia = orderMap.get(a.id)
+    const ib = orderMap.get(b.id)
+    if (ia !== undefined && ib !== undefined) return ia - ib
+    if (ia !== undefined) return -1
+    if (ib !== undefined) return 1
+    return new Date(a.createdAt ?? new Date()).getTime() - new Date(b.createdAt ?? new Date()).getTime()
+  })
+  return sorted
+}

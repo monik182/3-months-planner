@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext, useEffect, useMemo } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
 import { UsePlanActions, usePlanActions } from '@/app/hooks/usePlanActions'
 import { UseGoalActions, useGoalActions } from '@/app/hooks/useGoalActions'
 import { UseStrategyActions, useStrategyActions } from '@/app/hooks/useStrategyActions'
@@ -10,14 +10,10 @@ import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/ho
 import { Plan, Strategy } from '@prisma/client'
 import { Center, Spinner } from '@chakra-ui/react'
 import { useAuth } from '@/app/providers/AuthProvider'
-import {
-  getStrategyOrder,
-  setStrategyOrder,
-  clearStrategyOrder,
-} from '@/app/util/order'
+import { clearStrategyOrder } from '@/app/util/order'
 
 type PlanContextType = {
-  plan: Plan | null,
+  plan: Plan | null | undefined,
   hasPlan: boolean
   hasStartedPlan: boolean
   planActions: UsePlanActions
@@ -52,21 +48,6 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
 
   const { data: strategies = [], isLoading: strategiesLoading } =
     strategyActions.useGetByPlanId(plan?.id as string)
-  const orderedStrategies = useMemo(() => {
-    if (!plan?.id) return strategies
-    const storedOrder = getStrategyOrder(plan.id) || []
-    const orderMap = new Map(storedOrder.map((id, idx) => [id, idx]))
-    const sorted = [...strategies].sort((a, b) => {
-      const ia = orderMap.get(a.id)
-      const ib = orderMap.get(b.id)
-      if (ia !== undefined && ib !== undefined) return ia - ib
-      if (ia !== undefined) return -1
-      if (ib !== undefined) return 1
-      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    })
-    setStrategyOrder(plan.id, sorted.map((s) => s.id))
-    return sorted
-  }, [plan?.id, strategies])
 
   useEffect(() => {
     if (!user) {
@@ -96,8 +77,7 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         goalActions,
         strategyActions,
         indicatorActions,
-
-        strategies: orderedStrategies,
+        strategies,
         goalHistoryActions,
         strategyHistoryActions,
         indicatorHistoryActions,
