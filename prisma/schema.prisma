@@ -35,6 +35,7 @@ model Plan {
   goals Goal[]
 
   @@map("plans")
+  @@schema("public")
 }
 
 model Goal {
@@ -50,6 +51,7 @@ model Goal {
 
   @@index([planId])
   @@map("goals")
+  @@schema("public")
 }
 
 model GoalHistory {
@@ -64,6 +66,7 @@ model GoalHistory {
   @@index([goalId])
   @@index([planId])
   @@map("goal_history")
+  @@schema("public")
 }
 
 model Strategy {
@@ -81,6 +84,7 @@ model Strategy {
   @@index([goalId])
   @@index([planId])
   @@map("strategies")
+  @@schema("public")
 }
 
 model StrategyHistory {
@@ -99,6 +103,7 @@ model StrategyHistory {
   @@unique([strategyId, sequence])
   @@index([strategyId])
   @@index([planId])
+  @@schema("public")
   @@map("strategy_history")
 }
 
@@ -118,6 +123,7 @@ model Indicator {
   @@index([goalId])
   @@index([planId])
   @@map("indicators")
+  @@schema("public")
 }
 
 model IndicatorHistory {
@@ -133,6 +139,7 @@ model IndicatorHistory {
   @@index([indicatorId])
   @@index([planId])
   @@map("indicator_history")
+  @@schema("public")
 }
 
 model Notification {
@@ -150,6 +157,7 @@ model Notification {
 
   @@index([entityType, entityId])
   @@map("notifications")
+  @@schema("public")
 }
 
 model Waitlist {
@@ -165,6 +173,7 @@ model Waitlist {
 
   @@index([email, id, inviteToken])
   @@map("waitlist")
+  @@schema("public")
 }
 
 model Feedback {
@@ -175,6 +184,7 @@ model Feedback {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("feedbacks")
+  @@schema("public")
 }
 
 model User {
@@ -188,6 +198,7 @@ model User {
 
   @@index([email, id, waitlistId, role, auth0Id])
   @@map("users")
+  @@schema("public")
 }
 
 model Subscription {
@@ -207,6 +218,7 @@ model Subscription {
 
   @@index([userId, status])
   @@map("subscriptions")
+  @@schema("public")
 }
 
 enum Role {
@@ -215,6 +227,7 @@ enum Role {
   SUBSCRIBER // Paying customers with remote DB access
   ADMIN // Internal admin users with full platform access
   SUPERADMIN // Highest-level access, useful for system-level control
+  @@schema("public")
 }
 
 enum SubscriptionStatus {
@@ -228,10 +241,12 @@ enum SubscriptionStatus {
   RENEWAL_DUE // Subscription is active but needs renewal soon
   FAILED // Payment failed
   UPCOMING // Subscription is scheduled to start in the future
+  @@schema("public")
 }
 
 enum SubscriptionPlan {
   FREE // Free-tier users (local storage only)
   BASIC // Entry-level paid plan
   PREMIUM // Full-featured paid plan
+  @@schema("public")
 }
