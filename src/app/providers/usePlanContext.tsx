@@ -1,5 +1,5 @@
 'use client'
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
 import { UsePlanActions, usePlanActions } from '@/app/hooks/usePlanActions'
 import { UseGoalActions, useGoalActions } from '@/app/hooks/useGoalActions'
 import { UseStrategyActions, useStrategyActions } from '@/app/hooks/useStrategyActions'
@@ -10,9 +10,10 @@ import { UseIndicatorHistoryActions, useIndicatorHistoryActions } from '@/app/ho
 import { Plan, Strategy } from '@prisma/client'
 import { Center, Spinner } from '@chakra-ui/react'
 import { useAuth } from '@/app/providers/AuthProvider'
+import { clearStrategyOrder } from '@/app/util/order'
 
 type PlanContextType = {
-  plan: Plan | null,
+  plan: Plan | null | undefined,
   hasPlan: boolean
   hasStartedPlan: boolean
   planActions: UsePlanActions
@@ -48,6 +49,12 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
   const { data: strategies = [], isLoading: strategiesLoading } =
     strategyActions.useGetByPlanId(plan?.id as string)
 
+  useEffect(() => {
+    if (!user) {
+      clearStrategyOrder()
+    }
+  }, [user])
+
   const goalHistoryActions = useGoalHistoryActions()
   const strategyHistoryActions = useStrategyHistoryActions()
   const indicatorHistoryActions = useIndicatorHistoryActions()
@@ -70,7 +77,6 @@ export const PlanProvider = ({ children }: PlanTrackingProviderProps) => {
         goalActions,
         strategyActions,
         indicatorActions,
-
         strategies,
         goalHistoryActions,
         strategyHistoryActions,
