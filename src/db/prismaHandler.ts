@@ -14,10 +14,12 @@ export const planHandler = {
 export const goalHandler = {
   create: async (data: Prisma.GoalCreateInput) => prisma.goal.create({ data }),
   createMany: async (data: Prisma.GoalCreateManyInput[]) => prisma.goal.createMany({ data }),
-  findMany: async (where?: Prisma.GoalWhereInput, select?: Prisma.GoalSelect) => prisma.goal.findMany({
-    where,
-    ...(select ? { select } : {}),
-  }),
+  findMany: async (where?: Prisma.GoalWhereInput, select?: Prisma.GoalSelect) =>
+    prisma.goal.findMany({
+      where,
+      orderBy: { createdAt: 'asc' },
+      ...(select ? { select } : {}),
+    }),
   findOne: async (id: string) => prisma.goal.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.GoalUpdateInput) => prisma.goal.update({ where: { id }, data }),
   delete: async (id: string) => prisma.goal.delete({ where: { id } }),
@@ -50,7 +52,15 @@ export const goalHistoryHandler = {
 export const strategyHandler = {
   create: async (data: Prisma.StrategyCreateInput) => prisma.strategy.create({ data }),
   createMany: async (data: Prisma.StrategyCreateManyInput[]) => prisma.strategy.createMany({ data }),
-  findMany: async (where?: Prisma.StrategyWhereInput, select?: Prisma.StrategySelect) => prisma.strategy.findMany({ where, ...(select ? { select } : {}), }),
+  findMany: async (
+    where?: Prisma.StrategyWhereInput,
+    select?: Prisma.StrategySelect,
+  ) =>
+    prisma.strategy.findMany({
+      where,
+      orderBy: { createdAt: 'asc' },
+      ...(select ? { select } : {}),
+    }),
   findOne: async (id: string) => prisma.strategy.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.StrategyUpdateInput) => prisma.strategy.update({ where: { id }, data }),
   delete: async (id: string) => prisma.strategy.delete({ where: { id } }),
