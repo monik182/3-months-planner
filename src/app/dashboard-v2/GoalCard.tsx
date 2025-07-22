@@ -1,7 +1,8 @@
 import { Goal } from '@prisma/client';
 import WeekProgressIndicator from './WeekProgressIndicator';
-import { Box, Button, Card, Flex, Heading, Badge, Text } from '@chakra-ui/react'
-import { useMemo } from 'react';
+import { Box, Card, Flex, Heading, Badge, Text } from '@chakra-ui/react'
+import { Button } from '@/components/ui/button'
+import { useMemo, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 
 export interface GoalAction {
@@ -20,6 +21,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
   const { strategyHistoryActions } = usePlanContext()
   const { data: strategies = [] } = strategyHistoryActions.useGetByPlanId(goal.planId)
   const updateStrategy = strategyHistoryActions.useUpdate()
+  const [loadingToggle, setLoadingToggle] = useState<{actionId: string, index: number} | null>(null)
 
   const goalStrategies = useMemo(
     () => strategies.filter((s) => s.strategy.goalId === goal.id && s.sequence === sequence),
@@ -42,10 +44,16 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
     }
 
     updatedFrequencies[index] = !updatedFrequencies[index]
-    updateStrategy.mutate({
-      strategyId: id,
-      updates: { frequencies: updatedFrequencies },
-    })
+    setLoadingToggle({ actionId: id, index })
+    updateStrategy.mutate(
+      {
+        strategyId: id,
+        updates: { frequencies: updatedFrequencies },
+      },
+      {
+        onSettled: () => setLoadingToggle(null),
+      },
+    )
   }
 
   const calculateCompletionPercentage = () => {
@@ -113,6 +121,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
                           h="24px"
                           aria-label={`${isCompleted ? 'Mark as incomplete' : 'Mark as complete'} for ${dayName}`}
                           disabled={reachedLimit && !isCompleted}
+                          loading={loadingToggle?.actionId === action.id && loadingToggle?.index === index && updateStrategy.isPending}
                         >
                           {isCompleted && '✓'}
                         </Button>
