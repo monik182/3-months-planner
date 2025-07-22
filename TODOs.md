@@ -1,21 +1,25 @@
 # Post Release
+- Refactor dashboard 
 - Integrate templates
-- Integrate progress page
-- Improve the plan view and colors and reuse component in step4
-- Improve the goals/strategies/indicator creation forms
-- Improve HOME page with steps and everything
+- Integrate charts page
+- Improve HOME page with steps, wishlist count and everything
 - In strategies, create 7 checkboxes, one for each day, and let the user select the days they worked on it
 - Add reflection section for each week
-- Unify colors
 - Progress in new plan-v2 is not wired to real results.
+- Unify colors
+
+- Improve the plan view and colors and reuse component in step4 ✅
+- Improve the goals/strategies/indicator creation forms ✅
 
 - Integrate AI suggestions
 - Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
 
 # Complimentary Pages:
- - Vision & 3-year Milestone
- - Goals & Strategies editor
  - Past years
+ - Create your own template
+
+ - Vision & 3-year Milestone
+ - Goals & Strategies editor ✅
 
 
 # Print: 🔥 (?) - Not sure about this
