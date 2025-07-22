@@ -42,7 +42,8 @@ export const goalHistoryHandler = {
           content: true,
         }
       }
-    }
+    },
+    orderBy: { createdAt: 'asc' },
   }),
   findOne: async (id: string) => prisma.goalHistory.findUnique({ where: { id } }),
   update: async (id: string, data: Prisma.GoalHistoryUpdateInput) => prisma.goalHistory.update({ where: { id }, data }),
@@ -86,7 +87,8 @@ export const strategyHistoryHandler = {
           frequency: true,
         }
       }
-    }
+    },
+    orderBy: { createdAt: 'asc' },
   }),
   findManyByGoalId: async (goalId: string, where: Prisma.StrategyHistoryWhereInput = {}, seq?: string, status?: string) => prisma.strategyHistory.findMany({
     where: {

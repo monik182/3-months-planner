@@ -37,7 +37,7 @@ model Goal {
   planId      String        @map("plan_id")
   content     String
   status      String        @default("1")
-  created_at  DateTime?     @default(now()) @db.Timestamptz(6)
+  createdAt   DateTime?     @default(now()) @db.Timestamptz(6) @map("created_at")
   goalHistory GoalHistory[]
   plan        Plan          @relation(fields: [planId], references: [id], onDelete: Cascade)
   indicators  Indicator[]
@@ -91,7 +91,7 @@ model StrategyHistory {
   lastUpdate  DateTime? @map("last_update")
   sequence    Int
   frequencies Boolean[] @default([])
-  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6) @map("created_at")
   strategy    Strategy  @relation(fields: [strategyId], references: [id], onDelete: Cascade)
 
   @@unique([strategyId, sequence])
@@ -110,7 +110,7 @@ model Indicator {
   initialValue     Int                @map("initial_value")
   goalValue        Int                @map("goal_value")
   status           String             @default("1")
-  created_at       DateTime?          @default(now()) @db.Timestamptz(6)
+  createdAt        DateTime?          @default(now()) @db.Timestamptz(6) @map("created_at")
   indicatorHistory IndicatorHistory[]
   goal             Goal               @relation(fields: [goalId], references: [id], onDelete: Cascade)
 
@@ -126,7 +126,7 @@ model IndicatorHistory {
   planId      String    @map("plan_id")
   value       Int       @default(0)
   sequence    Int
-  created_at  DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt   DateTime? @default(now()) @db.Timestamptz(6) @map("created_at")
   indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
 
   @@unique([indicatorId, sequence])
