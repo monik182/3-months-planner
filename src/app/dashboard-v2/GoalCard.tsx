@@ -1,6 +1,6 @@
 import { Goal } from '@prisma/client';
 import WeekProgressIndicator from './WeekProgressIndicator';
-import { Box, Button, Card, Flex, Heading, Badge } from '@chakra-ui/react'
+import { Box, Button, Card, Flex, Heading, Badge, Text } from '@chakra-ui/react'
 import { useMemo } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 
@@ -49,11 +49,9 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
   }
 
   const calculateCompletionPercentage = () => {
-    // const total = goalStrategies.reduce((acc, strategy) => {
-    //   return acc + strategy.strategy.frequency
-    // }, 0)
-
-    const total = 7 * goalStrategies.length;
+    const total = goalStrategies.reduce((acc, strategy) => {
+      return acc + strategy.strategy.frequency
+    }, 0)
 
     const completed = goalStrategies.reduce((acc, strategy) => {
       return acc + strategy.frequencies.filter(Boolean).length
@@ -84,11 +82,17 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
               <Box key={action.id} display="flex" flexDirection="column" gap={2}>
                 <Flex justify="space-between" align="center">
                   <Heading as="h4" size="sm">{action.strategy.content}</Heading>
-                  {reachedLimit && (
-                    <Badge colorPalette="green" borderRadius="md">
-                      Complete action
-                    </Badge>
-                  )}
+                  <Badge colorPalette="green" borderRadius="md">
+                    {reachedLimit ? (
+                      'Complete action'
+                    )
+                      : (
+                        <Text as="span" colorPalette="gray.500">
+                          {completedCount}/{action.strategy.frequency}
+                        </Text>
+                      )
+                    }
+                  </Badge>
                 </Flex>
                 <Flex flexWrap="wrap" gap={2}>
                   {[...Array(7).keys()].map((_, index) => {
@@ -97,7 +101,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
 
                     return (
                       <Box key={index} display="flex" flexDirection="column" alignItems="center" gap={1}>
-                        {/* <Text fontSize="xs" color="gray.500">{dayName}</Text> */}
+                        <Text fontSize="xs" color="gray.500">{dayName}</Text>
                         <Button
                           onClick={() => handleToggleStrategy(action.id, index)}
                           size="xs"
