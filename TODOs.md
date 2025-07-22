@@ -1,6 +1,3 @@
-# Bug
-- strategies and goals are reordering randomly - avoid that. ✅
-
 # Post Release
 - Integrate templates
 - Integrate progress page
@@ -10,6 +7,8 @@
 - In strategies, create 7 checkboxes, one for each day, and let the user select the days they worked on it
 - Add reflection section for each week
 - Unify colors
+- Progress in new plan-v2 is not wired to real results.
+
 - Integrate AI suggestions
 - Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
 
@@ -257,3 +256,6 @@ with persistance will come success
 - Login issues? - Joel's email - CANNOT REPRODUCE  ❌
 - Duplicated goals? - Joel's email - CANNOT REPRODUCE ❌
 - Fix: when a strategy is created, let's say frequency 3, the user checks one of the checkboxes in the dashboard and the boolean array is created with length frequency, but then the user updates it, let's say to 5, the checkboxes are still 3. This must be addressed in the update logic. ✅
+
+# Bug
+- strategies and goals are reordering randomly - avoid that. ✅
