@@ -1,9 +1,12 @@
 import { StrategyList } from '@/components/GoalManager/Strategy/StrategyList';
 import { Button, Dialog, Portal, Textarea, Text, Box, Spinner, VStack, HStack } from '@chakra-ui/react';
 import { CloseButton } from '@/components/ui/close-button';
-import { Goal } from '@prisma/client';
+import { Goal, Indicator, Strategy } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
+import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList } from '@/app/util';
+import { toaster } from '@/components/ui/toaster';
+import { EntityType } from '@/app/types/types';
 
 interface GoalDialogProps {
   open: boolean;
@@ -13,16 +16,77 @@ interface GoalDialogProps {
 }
 
 export function GoalDialog({ open, goal, edit = false, onOpenChange }: GoalDialogProps) {
+  const planId = goal.planId
+  const { goalActions, goalHistoryActions, strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
+  const createBulkGoal = goalHistoryActions.useCreateBulk()
+  const createBulkStrategy = strategyHistoryActions.useCreateBulk()
+  // const createBulkIndicator = indicatorHistoryActions.useCreateBulk()
   const [content, setContent] = useState("");
   const [isNew, setIsNew] = useState(true)
   const [isPristine, setIsPristine] = useState(true)
-  const { goalActions } = usePlanContext()
   const [title, setTitle] = useState("Create a New Goal");
   const createGoal = goalActions.useCreate()
   const updateGoal = goalActions.useUpdate()
   const loading = createGoal.isPending || updateGoal.isPending
   const saveDisabled = !content || content === goal.content || loading
   const showOverlay = isNew && !goal.content && !loading
+
+  const createGoalHistory = (goal: Goal) => {
+    createBulkGoal.mutate(createGoalHistoryList(planId, [goal]), {
+      onSuccess: () => {
+        toaster.create({
+          title: 'Goal created',
+          type: 'success',
+          duration: 2000
+        })
+      },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error creating goal',
+          description: error.message,
+          type: 'error'
+        })
+      }
+    })
+  }
+
+  const createStrategyHistory = (_: EntityType, strategy: Strategy) => {
+    createBulkStrategy.mutate(createStrategyHistoryList(planId, [strategy]), {
+      onSuccess: () => {
+        toaster.create({
+          title: 'Action created',
+          type: 'success',
+          duration: 2000
+        })
+      },
+      onError: (error) => {
+        toaster.create({
+          title: 'Error creating action',
+          description: error.message,
+          type: 'error'
+        })
+      }
+    })
+  }
+
+  // const updateIndicators = (indicator: Indicator) => {
+  //   createBulkIndicator.mutate(createIndicatorHistoryList(planId, [indicator]), {
+  //     onSuccess: () => {
+  //       toaster.create({
+  //         title: 'Indicators updated',
+  //         type: 'success',
+  //         duration: 2000
+  //       })
+  //     },
+  //     onError: (error) => {
+  //       toaster.create({
+  //         title: 'Error updating indicators',
+  //         description: error.message,
+  //         type: 'error'
+  //       })
+  //     }
+  //   })
+  // }
 
   const handleOnChange = (content: string) => {
     setIsPristine(!content)
@@ -33,18 +97,19 @@ export function GoalDialog({ open, goal, edit = false, onOpenChange }: GoalDialo
     if (content.trim()) {
 
       if (edit) {
-        updateGoal.mutate({  goalId: goal.id, updates: { content } })
+        updateGoal.mutate({ goalId: goal.id, updates: { content } })
       } else {
         createGoal.mutate({
           ...goal,
           content: content,
           plan: { connect: { id: goal.planId } },
-        }, 
-        {
-          onSuccess: () => {
-            setIsNew(false)
-          }
-        })
+        },
+          {
+            onSuccess: () => {
+              setIsNew(false)
+              createGoalHistory({ ...goal, content })
+            }
+          })
       }
     }
   };
@@ -116,22 +181,22 @@ export function GoalDialog({ open, goal, edit = false, onOpenChange }: GoalDialo
                       </VStack>
                     </Box>
                   )}
-                  
-                    <div>
-                      <Box>
-                        <Text className="text-sm font-medium mb-2 text-gray-700">Actions</Text>
-                        <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={Infinity} />
-                      </Box>
-                      {/* // TODO: Check if indicators are necessary */}
-                      {/* <Separator my={4} />
+
+                  <div>
+                    <Box>
+                      <Text className="text-sm font-medium mb-2 text-gray-700">Actions</Text>
+                      <StrategyList goalId={goal.id} planId={goal.planId} maxLimit={Infinity} onEdit={createStrategyHistory} />
+                    </Box>
+                    {/* // TODO: Check if indicators are necessary */}
+                    {/* <Separator my={4} />
                         <Box>
                           <Flex flexDirection="column" gap="1rem">
                             <Text className="text-sm font-medium mb-2 text-gray-700">Progress Indicators</Text>
                             <IndicatorList goalId={goal.id} planId={goal.planId} maxLimit={2} />
                           </Flex>
                         </Box> */}
-                    </div>
-                  
+                  </div>
+
                 </Box>
               </div>
             </Dialog.Body>
