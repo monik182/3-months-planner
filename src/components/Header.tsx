@@ -14,6 +14,7 @@ import Link from 'next/link'
 import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthProvider'
 import { logout } from '@/services/auth'
+import { clearStrategyOrder } from '@/app/util/order'
 
 export function Header() {
   const { isGuest } = useAccountContext()
@@ -50,6 +51,7 @@ export function Header() {
         localStorage.removeItem(key);
       }
     })
+    clearStrategyOrder()
     router.push('/')
     await logout()
     window.location.reload()
