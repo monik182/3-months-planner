@@ -19,7 +19,7 @@
  - Past years
 
 
-# Print: 🔥
+# Print: 🔥 (?) - Not sure about this
 - Create printable templates for the weekly score tracking
 
 
