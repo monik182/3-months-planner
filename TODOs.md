@@ -1,5 +1,5 @@
 # Bug
-- strategies and goals are reordering randomly - avoid that.
+- strategies and goals are reordering randomly - avoid that. ✅
 
 # Post Release
 - Integrate templates
