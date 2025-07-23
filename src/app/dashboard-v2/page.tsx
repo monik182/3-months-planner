@@ -1,6 +1,10 @@
 'use client';
 import GoalCard from '@/app/dashboard-v2/GoalCard';
+import CurrentWeekSummary from '@/app/dashboard-v2/CurrentWeekSummary';
 import { usePlanContext } from '@/app/providers/usePlanContext';
+import { DashboardProvider } from '@/app/dashboard/dashboardContext';
+import { Grid } from '@chakra-ui/react';
+import { getCurrentWeekFromStartDate } from '@/app/util';
 
 export function DashboardV2() {
   const { plan, goalActions } = usePlanContext();
@@ -15,9 +19,26 @@ export function DashboardV2() {
     return <div>Loading...</div>;
   }
 
-  return <div>
-    <GoalCard goal={goals[0]} sequence={1} />
-  </div>;
+  const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 1;
+
+  return (
+    <>
+      <CurrentWeekSummary />
+      <Grid gap={6} gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
+        {goals.map((g) => (
+          <GoalCard key={g.id} goal={g} sequence={currentWeek} />
+        ))}
+      </Grid>
+    </>
+  );
 }
 
-export default DashboardV2;
+function DashboardV2WithContext() {
+  return (
+    <DashboardProvider>
+      <DashboardV2 />
+    </DashboardProvider>
+  )
+}
+
+export default DashboardV2WithContext;
