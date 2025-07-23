@@ -39,28 +39,25 @@ export function Header() {
         paddingY="3"
         paddingX={{ base: 2, md: 4 }}
       >
-        <Heading
-          size={{ md: '2xl', base: 'xl' }}
-          color="black"
-          onClick={() => router.push('/')}
-          cursor="pointer"
-        >
-          The Planner
+        <Heading size={{ md: '2xl', base: 'xl' }} color="black">
+          <ChakraLink as={Link} href="/" prefetch _hover={{ textDecoration: 'none' }}>
+            The Planner
+          </ChakraLink>
         </Heading>
         <HStack spacing={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
-          <ChakraLink as={Link} href="/" display="flex" alignItems="center" gap="1">
+          <ChakraLink as={Link} href="/" prefetch display="flex" alignItems="center" gap="1">
             <RiHome2Line />
             <Text display={{ base: 'none', md: 'inline' }}>Home</Text>
           </ChakraLink>
-          <ChakraLink as={Link} href="/plan-v2" display="flex" alignItems="center" gap="1">
+          <ChakraLink as={Link} href="/plan-v2" prefetch display="flex" alignItems="center" gap="1">
             <SlNotebook />
             <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
           </ChakraLink>
-          <ChakraLink as={Link} href="/dashboard-v2" display="flex" alignItems="center" gap="1">
+          <ChakraLink as={Link} href="/dashboard-v2" prefetch display="flex" alignItems="center" gap="1">
             <RxDashboard />
             <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
           </ChakraLink>
-          <ChakraLink as={Link} href="/templates" display="flex" alignItems="center" gap="1">
+          <ChakraLink as={Link} href="/templates" prefetch display="flex" alignItems="center" gap="1">
             <PiFileText />
             <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
           </ChakraLink>
@@ -85,6 +82,7 @@ export function Header() {
               <ChakraLink
                 as={Link}
                 href="/login"
+                prefetch
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <SlLogin />
@@ -93,6 +91,7 @@ export function Header() {
               <ChakraLink
                 as={Link}
                 href="/Signup"
+                prefetch
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <LuUserPlus />
