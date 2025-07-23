@@ -53,8 +53,8 @@ export default async function RootLayout({
                 <AccountProvider>
                   <PlanProvider>
                     <Box margin="0 2rem" paddingBottom="8">
-                      <Grid templateRows="auto 1fr auto" minHeight="100vh">
-                        <GridItem position="sticky" top="0" zIndex={1000}>
+                      <Grid templateRows="6rem 1fr auto" minHeight="100vh">
+                        <GridItem height="6rem">
                           <Header />
                         </GridItem>
                         <GridItem overflow="auto" paddingBottom="8">
