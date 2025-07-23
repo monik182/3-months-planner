@@ -31,7 +31,7 @@ export function Header() {
   }
 
   return (
-    <header className="backdrop-blur bg-white/70 fixed top-0 left-0 right-0 mx-8 z-50">
+    <header className="backdrop-blur bg-white/70 fixed top-0 left-0 right-0 px-8 z-50">
       <Flex
         justify="space-between"
         align="center"
