@@ -1,6 +1,7 @@
 import { Goal } from '@prisma/client';
 import WeekProgressIndicator from './WeekProgressIndicator';
 import { Box, Card, Flex, Heading, Badge, Text } from '@chakra-ui/react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useEffect, useMemo, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
@@ -93,6 +94,16 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
           />
         </Box>
         <Box display="flex" flexDirection="column" gap={6}>
+          {orderedStrategies.length === 0 && (
+            <Box textAlign="center">
+              <Link href="/plan-v2">
+                <Button variant="outline" size="sm">
+                  Edit goal to add actions
+                </Button>
+              </Link>
+            </Box>
+          )}
+
           {orderedStrategies.map((action) => {
             const completedCount = action.frequencies.filter(Boolean).length
             const reachedLimit = completedCount >= action.strategy.frequency
