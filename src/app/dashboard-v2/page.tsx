@@ -27,7 +27,6 @@ export function DashboardV2() {
     <>
       <WeekPagination
         activeWeek={activeWeek}
-        maxWeeks={12}
         startDate={plan?.startDate as Date}
         onChange={setActiveWeek}
       />
@@ -35,7 +34,6 @@ export function DashboardV2() {
       <Grid gap={6} gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
         {goals.map((g) => (
           <GoalCard key={g.id} goal={g} sequence={activeWeek} />
-
         ))}
       </Grid>
     </>

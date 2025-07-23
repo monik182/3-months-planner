@@ -9,19 +9,20 @@ export const getWeekLabel = (weekNumber: number, startDate: Date): string => {
   return `${formatDate(weekStartDate, "MMM DD")} - ${formatDate(weekEndDate, "MMM DD")}`
 }
 
+const MAX_WEEKS = 12
+
 interface WeekPaginationProps {
   activeWeek: number
-  maxWeeks: number
   startDate: Date
   onChange: (week: number) => void
 }
 
-export default function WeekPagination({ activeWeek, maxWeeks, startDate, onChange }: WeekPaginationProps) {
+export default function WeekPagination({ activeWeek, startDate, onChange }: WeekPaginationProps) {
   const navigateWeek = (direction: 'prev' | 'next') => {
     if (direction === 'prev' && activeWeek > 1) {
       onChange(activeWeek - 1)
     }
-    if (direction === 'next' && activeWeek < maxWeeks) {
+    if (direction === 'next' && activeWeek < MAX_WEEKS) {
       onChange(activeWeek + 1)
     }
   }
@@ -46,7 +47,7 @@ export default function WeekPagination({ activeWeek, maxWeeks, startDate, onChan
         aria-label="Next week"
         variant="outline"
         size="sm"
-        disabled={activeWeek >= maxWeeks}
+        disabled={activeWeek >= MAX_WEEKS}
         onClick={() => navigateWeek('next')}
       >
         <LuChevronRight />

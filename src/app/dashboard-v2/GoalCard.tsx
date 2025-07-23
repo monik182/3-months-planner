@@ -28,7 +28,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
 
   const goalStrategies = useMemo(
     () => strategies.filter((s) => s.strategy.goalId === goal.id && s.sequence === sequence),
-    [strategies, goal.id]
+    [strategies, goal.id, sequence]
   )
   const orderedStrategies: StrategyHistoryExtended[] = getOrderedStrategies(goal.planId, goalStrategies)
 
