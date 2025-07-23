@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { setStrategyOrder, getOrderedStrategies } from '@/app/util/order';
 import { StrategyHistoryExtended } from '@/app/types/types';
+import { GoalDialog } from '@/components/GoalDialog';
 
 export interface GoalAction {
   id: string
@@ -22,6 +23,7 @@ interface GoalCardProps {
 
 export default function GoalCard({ goal, sequence }: GoalCardProps) {
   const { strategyHistoryActions } = usePlanContext()
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { data: strategies = [], isFetching: isFetchingStrategies } = strategyHistoryActions.useGetByPlanId(goal.planId)
   const updateStrategy = strategyHistoryActions.useUpdate()
   const [loadingToggle, setLoadingToggle] = useState<{actionId: string, index: number} | null>(null)
@@ -96,11 +98,9 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
         <Box display="flex" flexDirection="column" gap={6}>
           {orderedStrategies.length === 0 && (
             <Box textAlign="center">
-              <Link href="/plan-v2">
-                <Button variant="outline" size="sm">
-                  Edit goal to add actions
-                </Button>
-              </Link>
+              <Button variant="outline" size="sm" onClick={() => setIsEditDialogOpen(true)}>
+                Add actions
+              </Button>
             </Box>
           )}
 
@@ -157,6 +157,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
             )
           })}
         </Box>
+        <GoalDialog edit open={isEditDialogOpen} goal={goal} onOpenChange={setIsEditDialogOpen} />
       </Card.Body>
     </Card.Root>
   )

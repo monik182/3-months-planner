@@ -1,5 +1,5 @@
 
-import { GoalDialog } from '@/app/plan-v2/GoalDialog';
+import { GoalDialog } from '@/components/GoalDialog';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { calculateCompletionScore } from '@/app/util';
 import { Badge, Button, Card, Collapsible, Dialog, Portal } from '@chakra-ui/react';

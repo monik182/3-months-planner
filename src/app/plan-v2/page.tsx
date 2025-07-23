@@ -4,7 +4,7 @@ import {
   useDashboardContext,
 } from "@/app/dashboard/dashboardContext";
 import { GoalCard } from "@/app/plan-v2/GoalCard";
-import { GoalDialog } from "@/app/plan-v2/GoalDialog";
+import { GoalDialog } from "@/components/GoalDialog";
 import { usePlanContext } from "@/app/providers/usePlanContext";
 import { getCurrentWeekFromStartDate, handleKeyDown } from "@/app/util";
 import { SavingSpinner } from "@/components/SavingSpinner";
