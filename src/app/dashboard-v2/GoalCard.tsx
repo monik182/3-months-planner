@@ -21,7 +21,7 @@ interface GoalCardProps {
 
 export default function GoalCard({ goal, sequence }: GoalCardProps) {
   const { strategyHistoryActions } = usePlanContext()
-  const { data: strategies = [] } = strategyHistoryActions.useGetByPlanId(goal.planId)
+  const { data: strategies = [], isFetching: isFetchingStrategies } = strategyHistoryActions.useGetByPlanId(goal.planId)
   const updateStrategy = strategyHistoryActions.useUpdate()
   const [loadingToggle, setLoadingToggle] = useState<{actionId: string, index: number} | null>(null)
 
@@ -48,15 +48,10 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
 
     updatedFrequencies[index] = !updatedFrequencies[index]
     setLoadingToggle({ actionId: id, index })
-    updateStrategy.mutate(
-      {
-        strategyId: id,
-        updates: { frequencies: updatedFrequencies },
-      },
-      {
-        onSettled: () => setLoadingToggle(null),
-      },
-    )
+    updateStrategy.mutate({
+      strategyId: id,
+      updates: { frequencies: updatedFrequencies },
+    })
   }
 
   const calculateCompletionPercentage = () => {
@@ -68,8 +63,16 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
       return acc + strategy.frequencies.filter(Boolean).length
     }, 0)
 
+    if (total === 0) return 0
     return Math.floor((completed / total) * 100)
   }
+
+  useEffect(() => {
+    if (!loadingToggle) return
+    if (!updateStrategy.isPending && !isFetchingStrategies) {
+      setLoadingToggle(null)
+    }
+  }, [loadingToggle, updateStrategy.isPending, isFetchingStrategies])
 
   useEffect(() => {
     if (!goal.planId || orderedStrategies.length === goalStrategies.length) return
@@ -129,7 +132,9 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
                           h="24px"
                           aria-label={`${isCompleted ? 'Mark as incomplete' : 'Mark as complete'} for ${dayName}`}
                           disabled={reachedLimit && !isCompleted}
-                          loading={loadingToggle?.actionId === action.id && loadingToggle?.index === index && updateStrategy.isPending}
+                          loading={loadingToggle?.actionId === action.id &&
+                            loadingToggle?.index === index &&
+                            (updateStrategy.isPending || isFetchingStrategies)}
                         >
                           {isCompleted && '✓'}
                         </Button>
