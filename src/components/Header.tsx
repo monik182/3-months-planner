@@ -1,15 +1,12 @@
 'use client'
-import { Flex, HStack, Heading, IconButton, Separator, Text } from '@chakra-ui/react'
+import { Flex, HStack, Heading, IconButton, Separator, Text, Link as ChakraLink } from '@chakra-ui/react'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
-import { usePathname, useRouter } from 'next/navigation'
-import { Avatar } from './ui/avatar'
-import { Button } from '@/components/ui/button'
-import { LuNotebookPen } from 'react-icons/lu'
-import { usePlanContext } from '@/app/providers/usePlanContext'
-import { useEffect, useState } from 'react'
-import { SegmentedControl } from '@/components/ui/segmented-control'
+import { LuUserPlus } from 'react-icons/lu'
+import { RiHome2Line } from 'react-icons/ri'
 import { RxDashboard } from 'react-icons/rx'
-import { useAccountContext } from '@/app/providers/useAccountContext'
+import { PiFileText } from 'react-icons/pi'
+import { useRouter } from 'next/navigation'
+import { Avatar } from './ui/avatar'
 import Link from 'next/link'
 import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthProvider'
@@ -17,33 +14,9 @@ import { logout } from '@/services/auth'
 import { clearStrategyOrder } from '@/app/util/order'
 
 export function Header() {
-  const { isGuest } = useAccountContext()
   const { session, user } = useAuth()
-  const { hasStartedPlan } = usePlanContext()
   const router = useRouter()
-  const pathname = usePathname()
-  const [value, setValue] = useState('plan')
-  const showCreatePlanButton = !!user && !isGuest && !hasStartedPlan && pathname !== '/plan'
   const userAvatar = user?.user_metadata?.picture || `https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=${user?.email?.split('@')[0] || user?.user_metadata?.name || 'Guest%20User'}`
-
-  const goToHome = () => {
-    if (hasStartedPlan)
-      return router.push('/dashboard')
-    router.push('/')
-  }
-
-  const handleCreatePlan = () => {
-    router.push('/plan/new')
-  }
-
-  const handleOnChange = (value: string) => {
-    setValue(value)
-    router.push(pageMap[value])
-  }
-
-  useEffect(() => {
-    setValue(pageMap[pathname])
-  }, [pathname])
 
   const handleLogout = async () => {
     Object.keys(localStorage).forEach((key) => {
@@ -58,83 +31,79 @@ export function Header() {
   }
 
   return (
-    <header style={{ backgroundColor: "white" }}>
-      <Flex justify="space-between" align="center" marginTop="1rem">
-        <Flex gap="1rem" align="center">
-          <Heading size={{ md: "2xl", base: "xl" }} color="black" onClick={goToHome} cursor="pointer">
-            The Planner
-          </Heading>
-        </Flex>
-        {hasStartedPlan && (
-          <SegmentedControl
-            size={{ base: "sm", lg: "lg" }}
-            value={value}
-            onValueChange={(e) => handleOnChange(e.value || '')}
-            items={items}
-          />
-        )}
-        <Flex gap="5px" alignItems="center">
-          <Flex gap="1rem" alignItems="center">
-            {showCreatePlanButton && (
-              <Button variant="outline" colorPalette="yellow" onClick={handleCreatePlan}>
-                <LuNotebookPen />
-                Create Plan
-              </Button>
-            )}
-            {!!session && (
-              <Avatar
-                name="User"
-                shape="full"
-                src={userAvatar}
-                size="xs"
-              />
-            )}
-            {!!session && SyncService.isEnabled && (
-              <IconButton
-                size="xs"
-                variant="ghost"
-                onClick={handleLogout}
-                className="flex flex-col justify-center items-center gap-2"
-              >
-                <SlLogout />
-                <Text textStyle="xs">Logout</Text>
-              </IconButton>
-            )}
-          </Flex>
+    <header className="backdrop-blur bg-white/70">
+      <Flex
+        justify="space-between"
+        align="center"
+        flexWrap="wrap"
+        paddingY="3"
+        paddingX={{ base: 2, md: 4 }}
+      >
+        <Heading
+          size={{ md: '2xl', base: 'xl' }}
+          color="black"
+          onClick={() => router.push('/')}
+          cursor="pointer"
+        >
+          The Planner
+        </Heading>
+        <HStack spacing={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
+          <ChakraLink as={Link} href="/" display="flex" alignItems="center" gap="1">
+            <RiHome2Line />
+            <Text display={{ base: 'none', md: 'inline' }}>Home</Text>
+          </ChakraLink>
+          <ChakraLink as={Link} href="/plan-v2" display="flex" alignItems="center" gap="1">
+            <SlNotebook />
+            <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
+          </ChakraLink>
+          <ChakraLink as={Link} href="/dashboard-v2" display="flex" alignItems="center" gap="1">
+            <RxDashboard />
+            <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
+          </ChakraLink>
+          <ChakraLink as={Link} href="/templates" display="flex" alignItems="center" gap="1">
+            <PiFileText />
+            <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
+          </ChakraLink>
+        </HStack>
+        <Flex gap={{ base: 2, md: 4 }} alignItems="center" marginTop={{ base: 2, md: 0 }}>
+          {!!session && (
+            <Avatar name="User" shape="full" src={userAvatar} size="xs" />
+          )}
+          {!!session && SyncService.isEnabled && (
+            <IconButton
+              size="xs"
+              variant="ghost"
+              onClick={handleLogout}
+              className="flex flex-col justify-center items-center gap-1"
+            >
+              <SlLogout />
+              <Text textStyle="xs">Logout</Text>
+            </IconButton>
+          )}
           {!session && SyncService.isEnabled && (
-            <Link href="/login" className="flex flex-col justify-center items-center gap-2"><SlLogin /> <Text textStyle="xs">Login</Text></Link>
+            <HStack spacing={2}>
+              <ChakraLink
+                as={Link}
+                href="/login"
+                className="flex flex-col justify-center items-center gap-1"
+              >
+                <SlLogin />
+                <Text textStyle="xs">Login</Text>
+              </ChakraLink>
+              <ChakraLink
+                as={Link}
+                href="/Signup"
+                className="flex flex-col justify-center items-center gap-1"
+              >
+                <LuUserPlus />
+                <Text textStyle="xs">Signup</Text>
+              </ChakraLink>
+            </HStack>
           )}
         </Flex>
       </Flex>
-      <Separator margin="1rem 0" />
+      <Separator marginY="1rem" />
     </header>
   )
 }
 
-const pageMap: Record<string, string> = {
-  dashboard: '/dashboard',
-  plan: '/plan/view',
-  '/dashboard': 'dashboard',
-  '/plan/view': 'plan',
-}
-
-const items = [
-  {
-    value: "dashboard",
-    label: (
-      <HStack>
-        <RxDashboard />
-        <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
-      </HStack>
-    ),
-  },
-  {
-    value: "plan",
-    label: (
-      <HStack>
-        <SlNotebook />
-        <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
-      </HStack>
-    ),
-  },
-]

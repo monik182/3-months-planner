@@ -4,6 +4,7 @@ import './globals.css'
 import { Provider } from '@/components/ui/provider'
 import { Box, Grid, GridItem } from '@chakra-ui/react'
 import { Header } from '@/components/Header'
+import { Footer } from '@/components/Footer'
 import { ReactQueryProvider } from './providers/ReactQueryProvider'
 import { PlanProvider } from '@/app/providers/usePlanContext'
 import { Extra } from '@/components/Extra'
@@ -51,10 +52,17 @@ export default async function RootLayout({
               <Provider>
                 <AccountProvider>
                   <PlanProvider>
-                    <Box margin="0 2rem 5rem">
-                      <Grid templateRows="10% auto" height="100vh">
-                        <GridItem><Header /></GridItem>
-                        <GridItem overflow="auto">{children}</GridItem>
+                    <Box margin="0 2rem" paddingBottom="8">
+                      <Grid templateRows="auto 1fr auto" minHeight="100vh">
+                        <GridItem position="sticky" top="0" zIndex={1000}>
+                          <Header />
+                        </GridItem>
+                        <GridItem overflow="auto" paddingBottom="8">
+                          {children}
+                        </GridItem>
+                        <GridItem>
+                          <Footer />
+                        </GridItem>
                       </Grid>
                     </Box>
                   </PlanProvider>
