@@ -29,15 +29,16 @@ export default function WeekPagination({ activeWeek, maxWeeks, startDate, onChan
   const weekLabel = getWeekLabel(activeWeek, startDate)
 
   return (
-    <HStack spacing={2} justify="center" my={4}>
+    <HStack gap={2} justify="center" my={4}>
       <IconButton
         aria-label="Previous week"
         variant="outline"
         size="sm"
-        icon={<LuChevronLeft />}
-        isDisabled={activeWeek <= 1}
+        disabled={activeWeek <= 1}
         onClick={() => navigateWeek('prev')}
-      />
+      >
+        <LuChevronLeft />
+      </IconButton>
       <Text fontSize="sm" fontWeight="medium">
         Week {activeWeek} ({weekLabel})
       </Text>
@@ -45,10 +46,11 @@ export default function WeekPagination({ activeWeek, maxWeeks, startDate, onChan
         aria-label="Next week"
         variant="outline"
         size="sm"
-        icon={<LuChevronRight />}
-        isDisabled={activeWeek >= maxWeeks}
+        disabled={activeWeek >= maxWeeks}
         onClick={() => navigateWeek('next')}
-      />
+      >
+        <LuChevronRight />
+      </IconButton>
     </HStack>
   )
 }
