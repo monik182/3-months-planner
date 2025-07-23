@@ -2,7 +2,7 @@
 import { Box, Flex, Heading, Spinner, Text } from '@chakra-ui/react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { useDashboardContext } from '@/app/dashboard/dashboardContext'
-import { calculateWeekEndDate, calculateWeekStartDate, formatDate, getCurrentWeekFromStartDate } from '@/app/util'
+import { calculateWeekEndDate, calculateWeekStartDate, formatDate } from '@/app/util'
 interface CurrentWeekSummaryProps {
   weekNumber: number
 }

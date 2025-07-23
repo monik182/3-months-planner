@@ -10,8 +10,10 @@ import { useState } from 'react';
 
 export function DashboardV2() {
   const { plan, goalActions } = usePlanContext();
+  const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 1;
+  const [activeWeek, setActiveWeek] = useState(currentWeek);
   const { data: goals = [], isLoading: loadingGoals } =
-    goalActions.useGetByPlanId(plan?.id);
+    goalActions.useGetByPlanId(plan?.id as string);
 
   if (!goals.length) {
     return null;
@@ -20,9 +22,6 @@ export function DashboardV2() {
   if (loadingGoals) {
     return <div>Loading...</div>;
   }
-
-  const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 1;
-  const [activeWeek, setActiveWeek] = useState(currentWeek);
 
   return (
     <>
