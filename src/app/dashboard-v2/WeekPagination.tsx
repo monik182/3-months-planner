@@ -1,5 +1,5 @@
 "use client";
-import { HStack, Text, IconButton } from '@chakra-ui/react'
+import { HStack, Text, IconButton, Heading, Box } from '@chakra-ui/react'
 import { LuChevronLeft, LuChevronRight } from 'react-icons/lu'
 import { calculateWeekStartDate, calculateWeekEndDate, formatDate } from '@/app/util'
 
@@ -40,9 +40,10 @@ export default function WeekPagination({ activeWeek, startDate, onChange }: Week
       >
         <LuChevronLeft />
       </IconButton>
-      <Text fontSize="sm" fontWeight="medium">
-        Week {activeWeek} ({weekLabel})
-      </Text>
+      <Box textAlign="center">
+        <Heading size="md">Week {activeWeek}</Heading>
+        <Text fontSize="sm">{weekLabel}</Text>
+      </Box>
       <IconButton
         aria-label="Next week"
         variant="outline"

@@ -1,7 +1,6 @@
 'use client';
 import GoalCard from '@/app/dashboard-v2/GoalCard';
 import CurrentWeekSummary from '@/app/dashboard-v2/CurrentWeekSummary';
-import WeekPagination from '@/app/dashboard-v2/WeekPagination';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { DashboardProvider } from '@/app/dashboard/dashboardContext';
 import { Grid } from '@chakra-ui/react';
@@ -25,12 +24,7 @@ export function DashboardV2() {
 
   return (
     <>
-      <WeekPagination
-        activeWeek={activeWeek}
-        startDate={plan?.startDate as Date}
-        onChange={setActiveWeek}
-      />
-      <CurrentWeekSummary weekNumber={activeWeek} />
+      <CurrentWeekSummary activeWeek={activeWeek} setActiveWeek={setActiveWeek} />
       <Grid gap={6} gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
         {goals.map((g) => (
           <GoalCard key={g.id} goal={g} sequence={activeWeek} />
