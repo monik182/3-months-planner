@@ -8,6 +8,7 @@ import { usePlanContext } from '@/app/providers/usePlanContext';
 import { setStrategyOrder, getOrderedStrategies } from '@/app/util/order';
 import { StrategyHistoryExtended } from '@/app/types/types';
 import { GoalDialog } from '@/components/GoalDialog';
+import { CiEdit } from 'react-icons/ci';
 
 export interface GoalAction {
   id: string
@@ -85,8 +86,9 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
   return (
     <Card.Root>
       <Card.Header pb={2} display="flex" justifyContent="space-between" alignItems="flex-start">
-        <Box>
+        <Box display="flex" alignItems="center" gap={2}>
           <Heading size="md">{goal.content}</Heading>
+          <CiEdit size={18} onClick={() => setIsEditDialogOpen(true)} />
         </Box>
       </Card.Header>
       <Card.Body pt={4}>
