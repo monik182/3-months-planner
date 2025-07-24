@@ -1,6 +1,6 @@
 'use client'
-import { GoalDetail } from '@/app/dashboard/Week/GoalDetail'
-import { useDashboardContext } from '@/app/dashboard/dashboardContext'
+import { GoalDetail } from '@/app/dashboard-legacy/Week/GoalDetail'
+import { useDashboardContext } from '@/app/dashboard-legacy/dashboardContext'
 import { calculateWeekEndDate, calculateWeekStartDate, formatDate } from '@/app/util'
 import { Box, Center, Flex, Grid, Heading, Spinner, Text } from '@chakra-ui/react'
 import { Plan } from '@prisma/client'

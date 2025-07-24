@@ -1,4 +1,4 @@
-import { useDashboardContext } from '@/app/dashboard/dashboardContext'
+import { useDashboardContext } from '@/app/dashboard-legacy/dashboardContext'
 import { Box, Heading, Stat, StatLabel, VStack, Separator } from '@chakra-ui/react'
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { FormatNumber } from '@chakra-ui/react'

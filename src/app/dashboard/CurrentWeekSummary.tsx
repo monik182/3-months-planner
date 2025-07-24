@@ -1,8 +1,8 @@
 "use client";
 import { Box, Flex, Spinner, Text } from '@chakra-ui/react'
 import { usePlanContext } from '@/app/providers/usePlanContext'
-import { useDashboardContext } from '@/app/dashboard/dashboardContext'
-import WeekPagination from '@/app/dashboard-v2/WeekPagination';
+import { useDashboardContext } from '@/app/dashboard-legacy/dashboardContext'
+import WeekPagination from '@/app/dashboard/WeekPagination';
 interface CurrentWeekSummaryProps {
   activeWeek: number
   setActiveWeek: (week: number) => void

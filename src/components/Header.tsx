@@ -2,9 +2,9 @@
 import { Flex, HStack, Heading, IconButton, Separator, Text, Link as ChakraLink } from '@chakra-ui/react'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { LuUserPlus } from 'react-icons/lu'
-import { RiHome2Line } from 'react-icons/ri'
+// import { RiHome2Line } from 'react-icons/ri'
 import { RxDashboard } from 'react-icons/rx'
-import { PiFileText } from 'react-icons/pi'
+// import { PiFileText } from 'react-icons/pi'
 import { useRouter, usePathname } from 'next/navigation'
 import { Avatar } from './ui/avatar'
 import Link from 'next/link'
@@ -41,15 +41,15 @@ export function Header() {
         paddingX={{ base: 2, md: 4 }}
       >
         <Heading size={{ md: '2xl', base: 'xl' }} color="black">
-          <ChakraLink as={Link} href="/" prefetch _hover={{ textDecoration: 'none' }}>
+          <ChakraLink as={Link} href="/"  _hover={{ textDecoration: 'none' }}>
             The Planner
           </ChakraLink>
         </Heading>
-        <HStack spacing={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
-          <ChakraLink
+        <HStack gap={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
+          {/* <ChakraLink
             as={Link}
             href="/"
-            prefetch
+            
             display="flex"
             alignItems="center"
             gap="1"
@@ -57,35 +57,35 @@ export function Header() {
           >
             <RiHome2Line />
             <Text display={{ base: 'none', md: 'inline' }}>Home</Text>
-          </ChakraLink>
+          </ChakraLink> */}
           <ChakraLink
             as={Link}
-            href="/plan-v2"
-            prefetch
+            href="/dashboard"
+
             display="flex"
             alignItems="center"
             gap="1"
-            fontWeight={pathname.startsWith('/plan-v2') ? 'bold' : 'normal'}
-          >
-            <SlNotebook />
-            <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
-          </ChakraLink>
-          <ChakraLink
-            as={Link}
-            href="/dashboard-v2"
-            prefetch
-            display="flex"
-            alignItems="center"
-            gap="1"
-            fontWeight={pathname.startsWith('/dashboard-v2') ? 'bold' : 'normal'}
+            fontWeight={pathname.startsWith('/dashboard') ? 'bold' : 'normal'}
           >
             <RxDashboard />
             <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
           </ChakraLink>
           <ChakraLink
             as={Link}
+            href="/plan"
+            
+            display="flex"
+            alignItems="center"
+            gap="1"
+            fontWeight={pathname.startsWith('/plan') ? 'bold' : 'normal'}
+          >
+            <SlNotebook />
+            <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
+          </ChakraLink>
+          {/* <ChakraLink
+            as={Link}
             href="/templates"
-            prefetch
+            
             display="flex"
             alignItems="center"
             gap="1"
@@ -93,7 +93,7 @@ export function Header() {
           >
             <PiFileText />
             <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
-          </ChakraLink>
+          </ChakraLink> */}
         </HStack>
         <Flex gap={{ base: 2, md: 4 }} alignItems="center" marginTop={{ base: 2, md: 0 }}>
           {!!session && (
@@ -111,11 +111,11 @@ export function Header() {
             </IconButton>
           )}
           {!session && SyncService.isEnabled && (
-            <HStack spacing={2}>
+            <HStack gap={2}>
               <ChakraLink
                 as={Link}
                 href="/login"
-                prefetch
+                
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <SlLogin />
@@ -124,7 +124,7 @@ export function Header() {
               <ChakraLink
                 as={Link}
                 href="/Signup"
-                prefetch
+                
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <LuUserPlus />

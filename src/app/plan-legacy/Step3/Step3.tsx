@@ -4,7 +4,7 @@ import {
   Collapsible,
   Text,
 } from '@chakra-ui/react'
-import { StepLayout } from '@/app/plan/stepLayout'
+import { StepLayout } from '@/app/plan-legacy/stepLayout'
 import { Step } from '@/app/types/types'
 import { Goal } from '@prisma/client'
 import { HiChevronDown, HiChevronUp } from 'react-icons/hi2'
