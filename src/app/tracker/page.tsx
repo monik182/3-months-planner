@@ -7,9 +7,11 @@ import { DoneHeatmap } from '@/components/tracker/DoneHeatmap'
 import { BurnUpChart } from '@/components/tracker/BurnUpChart'
 import { StreakGanttChart } from '@/components/tracker/StreakGanttChart'
 import { ComplianceRadarChart } from '@/components/tracker/ComplianceRadarChart'
+import { GoalCompletionLineChart } from '@/components/tracker/GoalCompletionLineChart'
 import type { Goal, Strategy, StrategyHistory, TrackerData } from './types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { StrategyHistoryExtended } from '@/app/types/types'
+import { useTrackerMetrics } from '@/app/hooks/useTrackerMetrics'
 
 // Helper: compute done flags per strategy
 export function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<string, number[]> {
@@ -88,9 +90,9 @@ export function computeWeekMetrics(done: Record<string, number[]>) {
 export default function TrackerPage() {
   const title = 'Tracker'
   const { plan, goalActions, strategyHistoryActions } = usePlanContext();
-  
-  // const { data: goals = [] } =
-  //   goalActions.useGetByPlanId(plan?.id as string);
+
+  const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string);
+  const { data: metrics } = useTrackerMetrics(plan?.id as string);
   
   const { data: strategies = [] } =
   strategyHistoryActions.useGetByPlanId(plan?.id as string);
@@ -112,7 +114,12 @@ export default function TrackerPage() {
       <Heading mb={4}>{title}</Heading>
       <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4}>
         {uniqueStrategies.map((s) => (
-          <StrategySummaryCard key={s.strategyId} strategy={s} metrics={strategyMetrics[s.strategyId]} />
+          <StrategySummaryCard
+            key={s.strategyId}
+            strategy={s}
+            metrics={strategyMetrics[s.strategyId]}
+            weeklyData={metrics?.strategies[s.strategyId]}
+          />
         ))}
       </Grid>
       <Stack gap={8} mt={8}>
@@ -127,6 +134,12 @@ export default function TrackerPage() {
             Habit Completion %
           </Heading>
           <HabitLineChart data={weekMetrics.habitPercent} />
+        </Box>
+        <Box>
+          <Heading size="md" mb={2}>
+            Goal Completion %
+          </Heading>
+          <GoalCompletionLineChart data={metrics?.goals || {}} goals={goals} />
         </Box>
         <Box>
           <Heading size="md" mb={2}>
