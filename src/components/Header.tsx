@@ -5,7 +5,7 @@ import { LuUserPlus } from 'react-icons/lu'
 import { RiHome2Line } from 'react-icons/ri'
 import { RxDashboard } from 'react-icons/rx'
 import { PiFileText } from 'react-icons/pi'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { Avatar } from './ui/avatar'
 import Link from 'next/link'
 import { SyncService } from '@/services/sync'
@@ -16,6 +16,7 @@ import { clearStrategyOrder } from '@/app/util/order'
 export function Header() {
   const { session, user } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
   const userAvatar = user?.user_metadata?.picture || `https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=${user?.email?.split('@')[0] || user?.user_metadata?.name || 'Guest%20User'}`
 
   const handleLogout = async () => {
@@ -45,19 +46,51 @@ export function Header() {
           </ChakraLink>
         </Heading>
         <HStack spacing={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
-          <ChakraLink as={Link} href="/" prefetch display="flex" alignItems="center" gap="1">
+          <ChakraLink
+            as={Link}
+            href="/"
+            prefetch
+            display="flex"
+            alignItems="center"
+            gap="1"
+            fontWeight={pathname === '/' ? 'bold' : 'normal'}
+          >
             <RiHome2Line />
             <Text display={{ base: 'none', md: 'inline' }}>Home</Text>
           </ChakraLink>
-          <ChakraLink as={Link} href="/plan-v2" prefetch display="flex" alignItems="center" gap="1">
+          <ChakraLink
+            as={Link}
+            href="/plan-v2"
+            prefetch
+            display="flex"
+            alignItems="center"
+            gap="1"
+            fontWeight={pathname.startsWith('/plan-v2') ? 'bold' : 'normal'}
+          >
             <SlNotebook />
             <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
           </ChakraLink>
-          <ChakraLink as={Link} href="/dashboard-v2" prefetch display="flex" alignItems="center" gap="1">
+          <ChakraLink
+            as={Link}
+            href="/dashboard-v2"
+            prefetch
+            display="flex"
+            alignItems="center"
+            gap="1"
+            fontWeight={pathname.startsWith('/dashboard-v2') ? 'bold' : 'normal'}
+          >
             <RxDashboard />
             <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
           </ChakraLink>
-          <ChakraLink as={Link} href="/templates" prefetch display="flex" alignItems="center" gap="1">
+          <ChakraLink
+            as={Link}
+            href="/templates"
+            prefetch
+            display="flex"
+            alignItems="center"
+            gap="1"
+            fontWeight={pathname.startsWith('/templates') ? 'bold' : 'normal'}
+          >
             <PiFileText />
             <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
           </ChakraLink>
