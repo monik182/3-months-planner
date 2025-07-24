@@ -27,13 +27,20 @@ export function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<
   //     result[h.strategyId][h.sequence - 1] = h.completed ? 1 : 0
   //   }
   // })
+  // strategies.forEach((s) => {
+  //   result[s.id] = Array(12).fill(0)
+  //   s.frequencies.forEach((f, idx) => {
+  //     if (f) {
+  //       result[s.id][idx] = 1
+  //     }
+  //   })
+  // })
+
   strategies.forEach((s) => {
-    result[s.id] = Array(12).fill(0)
-    s.frequencies.forEach((f, idx) => {
-      if (f) {
-        result[s.id][idx] = 1
-      }
-    })
+    if (!result[s.strategyId]) {
+      result[s.strategyId] = Array(12).fill(0)
+    }
+    result[s.strategyId][s.sequence - 1] = s.strategy.frequency === s.frequencies.filter(v => !!v).length ? 1 : 0;
   })
   console.log('result', result)
   return result
@@ -85,8 +92,12 @@ export default function TrackerPage() {
   // const { data: goals = [] } =
   //   goalActions.useGetByPlanId(plan?.id as string);
   
-    const { data: strategies = [] } =
-    strategyHistoryActions.useGetByPlanId(plan?.id as string);
+  const { data: strategies = [] } =
+  strategyHistoryActions.useGetByPlanId(plan?.id as string);
+
+  const uniqueStrategies = strategies.filter((s, idx, arr) => {
+    return arr.findIndex((t) => t.strategyId === s.strategyId) === idx
+  })
 
   const done = computeDoneFlags(strategies)
   const strategyMetrics = computeStrategyMetrics(done)
@@ -100,8 +111,8 @@ export default function TrackerPage() {
     <Container maxW="6xl" py={8}>
       <Heading mb={4}>{title}</Heading>
       <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4}>
-        {strategies.map((s) => (
-          <StrategySummaryCard key={s.id} strategy={s} metrics={strategyMetrics[s.id]} />
+        {uniqueStrategies.map((s) => (
+          <StrategySummaryCard key={s.strategyId} strategy={s} metrics={strategyMetrics[s.strategyId]} />
         ))}
       </Grid>
       <Stack gap={8} mt={8}>
@@ -121,26 +132,26 @@ export default function TrackerPage() {
           <Heading size="md" mb={2}>
             Completion Heatmap
           </Heading>
-          <DoneHeatmap strategies={strategies} done={done} />
+          <DoneHeatmap strategies={uniqueStrategies} done={done} />
         </Box>
-        <Box>
+        {/* <Box>
           <Heading size="md" mb={2}>
             Burn Up
           </Heading>
           <BurnUpChart data={cumulative} />
-        </Box>
+        </Box> */}
         <Box>
           <Heading size="md" mb={2}>
             Streaks
           </Heading>
-          <StreakGanttChart strategies={strategies} done={done} />
+          <StreakGanttChart strategies={uniqueStrategies} done={done} />
         </Box>
-        <Box>
+        {/* <Box>
           <Heading size="md" mb={2}>
             Compliance Radar
           </Heading>
-          <ComplianceRadarChart strategies={strategies} metrics={strategyMetrics} />
-        </Box>
+          <ComplianceRadarChart strategies={uniqueStrategies} metrics={strategyMetrics} />
+        </Box> */}
       </Stack>
     </Container>
   )

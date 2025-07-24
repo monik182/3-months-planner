@@ -18,11 +18,11 @@ export function DoneHeatmap({ strategies, done }: DoneHeatmapProps) {
       ))}
       {strategies.map((s) => (
         <>
-          <GridItem key={s.id + '-label'} textAlign="right" pr={1}>
+          <GridItem key={s.strategyId + '-label'} textAlign="right" pr={1}>
             <Text>{s.strategy.content}</Text>
           </GridItem>
-          {done[s.id].map((v, idx) => (
-            <GridItem key={s.id + idx}>
+          {done[s.strategyId].map((v, idx) => (
+            <GridItem key={s.strategyId + idx}>
               <Box h={4} borderRadius="sm" bg={v ? 'green.400' : 'gray.200'} />
             </GridItem>
           ))}

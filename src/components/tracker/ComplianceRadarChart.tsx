@@ -8,7 +8,7 @@ interface ComplianceRadarChartProps {
 }
 
 export function ComplianceRadarChart({ strategies, metrics }: ComplianceRadarChartProps) {
-  const data = strategies.map((s) => ({ name: s.strategy.content, value: metrics[s.id]?.complianceRate || 0 }))
+  const data = strategies.map((s) => ({ name: s.strategy.content, value: metrics[s.strategyId]?.complianceRate || 0 }))
   return (
     <ResponsiveContainer width="100%" height={300}>
       <RadarChart data={data}>
