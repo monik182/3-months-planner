@@ -327,7 +327,7 @@ function PlanV2Page() {
                 View charts and trends of your indicators to see your progress over time.
               </p>
               <Button asChild colorPalette="black" className="mt-auto">
-                <NextLink href="/indicators">View Indicators</NextLink>
+                <NextLink href="/tracker">View Tracker</NextLink>
               </Button>
             </Card.Root>
 
