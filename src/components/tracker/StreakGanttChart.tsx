@@ -1,15 +1,15 @@
 'use client'
 import { Box, Stack, Grid } from '@chakra-ui/react'
-import type { Strategy } from '@/app/tracker/types'
+import { StrategyHistoryExtended } from '@/app/types/types'
 
 interface StreakGanttChartProps {
-  strategies: Strategy[]
+  strategies: StrategyHistoryExtended[]
   done: Record<string, number[]>
 }
 
 export function StreakGanttChart({ strategies, done }: StreakGanttChartProps) {
   return (
-    <Stack spacing={1} fontSize="xs">
+    <Stack gap={1} fontSize="xs">
       {strategies.map((s) => (
         <Grid key={s.id} templateColumns={`repeat(12, 1fr)`} gap={1}>
           {done[s.id].map((v, idx) => (

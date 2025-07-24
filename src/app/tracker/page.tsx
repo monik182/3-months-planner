@@ -8,23 +8,34 @@ import { BurnUpChart } from '@/components/tracker/BurnUpChart'
 import { StreakGanttChart } from '@/components/tracker/StreakGanttChart'
 import { ComplianceRadarChart } from '@/components/tracker/ComplianceRadarChart'
 import type { Goal, Strategy, StrategyHistory, TrackerData } from './types'
+import { usePlanContext } from '@/app/providers/usePlanContext'
+import { StrategyHistoryExtended } from '@/app/types/types'
 
 // Helper: compute done flags per strategy
-export function computeDoneFlags(data: TrackerData): Record<string, number[]> {
+export function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<string, number[]> {
   const result: Record<string, number[]> = {}
-  data.goals.forEach((g) => {
-    g.strategies.forEach((s) => {
-      result[s.id] = Array(12).fill(0)
+  // data.goals.forEach((g) => {
+  //   g.strategies.forEach((s) => {
+  //     result[s.id] = Array(12).fill(0)
+  //   })
+  // })
+  // data.history.forEach((h) => {
+  //   if (h.sequence >= 1 && h.sequence <= 12) {
+  //     if (!result[h.strategyId]) {
+  //       result[h.strategyId] = Array(12).fill(0)
+  //     }
+  //     result[h.strategyId][h.sequence - 1] = h.completed ? 1 : 0
+  //   }
+  // })
+  strategies.forEach((s) => {
+    result[s.id] = Array(12).fill(0)
+    s.frequencies.forEach((f, idx) => {
+      if (f) {
+        result[s.id][idx] = 1
+      }
     })
   })
-  data.history.forEach((h) => {
-    if (h.sequence >= 1 && h.sequence <= 12) {
-      if (!result[h.strategyId]) {
-        result[h.strategyId] = Array(12).fill(0)
-      }
-      result[h.strategyId][h.sequence - 1] = h.completed ? 1 : 0
-    }
-  })
+  console.log('result', result)
   return result
 }
 
@@ -67,20 +78,23 @@ export function computeWeekMetrics(done: Record<string, number[]>) {
   return { weeklyWinCount, habitPercent }
 }
 
-interface TrackerPageProps {
-  data: TrackerData
-  title?: string
-}
+export default function TrackerPage() {
+  const title = 'Tracker'
+  const { plan, goalActions, strategyHistoryActions } = usePlanContext();
+  
+  // const { data: goals = [] } =
+  //   goalActions.useGetByPlanId(plan?.id as string);
+  
+    const { data: strategies = [] } =
+    strategyHistoryActions.useGetByPlanId(plan?.id as string);
 
-export default function TrackerPage({ data, title = 'Habit Tracker' }: TrackerPageProps) {
-  const done = computeDoneFlags(data)
+  const done = computeDoneFlags(strategies)
   const strategyMetrics = computeStrategyMetrics(done)
   const weekMetrics = computeWeekMetrics(done)
   const cumulative = weekMetrics.weeklyWinCount.reduce<number[]>((acc, v, idx) => {
     acc[idx] = (acc[idx - 1] || 0) + v
     return acc
   }, [])
-  const strategies: Strategy[] = data.goals.flatMap((g) => g.strategies)
 
   return (
     <Container maxW="6xl" py={8}>
@@ -90,7 +104,7 @@ export default function TrackerPage({ data, title = 'Habit Tracker' }: TrackerPa
           <StrategySummaryCard key={s.id} strategy={s} metrics={strategyMetrics[s.id]} />
         ))}
       </Grid>
-      <Stack spacing={8} mt={8}>
+      <Stack gap={8} mt={8}>
         <Box>
           <Heading size="md" mb={2}>
             Weekly Wins

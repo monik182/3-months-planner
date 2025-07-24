@@ -1,9 +1,9 @@
 'use client'
 import { Box, Grid, GridItem, Text } from '@chakra-ui/react'
-import type { Strategy } from '@/app/tracker/types'
+import { StrategyHistoryExtended } from '@/app/types/types'
 
 interface DoneHeatmapProps {
-  strategies: Strategy[]
+  strategies: StrategyHistoryExtended[]
   done: Record<string, number[]>
 }
 
@@ -19,7 +19,7 @@ export function DoneHeatmap({ strategies, done }: DoneHeatmapProps) {
       {strategies.map((s) => (
         <>
           <GridItem key={s.id + '-label'} textAlign="right" pr={1}>
-            <Text noOfLines={1}>{s.content}</Text>
+            <Text>{s.strategy.content}</Text>
           </GridItem>
           {done[s.id].map((v, idx) => (
             <GridItem key={s.id + idx}>

@@ -1,14 +1,14 @@
 'use client'
 import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip } from 'recharts'
-import type { Strategy } from '@/app/tracker/types'
+import { StrategyHistoryExtended } from '@/app/types/types'
 
 interface ComplianceRadarChartProps {
-  strategies: Strategy[]
+  strategies: StrategyHistoryExtended[]
   metrics: Record<string, { complianceRate: number }>
 }
 
 export function ComplianceRadarChart({ strategies, metrics }: ComplianceRadarChartProps) {
-  const data = strategies.map((s) => ({ name: s.content, value: metrics[s.id]?.complianceRate || 0 }))
+  const data = strategies.map((s) => ({ name: s.strategy.content, value: metrics[s.id]?.complianceRate || 0 }))
   return (
     <ResponsiveContainer width="100%" height={300}>
       <RadarChart data={data}>
