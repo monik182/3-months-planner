@@ -3,11 +3,15 @@ import GoalCard from '@/app/dashboard/GoalCard';
 import CurrentWeekSummary from '@/app/dashboard/CurrentWeekSummary';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { DashboardProvider } from '@/app/dashboard-legacy/dashboardContext';
-import { Grid } from '@chakra-ui/react';
+import { Grid, Center } from '@chakra-ui/react';
 import { Alert } from '@/components/ui/alert';
 import { formatDate } from '@/app/util';
 import { getCurrentWeekFromStartDate } from '@/app/util';
 import { useState } from 'react';
+import { EmptyState } from '@/components/ui/empty-state';
+import { Button } from '@/components/ui/button';
+import NextLink from 'next/link';
+import { LuTarget } from 'react-icons/lu';
 
 export function DashboardV2() {
   const { plan, goalActions, hasStartedPlan } = usePlanContext();
@@ -16,12 +20,25 @@ export function DashboardV2() {
   const { data: goals = [], isLoading: loadingGoals } =
     goalActions.useGetByPlanId(plan?.id as string);
 
-  if (!goals.length) {
-    return null;
-  }
-
   if (loadingGoals) {
     return <div>Loading...</div>;
+  }
+
+  if (!goals.length) {
+    return (
+      <Center h="full">
+        <EmptyState
+          icon={<LuTarget />}
+          size="lg"
+          title="No Goals Yet"
+          description="Head over to your plan and add a goal to get started"
+        >
+          <Button asChild colorPalette="yellow">
+            <NextLink href="/plan">Go to Plan</NextLink>
+          </Button>
+        </EmptyState>
+      </Center>
+    );
   }
 
   return (
