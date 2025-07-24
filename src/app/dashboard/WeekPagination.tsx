@@ -15,10 +15,12 @@ interface WeekPaginationProps {
   activeWeek: number
   startDate: Date
   onChange: (week: number) => void
+  disabled?: boolean
 }
 
-export default function WeekPagination({ activeWeek, startDate, onChange }: WeekPaginationProps) {
+export default function WeekPagination({ activeWeek, startDate, onChange, disabled }: WeekPaginationProps) {
   const navigateWeek = (direction: 'prev' | 'next') => {
+    if (disabled) return
     if (direction === 'prev' && activeWeek > 1) {
       onChange(activeWeek - 1)
     }
@@ -35,7 +37,7 @@ export default function WeekPagination({ activeWeek, startDate, onChange }: Week
         aria-label="Previous week"
         variant="outline"
         size="sm"
-        disabled={activeWeek <= 1}
+        disabled={disabled || activeWeek <= 1}
         onClick={() => navigateWeek('prev')}
       >
         <LuChevronLeft />
@@ -48,7 +50,7 @@ export default function WeekPagination({ activeWeek, startDate, onChange }: Week
         aria-label="Next week"
         variant="outline"
         size="sm"
-        disabled={activeWeek >= MAX_WEEKS}
+        disabled={disabled || activeWeek >= MAX_WEEKS}
         onClick={() => navigateWeek('next')}
       >
         <LuChevronRight />

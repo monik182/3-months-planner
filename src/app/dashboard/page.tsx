@@ -4,11 +4,13 @@ import CurrentWeekSummary from '@/app/dashboard/CurrentWeekSummary';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { DashboardProvider } from '@/app/dashboard-legacy/dashboardContext';
 import { Grid } from '@chakra-ui/react';
+import { Alert } from '@/components/ui/alert';
+import { formatDate } from '@/app/util';
 import { getCurrentWeekFromStartDate } from '@/app/util';
 import { useState } from 'react';
 
 export function DashboardV2() {
-  const { plan, goalActions } = usePlanContext();
+  const { plan, goalActions, hasStartedPlan } = usePlanContext();
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 1;
   const [activeWeek, setActiveWeek] = useState(currentWeek);
   const { data: goals = [], isLoading: loadingGoals } =
@@ -24,10 +26,22 @@ export function DashboardV2() {
 
   return (
     <>
-      <CurrentWeekSummary activeWeek={activeWeek} setActiveWeek={setActiveWeek} />
+      {!hasStartedPlan && (
+        <Alert.Root status="info" variant="subtle" mb={4}>
+          <Alert.Indicator />
+          <Alert.Title>
+            Your plan starts on {formatDate(plan?.startDate as Date, 'MMM DD, YYYY')}
+          </Alert.Title>
+        </Alert.Root>
+      )}
+      <CurrentWeekSummary
+        activeWeek={activeWeek}
+        setActiveWeek={setActiveWeek}
+        disabled={!hasStartedPlan}
+      />
       <Grid gap={6} gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
         {goals.map((g) => (
-          <GoalCard key={g.id} goal={g} sequence={activeWeek} />
+          <GoalCard key={g.id} goal={g} sequence={activeWeek} disabled={!hasStartedPlan} />
         ))}
       </Grid>
     </>
