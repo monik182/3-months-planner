@@ -2,6 +2,7 @@
 import { Flex, HStack, Heading, IconButton, Separator, Text, Link as ChakraLink } from '@chakra-ui/react'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { LuUserPlus } from 'react-icons/lu'
+import { AiOutlineBarChart } from 'react-icons/ai'
 // import { RiHome2Line } from 'react-icons/ri'
 import { RxDashboard } from 'react-icons/rx'
 // import { PiFileText } from 'react-icons/pi'
@@ -12,9 +13,11 @@ import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthProvider'
 import { logout } from '@/services/auth'
 import { clearStrategyOrder } from '@/app/util/order'
+import { usePlanContext } from '@/app/providers/usePlanContext'
 
 export function Header() {
   const { session, user } = useAuth()
+  const { hasStartedPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
   const userAvatar = user?.user_metadata?.picture || `https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=${user?.email?.split('@')[0] || user?.user_metadata?.name || 'Guest%20User'}`
@@ -82,6 +85,20 @@ export function Header() {
             <SlNotebook />
             <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
           </ChakraLink>
+          {hasStartedPlan && (
+            <ChakraLink
+              as={Link}
+              href="/tracker"
+
+              display="flex"
+              alignItems="center"
+              gap="1"
+              fontWeight={pathname.startsWith('/tracker') ? 'bold' : 'normal'}
+            >
+              <AiOutlineBarChart />
+              <Text display={{ base: 'none', md: 'inline' }}>Tracker</Text>
+            </ChakraLink>
+          )}
           {/* <ChakraLink
             as={Link}
             href="/templates"

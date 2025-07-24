@@ -1,0 +1,25 @@
+'use client'
+import { Box, Heading, Text, Stack } from '@chakra-ui/react'
+import { StrategyHistoryExtended } from '@/app/types/types'
+
+interface StrategySummaryCardProps {
+  strategy: StrategyHistoryExtended
+  metrics: {
+    complianceRate: number
+    currentStreak: number
+    longestStreak: number
+  }
+}
+
+export function StrategySummaryCard({ strategy, metrics }: StrategySummaryCardProps) {
+  return (
+    <Box borderWidth="1px" borderRadius="md" p={4}>
+      <Stack gap={1}>
+        <Heading size="sm">{strategy.strategy.content}</Heading>
+        <Text>Compliance: {metrics.complianceRate.toFixed(0)}%</Text>
+        <Text>Current Streak: {metrics.currentStreak}</Text>
+        <Text>Longest Streak: {metrics.longestStreak}</Text>
+      </Stack>
+    </Box>
+  )
+}
