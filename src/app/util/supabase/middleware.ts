@@ -50,6 +50,7 @@ export async function updateSession(request: NextRequest) {
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/plan/new'
   const isPlan = pathname === '/plan'
+  const isTracker = pathname.startsWith('/tracker')
 
   // 3) If no user → only allow auth pages
   if (!user && !isAuthPage && !userError) {
@@ -84,7 +85,7 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
-    if (plan && plan.started && !isDashboard) {
+    if (plan && plan.started && !(isDashboard || isPlan || isTracker)) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
