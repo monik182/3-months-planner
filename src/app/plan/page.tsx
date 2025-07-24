@@ -19,6 +19,7 @@ import {
   Card,
   Collapsible,
   Container,
+  Center,
   Flex,
   HStack,
   Heading,
@@ -34,6 +35,8 @@ import cuid from "cuid";
 import dayjs from "dayjs";
 import { useState, useEffect } from "react";
 import NextLink from "next/link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { SlNotebook } from "react-icons/sl";
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
 import { LuCalendarDays, LuPlus, LuTarget } from "react-icons/lu";
 import { PiChartPieSlice, PiFileText } from "react-icons/pi";
@@ -116,10 +119,36 @@ function PlanV2Page() {
     }
   };
 
-  if (!plan) return null;
+  if (!plan) {
+    return (
+      <Center h="full">
+        <EmptyState
+          icon={<SlNotebook />}
+          title="No plan yet"
+          size="lg"
+          description="Create a new plan to get started"
+        >
+          <Button asChild colorPalette="yellow">
+            <NextLink href="/plan/new">Create Plan</NextLink>
+          </Button>
+        </EmptyState>
+      </Center>
+    );
+  }
 
   return (
     <Container padding="10px">
+      <Flex justify="flex-end" mb={4}>
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          colorPalette="yellow"
+          disabled={plan.started}
+        >
+          <NextLink href="/plan/new">Create New Plan</NextLink>
+        </Button>
+      </Flex>
       <Flex gap="20px" direction="column">
         <Box
           shadow="lg"

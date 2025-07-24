@@ -6,9 +6,10 @@ import WeekPagination from '@/app/dashboard/WeekPagination';
 interface CurrentWeekSummaryProps {
   activeWeek: number
   setActiveWeek: (week: number) => void
+  disabled?: boolean
 }
 
-export default function CurrentWeekSummary({ activeWeek, setActiveWeek }: CurrentWeekSummaryProps) {
+export default function CurrentWeekSummary({ activeWeek, setActiveWeek, disabled }: CurrentWeekSummaryProps) {
   const { plan } = usePlanContext()
   const { weeklyScores, isRefetching } = useDashboardContext()
 
@@ -23,6 +24,7 @@ export default function CurrentWeekSummary({ activeWeek, setActiveWeek }: Curren
           activeWeek={activeWeek}
           startDate={plan?.startDate as Date}
           onChange={setActiveWeek}
+          disabled={disabled}
         />
       </Box>
       <Text fontSize="md">

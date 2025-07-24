@@ -20,9 +20,10 @@ interface GoalCardProps {
   goal: Goal
   sequence: number
   totalWeeks?: number
+  disabled?: boolean
 }
 
-export default function GoalCard({ goal, sequence }: GoalCardProps) {
+export default function GoalCard({ goal, sequence, disabled }: GoalCardProps) {
   const { strategyHistoryActions } = usePlanContext()
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const { data: strategies = [], isFetching: isFetchingStrategies } = strategyHistoryActions.useGetByPlanId(goal.planId)
@@ -36,6 +37,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
   const orderedStrategies: StrategyHistoryExtended[] = getOrderedStrategies(goal.planId, goalStrategies)
 
   const handleToggleStrategy = (id: string, index: number) => {
+    if (disabled) return
     const strategy = orderedStrategies.find((s) => s.id === id)
     if (!strategy) return
 
@@ -144,7 +146,7 @@ export default function GoalCard({ goal, sequence }: GoalCardProps) {
                           minW="24px"
                           h="24px"
                           aria-label={`${isCompleted ? 'Mark as incomplete' : 'Mark as complete'} for ${dayName}`}
-                          disabled={reachedLimit && !isCompleted}
+                          disabled={disabled || (reachedLimit && !isCompleted)}
                           loading={loadingToggle?.actionId === action.id &&
                             loadingToggle?.index === index &&
                             (updateStrategy.isPending || isFetchingStrategies)}

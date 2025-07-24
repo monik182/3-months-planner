@@ -49,6 +49,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthPage = ['/login', '/signup', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/plan/new'
+  const isPlan = pathname === '/plan'
 
   // 3) If no user → only allow auth pages
   if (!user && !isAuthPage && !userError) {
@@ -65,22 +66,25 @@ export async function updateSession(request: NextRequest) {
 
   // 5) For logged-in users, enforce plan logic
   if (user) {
-    // fetch whether this user has a plan
+    // fetch the user's current plan (not completed)
     const { data: plan } = await supabase
       .from('plans')
-      .select('id')
+      .select('id, started')
       .eq('user_id', user.id)
-      .single()
+      .eq('completed', false)
+      .maybeSingle()
 
-    const hasPlan = Boolean(plan)
-
-    // 5a) no plan → only allow plan/new
-    if (!hasPlan && isDashboard) {
+    if (!plan && pathname !== '/plan/new') {
       return NextResponse.redirect(new URL('/plan/new', request.url))
     }
 
-    // 5b) has plan → block plan/new
-    if (hasPlan && isPlanNew) {
+    if (plan && !plan.started) {
+      if (isPlanNew || (!isPlan && !isDashboard)) {
+        return NextResponse.redirect(new URL('/plan', request.url))
+      }
+    }
+
+    if (plan && plan.started && !isDashboard) {
       return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
