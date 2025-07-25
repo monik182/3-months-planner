@@ -117,22 +117,27 @@ export default function TrackerPage() {
         </Heading>
         <HabitLineChart data={weekMetrics.habitPercent} />
       </Box>
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4} hideFrom="md">
-        {uniqueStrategies.map((s) => (
-          <StrategySummaryCard
-            key={s.strategyId}
-            strategy={s}
-            metrics={strategyMetrics[s.strategyId]}
-            weeklyData={metrics?.strategies[s.strategyId]}
-          />
-        ))}
-      </Grid>
       <Stack gap={8} mt={8}>
         <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Weekly Wins
           </Heading>
           <WeeklyBarChart data={weekMetrics.weeklyWinCount} />
+        </Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
+          <Heading size="md" mb={2}>
+            Actions Completion %
+          </Heading>
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(500px,1fr))' }} gap={4}>
+            {uniqueStrategies.map((s) => (
+              <StrategySummaryCard
+                key={s.strategyId}
+                strategy={s}
+                metrics={strategyMetrics[s.strategyId]}
+                weeklyData={metrics?.strategies[s.strategyId]}
+              />
+            ))}
+          </Grid>
         </Box>
         <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>

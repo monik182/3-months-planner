@@ -23,7 +23,7 @@ export function GoalCompletionLineChart({ data, goals }: GoalCompletionLineChart
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="week" />
         <YAxis domain={[0, 100]} tickFormatter={(t) => `${t}%`} />
-        <Tooltip formatter={(v: number) => `${v}%`} />
+        <Tooltip formatter={(v: number) => `${v}%`} labelFormatter={(label) => `Week ${label}`} />
         <Legend />
         {goals.map((g, idx) => (
           <Line key={g.id} type="monotone" dataKey={g.id} name={g.content} stroke={colors[idx % colors.length]} />

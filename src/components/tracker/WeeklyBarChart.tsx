@@ -6,15 +6,15 @@ interface WeeklyBarChartProps {
 }
 
 export function WeeklyBarChart({ data }: WeeklyBarChartProps) {
-  const chartData = data.map((count, idx) => ({ week: idx + 1, count }))
+  const chartData = data.map((count, idx) => ({ week: idx + 1, goalsCompleted: count }))
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="week" />
         <YAxis allowDecimals={false} />
-        <Tooltip />
-        <Bar dataKey="count" fill="#DCD0FF" />
+        <Tooltip labelFormatter={(label) => `Week ${label}`} />
+        <Bar dataKey="goalsCompleted" fill="#DCD0FF" />
       </BarChart>
     </ResponsiveContainer>
   )
