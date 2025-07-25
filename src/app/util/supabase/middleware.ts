@@ -50,7 +50,7 @@ export async function updateSession(request: NextRequest) {
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/plan/new'
   const isPlan = pathname === '/plan'
-  const isTracker = pathname.startsWith('/tracker')
+  const isTracker = pathname.startsWith('/progress')
 
   // 3) If no user → only allow auth pages
   if (!user && !isAuthPage && !userError) {
