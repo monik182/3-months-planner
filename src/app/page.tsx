@@ -1,31 +1,61 @@
 'use client'
-import { Button, Flex, Heading, Text } from '@chakra-ui/react'
-import { useRouter } from 'next/navigation'
-import { RiArrowRightLine } from 'react-icons/ri'
+import { Box, Button, Flex, Heading, Stack, Text } from '@chakra-ui/react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { AnimatedCounter } from '@/components/AnimatedCounter'
 
 export default function Home() {
-  const router = useRouter()
+  const [stats, setStats] = useState({ waitlist: 0, users: 0 })
+
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => setStats(data))
+      .catch(() => {})
+  }, [])
 
   return (
-    <div className="container">
-      <section className="page" id="get-started">
-        <Heading as="h1" size={{ lg: "7xl", base: "4xl" }}>The Planner</Heading>
-        <Flex flexDir="column" gap="1rem" alignItems="center">
-          <Text>Stay Focused and Achieve More</Text>
-          <Button size="xl" onClick={() => router.push('/signup')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
-          <Text fontSize="xs">Already have an account?</Text>
-        </Flex>
-        <Button size="xs" onClick={() => router.push('/login')} variant="plain" textDecoration="underline">Login</Button>
-      </section>
-      {/* <section className="page" id="description">
-        <Heading size="5xl">Create Your Plan</Heading>
-      </section> */}
-      {/* <section className="page" id="pricing">
-        Pricing... TBD
-      </section> */}
-      {/* <section className="page" id="wait-list">
-        <WaitListSection />
-      </section> */}
-    </div>
+    <Stack spacing={20} py={10}>
+      <Box textAlign="center">
+        <Heading size={{ lg: '7xl', base: '4xl' }} mb={4}>
+          The Planner
+        </Heading>
+        <Text fontSize="xl" mb={6}>
+          Stay focused and achieve more with a simple 12‑week planning tool.
+        </Text>
+        <Button
+          as={Link}
+          href="/signup"
+          colorPalette="yellow"
+          variant="subtle"
+          size="xl"
+        >
+          Get Started
+        </Button>
+      </Box>
+      <Flex justify="center" gap={10}>
+        <AnimatedCounter label="On the Waitlist" value={stats.waitlist} />
+        <AnimatedCounter label="Active Users" value={stats.users} />
+      </Flex>
+      <Box textAlign="center">
+        <Heading size="xl" mb={4}>
+          Why The Planner?
+        </Heading>
+        <Stack spacing={2}>
+          <Text>Simplicity over cluttered tools.</Text>
+          <Text>Keep your goals organized.</Text>
+          <Text>Track progress every week.</Text>
+        </Stack>
+      </Box>
+      <Box textAlign="center">
+        <Heading size="xl" mb={4}>
+          Pricing
+        </Heading>
+        <Text mb={4}>Free or just $1 a month (or $10 a year).</Text>
+        <Button as={Link} href="/pricing" variant="outline" size="lg">
+          Learn More
+        </Button>
+      </Box>
+    </Stack>
   )
 }
