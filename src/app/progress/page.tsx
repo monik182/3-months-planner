@@ -7,7 +7,7 @@ import { DoneHeatmap } from '@/components/tracker/DoneHeatmap'
 import { BurnUpChart } from '@/components/tracker/BurnUpChart'
 import { StreakGanttChart } from '@/components/tracker/StreakGanttChart'
 import { ComplianceRadarChart } from '@/components/tracker/ComplianceRadarChart'
-import { GoalCompletionLineChart } from '@/components/tracker/GoalCompletionLineChart'
+import { GoalSummaryCard } from '@/components/tracker/GoalSummaryCard'
 import type { Goal, Strategy, StrategyHistory, TrackerData } from './types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { StrategyHistoryExtended } from '@/app/types/types'
@@ -143,7 +143,11 @@ export default function TrackerPage() {
           <Heading size="md" mb={2}>
             Goal Completion %
           </Heading>
-          <GoalCompletionLineChart data={metrics?.goals || {}} goals={goals} />
+          <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(500px,1fr))' }} gap={4}>
+            {goals.map((g) => (
+              <GoalSummaryCard key={g.id} goal={g} weeklyData={metrics?.goals[g.id]} />
+            ))}
+          </Grid>
         </Box>
         <Box bg="white" p={4} borderRadius="md" boxShadow="sm" className="hidden md:block">
           <Heading size="md" mb={2}>
