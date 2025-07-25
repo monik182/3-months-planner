@@ -19,22 +19,32 @@ function getColor(percent: number) {
 
 export function DoneHeatmap({ strategies, done, weeklyPercentages }: DoneHeatmapProps) {
   return (
-    <Grid templateColumns={`repeat(${13}, 1fr)`} gap={1} fontSize="xs">
-      <GridItem></GridItem>
-      {Array.from({ length: 12 }).map((_, idx) => (
-        <GridItem key={idx} textAlign="center">
-          {idx + 1}
-        </GridItem>
-      ))}
-      {strategies.map((s) => (
-        <>
-          <GridItem key={s.strategyId + '-label'} textAlign="right" pr={1}>
+    <Stack gap={1} fontSize="xs">
+      <Grid templateColumns={`repeat(${13}, 1fr)`} gap={1} alignItems="center">
+        <GridItem></GridItem>
+        {Array.from({ length: 12 }).map((_, idx) => (
+          <GridItem key={idx} textAlign="center">
+            {idx + 1}
+          </GridItem>
+        ))}
+      </Grid>
+      {strategies.map((s, rowIdx) => (
+        <Grid
+          key={s.strategyId}
+          templateColumns={`repeat(${13}, 1fr)`}
+          gap={1}
+          alignItems="center"
+          bg={rowIdx % 2 === 0 ? 'gray.50' : 'white'}
+          p={1}
+          borderRadius="md"
+        >
+          <GridItem textAlign="right" pr={1}>
             <Text>{s.strategy.content}</Text>
           </GridItem>
           {done[s.strategyId].map((v, idx) => {
             const percent = weeklyPercentages?.[s.strategyId]?.[idx] ?? (v ? 100 : 0)
             return (
-              <GridItem key={s.strategyId + idx}>
+              <GridItem key={s.strategyId + idx} display="flex" justifyContent="center" alignItems="center">
                 <Box
                   boxSize={4}
                   borderRadius="sm"
@@ -44,8 +54,8 @@ export function DoneHeatmap({ strategies, done, weeklyPercentages }: DoneHeatmap
               </GridItem>
             )
           })}
-        </>
+        </Grid>
       ))}
-    </Grid>
+    </Stack>
   )
 }
