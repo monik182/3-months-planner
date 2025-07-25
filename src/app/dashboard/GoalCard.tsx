@@ -1,7 +1,6 @@
 import { Goal } from '@prisma/client';
 import WeekProgressIndicator from './WeekProgressIndicator';
 import { Box, Card, Flex, Heading, Badge, Text } from '@chakra-ui/react'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { useEffect, useMemo, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';

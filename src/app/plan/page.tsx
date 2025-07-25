@@ -1,7 +1,6 @@
 "use client";
 import {
   DashboardProvider,
-  useDashboardContext,
 } from "@/app/dashboard-legacy/dashboardContext";
 import { GoalCard } from "@/app/plan/GoalCard";
 import { GoalDialog } from "@/components/GoalDialog";
@@ -9,11 +8,6 @@ import { usePlanContext } from "@/app/providers/usePlanContext";
 import { getCurrentWeekFromStartDate, handleKeyDown } from "@/app/util";
 import { SavingSpinner } from "@/components/SavingSpinner";
 import { Button } from "@/components/ui/button";
-import {
-  ProgressBar,
-  ProgressRoot,
-  ProgressValueText,
-} from "@/components/ui/progress";
 import {
   Box,
   Card,
@@ -39,17 +33,13 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { SlNotebook } from "react-icons/sl";
 import { HiChevronDown, HiChevronUp } from "react-icons/hi";
 import { LuCalendarDays, LuPlus, LuTarget } from "react-icons/lu";
-import { PiChartPieSlice, PiFileText } from "react-icons/pi";
+import { PiChartPieSlice } from "react-icons/pi";
 
 function PlanV2Page() {
   const { plan, planActions, goalActions } = usePlanContext();
-  const { planScore } = useDashboardContext();
   const startOfYPlan = dayjs(plan?.startDate).format("MMMM, DD YYYY");
   const endOfYPlan = dayjs(plan?.endDate).format("MMMM, DD YYYY");
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 0;
-  const hasNotStarted = currentWeek <= 0;
-  const progressValue = hasNotStarted ? 0 : (currentWeek / 12) * 100;
-  const week = hasNotStarted ? 1 : currentWeek;
   const [editing, setEditing] = useState(false);
   const [vision, setVision] = useState(plan?.vision || "");
   const update = planActions.useUpdate();
@@ -104,6 +94,7 @@ function PlanV2Page() {
       planId: plan!.id,
       content: "",
       status: `1`,
+      createdAt: null,
     };
   };
 

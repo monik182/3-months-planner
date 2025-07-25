@@ -1,10 +1,10 @@
 import { StrategyList } from '@/components/GoalManager/Strategy/StrategyList';
 import { Button, Dialog, Portal, Textarea, Text, Box, Spinner, VStack, HStack } from '@chakra-ui/react';
 import { CloseButton } from '@/components/ui/close-button';
-import { Goal, Indicator, Strategy } from '@prisma/client';
+import { Goal, Strategy } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { usePlanContext } from '@/app/providers/usePlanContext';
-import { createGoalHistoryList, createIndicatorHistoryList, createStrategyHistoryList } from '@/app/util';
+import { createGoalHistoryList, createStrategyHistoryList } from '@/app/util';
 import { toaster } from '@/components/ui/toaster';
 import { EntityType } from '@/app/types/types';
 
@@ -17,7 +17,7 @@ interface GoalDialogProps {
 
 export function GoalDialog({ open, goal, edit = false, onOpenChange }: GoalDialogProps) {
   const planId = goal.planId
-  const { goalActions, goalHistoryActions, strategyHistoryActions, indicatorHistoryActions } = usePlanContext()
+  const { goalActions, goalHistoryActions, strategyHistoryActions } = usePlanContext()
   const createBulkGoal = goalHistoryActions.useCreateBulk()
   const createBulkStrategy = strategyHistoryActions.useCreateBulk()
   // const createBulkIndicator = indicatorHistoryActions.useCreateBulk()

@@ -4,11 +4,7 @@ import { StrategySummaryCard } from '@/components/tracker/StrategySummaryCard'
 import { WeeklyBarChart } from '@/components/tracker/WeeklyBarChart'
 import { HabitLineChart } from '@/components/tracker/HabitLineChart'
 import { DoneHeatmap } from '@/components/tracker/DoneHeatmap'
-import { BurnUpChart } from '@/components/tracker/BurnUpChart'
-import { StreakGanttChart } from '@/components/tracker/StreakGanttChart'
-import { ComplianceRadarChart } from '@/components/tracker/ComplianceRadarChart'
 import { GoalSummaryCard } from '@/components/tracker/GoalSummaryCard'
-import type { Goal, Strategy, StrategyHistory, TrackerData } from './types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { StrategyHistoryExtended } from '@/app/types/types'
 import { useTrackerMetrics } from '@/app/hooks/useTrackerMetrics'
@@ -103,10 +99,6 @@ export default function TrackerPage() {
   const done = computeDoneFlags(strategies)
   const strategyMetrics = computeStrategyMetrics(done)
   const weekMetrics = computeWeekMetrics(done)
-  const cumulative = weekMetrics.weeklyWinCount.reduce<number[]>((acc, v, idx) => {
-    acc[idx] = (acc[idx - 1] || 0) + v
-    return acc
-  }, [])
 
   return (
     <Container maxW="6xl" py={8} borderRadius="md">

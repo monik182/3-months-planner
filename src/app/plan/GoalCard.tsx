@@ -1,7 +1,6 @@
 
 import { GoalDialog } from '@/components/GoalDialog';
 import { usePlanContext } from '@/app/providers/usePlanContext';
-import { calculateCompletionScore } from '@/app/util';
 import { Badge, Button, Card, Collapsible, Dialog, Portal } from '@chakra-ui/react';
 import { Goal } from '@prisma/client';
 import React, { useState, useMemo } from "react";
