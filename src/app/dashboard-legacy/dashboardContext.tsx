@@ -41,17 +41,17 @@ export const DashboardProvider = ({ children, fetchHistory = true }: DashboardTr
   const strategyHistoryActions = useStrategyHistoryActions()
   const indicatorHistoryActions = useIndicatorHistoryActions()
 
-  const goals = fetchHistory
-    ? goalHistoryActions.useGetByPlanId(plan?.id as string)
-    : ({ data: [], isLoading: false, isRefetching: false } as ReturnType<typeof goalHistoryActions.useGetByPlanId>)
+  const goals = goalHistoryActions.useGetByPlanId(
+    fetchHistory ? (plan?.id ?? '') : ''
+  )
 
-  const strategies = fetchHistory
-    ? strategyHistoryActions.useGetByPlanId(plan?.id as string)
-    : ({ data: [], isLoading: false, isRefetching: false } as ReturnType<typeof strategyHistoryActions.useGetByPlanId>)
+  const strategies = strategyHistoryActions.useGetByPlanId(
+    fetchHistory ? (plan?.id ?? '') : ''
+  )
 
-  const indicators = fetchHistory
-    ? indicatorHistoryActions.useGetByPlanId(plan?.id as string)
-    : ({ data: [], isLoading: false, isRefetching: false } as ReturnType<typeof indicatorHistoryActions.useGetByPlanId>)
+  const indicators = indicatorHistoryActions.useGetByPlanId(
+    fetchHistory ? (plan?.id ?? '') : ''
+  )
 
   const isLoading = fetchHistory && (goals.isLoading || strategies.isLoading || indicators.isLoading)
   const isRefetching = fetchHistory && (goals.isRefetching || strategies.isRefetching || indicators.isRefetching)
