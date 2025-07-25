@@ -15,7 +15,7 @@ const create = async (data: Prisma.IndicatorHistoryCreateInput): Promise<Indicat
     throw new Error('Failed to create indicator history')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const createBulk = async (histories: Prisma.IndicatorHistoryCreateManyInput[]): Promise<IndicatorHistory[]> => {
@@ -31,7 +31,7 @@ const createBulk = async (histories: Prisma.IndicatorHistoryCreateManyInput[]): 
     throw new Error('Failed to create indicator histories')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const get = async (id: string): Promise<IndicatorHistory | null> => {

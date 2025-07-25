@@ -37,16 +37,6 @@ const getRemoteById = async (id: string): Promise<User | null> => {
   return fetch(`/api/user/${id}`).then(response => response.json())
 }
 
-const getByAuth0Id = async (id: string): Promise<User | null> => {
-  const response = await fetch(`/api/user/auth0/${id}`)
-  if (!response.ok) {
-    return null
-  }
-
-  const remoteUser = await response.json()
-  return remoteUser
-}
-
 const update = async (id: string, user: Prisma.UserUpdateInput): Promise<Partial<User>> => {
   const parsedData = PartialUserSchema.omit({ id: true }).parse(user)
 
@@ -68,7 +58,6 @@ export const UserService = {
   get,
   create,
   getByEmail,
-  getByAuth0Id,
   getRemoteById,
   update,
 }

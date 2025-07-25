@@ -15,7 +15,7 @@ const create = async (data: Prisma.StrategyHistoryCreateInput): Promise<Strategy
     throw new Error('Failed to create action history')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const createBulk = async (histories: Prisma.StrategyHistoryCreateManyInput[]): Promise<StrategyHistory[]> => {
@@ -31,7 +31,7 @@ const createBulk = async (histories: Prisma.StrategyHistoryCreateManyInput[]): P
     throw new Error('Failed to create action histories')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const get = async (id: string): Promise<StrategyHistory | null> => {

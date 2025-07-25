@@ -193,8 +193,7 @@ export const userHandler = {
   findMany: async (where?: Prisma.UserWhereInput, select?: Prisma.UserSelect) => prisma.user.findMany({ where, ...(select ? { select } : {}) }),
   findOne: async (id: string) => prisma.user.findUnique({ where: { id } }),
   findOneByEmail: async (email: string) => prisma.user.findUnique({ where: { email } }),
-  findOneByAuth0Id: async (auth0Id: string) => prisma.user.findFirst({ where: { auth0Id } }),
   update: async (id: string, data: Prisma.UserUpdateInput) => prisma.user.update({ where: { id }, data }),
   delete: async (id: string) => prisma.user.delete({ where: { id } }),
-  upsert: async (data: Prisma.UserCreateInput) => prisma.user.upsert({ where: { id: data.id }, update: data, create: data }),
+  upsert: async (data: Prisma.UserCreateInput) => prisma.user.upsert({ where: { id: data.users?.connect?.id }, update: data, create: data }),
 }

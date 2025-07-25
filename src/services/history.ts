@@ -48,5 +48,9 @@ async function parseData(planId: string): Promise<HistoryData> {
   const strategiesHistory = StrategyHistoryNoStrategyArraySchema.parse(createStrategyHistoryList(planId, strategies))
   const indicatorsHistory = IndicatorHistoryNoIndicatorArraySchema.parse(createIndicatorHistoryList(planId, indicators))
 
-  return { goalHistory, strategiesHistory, indicatorsHistory }
+  return {
+    goalHistory,
+    strategiesHistory,
+    indicatorsHistory
+  }
 }

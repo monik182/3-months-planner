@@ -15,7 +15,7 @@ const create = async (data: Prisma.GoalHistoryCreateInput): Promise<GoalHistory>
     throw new Error('Failed to create goal history')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const createBulk = async (histories: Prisma.GoalHistoryCreateManyInput[]): Promise<GoalHistory[]> => {
@@ -31,7 +31,7 @@ const createBulk = async (histories: Prisma.GoalHistoryCreateManyInput[]): Promi
     throw new Error('Failed to create goal histories')
   }
 
-  return parsedData
+  return response.json()
 }
 
 const get = async (id: string): Promise<GoalHistory | null> => {

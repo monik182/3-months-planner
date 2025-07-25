@@ -15,6 +15,7 @@ interface OneTapProps {
 export function OneTap({ context, onError }: OneTapProps) {
   const supabase = createClient()
   const router = useRouter()
+  const google = (window as any).google
 
   useEffect(() => {
     const initializeGoogleOneTap = async () => {
@@ -32,7 +33,6 @@ export function OneTap({ context, onError }: OneTapProps) {
         return
       }
 
-      /* global google */
       if (!google) {
         console.error('Google One Tap not loaded')
         return
@@ -57,8 +57,8 @@ export function OneTap({ context, onError }: OneTapProps) {
             router.push('/')
           } catch (error) {
             console.error('Error logging in with Google One Tap', error)
-            console.error('Error logging in with Google One Tap', error.message)
-            onError?.(error.message)
+            console.error('Error logging in with Google One Tap', (error as unknown as Error).message)
+            onError?.((error as unknown as Error).message)
           }
         },
         nonce: hashedNonce,

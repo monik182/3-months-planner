@@ -59,6 +59,7 @@ export function createGoalHistoryList(planId: string, goals: Goal[]): Prisma.Goa
         planId,
         goalId: goal.id,
         sequence: parseInt(week),
+        createdAt: null,
       }
     })
   }).flat()

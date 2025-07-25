@@ -34,14 +34,6 @@ export function useUserActions() {
     })
   }
 
-  const useGetByAuth0Id = (id: string, enabled = true) => {
-    return useQuery({
-      queryKey: [QUERY_KEY, { id }],
-      queryFn: () => UserService.getByAuth0Id(id),
-      enabled: !!id && enabled,
-    })
-  }
-
   const useUpdate = () => {
     return useMutation({
       mutationFn: ({ userId, updates }: { userId: string, updates: Prisma.UserUpdateInput }) => UserService.update(userId, updates),
@@ -56,7 +48,6 @@ export function useUserActions() {
     useCreate,
     useGet,
     useGetByEmail,
-    useGetByAuth0Id,
     useUpdate,
   }
 }
