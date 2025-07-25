@@ -46,11 +46,15 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // define your protected/unprotected routes
-  const isAuthPage = ['/login', '/signup', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
+  const isAuthPage = ['/login', '/signup', '/recovery', '/recover-password', '/auth', '/', '/pricing'].includes(pathname)
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/plan/new'
-  const isPlan = pathname === '/plan'
+  const isPlan = pathname.startsWith('/plan')
   const isTracker = pathname.startsWith('/progress')
+
+  if (!user && (isDashboard || isPlan || isPlanNew || isTracker)) {
+    return NextResponse.redirect(new URL('/', request.url))
+  }
 
   // 3) If no user → only allow auth pages
   if (!user && !isAuthPage && !userError) {
