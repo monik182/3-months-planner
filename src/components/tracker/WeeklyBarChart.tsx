@@ -14,7 +14,7 @@ export function WeeklyBarChart({ data }: WeeklyBarChartProps) {
         <XAxis dataKey="week" />
         <YAxis allowDecimals={false} />
         <Tooltip />
-        <Bar dataKey="count" fill="#3182CE" />
+        <Bar dataKey="count" fill="#DCD0FF" />
       </BarChart>
     </ResponsiveContainer>
   )

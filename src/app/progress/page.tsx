@@ -7,9 +7,11 @@ import { DoneHeatmap } from '@/components/tracker/DoneHeatmap'
 import { BurnUpChart } from '@/components/tracker/BurnUpChart'
 import { StreakGanttChart } from '@/components/tracker/StreakGanttChart'
 import { ComplianceRadarChart } from '@/components/tracker/ComplianceRadarChart'
+import { GoalCompletionLineChart } from '@/components/tracker/GoalCompletionLineChart'
 import type { Goal, Strategy, StrategyHistory, TrackerData } from './types'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { StrategyHistoryExtended } from '@/app/types/types'
+import { useTrackerMetrics } from '@/app/hooks/useTrackerMetrics'
 
 // Helper: compute done flags per strategy
 export function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<string, number[]> {
@@ -86,11 +88,10 @@ export function computeWeekMetrics(done: Record<string, number[]>) {
 }
 
 export default function TrackerPage() {
-  const title = 'Tracker'
   const { plan, goalActions, strategyHistoryActions } = usePlanContext();
-  
-  // const { data: goals = [] } =
-  //   goalActions.useGetByPlanId(plan?.id as string);
+
+  const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string);
+  const { data: metrics } = useTrackerMetrics(plan?.id as string);
   
   const { data: strategies = [] } =
   strategyHistoryActions.useGetByPlanId(plan?.id as string);
@@ -108,31 +109,46 @@ export default function TrackerPage() {
   }, [])
 
   return (
-    <Container maxW="6xl" py={8}>
-      <Heading mb={4}>{title}</Heading>
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4}>
+    <Container maxW="6xl" py={8} borderRadius="md">
+      <Heading mb={4} size="2xl">My Progress</Heading>
+      <Box bg="white" p={4} borderRadius="md" boxShadow="sm" mb={4}>
+        <Heading size="md" mb={2}>
+          Plan Completion %
+        </Heading>
+        <HabitLineChart data={weekMetrics.habitPercent} />
+      </Box>
+      <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4} hideFrom="md">
         {uniqueStrategies.map((s) => (
-          <StrategySummaryCard key={s.strategyId} strategy={s} metrics={strategyMetrics[s.strategyId]} />
+          <StrategySummaryCard
+            key={s.strategyId}
+            strategy={s}
+            metrics={strategyMetrics[s.strategyId]}
+            weeklyData={metrics?.strategies[s.strategyId]}
+          />
         ))}
       </Grid>
       <Stack gap={8} mt={8}>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Weekly Wins
           </Heading>
           <WeeklyBarChart data={weekMetrics.weeklyWinCount} />
         </Box>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
-            Habit Completion %
+            Goal Completion %
           </Heading>
-          <HabitLineChart data={weekMetrics.habitPercent} />
+          <GoalCompletionLineChart data={metrics?.goals || {}} goals={goals} />
         </Box>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm" className="hidden md:block">
           <Heading size="md" mb={2}>
             Completion Heatmap
           </Heading>
-          <DoneHeatmap strategies={uniqueStrategies} done={done} />
+          <DoneHeatmap
+            strategies={uniqueStrategies}
+            done={done}
+            weeklyPercentages={metrics?.strategies}
+          />
         </Box>
         {/* <Box>
           <Heading size="md" mb={2}>
@@ -140,12 +156,12 @@ export default function TrackerPage() {
           </Heading>
           <BurnUpChart data={cumulative} />
         </Box> */}
-        <Box>
+        {/* <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Streaks
           </Heading>
           <StreakGanttChart strategies={uniqueStrategies} done={done} />
-        </Box>
+        </Box> */}
         {/* <Box>
           <Heading size="md" mb={2}>
             Compliance Radar

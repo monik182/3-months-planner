@@ -13,7 +13,12 @@ export function StreakGanttChart({ strategies, done }: StreakGanttChartProps) {
       {strategies.map((s) => (
         <Grid key={s.strategyId} templateColumns={`repeat(12, 1fr)`} gap={1}>
           {done[s.strategyId].map((v, idx) => (
-            <Box key={idx} h={3} bg={v ? 'green.500' : 'gray.200'} borderRadius="sm" />
+            <Box
+              key={idx}
+              boxSize={3}
+              bg={v ? 'green.500' : 'gray.200'}
+              borderRadius="sm"
+            />
           ))}
         </Grid>
       ))}

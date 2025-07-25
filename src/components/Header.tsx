@@ -88,15 +88,15 @@ export function Header() {
           {hasStartedPlan && (
             <ChakraLink
               as={Link}
-              href="/tracker"
+              href="/progress"
 
               display="flex"
               alignItems="center"
               gap="1"
-              fontWeight={pathname.startsWith('/tracker') ? 'bold' : 'normal'}
+              fontWeight={pathname.startsWith('/progress') ? 'bold' : 'normal'}
             >
               <AiOutlineBarChart />
-              <Text display={{ base: 'none', md: 'inline' }}>Tracker</Text>
+              <Text display={{ base: 'none', md: 'inline' }}>Progress Dashboard</Text>
             </ChakraLink>
           )}
           {/* <ChakraLink
