@@ -29,7 +29,7 @@ import { OneTap } from '@/components/OneTap';
 // const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 const passwordRequirements = /^.{8,}$/;
 
-export const formSchema = z
+const formSchema = z
   .object({
     email: z.email({ message: 'Please enter a valid email.' }),
     password: z

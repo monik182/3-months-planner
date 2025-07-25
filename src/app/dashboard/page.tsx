@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import NextLink from 'next/link';
 import { LuTarget } from 'react-icons/lu';
 
-export function DashboardV2() {
+function DashboardV2() {
   const { plan, goalActions, hasStartedPlan } = usePlanContext();
   const currentWeek = getCurrentWeekFromStartDate(plan?.startDate as Date) || 1;
   const [activeWeek, setActiveWeek] = useState(currentWeek);

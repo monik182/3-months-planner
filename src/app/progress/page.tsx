@@ -10,7 +10,7 @@ import { StrategyHistoryExtended } from '@/app/types/types'
 import { useTrackerMetrics } from '@/app/hooks/useTrackerMetrics'
 
 // Helper: compute done flags per strategy
-export function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<string, number[]> {
+function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<string, number[]> {
   const result: Record<string, number[]> = {}
   // data.goals.forEach((g) => {
   //   g.strategies.forEach((s) => {
@@ -45,7 +45,7 @@ export function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<
 }
 
 // Helper: compute metrics per strategy
-export function computeStrategyMetrics(done: Record<string, number[]>) {
+function computeStrategyMetrics(done: Record<string, number[]>) {
   const metrics: Record<string, { complianceRate: number; currentStreak: number; longestStreak: number }> = {}
   Object.entries(done).forEach(([id, arr]) => {
     const total = arr.reduce((a, b) => a + b, 0)
@@ -71,7 +71,7 @@ export function computeStrategyMetrics(done: Record<string, number[]>) {
 }
 
 // Helper: compute week metrics
-export function computeWeekMetrics(done: Record<string, number[]>) {
+function computeWeekMetrics(done: Record<string, number[]>) {
   const numStrategies = Object.keys(done).length
   const weeklyWinCount = Array(12).fill(0)
   Object.values(done).forEach((arr) => {
