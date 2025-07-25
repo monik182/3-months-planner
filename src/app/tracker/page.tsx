@@ -110,7 +110,7 @@ export default function TrackerPage() {
   }, [])
 
   return (
-    <Container maxW="6xl" py={8}>
+    <Container maxW="6xl" py={8} bg="gray.50" borderRadius="md">
       <Heading mb={4}>{title}</Heading>
       <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4}>
         {uniqueStrategies.map((s) => (
@@ -123,29 +123,33 @@ export default function TrackerPage() {
         ))}
       </Grid>
       <Stack gap={8} mt={8}>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Weekly Wins
           </Heading>
           <WeeklyBarChart data={weekMetrics.weeklyWinCount} />
         </Box>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Habit Completion %
           </Heading>
           <HabitLineChart data={weekMetrics.habitPercent} />
         </Box>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Goal Completion %
           </Heading>
           <GoalCompletionLineChart data={metrics?.goals || {}} goals={goals} />
         </Box>
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Completion Heatmap
           </Heading>
-          <DoneHeatmap strategies={uniqueStrategies} done={done} />
+          <DoneHeatmap
+            strategies={uniqueStrategies}
+            done={done}
+            weeklyPercentages={metrics?.strategies}
+          />
         </Box>
         {/* <Box>
           <Heading size="md" mb={2}>
@@ -153,7 +157,7 @@ export default function TrackerPage() {
           </Heading>
           <BurnUpChart data={cumulative} />
         </Box> */}
-        <Box>
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Streaks
           </Heading>
