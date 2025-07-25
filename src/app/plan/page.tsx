@@ -143,10 +143,9 @@ function PlanV2Page() {
           asChild
           variant="outline"
           size="sm"
-          colorPalette="yellow"
           disabled={plan.started}
         >
-          <NextLink href="/plan/new">Create New Plan</NextLink>
+          <NextLink href={plan.started ? "" : "/plan/new"}>Create New Plan</NextLink>
         </Button>
       </Flex>
       <Flex gap="20px" direction="column">
@@ -184,7 +183,7 @@ function PlanV2Page() {
                 </HStack>
                 <Stat.ValueText>{currentWeek}/12</Stat.ValueText>
               </Stat.Root>
-              <Stat.Root
+              {/* <Stat.Root
                 maxW="300px"
                 borderWidth="1px"
                 p="4"
@@ -196,15 +195,15 @@ function PlanV2Page() {
                   <Stat.Label>Progress</Stat.Label>
                 </HStack>
                 <Stat.ValueText>{planScore}%</Stat.ValueText>
-              </Stat.Root>
+              </Stat.Root> */}
             </Flex>
           </Flex>
-          <ProgressRoot colorPalette="yellow" value={progressValue}>
+          {/* <ProgressRoot colorPalette="yellow" value={progressValue}>
             <HStack gap="5">
               <ProgressBar flex="1" />
               <ProgressValueText>{week}/12</ProgressValueText>
             </HStack>
-          </ProgressRoot>
+          </ProgressRoot> */}
           <Card.Root>
             <Card.Body gap="2">
               <Card.Title mt="2">Define Your 3-Month Vision</Card.Title>
@@ -527,7 +526,7 @@ function VisionDescription({
               <li>Have weekly coffee dates with three mentors</li>
               <li>Run a 5K in under 30 minutes</li>
             </ul>
-          </div> 
+          </div>
         </Collapsible.Content>
       </Collapsible.Root>
     </div>

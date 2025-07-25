@@ -1,25 +1,15 @@
 # Post Release
-- Refactor dashboard 
+
 - Integrate templates
-- Integrate charts page
 - Improve HOME page with steps, wishlist count and everything
-- In strategies, create 7 checkboxes, one for each day, and let the user select the days they worked on it
 - Add reflection section for each week
-- Progress in new plan-v2 is not wired to real results.
 - Unify colors
 
-- Improve the plan view and colors and reuse component in step4 ✅
-- Improve the goals/strategies/indicator creation forms ✅
-
-- Integrate AI suggestions
-- Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
 
 # Complimentary Pages:
- - Past years
- - Create your own template
-
- - Vision & 3-year Milestone
- - Goals & Strategies editor ✅
+- Past years
+- Create your own template
+- Vision & 3-year Milestone
 
 
 # Print: 🔥 (?) - Not sure about this
@@ -263,3 +253,14 @@ with persistance will come success
 
 # Bug
 - strategies and goals are reordering randomly - avoid that. ✅
+
+# Post Release
+- Refactor dashboard ✅
+- Integrate charts page ✅
+- In strategies, create 7 checkboxes, one for each day, and let the user select the days they worked on it ✅
+- Progress in new plan-v2 is not wired to real results. ❌ [Will remove it]
+- Integrate AI suggestions
+- Improve the plan view and colors and reuse component in step4 ✅
+- Improve the goals/strategies/indicator creation forms ✅
+- Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
+- Goals & Strategies editor ✅
