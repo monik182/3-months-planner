@@ -88,7 +88,6 @@ export function computeWeekMetrics(done: Record<string, number[]>) {
 }
 
 export default function TrackerPage() {
-  const title = 'Tracker'
   const { plan, goalActions, strategyHistoryActions } = usePlanContext();
 
   const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string);
@@ -110,9 +109,15 @@ export default function TrackerPage() {
   }, [])
 
   return (
-    <Container maxW="6xl" py={8} bg="gray.50" borderRadius="md">
-      <Heading mb={4}>{title}</Heading>
-      <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4}>
+    <Container maxW="6xl" py={8} borderRadius="md">
+      <Heading mb={4} size="2xl">My Progress</Heading>
+      <Box bg="white" p={4} borderRadius="md" boxShadow="sm" mb={4}>
+        <Heading size="md" mb={2}>
+          Plan Completion %
+        </Heading>
+        <HabitLineChart data={weekMetrics.habitPercent} />
+      </Box>
+      <Grid templateColumns={{ base: '1fr', md: 'repeat(auto-fill, minmax(250px,1fr))' }} gap={4} hideFrom="md">
         {uniqueStrategies.map((s) => (
           <StrategySummaryCard
             key={s.strategyId}
@@ -131,17 +136,11 @@ export default function TrackerPage() {
         </Box>
         <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
-            Habit Completion %
-          </Heading>
-          <HabitLineChart data={weekMetrics.habitPercent} />
-        </Box>
-        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
-          <Heading size="md" mb={2}>
             Goal Completion %
           </Heading>
           <GoalCompletionLineChart data={metrics?.goals || {}} goals={goals} />
         </Box>
-        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
+        <Box bg="white" p={4} borderRadius="md" boxShadow="sm" className="hidden md:block">
           <Heading size="md" mb={2}>
             Completion Heatmap
           </Heading>
@@ -157,12 +156,12 @@ export default function TrackerPage() {
           </Heading>
           <BurnUpChart data={cumulative} />
         </Box> */}
-        <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
+        {/* <Box bg="white" p={4} borderRadius="md" boxShadow="sm">
           <Heading size="md" mb={2}>
             Streaks
           </Heading>
           <StreakGanttChart strategies={uniqueStrategies} done={done} />
-        </Box>
+        </Box> */}
         {/* <Box>
           <Heading size="md" mb={2}>
             Compliance Radar

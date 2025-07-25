@@ -15,7 +15,7 @@ export function HabitLineChart({ data, height = 300 }: HabitLineChartProps) {
         <XAxis dataKey="week" />
         <YAxis domain={[0, 100]} tickFormatter={(t) => `${t}%`} />
         <Tooltip formatter={(v: number) => `${v}%`} />
-        <Line type="monotone" dataKey="percent" stroke="#38A169" />
+        <Line type="monotone" dataKey="percent" stroke="#DCD0FF" />
       </LineChart>
     </ResponsiveContainer>
   )

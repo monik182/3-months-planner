@@ -96,7 +96,7 @@ export function Header() {
               fontWeight={pathname.startsWith('/tracker') ? 'bold' : 'normal'}
             >
               <AiOutlineBarChart />
-              <Text display={{ base: 'none', md: 'inline' }}>Tracker</Text>
+              <Text display={{ base: 'none', md: 'inline' }}>Progress Dashboard</Text>
             </ChakraLink>
           )}
           {/* <ChakraLink

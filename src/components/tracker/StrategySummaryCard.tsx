@@ -18,7 +18,7 @@ export function StrategySummaryCard({ strategy, metrics, weeklyData }: StrategyS
     <Box borderWidth="1px" borderRadius="md" p={4}>
       <Stack gap={1}>
         <Heading size="sm">{strategy.strategy.content}</Heading>
-        <Text>Compliance: {metrics.complianceRate.toFixed(0)}%</Text>
+        <Text>Score: {metrics.complianceRate.toFixed(0)}%</Text>
         <Text>Current Streak: {metrics.currentStreak}</Text>
         <Text>Longest Streak: {metrics.longestStreak}</Text>
         {weeklyData && <HabitLineChart data={weeklyData} height={150} />}
