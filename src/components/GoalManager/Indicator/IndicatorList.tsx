@@ -48,6 +48,7 @@ export function IndicatorList({ goalId, planId, maxLimit, onEdit, onLoading }: I
       initialValue: 0,
       goalValue: 0,
       status: Status.ACTIVE,
+      createdAt: null,
     }
     setIndicatorToUpdate(newIndicator)
   }

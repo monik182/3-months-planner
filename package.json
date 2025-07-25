@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
+    "@types/google-one-tap": "^1.2.6",
     "@types/mixpanel-browser": "^2.60.0",
     "@types/node": "^24.0.13",
     "@types/react": "^19.1.8",

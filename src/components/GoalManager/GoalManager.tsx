@@ -50,6 +50,7 @@ export function GoalManager({ onLoading, onEdit }: Step<Goal[]>) {
       id: cuid(),
       planId: plan!.id,
       content: '',
+      createdAt: null,
     }
 
     debouncedSave(newGoal)

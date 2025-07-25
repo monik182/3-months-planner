@@ -58,6 +58,7 @@ export default function TemplateGallery() {
           frequency: strategy.frequency,
           weeks: DEFAULT_WEEKS,
           status: Status.ACTIVE,
+          createdAt: null
         })));
 
         const indicators = createIndicators.mutateAsync(selectedTemplate.indicators.map(indicator => ({
@@ -69,6 +70,7 @@ export default function TemplateGallery() {
           initialValue: indicator.initialValue,
           goalValue: indicator.goalValue,
           status: Status.ACTIVE,
+          createdAt: null
         })));
 
         // Wait for both operations to complete

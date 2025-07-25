@@ -6,11 +6,11 @@ import { Plan } from '@prisma/client'
 import PlanViewer from '@/components/PlanViewer'
 
 export function Step4({ }: Step<Plan>) {
-  const { plan, isLoading: loadingPlan, goalActions, strategyActions, indicatorActions } = usePlanContext()
+  const { plan, goalActions, strategyActions, indicatorActions } = usePlanContext()
   const { isLoading: loadingGoals } = goalActions.useGetByPlanId(plan?.id as string)
   const { isLoading: loadingStrategies } = strategyActions.useGetByPlanId(plan?.id as string)
   const { isLoading: loadingIndicators } = indicatorActions.useGetByPlanId(plan?.id as string)
-  const loading = loadingPlan || loadingGoals || loadingStrategies || loadingIndicators
+  const loading = loadingGoals || loadingStrategies || loadingIndicators
 
   if (loading) {
     return (

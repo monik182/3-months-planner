@@ -26,10 +26,14 @@ function NewPlan() {
     
     const plan: Prisma.PlanCreateInput = {
       startDate: date,
-      userId: user!.id as string,
       endDate: calculatePlanEndDate(date),
       created: now,
       lastUpdate: now,
+      users: {
+        connect: {
+          id: user!.id as string,
+        }
+      }
     }
     createPlan.mutate(plan, {
       onSuccess() {

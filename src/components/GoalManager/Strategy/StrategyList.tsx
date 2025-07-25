@@ -51,6 +51,7 @@ export function StrategyList({ goalId, planId, maxLimit, onEdit, onLoading }: St
       weeks: [...DEFAULT_WEEKS],
       frequency: 7,
       status: Status.ACTIVE,
+      createdAt: null,
     }
     debouncedSave(newStrategy)
     setActiveStrategy(newStrategy.id)
