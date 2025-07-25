@@ -52,7 +52,7 @@ export default async function RootLayout({
               <Provider>
                 <AccountProvider>
                   <PlanProvider>
-                    <Box paddingBottom="8">
+                    <Box>
                       <Grid templateRows="6rem 1fr auto" minHeight="100vh">
                         <GridItem height="6rem">
                           <Header />
