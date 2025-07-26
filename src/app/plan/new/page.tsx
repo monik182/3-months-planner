@@ -12,13 +12,15 @@ import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/providers/AuthProvider'
+import NextLink from 'next/link'
 
 function NewPlan() {
   const router = useRouter()
   const { user } = useAuth()
-  const { planActions } = usePlanContext()
+  const { planActions, hasPlan } = usePlanContext()
   const createPlan = planActions.useCreate()
   const [startDate, setStartDate] = useState<string | undefined>(formatDate(getPlanStartDate(), 'YYYY-MM-DD'))
+  const [created, setCreated] = useState(false)
 
   const handleCreateNewPlan = () => {
     const date = dayjs(startDate).toDate()
@@ -41,7 +43,8 @@ function NewPlan() {
           title: 'Plan successfully created',
           type: 'success'
         })
-        router.replace('/plan')
+        setCreated(true)
+        router.push('/plan')
       },
       onError: (error) => {
         toaster.create({
@@ -51,6 +54,23 @@ function NewPlan() {
         })
       }
     })
+  }
+
+  if (hasPlan || created) {
+    return (
+      <Center>
+        <EmptyState
+          icon={<SlNotebook />}
+          size="lg"
+          title={created ? 'Plan created' : 'Plan in progress'}
+          description={created ? 'Your plan has been created successfully.' : 'You already have a plan in progress.'}
+        >
+          <Button asChild colorPalette="cyan">
+            <NextLink href="/plan">Go to Plan</NextLink>
+          </Button>
+        </EmptyState>
+      </Center>
+    )
   }
 
   return (
