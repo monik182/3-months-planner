@@ -1,3 +1,7 @@
+# BUG
+- Fix google button randomly not appear
+
+
 # Post Release
 
 - Integrate templates

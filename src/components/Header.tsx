@@ -140,7 +140,7 @@ export function Header() {
               </ChakraLink>
               <ChakraLink
                 as={Link}
-                href="/Signup"
+                href="/signup"
                 
                 className="flex flex-col justify-center items-center gap-1"
               >
