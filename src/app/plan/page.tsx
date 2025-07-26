@@ -119,7 +119,7 @@ function PlanV2Page() {
           size="lg"
           description="Create a new plan to get started"
         >
-          <Button asChild colorPalette="yellow">
+          <Button asChild colorPalette="cyan">
             <NextLink href="/plan/new">Create Plan</NextLink>
           </Button>
         </EmptyState>
@@ -129,7 +129,7 @@ function PlanV2Page() {
 
   return (
     <Container padding="10px">
-      <Flex justify="flex-end" mb={4}>
+      {/* <Flex justify="flex-end" mb={4}>
         <Button
           asChild
           variant="outline"
@@ -138,7 +138,7 @@ function PlanV2Page() {
         >
           <NextLink href={plan.started ? "" : "/plan/new"}>Create New Plan</NextLink>
         </Button>
-      </Flex>
+      </Flex> */}
       <Flex gap="20px" direction="column">
         <Box
           shadow="lg"
@@ -189,7 +189,7 @@ function PlanV2Page() {
               </Stat.Root> */}
             </Flex>
           </Flex>
-          {/* <ProgressRoot colorPalette="yellow" value={progressValue}>
+          {/* <ProgressRoot colorPalette="cyan" value={progressValue}>
             <HStack gap="5">
               <ProgressBar flex="1" />
               <ProgressValueText>{week}/12</ProgressValueText>

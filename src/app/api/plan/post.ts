@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const parsedData = PlanSchema.parse(data)
-    const planInProgress = await planHandler.findInProgress(data.userId)
+    const planInProgress = await planHandler.findStarted(data.users.connect.id)
 
     if (!!planInProgress) {
       return new Response(JSON.stringify({ message: 'The user already has a plan in progress', ok: false }), { status: 400 })

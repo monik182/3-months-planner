@@ -19,7 +19,9 @@ const create = async (data: Prisma.PlanCreateInput): Promise<Plan> => {
   })
 
   if (!response.ok) {
-    throw new Error('Failed to create plan')
+    console.error('Failed to create plan:', response.status)
+    const error = await response.json()
+    throw new Error(error.message || 'Failed to create plan')
   }
 
   const remotePlan = await response.json()

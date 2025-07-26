@@ -46,7 +46,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // define your protected/unprotected routes
-  const isAuthPage = ['/login', '/signup', '/join', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
+  const isAuthPage = ['/login', '/join', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/plan/new'
   const isPlan = pathname.startsWith('/plan')

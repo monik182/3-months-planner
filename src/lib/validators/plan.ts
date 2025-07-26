@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const PlanSchema = z.object({
   id: z.string().default(() => cuid()),
-  userId: z.string(),
+  users: z.object({ connect: z.object({ id: z.string() }) }),
   vision: z.string().default(''),
   milestone: z.string().default(''),
   completed: z.boolean().default(false),
