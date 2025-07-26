@@ -14,6 +14,7 @@ import { useAuth } from '@/app/providers/AuthProvider'
 import { logout } from '@/services/auth'
 import { clearStrategyOrder } from '@/app/util/order'
 import { usePlanContext } from '@/app/providers/usePlanContext'
+import Image from 'next/image'
 
 export function Header() {
   const { session, user } = useAuth()
@@ -44,12 +45,14 @@ export function Header() {
         paddingX={{ base: 2, md: 4 }}
       >
         <Heading size={{ md: '2xl', base: 'xl' }} color="black">
-          <ChakraLink as={Link} href="/"  _hover={{ textDecoration: 'none' }}>
+          <ChakraLink as={Link} href="/" _hover={{ textDecoration: 'none' }} display="flex" alignItems="center" gap="2">
+            <Image src="/logo-icon-no-bg.png" alt="The Planner" width="35" height="35" />
             The Planner
           </ChakraLink>
         </Heading>
-        <HStack gap={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
-          {/* <ChakraLink
+        {!!session && (
+          <HStack gap={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
+            {/* <ChakraLink
             as={Link}
             href="/"
             
@@ -61,45 +64,45 @@ export function Header() {
             <RiHome2Line />
             <Text display={{ base: 'none', md: 'inline' }}>Home</Text>
           </ChakraLink> */}
-          <ChakraLink
-            as={Link}
-            href="/dashboard"
-
-            display="flex"
-            alignItems="center"
-            gap="1"
-            fontWeight={pathname.startsWith('/dashboard') ? 'bold' : 'normal'}
-          >
-            <RxDashboard />
-            <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
-          </ChakraLink>
-          <ChakraLink
-            as={Link}
-            href="/plan"
-            
-            display="flex"
-            alignItems="center"
-            gap="1"
-            fontWeight={pathname.startsWith('/plan') ? 'bold' : 'normal'}
-          >
-            <SlNotebook />
-            <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
-          </ChakraLink>
-          {hasStartedPlan && (
             <ChakraLink
               as={Link}
-              href="/progress"
+              href="/dashboard"
 
               display="flex"
               alignItems="center"
               gap="1"
-              fontWeight={pathname.startsWith('/progress') ? 'bold' : 'normal'}
+              fontWeight={pathname.startsWith('/dashboard') ? 'bold' : 'normal'}
             >
-              <AiOutlineBarChart />
-              <Text display={{ base: 'none', md: 'inline' }}>Progress</Text>
+              <RxDashboard />
+              <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
             </ChakraLink>
-          )}
-          {/* <ChakraLink
+            <ChakraLink
+              as={Link}
+              href="/plan"
+
+              display="flex"
+              alignItems="center"
+              gap="1"
+              fontWeight={pathname.startsWith('/plan') ? 'bold' : 'normal'}
+            >
+              <SlNotebook />
+              <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
+            </ChakraLink>
+            {hasStartedPlan && (
+              <ChakraLink
+                as={Link}
+                href="/progress"
+
+                display="flex"
+                alignItems="center"
+                gap="1"
+                fontWeight={pathname.startsWith('/progress') ? 'bold' : 'normal'}
+              >
+                <AiOutlineBarChart />
+                <Text display={{ base: 'none', md: 'inline' }}>Progress</Text>
+              </ChakraLink>
+            )}
+            {/* <ChakraLink
             as={Link}
             href="/templates"
             
@@ -111,7 +114,8 @@ export function Header() {
             <PiFileText />
             <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
           </ChakraLink> */}
-        </HStack>
+          </HStack>
+        )}
         <Flex gap={{ base: 2, md: 4 }} alignItems="center" marginTop={{ base: 2, md: 0 }}>
           {!!session && (
             <Avatar name="User" shape="full" src={userAvatar} size="xs" />
@@ -132,7 +136,7 @@ export function Header() {
               <ChakraLink
                 as={Link}
                 href="/login"
-                
+
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <SlLogin />
@@ -141,7 +145,7 @@ export function Header() {
               <ChakraLink
                 as={Link}
                 href="/signup"
-                
+
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <LuUserPlus />

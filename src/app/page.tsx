@@ -2,6 +2,7 @@
 import { Button, Flex, Heading, Text } from '@chakra-ui/react'
 import { useRouter } from 'next/navigation'
 import { RiArrowRightLine } from 'react-icons/ri'
+import Image from 'next/image'
 
 export default function Home() {
   const router = useRouter()
@@ -9,7 +10,10 @@ export default function Home() {
   return (
     <div className="container">
       <section className="page" id="get-started">
-        <Heading as="h1" size={{ lg: "7xl", base: "4xl" }}>The Planner</Heading>
+        <Heading as="h1" size={{ lg: "7xl", base: "4xl" }} display="flex" alignItems="center" gap="2" flexDirection={{ base: "column" }}>
+          <Image src="/logo-icon-no-bg.png" alt="The Planner" width="100" height="100" />
+          The Planner
+        </Heading>
         <Flex flexDir="column" gap="1rem" alignItems="center">
           <Text>Stay Focused and Achieve More</Text>
           <Button size="xl" onClick={() => router.push('/signup')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
