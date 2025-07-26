@@ -5,7 +5,7 @@ export function Footer() {
   return (
     <Box as="footer" width="100%" bg="gray.200" paddingY="4" paddingX="8" textAlign="center">
       <Text fontSize="sm" color="gray.700">
-        MC Code Studio Product © {new Date().getFullYear()}
+        MC Code Studio © {new Date().getFullYear()}
       </Text>
     </Box>
   )
