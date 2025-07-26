@@ -2,6 +2,7 @@ import { planHandler } from '@/db/prismaHandler'
 
 import { PlanSchema } from '@/lib/validators/plan'
 import { NextRequest } from 'next/server'
+import dayjs from 'dayjs'
 
 export async function POST(request: NextRequest) {
   const data = await request.json()
@@ -12,6 +13,11 @@ export async function POST(request: NextRequest) {
 
   try {
     const parsedData = PlanSchema.parse(data)
+
+    if (dayjs(parsedData.startDate).isBefore(dayjs(), 'day')) {
+      parsedData.started = true
+    }
+
     const planInProgress = await planHandler.findInProgress(
       data.users.connect.id
     )
