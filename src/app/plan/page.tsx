@@ -62,10 +62,12 @@ function PlanV2Page() {
         .map((g) => g.id)
         .sort()
         .join(",");
+
       if (prevIds === newIds) {
-        // same set - update in place
-        return prev.map((g) => goalsData.find((ng) => ng.id === g.id) ?? g);
+        // Avoid creating a new array when goals haven't changed
+        return prev;
       }
+
       return goalsData;
     });
   }, [goalsData]);
