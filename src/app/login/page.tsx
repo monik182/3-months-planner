@@ -120,8 +120,8 @@ export default function Login() {
           <ChakraLink href="/recover-password" color="gray.500" _hover={{ textDecoration: 'underline' }} as={NextLink}>
             Forgot your password?
           </ChakraLink>
-          <ChakraLink href="/signup" color="gray.500" _hover={{ textDecoration: 'underline' }} as={NextLink}>
-            Don&apos;t have an account? Sign up
+          <ChakraLink href="/join" color="gray.500" _hover={{ textDecoration: 'underline' }} as={NextLink}>
+            Don&apos;t have an account? Join
           </ChakraLink>
         </VStack>
       </Box>

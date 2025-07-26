@@ -212,8 +212,8 @@ export default function ResetPasswordForm({ resetPassword, token }: ResetPasswor
             <ChakraLink as={NextLink} href="/login" color="gray.500">
               Already have an account? Sign in
             </ChakraLink>
-            <ChakraLink as={NextLink} href="/signup" color="gray.500">
-              Don’t have an account? Sign up
+            <ChakraLink as={NextLink} href="/join" color="gray.500">
+              Don’t have an account? Join
             </ChakraLink>
           </VStack>
         </Stack>

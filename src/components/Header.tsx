@@ -144,12 +144,12 @@ export function Header() {
               </ChakraLink>
               <ChakraLink
                 as={Link}
-                href="/signup"
+                href="/join"
 
                 className="flex flex-col justify-center items-center gap-1"
               >
                 <LuUserPlus />
-                <Text textStyle="xs">Signup</Text>
+                <Text textStyle="xs">Join</Text>
               </ChakraLink>
             </HStack>
           )}

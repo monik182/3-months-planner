@@ -16,7 +16,7 @@ export default function Home() {
         </Heading>
         <Flex flexDir="column" gap="1rem" alignItems="center">
           <Text>Stay Focused and Achieve More</Text>
-          <Button size="xl" onClick={() => router.push('/signup')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
+          <Button size="xl" onClick={() => router.push('/join')} colorPalette="yellow" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
           <Text fontSize="xs">Already have an account?</Text>
         </Flex>
         <Button size="xs" onClick={() => router.push('/login')} variant="plain" textDecoration="underline">Login</Button>
