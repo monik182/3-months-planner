@@ -74,6 +74,7 @@ export function createStrategyHistoryList(planId: string, strategies: Strategy[]
         strategyId: strategy.id,
         firstUpdate: null,
         lastUpdate: null,
+        createdAt: null,
       }
     })
   }).flat()
@@ -87,6 +88,7 @@ export function createIndicatorHistoryList(planId: string, indicators: Indicator
         sequence: parseInt(week),
         indicatorId: indicator.id,
         value: 0,
+        createdAt: null,
       }
     })
   }).flat()
