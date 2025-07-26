@@ -83,8 +83,11 @@ export default function SignUpForm() {
     formData.append('email', values.email);
     formData.append('password', values.password);
 
+    console.log('formData', formData);
+
     try {
       const response = await signup(formData);
+      console.log('response', response);
       if (response.error) {
         setError(response.error);
       }

@@ -1,5 +1,5 @@
 # BUG
-- Fix google button randomly not appear
+- Cannot create new users via google on prod
 
 
 # Post Release
@@ -268,3 +268,6 @@ with persistance will come success
 - Improve the goals/strategies/indicator creation forms ✅
 - Add password login? Or another auth provider? ❌ (Not needed, Already had email/password)
 - Goals & Strategies editor ✅
+
+# BUG
+- Fix google button randomly not appear ✅
