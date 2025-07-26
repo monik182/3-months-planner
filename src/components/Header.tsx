@@ -18,7 +18,7 @@ import Image from 'next/image'
 
 export function Header() {
   const { session, user } = useAuth()
-  const { hasStartedPlan } = usePlanContext()
+  const { hasStartedPlan, hasPlan } = usePlanContext()
   const router = useRouter()
   const pathname = usePathname()
   const userAvatar = user?.user_metadata?.picture || `https://ui-avatars.com/api/?background=000&color=fff&rounded=true&name=${user?.email?.split('@')[0] || user?.user_metadata?.name || 'Guest%20User'}`
@@ -88,7 +88,7 @@ export function Header() {
               <SlNotebook />
               <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
             </ChakraLink>
-            {hasStartedPlan && (
+            {hasPlan && (
               <ChakraLink
                 as={Link}
                 href="/progress"

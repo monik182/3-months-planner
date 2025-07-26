@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Geist_Mono, Outfit } from 'next/font/google'
 import './globals.css'
 import { Provider } from '@/components/ui/provider'
 import { Box, Grid, GridItem } from '@chakra-ui/react'
@@ -14,8 +14,8 @@ import { MixpanelProvider } from '@/app/providers/MixpanelProvider'
 import { getUser } from '@/app/util/auth'
 import { AuthProvider } from '@/app/providers/AuthProvider'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const outfitSans = Outfit({
+  variable: '--font-outfit-sans',
   subsets: ['latin'],
   display: 'swap',
   adjustFontFallback: false,
@@ -44,7 +44,7 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${outfitSans.variable} ${geistMono.variable} antialiased`}
       >
         <MixpanelProvider>
           <AuthProvider initialUser={user}>

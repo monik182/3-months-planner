@@ -84,7 +84,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (plan && !plan.started) {
-      if (isPlanNew || (!isPlan && !isDashboard)) {
+      if (isPlanNew || (!isPlan && !isDashboard && !isTracker)) {
         return NextResponse.redirect(new URL('/plan', request.url))
       }
     }
