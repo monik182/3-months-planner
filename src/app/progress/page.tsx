@@ -1,5 +1,5 @@
 'use client'
-import { Container, Heading, Grid, Stack, Box } from '@chakra-ui/react'
+import { Container, Heading, Grid, Stack, Box, Center } from '@chakra-ui/react'
 import { StrategySummaryCard } from '@/components/tracker/StrategySummaryCard'
 import { WeeklyBarChart } from '@/components/tracker/WeeklyBarChart'
 import { HabitLineChart } from '@/components/tracker/HabitLineChart'
@@ -8,6 +8,11 @@ import { GoalSummaryCard } from '@/components/tracker/GoalSummaryCard'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import { StrategyHistoryExtended } from '@/app/types/types'
 import { useTrackerMetrics } from '@/app/hooks/useTrackerMetrics'
+import { EmptyState } from '@/components/ui/empty-state'
+import { Button } from '@/components/ui/button'
+import NextLink from 'next/link'
+import { SlNotebook } from 'react-icons/sl'
+import { LuTarget } from 'react-icons/lu'
 
 // Helper: compute done flags per strategy
 function computeDoneFlags(strategies: StrategyHistoryExtended[]): Record<string, number[]> {
@@ -84,19 +89,59 @@ function computeWeekMetrics(done: Record<string, number[]>) {
 }
 
 export default function TrackerPage() {
-  const { plan, goalActions, strategyHistoryActions } = usePlanContext();
+  const {
+    plan,
+    goalActions,
+    strategyHistoryActions,
+    strategies,
+    hasStartedPlan,
+  } = usePlanContext();
 
   const { data: goals = [] } = goalActions.useGetByPlanId(plan?.id as string);
   const { data: metrics } = useTrackerMetrics(plan?.id as string);
   
-  const { data: strategies = [] } =
-  strategyHistoryActions.useGetByPlanId(plan?.id as string);
+  const { data: historyStrategies = [] } =
+    strategyHistoryActions.useGetByPlanId(plan?.id as string);
 
-  const uniqueStrategies = strategies.filter((s, idx, arr) => {
+  if (!goals.length && !strategies.length) {
+    return (
+      <Center h="full">
+        <EmptyState
+          icon={<LuTarget />}
+          size="lg"
+          title="No Goals or Actions"
+          description="Add goals and actions in your plan to see your progress."
+        >
+          <Button asChild colorPalette="cyan">
+            <NextLink href="/plan">Go to Plan</NextLink>
+          </Button>
+        </EmptyState>
+      </Center>
+    )
+  }
+
+  if (!hasStartedPlan) {
+    return (
+      <Center h="full">
+        <EmptyState
+          icon={<SlNotebook />}
+          size="lg"
+          title="Plan Not Started"
+          description="Start your plan or update it in the plan page."
+        >
+          <Button asChild colorPalette="cyan">
+            <NextLink href="/plan">Go to Plan</NextLink>
+          </Button>
+        </EmptyState>
+      </Center>
+    )
+  }
+
+  const uniqueStrategies = historyStrategies.filter((s, idx, arr) => {
     return arr.findIndex((t) => t.strategyId === s.strategyId) === idx
   })
 
-  const done = computeDoneFlags(strategies)
+  const done = computeDoneFlags(historyStrategies)
   const strategyMetrics = computeStrategyMetrics(done)
   const weekMetrics = computeWeekMetrics(done)
 
