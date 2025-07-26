@@ -39,6 +39,7 @@ export function OneTap({ context, onError }: OneTapProps) {
       client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
       context,
       callback: async (response: CredentialResponse) => {
+        console.log("credential response:", response);
         try {
           // send id token returned in response.credential to supabase
           const { data, error } = await supabase.auth.signInWithIdToken({
