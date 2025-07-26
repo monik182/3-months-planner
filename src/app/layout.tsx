@@ -29,8 +29,17 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'The Planner',
-  description: 'Achieve your goals faster with the 12-Week Year Plan Tracker. Create focused action plans, track progress weekly, and boost productivity—all in one place.',
+  title: 'The Planner - Plan Your Next Quarter',
+  description:
+    'The Planner helps you map out quarterly goals, track progress, and stay focused for the next 12 weeks.',
+  keywords: [
+    '12-week-year planner',
+    'plan',
+    'planner',
+    'quarter planner',
+    '3 months planner',
+    'simple planner',
+  ],
 }
 
 export default async function RootLayout({

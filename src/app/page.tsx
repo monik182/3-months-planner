@@ -11,11 +11,12 @@ export default function Home() {
     <div className="container">
       <section className="page" id="get-started">
         <Heading as="h1" size={{ lg: "7xl", base: "4xl" }} display="flex" alignItems="center" gap="2" flexDirection={{ base: "column" }}>
-          <Image src="/logo-icon-no-bg.png" alt="The Planner" width="100" height="100" />
+          <Image src="/logo-icon-no-bg.png" alt="The Planner logo" width="100" height="100" />
           The Planner
         </Heading>
         <Flex flexDir="column" gap="1rem" alignItems="center">
           <Text>Stay Focused and Achieve More</Text>
+          <Text textAlign="center">A simple planner for your next quarter.</Text>
           <Button size="xl" onClick={() => router.push('/join')} colorPalette="cyan" variant="subtle" width="100%">Get Started <RiArrowRightLine /></Button>
           <Text fontSize="xs">Already have an account?</Text>
         </Flex>
