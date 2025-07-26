@@ -441,7 +441,7 @@ export default function PlanViewer({ readonly = true }: { readonly?: boolean }) 
                                       bg="gray.50"
                                     >
                                       <HStack mb={1}>
-                                        <Badge colorPalette="yellow" borderRadius="md">
+                                        <Badge colorPalette="cyan" borderRadius="md">
                                           Indicator
                                         </Badge>
                                         <Text fontWeight="medium">{indicator.content}</Text>

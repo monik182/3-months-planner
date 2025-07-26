@@ -71,7 +71,7 @@ function EarlyAccess(props: WithTokenPageProps) {
         <Button
           size="lg"
           variant="subtle"
-          colorPalette="yellow"
+          colorPalette="cyan"
           onClick={handleCreateUser}
           loading={loading}
           disabled={disabled}

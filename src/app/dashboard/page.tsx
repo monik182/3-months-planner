@@ -32,7 +32,7 @@ function DashboardV2() {
           title="No Goals Yet"
           description="Head over to your plan and add a goal to get started"
         >
-          <Button asChild colorPalette="yellow">
+          <Button asChild colorPalette="cyan">
             <NextLink href="/plan">Go to Plan</NextLink>
           </Button>
         </EmptyState>

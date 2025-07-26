@@ -16,7 +16,7 @@ export function WeekIndicator() {
   return (
     <Tag
       startElement={<LuCalendarClock />}
-      colorPalette={hasNotStarted ? "gray" : "yellow"}
+      colorPalette={hasNotStarted ? "gray" : "cyan"}
       variant="subtle"
       size={{ base: "sm", md: "md" }}
     >
