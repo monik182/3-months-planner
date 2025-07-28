@@ -79,7 +79,10 @@ export async function updateSession(request: NextRequest) {
       .eq('completed', false)
       .maybeSingle()
 
+    console.log(user.id, 'Plan in middleware:', plan)
+
     if (!plan && pathname !== '/new') {
+      console.log('No plan, redirecting to new', request.nextUrl.pathname)
       return NextResponse.redirect(new URL('/new', request.url))
     }
 
