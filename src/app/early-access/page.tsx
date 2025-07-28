@@ -34,7 +34,7 @@ function EarlyAccess(props: WithTokenPageProps) {
           router.push('/join')
           return
         }
-        router.replace('/plan/new')
+        router.replace('/new')
       },
       onError: (error) => {
         toaster.create({

@@ -48,7 +48,7 @@ export async function updateSession(request: NextRequest) {
   // define your protected/unprotected routes
   const isAuthPage = ['/login', '/join', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
   const isDashboard = pathname.startsWith('/dashboard')
-  const isPlanNew = pathname === '/plan/new'
+  const isPlanNew = pathname === '/new'
   const isPlan = pathname.startsWith('/plan')
   const isTracker = pathname.startsWith('/progress')
 
@@ -79,8 +79,8 @@ export async function updateSession(request: NextRequest) {
       .eq('completed', false)
       .maybeSingle()
 
-    if (!plan && pathname !== '/plan/new') {
-      return NextResponse.redirect(new URL('/plan/new', request.url))
+    if (!plan && pathname !== '/new') {
+      return NextResponse.redirect(new URL('/new', request.url))
     }
 
     if (plan && !plan.started) {
