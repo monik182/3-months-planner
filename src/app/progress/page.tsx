@@ -112,8 +112,8 @@ export default function TrackerPage() {
           title="No Goals or Actions"
           description="Add goals and actions in your plan to see your progress."
         >
-          <Button asChild colorPalette="cyan">
-            <NextLink href="/plan">Go to Plan</NextLink>
+          <Button as={NextLink} href="/plan" colorPalette="cyan">
+            Go to Plan
           </Button>
         </EmptyState>
       </Center>
@@ -129,8 +129,8 @@ export default function TrackerPage() {
           title="Plan Not Started"
           description="Start your plan or update it in the plan page."
         >
-          <Button asChild colorPalette="cyan">
-            <NextLink href="/plan">Go to Plan</NextLink>
+          <Button as={NextLink} href="/plan" colorPalette="cyan">
+            Go to Plan
           </Button>
         </EmptyState>
       </Center>

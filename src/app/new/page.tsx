@@ -65,8 +65,8 @@ function NewPlan() {
           title={created ? 'Plan created' : 'Plan in progress'}
           description={created ? 'Your plan has been created successfully.' : 'You already have a plan in progress.'}
         >
-          <Button asChild colorPalette="cyan">
-            <NextLink href="/plan">Go to Plan</NextLink>
+          <Button as={NextLink} href="/plan" colorPalette="cyan">
+            Go to Plan
           </Button>
         </EmptyState>
       </Center>
