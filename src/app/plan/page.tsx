@@ -122,7 +122,7 @@ function PlanV2Page() {
           description="Create a new plan to get started"
         >
           <Button asChild colorPalette="cyan">
-            <NextLink href="/plan/new">Create Plan</NextLink>
+            <NextLink href="/new">Create Plan</NextLink>
           </Button>
         </EmptyState>
       </Center>
@@ -138,7 +138,7 @@ function PlanV2Page() {
           size="sm"
           disabled={plan.started}
         >
-          <NextLink href={plan.started ? "" : "/plan/new"}>Create New Plan</NextLink>
+          <NextLink href={plan.started ? "" : "/new"}>Create New Plan</NextLink>
         </Button>
       </Flex> */}
       <Flex gap="20px" direction="column">
