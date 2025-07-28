@@ -121,8 +121,8 @@ function PlanV2Page() {
           size="lg"
           description="Create a new plan to get started"
         >
-          <Button asChild colorPalette="cyan">
-            <NextLink href="/new">Create Plan</NextLink>
+          <Button as={NextLink} href="/new" colorPalette="cyan">
+            Create Plan
           </Button>
         </EmptyState>
       </Center>
@@ -318,8 +318,8 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 View charts and trends of your indicators to see your progress over time.
               </p>
-              <Button asChild colorPalette="black" className="mt-auto">
-                <NextLink href="/progress">View Progress</NextLink>
+              <Button as={NextLink} href="/progress" colorPalette="black" className="mt-auto">
+                View Progress
               </Button>
             </Card.Root>
 
@@ -329,8 +329,8 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 Browse pre-built goal templates for common objectives and add them to your plan.
               </p>
-              <Button asChild colorPalette="black" className="mt-auto">
-                <NextLink href="/templates">Browse Templates</NextLink>
+              <Button as={NextLink} href="/templates" colorPalette="black" className="mt-auto">
+                Browse Templates
               </Button>
             </Card.Root> */}
             {/* 
@@ -340,8 +340,8 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 Get intelligent suggestions for goals, strategies, and indicators based on your plan.
               </p>
-              <Button asChild colorPalette="black" className="mt-auto">
-                <NextLink href="/suggestions">Get Suggestions</NextLink>
+              <Button as={NextLink} href="/suggestions" colorPalette="black" className="mt-auto">
+                Get Suggestions
               </Button>
             </Card.Root> */}
           </div>
