@@ -1,5 +1,5 @@
 'use client'
-import { Container, Heading, Grid, Stack, Box, Center } from '@chakra-ui/react'
+import { Container, Heading, Grid, Stack, Box, Center, Link } from '@chakra-ui/react'
 import { StrategySummaryCard } from '@/components/tracker/StrategySummaryCard'
 import { WeeklyBarChart } from '@/components/tracker/WeeklyBarChart'
 import { HabitLineChart } from '@/components/tracker/HabitLineChart'
@@ -112,8 +112,10 @@ export default function TrackerPage() {
           title="No Goals or Actions"
           description="Add goals and actions in your plan to see your progress."
         >
-          <Button as={NextLink} href="/plan" colorPalette="cyan">
-            Go to Plan
+          <Button colorPalette="cyan">
+            <Link asChild color="white" variant="plain" textDecoration="none">
+              <NextLink href="/plan">Go To Plan</NextLink>
+            </Link>
           </Button>
         </EmptyState>
       </Center>
@@ -129,8 +131,10 @@ export default function TrackerPage() {
           title="Plan Not Started"
           description="Start your plan or update it in the plan page."
         >
-          <Button as={NextLink} href="/plan" colorPalette="cyan">
-            Go to Plan
+          <Button colorPalette="cyan">
+            <Link asChild color="white" variant="plain" textDecoration="none">
+              <NextLink href="/plan">Go To Plan</NextLink>
+            </Link>
           </Button>
         </EmptyState>
       </Center>

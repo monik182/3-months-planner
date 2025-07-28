@@ -1,5 +1,5 @@
 'use client'
-import { Flex, HStack, Heading, IconButton, Separator, Text, Link as ChakraLink } from '@chakra-ui/react'
+import { Flex, HStack, Heading, IconButton, Separator, Text, Link } from '@chakra-ui/react'
 import { SlLogin, SlLogout, SlNotebook } from 'react-icons/sl'
 import { LuUserPlus } from 'react-icons/lu'
 import { AiOutlineBarChart } from 'react-icons/ai'
@@ -8,13 +8,14 @@ import { RxDashboard } from 'react-icons/rx'
 // import { PiFileText } from 'react-icons/pi'
 import { useRouter, usePathname } from 'next/navigation'
 import { Avatar } from './ui/avatar'
-import Link from 'next/link'
 import { SyncService } from '@/services/sync'
 import { useAuth } from '@/app/providers/AuthProvider'
 import { logout } from '@/services/auth'
 import { clearStrategyOrder } from '@/app/util/order'
 import { usePlanContext } from '@/app/providers/usePlanContext'
 import Image from 'next/image'
+import NextLink from 'next/link'
+// import { PiFileText } from 'react-icons/pi'
 
 export function Header() {
   const { session, user } = useAuth()
@@ -45,75 +46,41 @@ export function Header() {
         paddingX={{ base: 2, md: 4 }}
       >
         <Heading size={{ md: '2xl', base: 'xl' }} color="black">
-          <ChakraLink as={Link} href="/" _hover={{ textDecoration: 'none' }} display="flex" alignItems="center" gap="2">
-            <Image src="/logo-icon-no-bg.png" alt="The Planner" width="35" height="35" />
-            The Planner
-          </ChakraLink>
+          <Link asChild variant="plain" textDecoration="none">
+            <NextLink href="/">
+              <Image src="/logo-icon-no-bg.png" alt="The Planner" width="35" height="35" />
+              The Planner
+            </NextLink>
+          </Link>
         </Heading>
         {!!session && (
           <HStack gap={{ base: 2, md: 4 }} marginTop={{ base: 2, md: 0 }}>
-            {/* <ChakraLink
-            as={Link}
-            href="/"
-            
-            display="flex"
-            alignItems="center"
-            gap="1"
-            fontWeight={pathname === '/' ? 'bold' : 'normal'}
-          >
-            <RiHome2Line />
-            <Text display={{ base: 'none', md: 'inline' }}>Home</Text>
-          </ChakraLink> */}
-            <ChakraLink
-              as={Link}
-              href="/dashboard"
-
-              display="flex"
-              alignItems="center"
-              gap="1"
-              fontWeight={pathname.startsWith('/dashboard') ? 'bold' : 'normal'}
-            >
-              <RxDashboard />
-              <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
-            </ChakraLink>
-            <ChakraLink
-              as={Link}
-              href="/plan"
-
-              display="flex"
-              alignItems="center"
-              gap="1"
-              fontWeight={pathname.startsWith('/plan') ? 'bold' : 'normal'}
-            >
-              <SlNotebook />
-              <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
-            </ChakraLink>
+            <Link asChild variant="plain" textDecoration="none" fontWeight={pathname.startsWith('/dashboard') ? 'bold' : 'normal'}>
+              <NextLink href="/dashboard">
+                <RxDashboard />
+                <Text display={{ base: 'none', md: 'inline' }}>Dashboard</Text>
+              </NextLink>
+            </Link>
+            <Link asChild variant="plain" textDecoration="none" fontWeight={pathname.startsWith('/plan') ? 'bold' : 'normal'}>
+              <NextLink href="/plan">
+                <SlNotebook />
+                <Text display={{ base: 'none', md: 'inline' }}>Plan</Text>
+              </NextLink>
+            </Link>
             {hasPlan && (
-              <ChakraLink
-                as={Link}
-                href="/progress"
-
-                display="flex"
-                alignItems="center"
-                gap="1"
-                fontWeight={pathname.startsWith('/progress') ? 'bold' : 'normal'}
-              >
-                <AiOutlineBarChart />
-                <Text display={{ base: 'none', md: 'inline' }}>Progress</Text>
-              </ChakraLink>
+              <Link asChild variant="plain" textDecoration="none" fontWeight={pathname.startsWith('/progress') ? 'bold' : 'normal'}>
+                <NextLink href="/progress">
+                  <AiOutlineBarChart />
+                  <Text display={{ base: 'none', md: 'inline' }}>Progress</Text>
+                </NextLink>
+              </Link>
             )}
-            {/* <ChakraLink
-            as={Link}
-            href="/templates"
-            
-            display="flex"
-            alignItems="center"
-            gap="1"
-            fontWeight={pathname.startsWith('/templates') ? 'bold' : 'normal'}
-          >
-            <PiFileText />
-            <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
-          </ChakraLink> */}
+            {/* <Link asChild variant="plain" textDecoration="none" fontWeight={pathname.startsWith('/templates') ? 'bold' : 'normal'}>
+              <NextLink href="/templates">
+                <PiFileText />
+                <Text display={{ base: 'none', md: 'inline' }}>Templates</Text>
+              </NextLink>
+            </Link> */}
           </HStack>
         )}
         <Flex gap={{ base: 2, md: 4 }} alignItems="center" marginTop={{ base: 2, md: 0 }}>
@@ -133,24 +100,18 @@ export function Header() {
           )}
           {!session && SyncService.isEnabled && (
             <HStack gap={2}>
-              <ChakraLink
-                as={Link}
-                href="/login"
-
-                className="flex flex-col justify-center items-center gap-1"
-              >
-                <SlLogin />
-                <Text textStyle="xs">Login</Text>
-              </ChakraLink>
-              <ChakraLink
-                as={Link}
-                href="/join"
-
-                className="flex flex-col justify-center items-center gap-1"
-              >
-                <LuUserPlus />
-                <Text textStyle="xs">Join</Text>
-              </ChakraLink>
+              <Link asChild variant="plain" textDecoration="none" className="flex flex-col justify-center items-center gap-1">
+                <NextLink href="/login">
+                  <SlLogin />
+                  <Text textStyle="xs">Login</Text>
+                </NextLink>
+              </Link>
+              <Link asChild variant="plain" textDecoration="none" className="flex flex-col justify-center items-center gap-1">
+                <NextLink href="/join">
+                  <LuUserPlus />
+                  <Text textStyle="xs">Join</Text>
+                </NextLink>
+              </Link>
             </HStack>
           )}
         </Flex>
@@ -159,4 +120,3 @@ export function Header() {
     </header>
   )
 }
-

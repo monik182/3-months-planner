@@ -3,7 +3,7 @@ import GoalCard from '@/app/dashboard/GoalCard';
 import CurrentWeekSummary from '@/app/dashboard/CurrentWeekSummary';
 import { usePlanContext } from '@/app/providers/usePlanContext';
 import { DashboardProvider } from '@/app/dashboard-legacy/dashboardContext';
-import { Grid, Center, Alert } from '@chakra-ui/react';
+import { Grid, Center, Alert, Link } from '@chakra-ui/react';
 import { formatDate } from '@/app/util';
 import { getCurrentWeekFromStartDate } from '@/app/util';
 import { useState } from 'react';
@@ -32,8 +32,10 @@ function DashboardV2() {
           title="No Goals Yet"
           description="Head over to your plan and add a goal to get started"
         >
-          <Button as={NextLink} href="/plan" colorPalette="cyan">
-            Go to Plan
+          <Button colorPalette="cyan">
+            <Link asChild color="white" variant="plain" textDecoration="none">
+              <NextLink href="/plan">Go To Plan</NextLink>
+            </Link>
           </Button>
         </EmptyState>
       </Center>

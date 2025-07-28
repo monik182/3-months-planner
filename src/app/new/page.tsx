@@ -5,7 +5,7 @@ import { calculatePlanEndDate, formatDate, getPlanStartDate } from '@/app/util'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
 import { toaster } from '@/components/ui/toaster'
-import { Center, Flex } from '@chakra-ui/react'
+import { Center, Flex, Link } from '@chakra-ui/react'
 import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useState } from 'react'
@@ -65,8 +65,10 @@ function NewPlan() {
           title={created ? 'Plan created' : 'Plan in progress'}
           description={created ? 'Your plan has been created successfully.' : 'You already have a plan in progress.'}
         >
-          <Button as={NextLink} href="/plan" colorPalette="cyan">
-            Go to Plan
+          <Button colorPalette="cyan">
+            <Link asChild color="white" variant="plain" textDecoration="none">
+              <NextLink href="/plan">Go To Plan</NextLink>
+            </Link>
           </Button>
         </EmptyState>
       </Center>

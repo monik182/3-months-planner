@@ -23,6 +23,7 @@ import {
   Textarea,
   VStack,
   Spinner,
+  Link,
 } from "@chakra-ui/react";
 import { Goal } from "@prisma/client";
 import cuid from "cuid";
@@ -121,8 +122,10 @@ function PlanV2Page() {
           size="lg"
           description="Create a new plan to get started"
         >
-          <Button as={NextLink} href="/new" colorPalette="cyan">
-            Create Plan
+          <Button colorPalette="cyan">
+            <Link asChild color="white" variant="plain" textDecoration="none">
+              <NextLink href="/new">Create Plan</NextLink>
+            </Link>
           </Button>
         </EmptyState>
       </Center>
@@ -318,8 +321,10 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 View charts and trends of your indicators to see your progress over time.
               </p>
-              <Button as={NextLink} href="/progress" colorPalette="black" className="mt-auto">
-                View Progress
+              <Button variant="outline">
+                <Link asChild variant="plain" textDecoration="none">
+                  <NextLink href="/progress">View Progress</NextLink>
+                </Link>
               </Button>
             </Card.Root>
 
@@ -329,19 +334,23 @@ function PlanV2Page() {
               <p className="text-muted-foreground mb-4">
                 Browse pre-built goal templates for common objectives and add them to your plan.
               </p>
-              <Button as={NextLink} href="/templates" colorPalette="black" className="mt-auto">
-                Browse Templates
+              <Button variant="outline">
+                <Link asChild variant="plain" textDecoration="none">
+                  <NextLink href="/templates">Browse Templates</NextLink>
+                </Link>
               </Button>
             </Card.Root> */}
-            {/* 
-            <Card.Root className="flex flex-col items-center text-center p-6">
+            
+            {/* <Card.Root className="flex flex-col items-center text-center p-6">
               <PiLightbulb className="h-12 w-12 mb-4 text-black" />
               <h3 className="text-xl font-bold mb-2">AI Suggestions</h3>
               <p className="text-muted-foreground mb-4">
                 Get intelligent suggestions for goals, strategies, and indicators based on your plan.
               </p>
-              <Button as={NextLink} href="/suggestions" colorPalette="black" className="mt-auto">
-                Get Suggestions
+              <Button variant="outline">
+                <Link asChild variant="plain" textDecoration="none">
+                  <NextLink href="/suggestions">Get Suggestions</NextLink>
+                </Link>
               </Button>
             </Card.Root> */}
           </div>
