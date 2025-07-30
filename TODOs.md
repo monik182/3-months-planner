@@ -6,7 +6,7 @@
 # Post Release
 
 - Integrate templates
-- Improve HOME page with steps, wishlist count and everything
+- Improve HOME page with demo video, wishlist and users count
 - Add reflection section for each week
 - Unify colors
 
