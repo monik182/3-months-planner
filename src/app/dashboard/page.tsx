@@ -55,11 +55,10 @@ function DashboardV2() {
       <CurrentWeekSummary
         activeWeek={activeWeek}
         setActiveWeek={setActiveWeek}
-        disabled={!hasStartedPlan}
       />
       <Grid gap={6} gridTemplateColumns={{ base: '1fr', lg: '1fr 1fr' }}>
         {goals.map((g) => (
-          <GoalCard key={g.id} goal={g} sequence={activeWeek} disabled={!hasStartedPlan} />
+          <GoalCard key={g.id} goal={g} sequence={activeWeek} />
         ))}
       </Grid>
     </>
