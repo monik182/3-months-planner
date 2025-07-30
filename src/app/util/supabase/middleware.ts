@@ -42,43 +42,15 @@ export async function updateSession(request: NextRequest) {
     console.error('Error fetching user in middleware:', userError.message)
   }
 
-  if (!user) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
 
-  const url = request.nextUrl
-  const { pathname,
-    // searchParams
-  } = url
+  const { pathname } = request.nextUrl
 
   // define your protected/unprotected routes
-  const isAuthPage = ['/login', '/join', '/recover-password', '/', '/auth', '/auth/confirm'].includes(pathname)
-  // const isResetPage = pathname === '/reset'
+  const isAuthPage = ['/login', '/join', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/new'
   const isPlan = pathname.startsWith('/plan')
   const isTracker = pathname.startsWith('/progress')
-
-  // console.log('url:', url)
-  // console.log('Pathname:', pathname)
-  // console.log('searchParams token:', searchParams.get('token'))
-  // console.log('searchParams type:', searchParams.get('type'))
-  // console.log('searchParams:', searchParams.get('hash_token'))
-
-  // if ((isAuthPage) && searchParams.get('token') && searchParams.get('type') === 'recovery') {
-  //   console.log('Recovery token, redirecting to reset', request.nextUrl.pathname)
-  //   const url = new URL('/reset', request.url)
-  //   url.searchParams.set('token', searchParams.get('token') as string)
-  //   url.searchParams.set('type', searchParams.get('type') as string)
-  //   url.searchParams.set('token_hash', searchParams.get('token_hash') as string)
-  //   url.searchParams.set('redirectTo', searchParams.get('redirectTo') as string)
-  //   return NextResponse.redirect(url)
-  // }
-  // if (isResetPage && searchParams.get('token') && searchParams.get('type') === 'recovery') {
-  //   return NextResponse.next({
-  //     request,
-  //   })
-  // }
 
   if (!user && (isDashboard || isPlan || isPlanNew || isTracker)) {
     return NextResponse.redirect(new URL('/', request.url))
@@ -98,29 +70,31 @@ export async function updateSession(request: NextRequest) {
 
 
   // 5) For logged-in users, enforce plan logic
-  // fetch the user's current plan (not completed)
-  const { data: plan } = await supabase
-    .from('plans')
-    .select('id, started')
-    .eq('user_id', user.id)
-    .eq('completed', false)
-    .maybeSingle()
+  if (user) {
+    // fetch the user's current plan (not completed)
+    const { data: plan } = await supabase
+      .from('plans')
+      .select('id, started')
+      .eq('user_id', user.id)
+      .eq('completed', false)
+      .maybeSingle()
 
-  console.log(user.id, 'Plan in middleware:', plan)
+    console.log(user.id, 'Plan in middleware:', plan)
 
-  if (!plan) {
-    console.log('No plan, redirecting to new', request.nextUrl.pathname)
-    return NextResponse.redirect(new URL('/new', request.url))
-  }
-
-  if (plan && !plan.started) {
-    if (isPlanNew || (!isPlan && !isDashboard && !isTracker)) {
-      return NextResponse.redirect(new URL('/plan', request.url))
+    if (!plan && pathname !== '/new') {
+      console.log('No plan, redirecting to new', request.nextUrl.pathname)
+      return NextResponse.redirect(new URL('/new', request.url))
     }
-  }
 
-  if (plan && plan.started && !(isDashboard || isPlan || isTracker)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    if (plan && !plan.started) {
+      if (isPlanNew || (!isPlan && !isDashboard && !isTracker)) {
+        return NextResponse.redirect(new URL('/plan', request.url))
+      }
+    }
+
+    if (plan && plan.started && !(isDashboard || isPlan || isTracker)) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
