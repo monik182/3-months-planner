@@ -1,5 +1,6 @@
 # BUG
-- Cannot create new users via google on prod
+- After plan creation app is not redirecting to /plan, even if forced
+- Cannot recover password 
 
 
 # Post Release
@@ -271,3 +272,4 @@ with persistance will come success
 
 # BUG
 - Fix google button randomly not appear ✅
+- Cannot create new users via google on prod ✅
