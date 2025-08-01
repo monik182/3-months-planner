@@ -30,7 +30,13 @@ export default function GoalCard({ goal, sequence, disabled }: GoalCardProps) {
   const [loadingToggle, setLoadingToggle] = useState<{actionId: string, index: number} | null>(null)
 
   const goalStrategies = useMemo(
-    () => strategies.filter((s) => s.strategy.goalId === goal.id && s.sequence === sequence),
+    () =>
+      strategies.filter(
+        (s) =>
+          s.strategy.goalId === goal.id &&
+          s.sequence === sequence &&
+          s.strategy.weeks.includes(sequence.toString())
+      ),
     [strategies, goal.id, sequence]
   )
   const orderedStrategies: StrategyHistoryExtended[] = getOrderedStrategies(goal.planId, goalStrategies)
