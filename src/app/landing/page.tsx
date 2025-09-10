@@ -11,7 +11,7 @@ import {
   SimpleGrid,
   Badge,
   List,
-  Link as ChakraLink,
+  // Link as ChakraLink,
 } from "@chakra-ui/react";
 
 function Section({ id, children, className = "" }: { id?: string; children: React.ReactNode; className?: string }) {
@@ -22,30 +22,30 @@ function Section({ id, children, className = "" }: { id?: string; children: Reac
   );
 }
 
-function Nav() {
-  return (
-    <Box as="header" borderBottom="1px" borderColor="gray.200" className="sticky top-0 z-40 bg-white/80 backdrop-blur">
-      <Container maxW="6xl">
-        <HStack py={4} justify="space-between">
-          <HStack gap={2}>
-            <Box className="h-6 w-6 rounded-sm bg-black" />
-            <Text fontWeight="bold">MC Code Studio</Text>
-          </HStack>
-          <HStack gap={6} className="hidden md:flex">
-            <ChakraLink href="#planner">Planner</ChakraLink>
-            <ChakraLink href="#meal">Meal Analyzer</ChakraLink>
-            <ChakraLink href="#pricing">Pricing</ChakraLink>
-            <ChakraLink href="#faq">FAQ</ChakraLink>
-          </HStack>
-          <HStack gap={3}>
-            <Button asChild variant="outline" size="sm"><a href="#pricing">Start trial</a></Button>
-            <Button asChild variant="solid" size="sm"><a href="#pricing">Buy now</a></Button>
-          </HStack>
-        </HStack>
-      </Container>
-    </Box>
-  );
-}
+// function Nav() {
+//   return (
+//     <Box as="header" borderBottom="1px" borderColor="gray.200" className="sticky top-0 z-40 bg-white/80 backdrop-blur">
+//       <Container maxW="6xl">
+//         <HStack py={4} justify="space-between">
+//           <HStack gap={2}>
+//             <Box className="h-6 w-6 rounded-sm bg-black" />
+//             <Text fontWeight="bold">MC Code Studio</Text>
+//           </HStack>
+//           <HStack gap={6} className="hidden md:flex">
+//             <ChakraLink href="#planner">Planner</ChakraLink>
+//             <ChakraLink href="#meal">Meal Analyzer</ChakraLink>
+//             <ChakraLink href="#pricing">Pricing</ChakraLink>
+//             <ChakraLink href="#faq">FAQ</ChakraLink>
+//           </HStack>
+//           <HStack gap={3}>
+//             <Button asChild variant="outline" size="sm"><a href="#pricing">Start trial</a></Button>
+//             <Button asChild variant="solid" size="sm"><a href="#pricing">Buy now</a></Button>
+//           </HStack>
+//         </HStack>
+//       </Container>
+//     </Box>
+//   );
+// }
 
 function Hero() {
   return (
@@ -106,42 +106,42 @@ function ProductPlanner() {
   );
 }
 
-function ProductMeal() {
-  return (
-    <Section id="meal">
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={12} alignItems="center">
-        <Box className="order-2 md:order-1 rounded-2xl border border-gray-200 p-6 shadow-sm bg-white">
-          <Text mb={3} fontWeight="bold">Quick demo (1 min)</Text>
-          <Box className="aspect-video w-full rounded-lg border border-black/10 bg-gray-100" />
-          <Text mt={3} fontSize="sm" color="gray.600">Embed your Loom/YT demo here.</Text>
-        </Box>
-        <VStack align="start" gap={6} className="order-1 md:order-2">
-          <Heading size="lg">AI Meal Analyzer — Macros in seconds</Heading>
-          <Text color="gray.700">
-            Paste what you ate; get an instant macro estimate. Edit portions, save favorites, duplicate meals, and export.
-          </Text>
-          <List.Root gap={3} color="gray.700">
-            <List.Item>30‑second macro estimates you can adjust</List.Item>
-            <List.Item>History, favorites, CSV/PDF export (Pro)</List.Item>
-            <List.Item>Built for speed — no clutter</List.Item>
-          </List.Root>
-          <HStack gap={3}>
-            <Button
-              asChild
-              variant="solid"
-            >
-              <a href="https://buy.stripe.com/test_meal_monthly">Start 15‑day trial</a>
-            </Button>
-            <Button asChild variant="outline">
-              <a href="#pricing">See pricing</a>
-            </Button>
-          </HStack>
-          <Text fontSize="sm" color="gray.600">After trial: <strong>€1.99/month</strong> or <strong>€14.99/year</strong>.</Text>
-        </VStack>
-      </SimpleGrid>
-    </Section>
-  );
-}
+// function ProductMeal() {
+//   return (
+//     <Section id="meal">
+//       <SimpleGrid columns={{ base: 1, md: 2 }} gap={12} alignItems="center">
+//         <Box className="order-2 md:order-1 rounded-2xl border border-gray-200 p-6 shadow-sm bg-white">
+//           <Text mb={3} fontWeight="bold">Quick demo (1 min)</Text>
+//           <Box className="aspect-video w-full rounded-lg border border-black/10 bg-gray-100" />
+//           <Text mt={3} fontSize="sm" color="gray.600">Embed your Loom/YT demo here.</Text>
+//         </Box>
+//         <VStack align="start" gap={6} className="order-1 md:order-2">
+//           <Heading size="lg">AI Meal Analyzer — Macros in seconds</Heading>
+//           <Text color="gray.700">
+//             Paste what you ate; get an instant macro estimate. Edit portions, save favorites, duplicate meals, and export.
+//           </Text>
+//           <List.Root gap={3} color="gray.700">
+//             <List.Item>30‑second macro estimates you can adjust</List.Item>
+//             <List.Item>History, favorites, CSV/PDF export (Pro)</List.Item>
+//             <List.Item>Built for speed — no clutter</List.Item>
+//           </List.Root>
+//           <HStack gap={3}>
+//             <Button
+//               asChild
+//               variant="solid"
+//             >
+//               <a href="https://buy.stripe.com/test_meal_monthly">Start 15‑day trial</a>
+//             </Button>
+//             <Button asChild variant="outline">
+//               <a href="#pricing">See pricing</a>
+//             </Button>
+//           </HStack>
+//           <Text fontSize="sm" color="gray.600">After trial: <strong>€1.99/month</strong> or <strong>€14.99/year</strong>.</Text>
+//         </VStack>
+//       </SimpleGrid>
+//     </Section>
+//   );
+// }
 
 function Pricing() {
   return (
@@ -230,22 +230,22 @@ function FAQ() {
   );
 }
 
-function Footer() {
-  return (
-    <Box as="footer" borderTop="1px" borderColor="gray.200" py={10} className="bg-white">
-      <Container maxW="6xl">
-        <VStack gap={3}>
-          <Text fontWeight="medium">© {new Date().getFullYear()} MC Code Studio</Text>
-          <HStack gap={6}>
-            <ChakraLink href="#">Terms</ChakraLink>
-            <ChakraLink href="#">Privacy</ChakraLink>
-            <ChakraLink href="#">Contact</ChakraLink>
-          </HStack>
-        </VStack>
-      </Container>
-    </Box>
-  );
-}
+// function Footer() {
+//   return (
+//     <Box as="footer" borderTop="1px" borderColor="gray.200" py={10} className="bg-white">
+//       <Container maxW="6xl">
+//         <VStack gap={3}>
+//           <Text fontWeight="medium">© {new Date().getFullYear()} MC Code Studio</Text>
+//           <HStack gap={6}>
+//             <ChakraLink href="#">Terms</ChakraLink>
+//             <ChakraLink href="#">Privacy</ChakraLink>
+//             <ChakraLink href="#">Contact</ChakraLink>
+//           </HStack>
+//         </VStack>
+//       </Container>
+//     </Box>
+//   );
+// }
 
 export default function LandingPage() {
   return (

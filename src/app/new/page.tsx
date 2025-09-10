@@ -10,12 +10,10 @@ import { Prisma } from '@prisma/client'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 import { SlNotebook } from 'react-icons/sl'
-import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/providers/AuthProvider'
 import NextLink from 'next/link'
 
 function NewPlan() {
-  const router = useRouter()
   const { user } = useAuth()
   const { planActions, hasPlan } = usePlanContext()
   const createPlan = planActions.useCreate()
