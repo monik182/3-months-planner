@@ -46,11 +46,14 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // define your protected/unprotected routes
-  const isAuthPage = ['/login', '/join', '/recovery', '/recover-password', '/auth', '/'].includes(pathname)
+  const isAuthPage = ['/login', '/join', '/recovery', '/recover-password', '/auth/confirm', '/', '/landing', '/reset'].includes(pathname)
   const isDashboard = pathname.startsWith('/dashboard')
   const isPlanNew = pathname === '/new'
   const isPlan = pathname.startsWith('/plan')
   const isTracker = pathname.startsWith('/progress')
+  const isReset = pathname.startsWith('/reset')
+
+  console.log('******** User, in middleware ******** ', request.nextUrl.pathname)
 
   if (!user && (isDashboard || isPlan || isPlanNew || isTracker)) {
     return NextResponse.redirect(new URL('/', request.url))
@@ -58,19 +61,25 @@ export async function updateSession(request: NextRequest) {
 
   // 3) If no user → only allow auth pages
   if (!user && !isAuthPage && !userError) {
-    console.log('No user, redirecting to login', request.nextUrl.pathname)
+    console.log('No user, redirecting to /login | ', request.nextUrl.pathname)
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
   // 4) If user is logged in → block auth pages
-  if (user && isAuthPage) {
-    console.log('User, redirecting to dashboard', request.nextUrl.pathname)
+  if (!isReset && user && isAuthPage) {
+
+    if (pathname.includes('/auth/confirm')) {
+      console.log('User, redirecting to /reset | ', request.nextUrl.pathname)
+      return NextResponse.redirect(new URL('/reset', request.url))
+    }
+
+    console.log('User, redirecting to /dashboard | ', request.nextUrl.pathname)
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
 
   // 5) For logged-in users, enforce plan logic
-  if (user) {
+  if (user && !isReset) {
     // fetch the user's current plan (not completed)
     const { data: plan } = await supabase
       .from('plans')
@@ -79,10 +88,8 @@ export async function updateSession(request: NextRequest) {
       .eq('completed', false)
       .maybeSingle()
 
-    console.log(user.id, 'Plan in middleware:', plan)
-
     if (!plan && pathname !== '/new') {
-      console.log('No plan, redirecting to new', request.nextUrl.pathname)
+      console.log('No plan, redirecting to /new | ', request.nextUrl.pathname)
       return NextResponse.redirect(new URL('/new', request.url))
     }
 

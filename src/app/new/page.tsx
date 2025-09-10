@@ -44,7 +44,7 @@ function NewPlan() {
           type: 'success'
         })
         setCreated(true)
-        router.push('/plan')
+        window.location.href = '/plan'
       },
       onError: (error) => {
         toaster.create({

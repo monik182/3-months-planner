@@ -1,12 +1,7 @@
-# BUG
-- After plan creation app is not redirecting to /plan, even if forced
-- Cannot recover password 
-
-
 # Post Release
 
-- Integrate templates
 - Improve HOME page with demo video, wishlist and users count
+- Integrate templates
 - Add reflection section for each week
 - Unify colors
 
@@ -19,6 +14,10 @@
 
 # Print: 🔥 (?) - Not sure about this
 - Create printable templates for the weekly score tracking
+
+
+
+
 
 
 
@@ -273,3 +272,7 @@ with persistance will come success
 # BUG
 - Fix google button randomly not appear ✅
 - Cannot create new users via google on prod ✅
+
+# BUG
+- After plan creation app is not redirecting to /plan, even if forced ✅
+- Cannot recover password ✅
